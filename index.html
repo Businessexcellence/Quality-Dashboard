@@ -176,22 +176,19 @@
             left: 0;
             right: 0;
             height: var(--header-height);
-            background: var(--bg-secondary);
+            background: #ffffff;
             border-bottom: 2px solid var(--border);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 1000;
-            box-shadow: 0 4px 12px var(--shadow);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         .header h1 {
             font-size: 20px;
             font-weight: 700;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: #000000;
             text-align: center;
             line-height: 1.4;
         }
@@ -713,7 +710,7 @@
     <div class="header">
         <h1>
             Business Excellence<br>
-            <span style="font-size: 14px; font-weight: 500; opacity: 0.9;">Comprehensive Quality Dashboard</span>
+            <span style="font-size: 14px; font-weight: 500; color: #000000;">Comprehensive Quality Dashboard</span>
         </h1>
         <button class="upload-btn" onclick="console.log('Button clicked!'); window.openUploadModal(); return false;">
             <i class="fas fa-upload"></i>
@@ -813,7 +810,7 @@
                         <i class="fas fa-times"></i> Clear Filter
                     </button>
                 </div>
-                <div id="accountFilters" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+                <div id="accountFilters" style="display: flex; flex-wrap: wrap; gap: 16px; overflow-x: auto;">
                     <!-- Filter cards will be generated dynamically -->
                 </div>
             </div>
@@ -889,10 +886,6 @@
                             <th>Frequency</th>
                             <th>BE SPOC Audit</th>
                             <th>BE SPOC SLA</th>
-                            <th>Accuracy %</th>
-                            <th>Sample %</th>
-                            <th>Error %</th>
-                            <th>Audit Count</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -1673,9 +1666,9 @@
             const sampleRow = dashboardData.accountSummary[0];
             console.log('📋 Available Account Summary columns:', Object.keys(sampleRow));
 
-            // Create filter cards with counts - NOW INCLUDING REGION
+            // Create filter cards with counts - Practice Head is now a filter
             const filters = [
-                { label: 'Client Interaction', field: 'Client Interaction', icon: 'handshake' },
+                { label: 'Client Interaction', field: 'Client Interaction', icon: 'handshake', showOnlyYes: true },
                 { label: 'Practice Head', field: 'Practice Head', icon: 'user-tie' },
                 { label: 'Audit Status', field: 'Audit Status', icon: 'clipboard-check' },
                 { label: 'Audit Frequency', field: 'Audit Frequency', icon: 'calendar-alt' },
@@ -1692,7 +1685,10 @@
 
                 if (values.length === 0) return '';
 
-                return values.map(value => {
+                // For Client Interaction, only show 'Yes' count
+                const valuesToShow = filter.showOnlyYes ? values.filter(v => String(v).toLowerCase() === 'yes') : values;
+
+                return valuesToShow.map(value => {
                     const count = dashboardData.accountSummary.filter(r => {
                         const rowValue = r[filter.field];
                         const cleanRowValue = typeof rowValue === 'string' ? rowValue.trim() : rowValue;
@@ -2021,7 +2017,7 @@
             const filteredCount = document.getElementById('filteredCount');
             
             if (!dashboardData.accountSummary.length) {
-                tbody.innerHTML = '<tr><td colspan="13" class="empty-state">📊 No Account Summary data available. Please upload Base File.xlsx</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="9" class="empty-state">📊 No Account Summary data available. Please upload Base File.xlsx</td></tr>';
                 console.warn('⚠️ No Account Summary data for table');
                 return;
             }
@@ -2089,10 +2085,6 @@
                         <td>${(row['Audit Frequency'] || row['Frequency'] || 'N/A')}</td>
                         <td>${(row['BE SPOC - Audit'] || row['BE SPOC Audit'] || 'N/A')}</td>
                         <td>${(row['BE SPOC - SLAs/KPIs'] || row['BE SPOC SLA'] || 'N/A')}</td>
-                        <td><span style="color: #10b981; font-weight: 600;">${accuracy}%</span></td>
-                        <td><span style="color: #3b82f6; font-weight: 600;">${sampleRate}%</span></td>
-                        <td><span style="color: #ef4444; font-weight: 600;">${errorRate}%</span></td>
-                        <td><span style="color: var(--primary); font-weight: 600;">${oppCount}</span></td>
                     </tr>
                 `;
             }).join('');
