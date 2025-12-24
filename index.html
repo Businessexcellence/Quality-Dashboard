@@ -1936,8 +1936,11 @@
             
             const uniqueRegionalHeads = Object.keys(regionalHeadMap).filter(r => r !== 'Unassigned').length;
 
-            document.getElementById('activeAccountCount').textContent = activeCount;
-            document.getElementById('regionalCount').textContent = uniqueRegionalHeads;
+            // Only update activeAccountCount (regionalCount element removed)
+            const activeCountEl = document.getElementById('activeAccountCount');
+            if (activeCountEl) {
+                activeCountEl.textContent = activeCount;
+            }
 
             console.log(`📊 KPIs: Active Accounts=${activeCount}, Regional Heads=${uniqueRegionalHeads}`);
             console.log(`📊 Regional breakdown:`, regionalHeadMap);
@@ -2013,36 +2016,44 @@
                 console.warn('⚠️ No Account Summary data for BE SPOC rendering');
                 const audit = document.getElementById('beSPOCAudit');
                 const sla = document.getElementById('beSPOCSLA');
-                if (audit) audit.innerHTML = '<div style="padding: 6px; text-align: center; color: #f8fafc; font-size: 9px;">No data available</div>';
-                if (sla) sla.innerHTML = '<div style="padding: 6px; text-align: center; color: #f8fafc; font-size: 9px;">No data available</div>';
+                if (audit) audit.innerHTML = '<div style="padding: 6px; text-align: center; color: #f8fafc; font-size: 9px;">No data available. Please upload Base File.xlsx</div>';
+                if (sla) sla.innerHTML = '<div style="padding: 6px; text-align: center; color: #f8fafc; font-size: 9px;">No data available. Please upload Base File.xlsx</div>';
                 return;
             }
             
             console.log('✅ Data available:', dashboardData.accountSummary.length, 'rows');
+            console.log('📋 First row sample:', dashboardData.accountSummary[0]);
             
             // BE SPOC - Audit (Column C) - Map SPOC to Account Names
             const beSPOCAuditContainer = document.getElementById('beSPOCAudit');
             if (!beSPOCAuditContainer) {
-                console.error('❌ BE SPOC Audit container not found');
+                console.error('❌ BE SPOC Audit container not found in DOM!');
                 return;
             }
+            console.log('✅ BE SPOC Audit container found');
             
             const spocAuditMap = {};
-            dashboardData.accountSummary.forEach(row => {
-                const spoc = row['BE SPOC - Audit'] || row['BE SPOC Audit'] || row['SPOC Audit'] || 'Unassigned';
-                const account = row['Account'] || 'Unknown';
+            dashboardData.accountSummary.forEach((row, index) => {
+                const spoc = String(row['BE SPOC - Audit'] || row['BE SPOC Audit'] || row['SPOC Audit'] || 'Unassigned').trim();
+                const account = String(row['Account'] || 'Unknown').trim();
                 if (!spocAuditMap[spoc]) spocAuditMap[spoc] = [];
                 spocAuditMap[spoc].push(account);
+                
+                if (index < 3) {
+                    console.log(`Row ${index + 1}: SPOC="${spoc}", Account="${account}"`);
+                }
             });
 
             console.log('📊 BE SPOC Audit map:', spocAuditMap);
+            console.log('📊 Total SPOCs:', Object.keys(spocAuditMap).length);
 
             const sortedSPOCAudit = Object.entries(spocAuditMap).sort((a, b) => b[1].length - a[1].length);
             
             if (sortedSPOCAudit.length === 0) {
-                beSPOCAuditContainer.innerHTML = '<div style="padding: 6px; text-align: center; color: #f8fafc; font-size: 9px;">No SPOC data</div>';
+                beSPOCAuditContainer.innerHTML = '<div style="padding: 6px; text-align: center; color: #f8fafc; font-size: 9px;">No SPOC data found</div>';
+                console.warn('⚠️ No SPOC Audit data after processing');
             } else {
-                beSPOCAuditContainer.innerHTML = sortedSPOCAudit.slice(0, 10).map(([spoc, accounts]) => `
+                const html = sortedSPOCAudit.slice(0, 10).map(([spoc, accounts]) => `
                     <div style="margin-bottom: 8px; padding: 6px; background: rgba(255, 140, 66, 0.05); border-radius: 4px; border-left: 3px solid var(--primary);">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                             <span style="font-size: 10px; color: var(--primary); font-weight: 700;">${spoc}</span>
@@ -2053,32 +2064,42 @@
                         </div>
                     </div>
                 `).join('');
+                
+                beSPOCAuditContainer.innerHTML = html;
                 console.log('✅ BE SPOC Audit rendered:', sortedSPOCAudit.length, 'SPOCs with account names');
+                console.log('✅ HTML length:', html.length, 'characters');
             }
 
             // BE SPOC - SLAs/KPIs (Column B) - Map SPOC to Account Names
             const beSPOCSLAContainer = document.getElementById('beSPOCSLA');
             if (!beSPOCSLAContainer) {
-                console.error('❌ BE SPOC SLA container not found');
+                console.error('❌ BE SPOC SLA container not found in DOM!');
                 return;
             }
+            console.log('✅ BE SPOC SLA container found');
             
             const spocSLAMap = {};
-            dashboardData.accountSummary.forEach(row => {
-                const spoc = row['BE SPOC - SLAs/KPIs'] || row['BE SPOC SLA'] || row['SPOC SLA'] || 'Unassigned';
-                const account = row['Account'] || 'Unknown';
+            dashboardData.accountSummary.forEach((row, index) => {
+                const spoc = String(row['BE SPOC - SLAs/KPIs'] || row['BE SPOC SLA'] || row['SPOC SLA'] || 'Unassigned').trim();
+                const account = String(row['Account'] || 'Unknown').trim();
                 if (!spocSLAMap[spoc]) spocSLAMap[spoc] = [];
                 spocSLAMap[spoc].push(account);
+                
+                if (index < 3) {
+                    console.log(`Row ${index + 1}: SPOC SLA="${spoc}", Account="${account}"`);
+                }
             });
 
             console.log('📊 BE SPOC SLA map:', spocSLAMap);
+            console.log('📊 Total SPOCs:', Object.keys(spocSLAMap).length);
 
             const sortedSPOCSLA = Object.entries(spocSLAMap).sort((a, b) => b[1].length - a[1].length);
             
             if (sortedSPOCSLA.length === 0) {
-                beSPOCSLAContainer.innerHTML = '<div style="padding: 6px; text-align: center; color: #f8fafc; font-size: 9px;">No SPOC data</div>';
+                beSPOCSLAContainer.innerHTML = '<div style="padding: 6px; text-align: center; color: #f8fafc; font-size: 9px;">No SPOC data found</div>';
+                console.warn('⚠️ No SPOC SLA data after processing');
             } else {
-                beSPOCSLAContainer.innerHTML = sortedSPOCSLA.slice(0, 10).map(([spoc, accounts]) => `
+                const html = sortedSPOCSLA.slice(0, 10).map(([spoc, accounts]) => `
                     <div style="margin-bottom: 8px; padding: 6px; background: rgba(255, 140, 66, 0.05); border-radius: 4px; border-left: 3px solid var(--primary);">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                             <span style="font-size: 10px; color: var(--primary); font-weight: 700;">${spoc}</span>
@@ -2089,7 +2110,10 @@
                         </div>
                     </div>
                 `).join('');
+                
+                beSPOCSLAContainer.innerHTML = html;
                 console.log('✅ BE SPOC SLA rendered:', sortedSPOCSLA.length, 'SPOCs with account names');
+                console.log('✅ HTML length:', html.length, 'characters');
             }
 
             console.log('✅ BE SPOC data rendered successfully with account names');
