@@ -977,7 +977,7 @@
                     </a>
                 </p>
             </div>
-            <input type="file" id="fileInput" accept=".xlsx,.xls" style="display: none;" onchange="window.handleFileUpload(event)">
+            <input type="file" id="fileInput" accept=".xlsx,.xls" style="display: none;">
             
             <!-- Enhanced Progress Section -->
             <div id="progressSection" style="display: none; padding: 20px;">
@@ -2227,6 +2227,24 @@ Total Population: ${totalPop}
         
         window.addEventListener('DOMContentLoaded', () => {
             console.log('Dashboard initialized');
+            
+            // CRITICAL: Attach file input change listener (like working test page)
+            const fileInput = document.getElementById('fileInput');
+            if (fileInput) {
+                fileInput.addEventListener('change', function(event) {
+                    console.log('📁 FILE INPUT CHANGED (event listener)');
+                    console.log('📁 File selected:', event.target.files[0]?.name);
+                    if (typeof window.handleFileUpload === 'function') {
+                        window.handleFileUpload(event);
+                    } else {
+                        console.error('❌ handleFileUpload not defined!');
+                        alert('Upload function not loaded. Please refresh the page.');
+                    }
+                });
+                console.log('✅ File input event listener attached');
+            } else {
+                console.error('❌ File input not found!');
+            }
             
             // Setup upload button click handler as backup
             const uploadBtn = document.querySelector('.upload-btn');
