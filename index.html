@@ -1119,6 +1119,15 @@
                 if (targetTab) {
                     targetTab.classList.add('active');
                     console.log('✅ Tab activated:', tabId);
+                    
+                    // Re-render chart when Account Summary tab is activated
+                    if (tabId === 'account-summary' && dashboardData && dashboardData.accountSummary && dashboardData.accountSummary.length > 0) {
+                        console.log('🗺️ Re-rendering region chart for visible tab');
+                        // Use setTimeout to ensure DOM is fully rendered
+                        setTimeout(() => {
+                            renderRegionChart();
+                        }, 100);
+                    }
                 } else {
                     console.error('❌ Tab not found:', tabId);
                 }
@@ -2060,23 +2069,34 @@
 
         function renderRegionChart() {
             console.log('🗺️ Starting renderRegionChart()');
+            
+            // Check if Chart.js is loaded
+            if (typeof Chart === 'undefined') {
+                console.error('❌ Chart.js library not loaded!');
+                return;
+            }
+            
             const canvas = document.getElementById('regionChart');
             if (!canvas) {
                 console.error('❌ Canvas element #regionChart not found');
                 return;
             }
+            
+            console.log('✅ Canvas found:', canvas);
 
             // Check if we have data
             if (!dashboardData || !dashboardData.accountSummary || dashboardData.accountSummary.length === 0) {
                 console.warn('⚠️ No account summary data available');
                 const container = document.getElementById('regionChartContainer');
-                container.innerHTML = `
-                    <div style="text-align: center; padding: 40px; color: var(--text-muted);">
-                        <i class="fas fa-map-marker-alt" style="font-size: 48px; color: var(--primary); margin-bottom: 16px;"></i>
-                        <h3 style="color: var(--text-primary); margin-bottom: 8px;">No Data Available</h3>
-                        <p>Upload an Excel file to see the region distribution.</p>
-                    </div>
-                `;
+                if (container) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+                            <i class="fas fa-map-marker-alt" style="font-size: 48px; color: var(--primary); margin-bottom: 16px;"></i>
+                            <h3 style="color: var(--text-primary); margin-bottom: 8px;">No Data Available</h3>
+                            <p>Upload an Excel file to see the region distribution.</p>
+                        </div>
+                    `;
+                }
                 return;
             }
 
@@ -2143,9 +2163,17 @@
             console.log('🗺️ Chart labels:', labels);
             console.log('🗺️ Chart data:', data);
 
-            // Create professional donut chart
-            const ctx = canvas.getContext('2d');
-            window.regionChartInstance = new Chart(ctx, {
+            // Create professional donut chart with error handling
+            try {
+                const ctx = canvas.getContext('2d');
+                if (!ctx) {
+                    console.error('❌ Failed to get 2D context from canvas');
+                    return;
+                }
+                
+                console.log('✅ Got 2D context, creating chart...');
+                
+                window.regionChartInstance = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
                     labels: labels,
@@ -2231,6 +2259,21 @@
             });
 
             console.log('✅ Region chart rendered successfully with', labels.length, 'regions');
+            } catch (error) {
+                console.error('❌ Error creating chart:', error);
+                console.error('Error details:', error.message, error.stack);
+                const container = document.getElementById('regionChartContainer');
+                if (container) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+                            <i class="fas fa-exclamation-triangle" style="font-size: 48px; color: #ff6600; margin-bottom: 16px;"></i>
+                            <h3 style="color: var(--text-primary); margin-bottom: 8px;">Chart Error</h3>
+                            <p>Failed to render chart: ${error.message}</p>
+                            <p style="font-size: 12px; margin-top: 8px;">Check console (F12) for details.</p>
+                        </div>
+                    `;
+                }
+            }
         }
 
         function filterByRegion(region) {
