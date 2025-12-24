@@ -970,8 +970,24 @@
                 </p>
             </div>
             <input type="file" id="fileInput" accept=".xlsx,.xls" style="display: none;" onchange="handleFileUpload(event)">
-            <div class="progress-bar" id="progressBar" style="display: none;">
-                <div class="progress-fill" id="progressFill"></div>
+            
+            <!-- Enhanced Progress Section -->
+            <div id="progressSection" style="display: none; padding: 20px;">
+                <div style="text-align: center; margin-bottom: 15px;">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 32px; color: var(--primary);"></i>
+                    <p id="uploadStatus" style="margin-top: 10px; font-size: 16px; font-weight: 600; color: var(--text-primary);">
+                        Uploading...
+                    </p>
+                    <p id="uploadSubStatus" style="margin-top: 5px; font-size: 13px; color: var(--text-secondary);">
+                        Please wait
+                    </p>
+                </div>
+                <div class="progress-bar" style="display: block; height: 8px; background: var(--bg-tertiary); border-radius: 4px; overflow: hidden; position: relative;">
+                    <div class="progress-fill" id="progressFill" style="height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); width: 0%; transition: width 0.3s ease;"></div>
+                </div>
+                <div style="text-align: center; margin-top: 10px;">
+                    <span id="progressPercent" style="font-size: 14px; font-weight: 600; color: var(--primary);">0%</span>
+                </div>
             </div>
         </div>
     </div>
@@ -1113,16 +1129,31 @@
             }
 
             const reader = new FileReader();
-            const progressBar = document.getElementById('progressBar');
+            const progressSection = document.getElementById('progressSection');
             const progressFill = document.getElementById('progressFill');
+            const progressPercent = document.getElementById('progressPercent');
+            const uploadStatus = document.getElementById('uploadStatus');
+            const uploadSubStatus = document.getElementById('uploadSubStatus');
+            const uploadZone = document.getElementById('uploadZone');
 
-            progressBar.style.display = 'block';
-            progressFill.style.width = '30%';
+            // Show progress section, hide upload zone
+            uploadZone.style.display = 'none';
+            progressSection.style.display = 'block';
+            
+            // Update status
+            uploadStatus.textContent = '📁 Reading file...';
+            uploadSubStatus.textContent = file.name + ' (' + (file.size / 1024 / 1024).toFixed(2) + ' MB)';
+            progressFill.style.width = '20%';
+            progressPercent.textContent = '20%';
+            
             console.log('📊 Starting to read file...');
 
             reader.onload = function(e) {
                 console.log('📖 File read complete, parsing...');
-                progressFill.style.width = '60%';
+                uploadStatus.textContent = '⚙️ Parsing Excel file...';
+                uploadSubStatus.textContent = 'Extracting data from sheets';
+                progressFill.style.width = '40%';
+                progressPercent.textContent = '40%';
                 
                 try {
                     const data = new Uint8Array(e.target.result);
@@ -1130,6 +1161,11 @@
                     
                     const workbook = XLSX.read(data, { type: 'array' });
                     console.log('📊 Workbook parsed successfully');
+
+                    uploadStatus.textContent = '📊 Loading sheets...';
+                    uploadSubStatus.textContent = 'Found ' + workbook.SheetNames.length + ' sheets';
+                    progressFill.style.width = '60%';
+                    progressPercent.textContent = '60%';
 
                     // Parse all sheets - try underscore variations first (user's file format)
                     console.log('📊 Available sheets:', workbook.SheetNames);
@@ -1202,36 +1238,72 @@
                         console.warn('⚠️ Could not save to localStorage:', storageError.message);
                     }
 
+                    uploadStatus.textContent = '✅ Upload complete!';
+                    uploadSubStatus.textContent = 'Data loaded successfully';
                     progressFill.style.width = '100%';
+                    progressPercent.textContent = '100%';
                     console.log('✅ All data loaded successfully!');
 
                     // Wait a bit then close modal and refresh
                     setTimeout(() => {
                         closeUploadModal();
                         refreshAllTabs();
-                        alert(`✅ Data loaded successfully!\n\n📊 Summary:\n- Parameter Audits: ${dashboardData.parameterAuditCount.length}\n- Account Summary: ${dashboardData.accountSummary.length}\n- Recruiter Audits: ${dashboardData.recruiterAuditCount.length}`);
                         
-                        // Reset file input
+                        // Show detailed success message
+                        const summary = `✅ File uploaded successfully!\n\n📊 Data Summary:\n` +
+                            `• Parameter Audits: ${dashboardData.parameterAuditCount.length} rows\n` +
+                            `• Account Summary: ${dashboardData.accountSummary.length} accounts\n` +
+                            `• Recruiter Audits: ${dashboardData.recruiterAuditCount.length} rows\n` +
+                            `• RCA/CAPA: ${dashboardData.rcaCapa.length} rows\n` +
+                            `• Projects: ${dashboardData.projects.length} rows\n` +
+                            `• CSAT: ${dashboardData.csat.length} rows\n\n` +
+                            `✨ Dashboard has been refreshed with your data!`;
+                        
+                        alert(summary);
+                        
+                        // Reset UI
                         document.getElementById('fileInput').value = '';
-                        progressBar.style.display = 'none';
+                        progressSection.style.display = 'none';
+                        uploadZone.style.display = 'block';
                         progressFill.style.width = '0%';
-                    }, 500);
+                        progressPercent.textContent = '0%';
+                    }, 1000);
 
                 } catch (error) {
                     console.error('❌ Error parsing Excel:', error);
                     console.error('Error details:', error.message);
                     console.error('Error stack:', error.stack);
-                    progressFill.style.width = '0%';
-                    progressBar.style.display = 'none';
-                    alert(`❌ Error parsing file\n\nDetails: ${error.message}\n\nPlease ensure:\n- File is a valid Excel (.xlsx) file\n- File contains required sheets\n- File is not corrupted\n\nCheck browser console (F12) for more details.`);
                     
-                    // Reset file input
-                    document.getElementById('fileInput').value = '';
+                    uploadStatus.textContent = '❌ Upload failed';
+                    uploadSubStatus.textContent = error.message;
+                    progressFill.style.width = '0%';
+                    progressPercent.textContent = '0%';
+                    
+                    setTimeout(() => {
+                        alert(`❌ Error parsing file\n\nDetails: ${error.message}\n\nPlease ensure:\n- File is a valid Excel (.xlsx) file\n- File contains required sheets\n- File is not corrupted\n\nCheck browser console (F12) for more details.`);
+                        
+                        // Reset UI
+                        document.getElementById('fileInput').value = '';
+                        progressSection.style.display = 'none';
+                        uploadZone.style.display = 'block';
+                    }, 1500);
                 }
             };
 
             reader.onerror = function(error) {
                 console.error('❌ FileReader error:', error);
+                uploadStatus.textContent = '❌ Error reading file';
+                uploadSubStatus.textContent = 'File read failed';
+                progressFill.style.width = '0%';
+                progressPercent.textContent = '0%';
+                
+                setTimeout(() => {
+                    alert('❌ Error reading file. Please try again.');
+                    document.getElementById('fileInput').value = '';
+                    progressSection.style.display = 'none';
+                    uploadZone.style.display = 'block';
+                }, 1500);
+            };
                 alert('❌ Error reading file. Please try again.');
                 progressBar.style.display = 'none';
                 progressFill.style.width = '0%';
