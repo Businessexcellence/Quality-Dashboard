@@ -131,6 +131,11 @@
             gap: 8px;
             transition: all 0.3s ease;
             z-index: 1001;
+            pointer-events: auto;
+        }
+
+        .upload-btn:active {
+            transform: translateY(-50%) scale(0.95);
         }
 
         .upload-btn:hover {
@@ -625,7 +630,7 @@
             Business Excellence<br>
             <span style="font-size: 14px; font-weight: 500; opacity: 0.9;">Comprehensive Quality Dashboard</span>
         </h1>
-        <button class="upload-btn" onclick="openUploadModal()">
+        <button class="upload-btn" onclick="console.log('Button clicked!'); window.openUploadModal(); return false;">
             <i class="fas fa-upload"></i>
             Upload Excel
         </button>
@@ -912,25 +917,51 @@
         // UPLOAD MODAL FUNCTIONS (Defined at top level)
         // ==========================================
         
+        console.log('🚀 Script loaded - defining upload functions');
+        
         window.openUploadModal = function() {
             console.log('🎯 Opening upload modal...');
-            const modal = document.getElementById('uploadModal');
-            if (modal) {
-                modal.classList.add('active');
-                console.log('✅ Upload modal opened');
-            } else {
-                console.error('❌ Upload modal not found!');
+            try {
+                const modal = document.getElementById('uploadModal');
+                console.log('Modal element:', modal);
+                if (modal) {
+                    modal.style.display = 'flex';
+                    modal.classList.add('active');
+                    console.log('✅ Upload modal opened');
+                } else {
+                    console.error('❌ Upload modal not found!');
+                    alert('Error: Upload modal not found. Please refresh the page.');
+                }
+            } catch (error) {
+                console.error('❌ Error opening modal:', error);
+                alert('Error opening upload modal: ' + error.message);
             }
         };
 
         window.closeUploadModal = function() {
             console.log('🎯 Closing upload modal...');
-            const modal = document.getElementById('uploadModal');
-            if (modal) {
-                modal.classList.remove('active');
-                console.log('✅ Upload modal closed');
+            try {
+                const modal = document.getElementById('uploadModal');
+                if (modal) {
+                    modal.style.display = 'none';
+                    modal.classList.remove('active');
+                    console.log('✅ Upload modal closed');
+                }
+            } catch (error) {
+                console.error('❌ Error closing modal:', error);
             }
         };
+        
+        // Test function
+        window.testUpload = function() {
+            console.log('✅ Test function working!');
+            alert('JavaScript is working! Now testing modal...');
+            window.openUploadModal();
+        };
+        
+        console.log('✅ Upload functions defined on window object');
+        console.log('window.openUploadModal:', typeof window.openUploadModal);
+        console.log('window.closeUploadModal:', typeof window.closeUploadModal);
         
         // ==========================================
         // NAVIGATION
