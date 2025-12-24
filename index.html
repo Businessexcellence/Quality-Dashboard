@@ -1122,30 +1122,23 @@
         // ==========================================
         
         window.handleFileUpload = function(event) {
-            console.log('═══════════════════════════════════════');
-            console.log('🔄 handleFileUpload CALLED');
-            console.log('═══════════════════════════════════════');
+            console.log('🔄 handleFileUpload called');
             
             try {
                 const file = event.target.files[0];
-                console.log('📁 File object:', file);
                 
                 if (!file) {
                     console.warn('⚠️ No file selected');
-                    alert('⚠️ No file selected');
                     return;
                 }
 
-                console.log('📁 File selected:', file.name, 'Size:', (file.size / 1024 / 1024).toFixed(2) + 'MB');
-                alert('✅ File detected: ' + file.name);
+                console.log('📁 File:', file.name, 'Size:', (file.size / 1024 / 1024).toFixed(2) + 'MB');
 
                 // Check file type
                 if (!file.name.endsWith('.xlsx') && !file.name.endsWith('.xls')) {
                     alert('❌ Please upload an Excel file (.xlsx or .xls)');
                     return;
                 }
-                
-                console.log('✅ File type validated');
 
                 const reader = new FileReader();
                 const progressSection = document.getElementById('progressSection');
@@ -1155,23 +1148,12 @@
                 const uploadSubStatus = document.getElementById('uploadSubStatus');
                 const uploadZone = document.getElementById('uploadZone');
                 
-                console.log('📊 Progress elements:', {
-                    progressSection: !!progressSection,
-                    progressFill: !!progressFill,
-                    progressPercent: !!progressPercent,
-                    uploadStatus: !!uploadStatus,
-                    uploadSubStatus: !!uploadSubStatus,
-                    uploadZone: !!uploadZone
-                });
-
                 if (!progressSection || !uploadZone) {
-                    alert('❌ Progress UI elements not found!');
-                    console.error('❌ Missing UI elements');
+                    console.error('❌ Progress UI elements not found');
                     return;
                 }
 
                 // Show progress section, hide upload zone
-                console.log('🎨 Updating UI...');
                 uploadZone.style.display = 'none';
                 progressSection.style.display = 'block';
                 
@@ -1181,12 +1163,10 @@
                 progressFill.style.width = '20%';
                 progressPercent.textContent = '20%';
                 
-                console.log('📊 Starting to read file...');
-                alert('📊 Starting file read...');
+                console.log('📊 Reading file...');
 
                 reader.onload = function(e) {
-                    console.log('📖 File read complete, parsing...');
-                    alert('📖 File read complete!');
+                    console.log('📖 File read complete');
                     uploadStatus.textContent = '⚙️ Parsing Excel file...';
                     uploadSubStatus.textContent = 'Extracting data from sheets';
                     progressFill.style.width = '40%';
@@ -1197,22 +1177,18 @@
                         console.log('📦 File data loaded:', data.length, 'bytes');
                         
                         if (typeof XLSX === 'undefined') {
-                            alert('❌ XLSX library not loaded!');
                             throw new Error('XLSX library not loaded');
                         }
                         
                         const workbook = XLSX.read(data, { type: 'array' });
-                        console.log('📊 Workbook parsed successfully');
-                        alert('📊 Excel parsed! Found ' + workbook.SheetNames.length + ' sheets');
+                        console.log('📊 Workbook parsed, sheets:', workbook.SheetNames.length);
 
                         uploadStatus.textContent = '📊 Loading sheets...';
                         uploadSubStatus.textContent = 'Found ' + workbook.SheetNames.length + ' sheets';
                         progressFill.style.width = '60%';
                         progressPercent.textContent = '60%';
 
-                        // Parse all sheets - try underscore variations first (user's file format)
-                        console.log('📊 Available sheets:', workbook.SheetNames);
-                        console.log('📊 Sheet names (exact):', JSON.stringify(workbook.SheetNames));
+                        console.log('📊 Sheet names:', JSON.stringify(workbook.SheetNames));
                     
                     // Parameter_Audit_Count (for calculations) - try underscore first
                     let paramData = parseSheet(workbook, 'Parameter_Audit_Count');
@@ -1349,17 +1325,15 @@
             };
 
             reader.readAsArrayBuffer(file);
-            console.log('✅ FileReader.readAsArrayBuffer() called successfully');
-            alert('✅ Reading file... Watch for progress!');
+            console.log('✅ File reader started');
             
             } catch (error) {
-                console.error('❌ CRITICAL ERROR in handleFileUpload:', error);
-                alert('❌ CRITICAL ERROR: ' + error.message);
+                console.error('❌ Error in handleFileUpload:', error);
+                alert('❌ Upload error: ' + error.message);
             }
         }
         
-        console.log('✅ handleFileUpload function definition complete');
-        console.log('✅ Type of handleFileUpload:', typeof window.handleFileUpload);
+        console.log('✅ handleFileUpload function loaded');
         
         // Check if there was a pending upload from HEAD
         if (window._pendingFileUpload) {
@@ -2266,47 +2240,33 @@ Total Population: ${totalPop}
         // ==========================================
         
         window.addEventListener('DOMContentLoaded', () => {
-            console.log('🚀🚀🚀 Dashboard initialized - DOMContentLoaded fired');
-            alert('Dashboard loaded! Check console (F12) for logs.');
+            console.log('✅ Dashboard initialized');
             
-            // CRITICAL: Attach file input change listener (like working test page)
+            // Attach file input change listener
             const fileInput = document.getElementById('fileInput');
-            console.log('📁 File input element:', fileInput);
-            
             if (fileInput) {
-                console.log('✅ File input found, attaching listener...');
                 fileInput.addEventListener('change', function(event) {
-                    console.log('🎉🎉🎉 FILE INPUT CHANGED (event listener)');
-                    alert('File selected: ' + event.target.files[0]?.name);
-                    console.log('📁 File selected:', event.target.files[0]?.name);
-                    console.log('📁 Files array:', event.target.files);
-                    
-                    if (typeof window.handleFileUpload === 'function') {
-                        console.log('✅ Calling window.handleFileUpload...');
-                        window.handleFileUpload(event);
-                    } else {
-                        console.error('❌ handleFileUpload not defined!');
-                        console.error('❌ Type:', typeof window.handleFileUpload);
-                        alert('Upload function not loaded. Please refresh the page.');
+                    console.log('📁 File input changed');
+                    if (event.target.files[0]) {
+                        console.log('📁 File selected:', event.target.files[0].name);
+                        if (typeof window.handleFileUpload === 'function') {
+                            window.handleFileUpload(event);
+                        } else {
+                            console.error('❌ handleFileUpload not defined');
+                        }
                     }
                 });
-                console.log('✅ File input event listener attached successfully');
-                alert('File input listener attached! Try selecting a file.');
-            } else {
-                console.error('❌ File input not found!');
-                alert('ERROR: File input not found!');
+                console.log('✅ File input event listener attached');
             }
             
-            // Setup upload button click handler as backup
+            // Setup upload button click handler
             const uploadBtn = document.querySelector('.upload-btn');
             if (uploadBtn) {
                 uploadBtn.addEventListener('click', function(e) {
-                    console.log('📤 Upload button clicked (event listener)');
+                    console.log('📤 Upload button clicked');
                     openUploadModal();
                 });
                 console.log('✅ Upload button event listener attached');
-            } else {
-                console.error('❌ Upload button not found!');
             }
             
             // Check if data exists in localStorage
