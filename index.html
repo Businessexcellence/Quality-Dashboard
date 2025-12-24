@@ -1648,8 +1648,22 @@
 
         function showRegionalBreakdown() {
             console.log('📊 Showing Regional Breakdown');
-            alert('Regional breakdown feature - showing distribution by Regional Head');
-            // Could expand this to show a detailed modal
+            
+            // Get regional head distribution
+            const regionalData = {};
+            dashboardData.accountSummary.forEach(row => {
+                const regional = row['Regional Head'] || 'Unassigned';
+                if (!regionalData[regional]) regionalData[regional] = 0;
+                regionalData[regional]++;
+            });
+            
+            const sortedRegions = Object.entries(regionalData).sort((a, b) => b[1] - a[1]);
+            
+            const breakdown = sortedRegions.map(([region, count]) => 
+                `${region}: ${count} accounts`
+            ).join('\n');
+            
+            alert(`Regional Head-wise Account Distribution\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n${breakdown}\n\nTotal Regions: ${sortedRegions.length}\nTotal Accounts: ${dashboardData.accountSummary.length}`);
         }
 
         function showRegionDetails(region, count) {
@@ -1659,12 +1673,38 @@
 
         function showSPOCAuditDetails() {
             console.log('👤 Showing SPOC Audit details');
-            alert('BE SPOC - Audit\n\nClick on individual SPOCs to see their account details');
+            
+            const spocData = {};
+            dashboardData.accountSummary.forEach(row => {
+                const spoc = row['BE SPOC - Audit'] || row['BE SPOC Audit'] || 'Unassigned';
+                if (!spocData[spoc]) spocData[spoc] = 0;
+                spocData[spoc]++;
+            });
+            
+            const sortedSPOCs = Object.entries(spocData).sort((a, b) => b[1] - a[1]);
+            const breakdown = sortedSPOCs.map(([spoc, count]) => 
+                `${spoc}: ${count} accounts`
+            ).join('\n');
+            
+            alert(`BE SPOC - Audit Distribution\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n${breakdown}\n\nTotal SPOCs: ${sortedSPOCs.length}\nTotal Accounts: ${dashboardData.accountSummary.length}\n\n💡 Click on individual SPOC names to filter accounts`);
         }
 
         function showSPOCSLADetails() {
             console.log('👤 Showing SPOC SLA details');
-            alert('BE SPOC - SLAs/KPIs\n\nClick on individual SPOCs to see their account details');
+            
+            const spocData = {};
+            dashboardData.accountSummary.forEach(row => {
+                const spoc = row['BE SPOC - SLAs/KPIs'] || row['BE SPOC SLA'] || 'Unassigned';
+                if (!spocData[spoc]) spocData[spoc] = 0;
+                spocData[spoc]++;
+            });
+            
+            const sortedSPOCs = Object.entries(spocData).sort((a, b) => b[1] - a[1]);
+            const breakdown = sortedSPOCs.map(([spoc, count]) => 
+                `${spoc}: ${count} accounts`
+            ).join('\n');
+            
+            alert(`BE SPOC - SLAs/KPIs Distribution\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n${breakdown}\n\nTotal SPOCs: ${sortedSPOCs.length}\nTotal Accounts: ${dashboardData.accountSummary.length}\n\n💡 Click on individual SPOC names to filter accounts`);
         }
 
         function showAccountDetails(index) {
