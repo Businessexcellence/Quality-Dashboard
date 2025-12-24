@@ -2,11 +2,10 @@ module.exports = {
   apps: [
     {
       name: 'webapp',
-      script: 'npx',
-      args: 'http-server dist -p 3000 -a 0.0.0.0 -c-1',
+      script: 'server.js',
       env: {
         NODE_ENV: 'development',
-        PORT: 3000
+        PORT: 3001
       },
       watch: false,
       instances: 1,
