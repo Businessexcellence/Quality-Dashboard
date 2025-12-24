@@ -819,18 +819,28 @@
 
         <!-- ACCOUNT SUMMARY TAB -->
         <div id="account-summary" class="tab-content">
-            <!-- Filter Section - Very Compact with Scroll -->
-            <div style="margin-bottom: 20px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                    <h2 style="font-size: 14px; color: var(--text-primary); margin: 0;">
+            <!-- Filter Section - Extra Compact with Scroll -->
+            <div style="margin-bottom: 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <h2 style="font-size: 13px; color: var(--text-primary); margin: 0;">
                         <i class="fas fa-filter"></i> Filters
                     </h2>
-                    <button onclick="clearAccountFilter()" style="background: var(--error); border: none; color: white; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-size: 11px; font-weight: 600; transition: all 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-                        <i class="fas fa-times"></i> Clear All Filters
+                    <button onclick="clearAccountFilter()" style="background: var(--error); border: none; color: white; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 10px; font-weight: 600; transition: all 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                        <i class="fas fa-times"></i> Clear Filters
                     </button>
                 </div>
-                <div id="accountFilters" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+                <div id="accountFilters" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
                     <!-- Filter dropdowns will be generated dynamically -->
+                </div>
+            </div>
+
+            <!-- Regional Head Cards -->
+            <div style="margin-bottom: 20px;">
+                <h2 style="margin-bottom: 12px; font-size: 16px; color: var(--text-primary);">
+                    <i class="fas fa-users"></i> Regional Heads
+                </h2>
+                <div id="regionalHeadCards" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px;">
+                    <!-- Regional Head cards will be generated dynamically -->
                 </div>
             </div>
 
@@ -880,27 +890,29 @@
             </div>
 
             <!-- Account Details Table -->
-            <div class="table-container">
-                <h3 style="margin-bottom: 16px;">
+            <div class="table-container" style="max-height: 600px; overflow-y: auto; position: relative;">
+                <h3 style="margin-bottom: 16px; position: sticky; top: 0; background: var(--bg-primary); z-index: 10; padding: 12px 0;">
                     <i class="fas fa-table"></i> Account Details
                     <span id="filteredCount" style="font-size: 14px; font-weight: normal; color: var(--text-muted); margin-left: 8px;"></span>
                 </h3>
-                <table class="data-table" id="accountTable">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Account/Client</th>
-                            <th>Practice Head</th>
-                            <th>Regional Head</th>
-                            <th>Audit Status</th>
-                            <th>Client Interaction</th>
-                            <th>Frequency</th>
-                            <th>BE SPOC Audit</th>
-                            <th>BE SPOC SLA</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
+                <div style="overflow-x: auto;">
+                    <table class="data-table" id="accountTable">
+                        <thead style="position: sticky; top: 52px; background: var(--bg-secondary); z-index: 9;">
+                            <tr>
+                                <th>#</th>
+                                <th>Account/Client</th>
+                                <th>Practice Head</th>
+                                <th>Regional Head</th>
+                                <th>Audit Status</th>
+                                <th>Client Interaction</th>
+                                <th>Frequency</th>
+                                <th>BE SPOC Audit</th>
+                                <th>BE SPOC SLA</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
@@ -1644,6 +1656,7 @@
             
             renderAccountFilters();
             renderAccountKPIs();
+            renderRegionalHeadCards();
             renderBESPOC();
             renderIndiaMap();
             renderAccountTable();
@@ -1704,24 +1717,24 @@
                     return { value, count };
                 }).sort((a, b) => b.count - a.count); // Sort by count descending
 
-                // Create very compact filter with scroll
+                // Create extra compact filter with scroll
                 return `
                     <div style="
                         background: var(--bg-card); 
                         border: 1px solid var(--border); 
-                        border-radius: 8px; 
-                        padding: 8px; 
+                        border-radius: 6px; 
+                        padding: 6px; 
                         transition: all 0.3s;
                     ">
-                        <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 8px;">
-                            <i class="fas fa-${filter.icon}" style="color: var(--primary); font-size: 12px;"></i>
-                            <h3 style="font-size: 11px; font-weight: 600; color: var(--text-primary); margin: 0;">${filter.label}</h3>
+                        <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 6px;">
+                            <i class="fas fa-${filter.icon}" style="color: var(--primary); font-size: 10px;"></i>
+                            <h3 style="font-size: 10px; font-weight: 600; color: var(--text-primary); margin: 0;">${filter.label}</h3>
                         </div>
                         <div style="
                             display: flex; 
                             flex-direction: column; 
-                            gap: 4px; 
-                            max-height: 150px; 
+                            gap: 3px; 
+                            max-height: 120px; 
                             overflow-y: auto;
                             padding-right: 2px;
                         ">
@@ -1732,10 +1745,10 @@
                                         display: flex;
                                         justify-content: space-between;
                                         align-items: center;
-                                        padding: 5px 8px;
+                                        padding: 4px 6px;
                                         background: var(--bg-primary);
                                         border: 1px solid var(--border);
-                                        border-radius: 5px;
+                                        border-radius: 4px;
                                         cursor: pointer;
                                         transition: all 0.2s;
                                         text-align: left;
@@ -1744,18 +1757,18 @@
                                     onmouseover="this.style.background='var(--bg-hover)'; this.style.borderColor='var(--primary)';"
                                     onmouseout="this.style.background='var(--bg-primary)'; this.style.borderColor='var(--border)';"
                                 >
-                                    <span style="color: var(--text-primary); font-size: 11px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;">${value}</span>
+                                    <span style="color: var(--text-primary); font-size: 10px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;">${value}</span>
                                     <span style="
                                         background: var(--primary);
                                         color: white;
-                                        padding: 2px 6px;
-                                        border-radius: 8px;
-                                        font-size: 10px;
+                                        padding: 2px 5px;
+                                        border-radius: 6px;
+                                        font-size: 9px;
                                         font-weight: 700;
-                                        min-width: 24px;
+                                        min-width: 20px;
                                         text-align: center;
                                         flex-shrink: 0;
-                                        margin-left: 6px;
+                                        margin-left: 4px;
                                     ">${count}</span>
                                 </button>
                             `).join('')}
@@ -1817,6 +1830,68 @@
 
             console.log(`📊 KPIs: Active Accounts=${activeCount}, Regional Heads=${uniqueRegionalHeads}`);
             console.log(`📊 Regional breakdown:`, regionalHeadMap);
+        }
+
+        function renderRegionalHeadCards() {
+            const container = document.getElementById('regionalHeadCards');
+            
+            if (!dashboardData.accountSummary.length) {
+                container.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-muted);">No data available</div>';
+                return;
+            }
+
+            // Group accounts by Regional Head
+            const regionalHeadMap = {};
+            dashboardData.accountSummary.forEach(account => {
+                const regionalHead = account['Regional Head'] ? String(account['Regional Head']).trim() : 'Unassigned';
+                if (!regionalHeadMap[regionalHead]) {
+                    regionalHeadMap[regionalHead] = [];
+                }
+                regionalHeadMap[regionalHead].push(account);
+            });
+
+            // Sort by count descending
+            const sortedRegionalHeads = Object.entries(regionalHeadMap)
+                .filter(([name]) => name !== 'Unassigned')
+                .sort((a, b) => b[1].length - a[1].length);
+
+            if (sortedRegionalHeads.length === 0) {
+                container.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-muted);">No Regional Heads found</div>';
+                return;
+            }
+
+            // Render clickable cards
+            container.innerHTML = sortedRegionalHeads.map(([name, accounts]) => `
+                <div 
+                    onclick="applyAccountFilter('Regional Head', '${name.replace(/'/g, "\\'")}')"
+                    style="
+                        background: var(--bg-card);
+                        border: 2px solid var(--border);
+                        border-radius: 8px;
+                        padding: 12px;
+                        cursor: pointer;
+                        transition: all 0.3s;
+                        text-align: center;
+                    "
+                    onmouseover="this.style.borderColor='var(--primary)'; this.style.boxShadow='0 4px 12px rgba(255, 102, 0, 0.3)';"
+                    onmouseout="this.style.borderColor='var(--border)'; this.style.boxShadow='none';"
+                >
+                    <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 6px;">Regional Head</div>
+                    <div style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px;">${name}</div>
+                    <div style="
+                        display: inline-block;
+                        background: var(--primary);
+                        color: white;
+                        padding: 6px 14px;
+                        border-radius: 20px;
+                        font-size: 18px;
+                        font-weight: 700;
+                    ">${accounts.length}</div>
+                    <div style="font-size: 10px; color: var(--text-muted); margin-top: 6px;">accounts</div>
+                </div>
+            `).join('');
+
+            console.log('✅ Regional Head cards rendered:', sortedRegionalHeads.length);
         }
 
         function renderBESPOC() {
@@ -2077,9 +2152,19 @@
                 const sampleRate = totalPop > 0 ? ((oppCount / totalPop) * 100).toFixed(2) : 0;
                 const errorRate = oppCount > 0 ? ((oppFail / oppCount) * 100).toFixed(2) : 0;
                 
-                // Properly check Audit Status - trim and check for Yes/No
+                // Properly check Audit Status - trim and check for Yes/No/To Be Initiated
                 const auditStatus = row['Audit Status'] ? String(row['Audit Status']).trim() : '';
-                const isAuditYes = auditStatus.toLowerCase() === 'yes';
+                const auditStatusLower = auditStatus.toLowerCase();
+                
+                // Color coding: Yes=Green, To Be Initiated=Amber, No=Red
+                let auditStatusColor = 'var(--text-muted)'; // default
+                if (auditStatusLower === 'yes') {
+                    auditStatusColor = '#10b981'; // green
+                } else if (auditStatusLower === 'to be initiated') {
+                    auditStatusColor = '#f59e0b'; // amber
+                } else if (auditStatusLower === 'no') {
+                    auditStatusColor = '#ef4444'; // red
+                }
                 
                 return `
                     <tr onclick="showAccountDetails(${index})" style="cursor: pointer;">
@@ -2087,7 +2172,7 @@
                         <td><strong>${(row.Account || row.Client || row['Account Name'] || 'N/A')}</strong></td>
                         <td>${(row['Practice Head'] || row['Practice'] || 'N/A')}</td>
                         <td>${(row['Regional Head'] || row['Region'] || row['Regional'] || 'N/A')}</td>
-                        <td><span class="badge ${isAuditYes ? 'badge-success' : 'badge-warning'}">${auditStatus || 'N/A'}</span></td>
+                        <td><strong style="color: ${auditStatusColor};">${auditStatus || 'N/A'}</strong></td>
                         <td>${(row['Client Interaction'] || row['Interaction'] || 'N/A')}</td>
                         <td>${(row['Audit Frequency'] || row['Frequency'] || 'N/A')}</td>
                         <td>${(row['BE SPOC - Audit'] || row['BE SPOC Audit'] || 'N/A')}</td>
