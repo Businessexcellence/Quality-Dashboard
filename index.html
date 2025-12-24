@@ -130,6 +130,7 @@
             align-items: center;
             gap: 8px;
             transition: all 0.3s ease;
+            z-index: 1001;
         }
 
         .upload-btn:hover {
@@ -908,6 +909,30 @@
         };
 
         // ==========================================
+        // UPLOAD MODAL FUNCTIONS (Defined at top level)
+        // ==========================================
+        
+        window.openUploadModal = function() {
+            console.log('🎯 Opening upload modal...');
+            const modal = document.getElementById('uploadModal');
+            if (modal) {
+                modal.classList.add('active');
+                console.log('✅ Upload modal opened');
+            } else {
+                console.error('❌ Upload modal not found!');
+            }
+        };
+
+        window.closeUploadModal = function() {
+            console.log('🎯 Closing upload modal...');
+            const modal = document.getElementById('uploadModal');
+            if (modal) {
+                modal.classList.remove('active');
+                console.log('✅ Upload modal closed');
+            }
+        };
+        
+        // ==========================================
         // NAVIGATION
         // ==========================================
         
@@ -933,26 +958,6 @@
         // UPLOAD MODAL
         // ==========================================
         
-        function openUploadModal() {
-            console.log('🎯 Opening upload modal...');
-            const modal = document.getElementById('uploadModal');
-            if (modal) {
-                modal.classList.add('active');
-                console.log('✅ Upload modal opened');
-            } else {
-                console.error('❌ Upload modal not found!');
-            }
-        }
-
-        function closeUploadModal() {
-            console.log('🎯 Closing upload modal...');
-            const modal = document.getElementById('uploadModal');
-            if (modal) {
-                modal.classList.remove('active');
-                console.log('✅ Upload modal closed');
-            }
-        }
-
         // ==========================================
         // FILE UPLOAD & PARSING
         // ==========================================
