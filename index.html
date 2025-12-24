@@ -834,15 +834,7 @@
                 </div>
             </div>
 
-            <!-- Regional Head Cards -->
-            <div style="margin-bottom: 20px;">
-                <h2 style="margin-bottom: 12px; font-size: 16px; color: var(--text-primary);">
-                    <i class="fas fa-users"></i> Regional Heads
-                </h2>
-                <div id="regionalHeadCards" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px;">
-                    <!-- Regional Head cards will be generated dynamically -->
-                </div>
-            </div>
+
 
             <!-- Clickable KPI Cards -->
             <div style="margin-bottom: 24px;">
@@ -867,13 +859,13 @@
 
             <!-- BE SPOC Section -->
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-bottom: 24px;">
-                <div class="widget-card" onclick="showSPOCAuditDetails()" style="cursor: pointer;">
+                <div class="widget-card">
                     <h3><i class="fas fa-user-check"></i> BE SPOC - Audit</h3>
                     <div id="beSPOCAudit" style="margin-top: 12px;">
                         <!-- BE SPOC Audit details will be generated -->
                     </div>
                 </div>
-                <div class="widget-card" onclick="showSPOCSLADetails()" style="cursor: pointer;">
+                <div class="widget-card">
                     <h3><i class="fas fa-user-clock"></i> BE SPOC - SLAs/KPIs</h3>
                     <div id="beSPOCSLA" style="margin-top: 12px;">
                         <!-- BE SPOC SLA details will be generated -->
@@ -891,13 +883,13 @@
 
             <!-- Account Details Table -->
             <div style="margin-bottom: 24px;">
-                <h3 style="margin-bottom: 16px;">
+                <h3 style="margin-bottom: 12px;">
                     <i class="fas fa-table"></i> Account Details
                     <span id="filteredCount" style="font-size: 14px; font-weight: normal; color: var(--text-muted); margin-left: 8px;"></span>
                 </h3>
-                <div class="table-container" style="max-height: 500px; overflow-y: auto; overflow-x: auto; border: 1px solid var(--border); border-radius: 8px;">
+                <div style="border: 1px solid var(--border); border-radius: 8px; max-height: 400px; overflow: auto;">
                     <table class="data-table" id="accountTable">
-                        <thead style="position: sticky; top: 0; background: var(--bg-secondary); z-index: 10; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">
+                        <thead style="position: sticky; top: 0; background: var(--bg-secondary); z-index: 10;">
                             <tr>
                                 <th>#</th>
                                 <th>Account/Client</th>
@@ -1656,7 +1648,6 @@
             
             renderAccountFilters();
             renderAccountKPIs();
-            renderRegionalHeadCards();
             renderBESPOC();
             renderIndiaMap();
             renderAccountTable();
@@ -1694,7 +1685,7 @@
                 { label: 'Practice Head', field: 'Practice Head', icon: 'user-tie' },
                 { label: 'Audit Status', field: 'Audit Status', icon: 'clipboard-check' },
                 { label: 'Audit Frequency', field: 'Audit Frequency', icon: 'calendar-alt' },
-                { label: 'Region', field: 'Regional Head', icon: 'map-marker-alt' }
+                { label: 'Region', field: 'Region', icon: 'map-marker-alt' }
             ];
 
             container.innerHTML = filters.map(filter => {
@@ -1921,8 +1912,7 @@
                 beSPOCAuditContainer.innerHTML = '<div style="padding: 12px; text-align: center; color: var(--text-muted); font-size: 12px;">No SPOC data available</div>';
             } else {
                 beSPOCAuditContainer.innerHTML = sortedSPOCAudit.slice(0, 10).map(([spoc, count]) => `
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.2s;" 
-                         onclick="filterBySPOC('BE SPOC - Audit', '${spoc.replace(/'/g, "\\'")}')">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border);">
                         <span style="font-size: 13px; color: var(--text-primary);">${spoc}</span>
                         <span style="font-size: 16px; font-weight: 700; color: var(--primary);">${count}</span>
                     </div>
@@ -1946,8 +1936,7 @@
                 beSPOCSLAContainer.innerHTML = '<div style="padding: 12px; text-align: center; color: var(--text-muted); font-size: 12px;">No SPOC data available</div>';
             } else {
                 beSPOCSLAContainer.innerHTML = sortedSPOCSLA.slice(0, 10).map(([spoc, count]) => `
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.2s;" 
-                         onclick="filterBySPOC('BE SPOC - SLAs/KPIs', '${spoc.replace(/'/g, "\\'")}')">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border);">
                         <span style="font-size: 13px; color: var(--text-primary);">${spoc}</span>
                         <span style="font-size: 16px; font-weight: 700; color: var(--primary);">${count}</span>
                     </div>
@@ -1955,15 +1944,6 @@
             }
 
             console.log('📊 BE SPOC data rendered');
-        }
-
-        function filterBySPOC(field, spoc) {
-            console.log(`🔍 Filtering by ${field}: ${spoc}`);
-            currentAccountFilter = { field, value: spoc };
-            renderAccountTable();
-            
-            // Scroll to table
-            document.querySelector('#accountTable').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
         function renderIndiaMap() {
@@ -2230,52 +2210,6 @@
         function showRegionDetails(region, count) {
             console.log(`📍 Region: ${region}, Accounts: ${count}`);
             alert(`${region} Region\n\nAccounts: ${count}`);
-        }
-
-        function showSPOCAuditDetails() {
-            console.log('👤 Showing SPOC Audit details');
-            
-            if (!dashboardData.accountSummary || dashboardData.accountSummary.length === 0) {
-                alert('⚠️ No Account Summary data available.\n\nPlease upload your Base File.xlsx first.');
-                return;
-            }
-            
-            const spocData = {};
-            dashboardData.accountSummary.forEach(row => {
-                const spoc = row['BE SPOC - Audit'] || row['BE SPOC Audit'] || 'Unassigned';
-                if (!spocData[spoc]) spocData[spoc] = 0;
-                spocData[spoc]++;
-            });
-            
-            const sortedSPOCs = Object.entries(spocData).sort((a, b) => b[1] - a[1]);
-            const breakdown = sortedSPOCs.map(([spoc, count]) => 
-                `${spoc}: ${count} accounts`
-            ).join('\n');
-            
-            alert(`BE SPOC - Audit Distribution\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n${breakdown}\n\nTotal SPOCs: ${sortedSPOCs.length}\nTotal Accounts: ${dashboardData.accountSummary.length}\n\n💡 Click on individual SPOC names to filter accounts`);
-        }
-
-        function showSPOCSLADetails() {
-            console.log('👤 Showing SPOC SLA details');
-            
-            if (!dashboardData.accountSummary || dashboardData.accountSummary.length === 0) {
-                alert('⚠️ No Account Summary data available.\n\nPlease upload your Base File.xlsx first.');
-                return;
-            }
-            
-            const spocData = {};
-            dashboardData.accountSummary.forEach(row => {
-                const spoc = row['BE SPOC - SLAs/KPIs'] || row['BE SPOC SLA'] || 'Unassigned';
-                if (!spocData[spoc]) spocData[spoc] = 0;
-                spocData[spoc]++;
-            });
-            
-            const sortedSPOCs = Object.entries(spocData).sort((a, b) => b[1] - a[1]);
-            const breakdown = sortedSPOCs.map(([spoc, count]) => 
-                `${spoc}: ${count} accounts`
-            ).join('\n');
-            
-            alert(`BE SPOC - SLAs/KPIs Distribution\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n${breakdown}\n\nTotal SPOCs: ${sortedSPOCs.length}\nTotal Accounts: ${dashboardData.accountSummary.length}\n\n💡 Click on individual SPOC names to filter accounts`);
         }
 
         function showAccountDetails(index) {
