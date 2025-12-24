@@ -19,6 +19,10 @@
     
     <!-- CRITICAL: Define functions BEFORE body loads -->
     <script>
+        // India Map Base64 Image Data
+        window.indiaMapImageData = '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';
+        console.log('✅ India map image data loaded');
+        
         // Define navigation function immediately
         window.switchTab = function(tabId, clickedElement) {
             console.log('🔄 Switching to tab:', tabId);
@@ -2019,12 +2023,51 @@
                 }
             });
 
-            // Create map HTML with proper India map image and region overlays
+            // Create map HTML with embedded base64 India map image and region overlays
+            const indiaMapBase64 = `data:image/png;base64,${window.indiaMapImageData || ''}`;
+            
             container.innerHTML = `
-                <div style="position: relative; width: 100%; max-width: 600px; margin: 0 auto; background: #f8f9fa; padding: 20px; border-radius: 12px;">
-                    <img src="https://www.genspark.ai/api/files/s/Zh1QGCd5" 
-                         alt="India Map" 
-                         style="width: 100%; height: auto; display: block; border-radius: 8px;">
+                <div style="
+                    position: relative; 
+                    width: 100%; 
+                    max-width: 700px; 
+                    margin: 0 auto; 
+                    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); 
+                    padding: 30px; 
+                    border-radius: 16px;
+                    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+                ">
+                    <div style="
+                        position: relative;
+                        width: 100%;
+                        padding-bottom: 100%;
+                        overflow: visible;
+                    ">
+                        <img src="${indiaMapBase64}" 
+                             alt="India Map" 
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+                             style="
+                                position: absolute;
+                                top: 0;
+                                left: 0;
+                                width: 100%;
+                                height: 100%;
+                                object-fit: contain;
+                                object-position: center;
+                                border-radius: 8px;
+                             ">
+                        <div style="
+                            display: none;
+                            position: absolute;
+                            top: 50%;
+                            left: 50%;
+                            transform: translate(-50%, -50%);
+                            text-align: center;
+                            color: var(--text-muted);
+                        ">
+                            <i class="fas fa-map" style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"></i>
+                            <p style="font-size: 14px;">India Map Loading...</p>
+                        </div>
                     
                     <!-- North India Overlay -->
                     <div style="position: absolute; top: 18%; left: 50%; transform: translate(-50%, -50%); text-align: center; cursor: pointer; background: rgba(255, 102, 0, 0.95); padding: 10px 16px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: all 0.3s; min-width: 140px;" 
