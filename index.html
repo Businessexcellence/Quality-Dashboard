@@ -714,9 +714,14 @@
         <div id="account-summary" class="tab-content">
             <!-- Filter Cards Section -->
             <div style="margin-bottom: 24px;">
-                <h2 style="margin-bottom: 16px; font-size: 18px; color: var(--text-primary);">
-                    <i class="fas fa-filter"></i> Filters
-                </h2>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <h2 style="font-size: 18px; color: var(--text-primary); margin: 0;">
+                        <i class="fas fa-filter"></i> Filters
+                    </h2>
+                    <button onclick="clearAccountFilter()" style="background: var(--bg-card); border: 2px solid var(--border); color: var(--text-primary); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 12px; transition: all 0.3s;">
+                        <i class="fas fa-times"></i> Clear Filter
+                    </button>
+                </div>
                 <div id="accountFilters" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
                     <!-- Filter cards will be generated dynamically -->
                 </div>
@@ -748,6 +753,16 @@
                         <div class="kpi-value" id="auditStatusCount">0</div>
                         <div class="kpi-label">Audit Status (Yes)</div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Calculation Metrics (Accuracy%, Sample%, Error%, Overall Audit Count) -->
+            <div style="margin-bottom: 24px;">
+                <h2 style="margin-bottom: 16px; font-size: 18px; color: var(--text-primary);">
+                    <i class="fas fa-calculator"></i> Audit Calculations
+                </h2>
+                <div id="accountCalcMetrics" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+                    <!-- Calculation cards will be generated dynamically -->
                 </div>
             </div>
 
@@ -793,6 +808,10 @@
                             <th>Frequency</th>
                             <th>BE SPOC Audit</th>
                             <th>BE SPOC SLA</th>
+                            <th>Accuracy %</th>
+                            <th>Sample %</th>
+                            <th>Error %</th>
+                            <th>Audit Count</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -865,7 +884,14 @@
             <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
                 <i class="fas fa-cloud-upload-alt"></i>
                 <p>Click to upload or drag and drop</p>
-                <p style="font-size: 11px; color: var(--text-muted); margin-top: 8px;">Base File.xlsx</p>
+                <p style="font-size: 11px; color: var(--text-muted); margin-top: 8px;">
+                    Excel file (.xlsx, .xls) - Max 5MB
+                </p>
+                <p style="font-size: 10px; color: var(--text-muted); margin-top: 8px;">
+                    <a href="/Base File.xlsx" download style="color: var(--primary); text-decoration: none;">
+                        <i class="fas fa-download"></i> Download Sample: Base File.xlsx
+                    </a>
+                </p>
             </div>
             <input type="file" id="fileInput" accept=".xlsx,.xls" style="display: none;" onchange="handleFileUpload(event)">
             <div class="progress-bar" id="progressBar" style="display: none;">
@@ -1271,11 +1297,13 @@
             if (!dashboardData.accountSummary.length) {
                 console.warn('⚠️ No Account Summary data available');
                 document.getElementById('accountFilters').innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-muted);">No data available. Please upload Base File.xlsx</div>';
+                document.getElementById('accountCalcMetrics').innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-muted);">No data available</div>';
                 return;
             }
             
             renderAccountFilters();
             renderAccountKPIs();
+            renderAccountCalculations();
             renderBESPOC();
             renderIndiaMap();
             renderAccountTable();
@@ -1370,6 +1398,59 @@
             console.log(`📊 KPIs: Active=${activeCount}, Regions=${regions}, Client Int=${clientInteraction}`);
         }
 
+        function renderAccountCalculations() {
+            const container = document.getElementById('accountCalcMetrics');
+            
+            if (!dashboardData.accountSummary.length) {
+                container.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-muted);">No data available</div>';
+                return;
+            }
+
+            // Calculate metrics using the Account_Summary data
+            const accuracy = calculateAccuracy(dashboardData.accountSummary);
+            const sampleRate = calculateSampleRate(dashboardData.accountSummary);
+            const errorRate = calculateErrorRate(dashboardData.accountSummary);
+            
+            // Overall Audit Count = Sum of "Opportunity Count"
+            const overallAuditCount = dashboardData.accountSummary.reduce((sum, row) => 
+                sum + (parseFloat(row['Opportunity Count']) || 0), 0
+            );
+
+            const metrics = [
+                { label: 'Accuracy %', value: accuracy + '%', icon: 'check-circle', color: '#10b981' },
+                { label: 'Sample %', value: sampleRate + '%', icon: 'percentage', color: '#3b82f6' },
+                { label: 'Error %', value: errorRate + '%', icon: 'exclamation-triangle', color: '#ef4444' },
+                { label: 'Overall Audit Count', value: overallAuditCount.toLocaleString(), icon: 'list-ol', color: '#ff6600' }
+            ];
+
+            container.innerHTML = metrics.map(metric => `
+                <div class="kpi-card" style="cursor: pointer; border-color: ${metric.color};" onclick="showCalculationDetails('${metric.label}', '${metric.value}')">
+                    <div class="kpi-icon" style="color: ${metric.color};"><i class="fas fa-${metric.icon}"></i></div>
+                    <div class="kpi-value" style="color: ${metric.color};">${metric.value}</div>
+                    <div class="kpi-label">${metric.label}</div>
+                </div>
+            `).join('');
+
+            console.log(`📊 Calculations: Accuracy=${accuracy}%, Sample=${sampleRate}%, Error=${errorRate}%, Overall Count=${overallAuditCount}`);
+        }
+
+        function showCalculationDetails(label, value) {
+            console.log(`📊 Showing details for ${label}: ${value}`);
+            
+            let details = '';
+            if (label === 'Accuracy %') {
+                details = 'Formula: Sum(Opportunity Pass) / (Sum(Opportunity Count) - Sum(Opportunity NA))';
+            } else if (label === 'Sample %') {
+                details = 'Formula: Sum(Opportunity Count) / Sum(Total Population)';
+            } else if (label === 'Error %') {
+                details = 'Formula: Sum(Opportunity Fail) / Sum(Opportunity Count)';
+            } else if (label === 'Overall Audit Count') {
+                details = 'Formula: Sum(Opportunity Count)';
+            }
+            
+            alert(`${label}\n\nValue: ${value}\n\n${details}`);
+        }
+
         function renderBESPOC() {
             // BE SPOC - Audit
             const beSPOCAuditContainer = document.getElementById('beSPOCAudit');
@@ -1384,8 +1465,9 @@
 
             const sortedSPOCAudit = Object.entries(spocAuditData).sort((a, b) => b[1] - a[1]);
             
-            beSPOCAuditContainer.innerHTML = sortedSPOCAudit.slice(0, 5).map(([spoc, count]) => `
-                <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border);">
+            beSPOCAuditContainer.innerHTML = sortedSPOCAudit.slice(0, 10).map(([spoc, count]) => `
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.2s;" 
+                     onclick="filterBySPOC('BE SPOC - Audit', '${spoc.replace(/'/g, "\\'")}')">
                     <span style="font-size: 13px; color: var(--text-primary);">${spoc}</span>
                     <span style="font-size: 16px; font-weight: 700; color: var(--primary);">${count}</span>
                 </div>
@@ -1404,14 +1486,24 @@
 
             const sortedSPOCSLA = Object.entries(spocSLAData).sort((a, b) => b[1] - a[1]);
             
-            beSPOCSLAContainer.innerHTML = sortedSPOCSLA.slice(0, 5).map(([spoc, count]) => `
-                <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border);">
+            beSPOCSLAContainer.innerHTML = sortedSPOCSLA.slice(0, 10).map(([spoc, count]) => `
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.2s;" 
+                     onclick="filterBySPOC('BE SPOC - SLAs/KPIs', '${spoc.replace(/'/g, "\\'")}')">
                     <span style="font-size: 13px; color: var(--text-primary);">${spoc}</span>
                     <span style="font-size: 16px; font-weight: 700; color: var(--primary);">${count}</span>
                 </div>
             `).join('');
 
             console.log('📊 BE SPOC data rendered');
+        }
+
+        function filterBySPOC(field, spoc) {
+            console.log(`🔍 Filtering by ${field}: ${spoc}`);
+            currentAccountFilter = { field, value: spoc };
+            renderAccountTable();
+            
+            // Scroll to table
+            document.querySelector('#accountTable').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
         function renderIndiaMap() {
@@ -1482,7 +1574,7 @@
             const filteredCount = document.getElementById('filteredCount');
             
             if (!dashboardData.accountSummary.length) {
-                tbody.innerHTML = '<tr><td colspan="9" class="empty-state">📊 No Account Summary data available. Please upload Base File.xlsx</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="13" class="empty-state">📊 No Account Summary data available. Please upload Base File.xlsx</td></tr>';
                 console.warn('⚠️ No Account Summary data for table');
                 return;
             }
@@ -1501,19 +1593,36 @@
             console.log(`📋 Rendering ${filteredData.length} accounts in table`);
             
             // Show first 100 accounts
-            tbody.innerHTML = filteredData.slice(0, 100).map((row, index) => `
-                <tr onclick="showAccountDetails(${index})" style="cursor: pointer;">
-                    <td><strong>${index + 1}</strong></td>
-                    <td><strong>${row.Account || row.Client || row['Account Name'] || 'N/A'}</strong></td>
-                    <td>${row['Practice Head'] || row['Practice'] || 'N/A'}</td>
-                    <td>${row['Regional Head'] || row['Region'] || row['Regional'] || 'N/A'}</td>
-                    <td><span class="badge ${(row['Audit Status'] || '').toString().toLowerCase() === 'yes' ? 'badge-success' : 'badge-warning'}">${row['Audit Status'] || 'N/A'}</span></td>
-                    <td>${row['Client Interaction'] || row['Interaction'] || 'N/A'}</td>
-                    <td>${row['Audit Frequency'] || row['Frequency'] || 'N/A'}</td>
-                    <td>${row['BE SPOC - Audit'] || row['BE SPOC Audit'] || 'N/A'}</td>
-                    <td>${row['BE SPOC - SLAs/KPIs'] || row['BE SPOC SLA'] || 'N/A'}</td>
-                </tr>
-            `).join('');
+            tbody.innerHTML = filteredData.slice(0, 100).map((row, index) => {
+                // Calculate metrics for this account
+                const oppPass = parseFloat(row['Opportunity Pass']) || 0;
+                const oppCount = parseFloat(row['Opportunity Count']) || 0;
+                const oppNA = parseFloat(row['Opportunity NA']) || 0;
+                const oppFail = parseFloat(row['Opportunity Fail']) || 0;
+                const totalPop = parseFloat(row['Total Population']) || 0;
+                
+                const accuracy = oppCount - oppNA > 0 ? ((oppPass / (oppCount - oppNA)) * 100).toFixed(2) : 0;
+                const sampleRate = totalPop > 0 ? ((oppCount / totalPop) * 100).toFixed(2) : 0;
+                const errorRate = oppCount > 0 ? ((oppFail / oppCount) * 100).toFixed(2) : 0;
+                
+                return `
+                    <tr onclick="showAccountDetails(${index})" style="cursor: pointer;">
+                        <td><strong>${index + 1}</strong></td>
+                        <td><strong>${row.Account || row.Client || row['Account Name'] || 'N/A'}</strong></td>
+                        <td>${row['Practice Head'] || row['Practice'] || 'N/A'}</td>
+                        <td>${row['Regional Head'] || row['Region'] || row['Regional'] || 'N/A'}</td>
+                        <td><span class="badge ${(row['Audit Status'] || '').toString().toLowerCase() === 'yes' ? 'badge-success' : 'badge-warning'}">${row['Audit Status'] || 'N/A'}</span></td>
+                        <td>${row['Client Interaction'] || row['Interaction'] || 'N/A'}</td>
+                        <td>${row['Audit Frequency'] || row['Frequency'] || 'N/A'}</td>
+                        <td>${row['BE SPOC - Audit'] || row['BE SPOC Audit'] || 'N/A'}</td>
+                        <td>${row['BE SPOC - SLAs/KPIs'] || row['BE SPOC SLA'] || 'N/A'}</td>
+                        <td><span style="color: #10b981; font-weight: 600;">${accuracy}%</span></td>
+                        <td><span style="color: #3b82f6; font-weight: 600;">${sampleRate}%</span></td>
+                        <td><span style="color: #ef4444; font-weight: 600;">${errorRate}%</span></td>
+                        <td><span style="color: var(--primary); font-weight: 600;">${oppCount}</span></td>
+                    </tr>
+                `;
+            }).join('');
             
             console.log('✅ Account table rendered');
         }
@@ -1560,8 +1669,51 @@
 
         function showAccountDetails(index) {
             const account = dashboardData.accountSummary[index];
+            
+            // Calculate metrics
+            const oppPass = parseFloat(account['Opportunity Pass']) || 0;
+            const oppCount = parseFloat(account['Opportunity Count']) || 0;
+            const oppNA = parseFloat(account['Opportunity NA']) || 0;
+            const oppFail = parseFloat(account['Opportunity Fail']) || 0;
+            const totalPop = parseFloat(account['Total Population']) || 0;
+            
+            const accuracy = oppCount - oppNA > 0 ? ((oppPass / (oppCount - oppNA)) * 100).toFixed(2) : 0;
+            const sampleRate = totalPop > 0 ? ((oppCount / totalPop) * 100).toFixed(2) : 0;
+            const errorRate = oppCount > 0 ? ((oppFail / oppCount) * 100).toFixed(2) : 0;
+            
             console.log('📋 Account details:', account);
-            alert(`Account Details\n\nName: ${account.Account || account.Client}\nPractice Head: ${account['Practice Head']}\nRegional Head: ${account['Regional Head']}\nAudit Status: ${account['Audit Status']}`);
+            
+            const details = `
+Account Details
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📊 Account Information:
+Name: ${account.Account || account.Client || 'N/A'}
+Practice Head: ${account['Practice Head'] || 'N/A'}
+Regional Head: ${account['Regional Head'] || 'N/A'}
+Audit Status: ${account['Audit Status'] || 'N/A'}
+Client Interaction: ${account['Client Interaction'] || 'N/A'}
+Audit Frequency: ${account['Audit Frequency'] || 'N/A'}
+
+👥 BE SPOC:
+Audit: ${account['BE SPOC - Audit'] || account['BE SPOC Audit'] || 'N/A'}
+SLAs/KPIs: ${account['BE SPOC - SLAs/KPIs'] || account['BE SPOC SLA'] || 'N/A'}
+
+📈 Audit Metrics:
+Accuracy: ${accuracy}%
+Sample Rate: ${sampleRate}%
+Error Rate: ${errorRate}%
+Overall Audit Count: ${oppCount}
+
+🔢 Raw Data:
+Opportunity Pass: ${oppPass}
+Opportunity Count: ${oppCount}
+Opportunity NA: ${oppNA}
+Opportunity Fail: ${oppFail}
+Total Population: ${totalPop}
+            `.trim();
+            
+            alert(details);
         }
 
         // ==========================================
