@@ -777,7 +777,7 @@
     <div id="uploadModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">Upload Excel File</div>
-            <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
+            <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
                 <i class="fas fa-cloud-upload-alt"></i>
                 <p>Click to upload or drag and drop</p>
                 <p style="font-size: 11px; color: var(--text-muted); margin-top: 8px;">Base File.xlsx</p>
@@ -842,8 +842,21 @@
         // ==========================================
         
         function handleFileUpload(event) {
+            console.log('🔄 File upload started...');
             const file = event.target.files[0];
-            if (!file) return;
+            
+            if (!file) {
+                console.warn('⚠️ No file selected');
+                return;
+            }
+
+            console.log('📁 File selected:', file.name, 'Size:', (file.size / 1024 / 1024).toFixed(2) + 'MB');
+
+            // Check file type
+            if (!file.name.endsWith('.xlsx') && !file.name.endsWith('.xls')) {
+                alert('❌ Please upload an Excel file (.xlsx or .xls)');
+                return;
+            }
 
             const reader = new FileReader();
             const progressBar = document.getElementById('progressBar');
@@ -851,13 +864,18 @@
 
             progressBar.style.display = 'block';
             progressFill.style.width = '30%';
+            console.log('📊 Starting to read file...');
 
             reader.onload = function(e) {
+                console.log('📖 File read complete, parsing...');
                 progressFill.style.width = '60%';
                 
                 try {
                     const data = new Uint8Array(e.target.result);
+                    console.log('📦 File data loaded:', data.length, 'bytes');
+                    
                     const workbook = XLSX.read(data, { type: 'array' });
+                    console.log('📊 Workbook parsed successfully');
 
                     // Parse all sheets
                     console.log('📊 Available sheets:', workbook.SheetNames);
@@ -884,15 +902,26 @@
                     console.log('✅ CSAT rows:', dashboardData.csat.length);
 
                     // Save to localStorage
-                    localStorage.setItem('dashboardData', JSON.stringify(dashboardData));
+                    try {
+                        localStorage.setItem('dashboardData', JSON.stringify(dashboardData));
+                        console.log('💾 Data saved to localStorage');
+                    } catch (storageError) {
+                        console.warn('⚠️ Could not save to localStorage:', storageError.message);
+                    }
 
                     progressFill.style.width = '100%';
+                    console.log('✅ All data loaded successfully!');
 
                     // Wait a bit then close modal and refresh
                     setTimeout(() => {
                         closeUploadModal();
                         refreshAllTabs();
                         alert(`✅ Data loaded successfully!\n\n📊 Summary:\n- Parameter Audits: ${dashboardData.parameterAuditCount.length}\n- Account Summary: ${dashboardData.accountSummary.length}\n- Recruiter Audits: ${dashboardData.recruiterAuditCount.length}`);
+                        
+                        // Reset file input
+                        document.getElementById('fileInput').value = '';
+                        progressBar.style.display = 'none';
+                        progressFill.style.width = '0%';
                     }, 500);
 
                 } catch (error) {
@@ -900,8 +929,20 @@
                     console.error('Error details:', error.message);
                     console.error('Error stack:', error.stack);
                     progressFill.style.width = '0%';
-                    alert(`❌ Error parsing file\n\nDetails: ${error.message}\n\nPlease ensure:\n- File is a valid Excel (.xlsx) file\n- File contains required sheets\n- File is not corrupted`);
+                    progressBar.style.display = 'none';
+                    alert(`❌ Error parsing file\n\nDetails: ${error.message}\n\nPlease ensure:\n- File is a valid Excel (.xlsx) file\n- File contains required sheets\n- File is not corrupted\n\nCheck browser console (F12) for more details.`);
+                    
+                    // Reset file input
+                    document.getElementById('fileInput').value = '';
                 }
+            };
+
+            reader.onerror = function(error) {
+                console.error('❌ FileReader error:', error);
+                alert('❌ Error reading file. Please try again.');
+                progressBar.style.display = 'none';
+                progressFill.style.width = '0%';
+                document.getElementById('fileInput').value = '';
             };
 
             reader.readAsArrayBuffer(file);
@@ -1255,7 +1296,45 @@
             if (savedData) {
                 dashboardData = JSON.parse(savedData);
                 refreshAllTabs();
+                console.log('💾 Loaded saved data from localStorage');
             }
+
+            // Setup drag-and-drop for upload zone
+            const uploadZone = document.getElementById('uploadZone');
+            
+            uploadZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                uploadZone.style.borderColor = 'var(--primary)';
+                uploadZone.style.background = 'rgba(255, 102, 0, 0.1)';
+            });
+
+            uploadZone.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                uploadZone.style.borderColor = 'var(--border)';
+                uploadZone.style.background = 'transparent';
+            });
+
+            uploadZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                uploadZone.style.borderColor = 'var(--border)';
+                uploadZone.style.background = 'transparent';
+
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    console.log('📂 File dropped:', files[0].name);
+                    // Simulate file input change event
+                    const fileInput = document.getElementById('fileInput');
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(files[0]);
+                    fileInput.files = dataTransfer.files;
+                    handleFileUpload({ target: fileInput });
+                }
+            });
+
+            console.log('✅ Drag-and-drop upload enabled');
         });
 
         // Close modal on clicking outside
