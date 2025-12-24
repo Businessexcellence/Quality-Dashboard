@@ -988,32 +988,48 @@
                     const workbook = XLSX.read(data, { type: 'array' });
                     console.log('📊 Workbook parsed successfully');
 
-                    // Parse all sheets
+                    // Parse all sheets - try multiple name variations
                     console.log('📊 Available sheets:', workbook.SheetNames);
+                    console.log('📊 Sheet names (exact):', JSON.stringify(workbook.SheetNames));
                     
-                    dashboardData.parameterAuditCount = parseSheet(workbook, 'Parameter_Audit_Count');
+                    // Parameter Audit Count (for calculations)
+                    dashboardData.parameterAuditCount = parseSheet(workbook, 'Parameter_Audit_Count') || 
+                                                       parseSheet(workbook, 'Parameter Audit Count') ||
+                                                       parseSheet(workbook, 'ParameterAuditCount') || [];
                     console.log('✅ Parameter_Audit_Count rows:', dashboardData.parameterAuditCount.length);
                     
-                    dashboardData.recruiterAuditCount = parseSheet(workbook, 'Recruiter_Audit_Count');
+                    // Recruiter Audit Count
+                    dashboardData.recruiterAuditCount = parseSheet(workbook, 'Recruiter_Audit_Count') ||
+                                                       parseSheet(workbook, 'Recruiter Audit Count') || [];
                     console.log('✅ Recruiter_Audit_Count rows:', dashboardData.recruiterAuditCount.length);
                     
-                    // Try both 'Account Summary' (with space) and 'Account_Summary' (with underscore)
-                    dashboardData.accountSummary = parseSheet(workbook, 'Account Summary') || parseSheet(workbook, 'Account_Summary');
+                    // Account Summary (THE CRITICAL ONE)
+                    console.log('🔍 Searching for Account Summary sheet...');
+                    dashboardData.accountSummary = parseSheet(workbook, 'Account Summary') || 
+                                                  parseSheet(workbook, 'Account_Summary') ||
+                                                  parseSheet(workbook, 'AccountSummary') ||
+                                                  parseSheet(workbook, 'Account summary') || [];
+                    
                     console.log('✅ Account Summary rows:', dashboardData.accountSummary.length);
                     if (dashboardData.accountSummary.length > 0) {
                         console.log('📄 First Account Summary row:', dashboardData.accountSummary[0]);
                         console.log('📋 Account Summary columns:', Object.keys(dashboardData.accountSummary[0]));
                     } else {
-                        console.error('❌ Account Summary sheet not found! Available sheets:', workbook.SheetNames);
+                        console.error('❌ CRITICAL: Account Summary sheet not found!');
+                        console.error('📋 Available sheets in your file:', workbook.SheetNames);
+                        console.error('💡 Please check the exact sheet name in your Excel file');
+                        
+                        // Show helpful alert
+                        alert(`⚠️ Account Summary sheet not found!\n\nAvailable sheets in your file:\n${workbook.SheetNames.join('\n')}\n\nPlease ensure you have a sheet named:\n- "Account Summary" (with space)\nor\n- "Account_Summary" (with underscore)`);
                     }
                     
-                    dashboardData.rcaCapa = parseSheet(workbook, 'RCA_CAPA');
+                    dashboardData.rcaCapa = parseSheet(workbook, 'RCA_CAPA') || parseSheet(workbook, 'RCA CAPA') || [];
                     console.log('✅ RCA_CAPA rows:', dashboardData.rcaCapa.length);
                     
-                    dashboardData.projects = parseSheet(workbook, 'Projects');
+                    dashboardData.projects = parseSheet(workbook, 'Projects') || [];
                     console.log('✅ Projects rows:', dashboardData.projects.length);
                     
-                    dashboardData.csat = parseSheet(workbook, 'CSAT');
+                    dashboardData.csat = parseSheet(workbook, 'CSAT') || [];
                     console.log('✅ CSAT rows:', dashboardData.csat.length);
 
                     // Save to localStorage
@@ -1064,33 +1080,51 @@
         }
 
         function parseSheet(workbook, sheetName) {
-            console.log(`🔍 Looking for sheet: "${sheetName}"`);
-            console.log(`📋 Available sheets:`, workbook.SheetNames);
+            console.log(`🔍 Attempting to load sheet: "${sheetName}"`);
             
-            if (!workbook.SheetNames.includes(sheetName)) {
-                console.warn(`⚠️ Sheet '${sheetName}' not found in workbook`);
+            // First, try exact match
+            if (workbook.SheetNames.includes(sheetName)) {
+                const worksheet = workbook.Sheets[sheetName];
+                const data = XLSX.utils.sheet_to_json(worksheet);
+                console.log(`✅ Loaded ${data.length} rows from "${sheetName}"`);
+                if (data.length > 0) {
+                    console.log(`📋 Columns in "${sheetName}":`, Object.keys(data[0]));
+                }
+                return data;
+            }
+            
+            // If not found, try fuzzy matching
+            console.log(`⚠️ Sheet "${sheetName}" not found, trying fuzzy match...`);
+            
+            // Create variations to try
+            const variations = [
+                sheetName.toLowerCase(),
+                sheetName.toUpperCase(),
+                sheetName.replace(/_/g, ' '),
+                sheetName.replace(/ /g, '_'),
+                sheetName.replace(/[_\s]/g, '')
+            ];
+            
+            for (const actualSheet of workbook.SheetNames) {
+                const actualLower = actualSheet.toLowerCase();
+                const actualNoSpace = actualSheet.replace(/[_\s]/g, '').toLowerCase();
+                const targetNoSpace = sheetName.replace(/[_\s]/g, '').toLowerCase();
                 
-                // Try to find similar sheet names
-                const similar = workbook.SheetNames.filter(s => 
-                    s.toLowerCase().includes(sheetName.toLowerCase().replace(/_/g, ' ')) ||
-                    s.toLowerCase().replace(/ /g, '_') === sheetName.toLowerCase()
-                );
-                
-                if (similar.length > 0) {
-                    console.log(`💡 Found similar sheet: "${similar[0]}" - using it instead`);
-                    const worksheet = workbook.Sheets[similar[0]];
+                if (actualLower === sheetName.toLowerCase() || actualNoSpace === targetNoSpace) {
+                    console.log(`💡 Found similar sheet: "${actualSheet}" (was looking for "${sheetName}")`);
+                    const worksheet = workbook.Sheets[actualSheet];
                     const data = XLSX.utils.sheet_to_json(worksheet);
-                    console.log(`✅ Loaded ${data.length} rows from "${similar[0]}"`);
+                    console.log(`✅ Loaded ${data.length} rows from "${actualSheet}"`);
+                    if (data.length > 0) {
+                        console.log(`📋 Columns in "${actualSheet}":`, Object.keys(data[0]));
+                    }
                     return data;
                 }
-                
-                return [];
             }
-
-            const worksheet = workbook.Sheets[sheetName];
-            const data = XLSX.utils.sheet_to_json(worksheet);
-            console.log(`✅ Loaded ${data.length} rows from "${sheetName}"`);
-            return data;
+            
+            console.error(`❌ Sheet "${sheetName}" not found in workbook`);
+            console.log(`📋 Available sheets:`, workbook.SheetNames);
+            return [];
         }
 
         // ==========================================
@@ -1485,6 +1519,14 @@
         }
 
         function renderBESPOC() {
+            // Check if we have data
+            if (!dashboardData.accountSummary || dashboardData.accountSummary.length === 0) {
+                console.warn('⚠️ No Account Summary data for BE SPOC rendering');
+                document.getElementById('beSPOCAudit').innerHTML = '<div style="padding: 12px; text-align: center; color: var(--text-muted); font-size: 12px;">No data available</div>';
+                document.getElementById('beSPOCSLA').innerHTML = '<div style="padding: 12px; text-align: center; color: var(--text-muted); font-size: 12px;">No data available</div>';
+                return;
+            }
+            
             // BE SPOC - Audit
             const beSPOCAuditContainer = document.getElementById('beSPOCAudit');
             const spocAuditField = 'BE SPOC - Audit' || 'BE SPOC Audit' || 'SPOC Audit';
@@ -1498,13 +1540,17 @@
 
             const sortedSPOCAudit = Object.entries(spocAuditData).sort((a, b) => b[1] - a[1]);
             
-            beSPOCAuditContainer.innerHTML = sortedSPOCAudit.slice(0, 10).map(([spoc, count]) => `
-                <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.2s;" 
-                     onclick="filterBySPOC('BE SPOC - Audit', '${spoc.replace(/'/g, "\\'")}')">
-                    <span style="font-size: 13px; color: var(--text-primary);">${spoc}</span>
-                    <span style="font-size: 16px; font-weight: 700; color: var(--primary);">${count}</span>
-                </div>
-            `).join('');
+            if (sortedSPOCAudit.length === 0) {
+                beSPOCAuditContainer.innerHTML = '<div style="padding: 12px; text-align: center; color: var(--text-muted); font-size: 12px;">No SPOC data available</div>';
+            } else {
+                beSPOCAuditContainer.innerHTML = sortedSPOCAudit.slice(0, 10).map(([spoc, count]) => `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.2s;" 
+                         onclick="filterBySPOC('BE SPOC - Audit', '${spoc.replace(/'/g, "\\'")}')">
+                        <span style="font-size: 13px; color: var(--text-primary);">${spoc}</span>
+                        <span style="font-size: 16px; font-weight: 700; color: var(--primary);">${count}</span>
+                    </div>
+                `).join('');
+            }
 
             // BE SPOC - SLAs/KPIs
             const beSPOCSLAContainer = document.getElementById('beSPOCSLA');
@@ -1519,13 +1565,17 @@
 
             const sortedSPOCSLA = Object.entries(spocSLAData).sort((a, b) => b[1] - a[1]);
             
-            beSPOCSLAContainer.innerHTML = sortedSPOCSLA.slice(0, 10).map(([spoc, count]) => `
-                <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.2s;" 
-                     onclick="filterBySPOC('BE SPOC - SLAs/KPIs', '${spoc.replace(/'/g, "\\'")}')">
-                    <span style="font-size: 13px; color: var(--text-primary);">${spoc}</span>
-                    <span style="font-size: 16px; font-weight: 700; color: var(--primary);">${count}</span>
-                </div>
-            `).join('');
+            if (sortedSPOCSLA.length === 0) {
+                beSPOCSLAContainer.innerHTML = '<div style="padding: 12px; text-align: center; color: var(--text-muted); font-size: 12px;">No SPOC data available</div>';
+            } else {
+                beSPOCSLAContainer.innerHTML = sortedSPOCSLA.slice(0, 10).map(([spoc, count]) => `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.2s;" 
+                         onclick="filterBySPOC('BE SPOC - SLAs/KPIs', '${spoc.replace(/'/g, "\\'")}')">
+                        <span style="font-size: 13px; color: var(--text-primary);">${spoc}</span>
+                        <span style="font-size: 16px; font-weight: 700; color: var(--primary);">${count}</span>
+                    </div>
+                `).join('');
+            }
 
             console.log('📊 BE SPOC data rendered');
         }
@@ -1729,6 +1779,11 @@
         function showSPOCAuditDetails() {
             console.log('👤 Showing SPOC Audit details');
             
+            if (!dashboardData.accountSummary || dashboardData.accountSummary.length === 0) {
+                alert('⚠️ No Account Summary data available.\n\nPlease upload your Base File.xlsx first.');
+                return;
+            }
+            
             const spocData = {};
             dashboardData.accountSummary.forEach(row => {
                 const spoc = row['BE SPOC - Audit'] || row['BE SPOC Audit'] || 'Unassigned';
@@ -1746,6 +1801,11 @@
 
         function showSPOCSLADetails() {
             console.log('👤 Showing SPOC SLA details');
+            
+            if (!dashboardData.accountSummary || dashboardData.accountSummary.length === 0) {
+                alert('⚠️ No Account Summary data available.\n\nPlease upload your Base File.xlsx first.');
+                return;
+            }
             
             const spocData = {};
             dashboardData.accountSummary.forEach(row => {
