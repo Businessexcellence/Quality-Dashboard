@@ -57,7 +57,7 @@
             /* Spacing */
             --nav-width: 60px;
             --nav-width-expanded: 240px;
-            --header-height: 70px;
+            --header-height: 80px;
         }
 
         body {
@@ -110,6 +110,7 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
             text-align: center;
+            line-height: 1.4;
         }
 
         .upload-btn {
@@ -578,7 +579,10 @@
 <body>
     <!-- HEADER -->
     <div class="header">
-        <h1>Business Excellence – Comprehensive Quality Dashboard</h1>
+        <h1>
+            Business Excellence<br>
+            <span style="font-size: 14px; font-weight: 500; opacity: 0.9;">Comprehensive Quality Dashboard</span>
+        </h1>
         <button class="upload-btn" onclick="openUploadModal()">
             <i class="fas fa-upload"></i>
             Upload Excel
@@ -892,8 +896,11 @@
                     }, 500);
 
                 } catch (error) {
-                    console.error('Error parsing Excel:', error);
-                    alert('❌ Error parsing file. Please check the format.');
+                    console.error('❌ Error parsing Excel:', error);
+                    console.error('Error details:', error.message);
+                    console.error('Error stack:', error.stack);
+                    progressFill.style.width = '0%';
+                    alert(`❌ Error parsing file\n\nDetails: ${error.message}\n\nPlease ensure:\n- File is a valid Excel (.xlsx) file\n- File contains required sheets\n- File is not corrupted`);
                 }
             };
 
