@@ -997,10 +997,14 @@
                     dashboardData.recruiterAuditCount = parseSheet(workbook, 'Recruiter_Audit_Count');
                     console.log('✅ Recruiter_Audit_Count rows:', dashboardData.recruiterAuditCount.length);
                     
-                    dashboardData.accountSummary = parseSheet(workbook, 'Account_Summary');
-                    console.log('✅ Account_Summary rows:', dashboardData.accountSummary.length);
+                    // Try both 'Account Summary' (with space) and 'Account_Summary' (with underscore)
+                    dashboardData.accountSummary = parseSheet(workbook, 'Account Summary') || parseSheet(workbook, 'Account_Summary');
+                    console.log('✅ Account Summary rows:', dashboardData.accountSummary.length);
                     if (dashboardData.accountSummary.length > 0) {
-                        console.log('📄 First Account_Summary row:', dashboardData.accountSummary[0]);
+                        console.log('📄 First Account Summary row:', dashboardData.accountSummary[0]);
+                        console.log('📋 Account Summary columns:', Object.keys(dashboardData.accountSummary[0]));
+                    } else {
+                        console.error('❌ Account Summary sheet not found! Available sheets:', workbook.SheetNames);
                     }
                     
                     dashboardData.rcaCapa = parseSheet(workbook, 'RCA_CAPA');
@@ -1060,13 +1064,33 @@
         }
 
         function parseSheet(workbook, sheetName) {
+            console.log(`🔍 Looking for sheet: "${sheetName}"`);
+            console.log(`📋 Available sheets:`, workbook.SheetNames);
+            
             if (!workbook.SheetNames.includes(sheetName)) {
-                console.warn(`Sheet '${sheetName}' not found`);
+                console.warn(`⚠️ Sheet '${sheetName}' not found in workbook`);
+                
+                // Try to find similar sheet names
+                const similar = workbook.SheetNames.filter(s => 
+                    s.toLowerCase().includes(sheetName.toLowerCase().replace(/_/g, ' ')) ||
+                    s.toLowerCase().replace(/ /g, '_') === sheetName.toLowerCase()
+                );
+                
+                if (similar.length > 0) {
+                    console.log(`💡 Found similar sheet: "${similar[0]}" - using it instead`);
+                    const worksheet = workbook.Sheets[similar[0]];
+                    const data = XLSX.utils.sheet_to_json(worksheet);
+                    console.log(`✅ Loaded ${data.length} rows from "${similar[0]}"`);
+                    return data;
+                }
+                
                 return [];
             }
 
             const worksheet = workbook.Sheets[sheetName];
-            return XLSX.utils.sheet_to_json(worksheet);
+            const data = XLSX.utils.sheet_to_json(worksheet);
+            console.log(`✅ Loaded ${data.length} rows from "${sheetName}"`);
+            return data;
         }
 
         // ==========================================
@@ -1293,10 +1317,12 @@
         function refreshAccountSummaryTab() {
             console.log('🔄 Refreshing Account Summary Tab...');
             console.log('📊 Account Summary data rows:', dashboardData.accountSummary.length);
+            console.log('📊 Parameter Audit Count rows:', dashboardData.parameterAuditCount.length);
             
             if (!dashboardData.accountSummary.length) {
                 console.warn('⚠️ No Account Summary data available');
-                document.getElementById('accountFilters').innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-muted);">No data available. Please upload Base File.xlsx</div>';
+                console.error('❌ Please check sheet name - looking for "Account Summary" (with space)');
+                document.getElementById('accountFilters').innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-muted);">📊 No Account Summary data. Please upload Base File.xlsx with "Account Summary" sheet</div>';
                 document.getElementById('accountCalcMetrics').innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-muted);">No data available</div>';
                 return;
             }
@@ -1401,18 +1427,25 @@
         function renderAccountCalculations() {
             const container = document.getElementById('accountCalcMetrics');
             
-            if (!dashboardData.accountSummary.length) {
-                container.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-muted);">No data available</div>';
+            // Use Parameter_Audit_Count data for calculations as specified
+            const calcData = dashboardData.parameterAuditCount.length > 0 
+                ? dashboardData.parameterAuditCount 
+                : dashboardData.accountSummary;
+            
+            if (calcData.length === 0) {
+                container.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-muted);">No data available for calculations. Please upload Base File.xlsx</div>';
                 return;
             }
 
-            // Calculate metrics using the Account_Summary data
-            const accuracy = calculateAccuracy(dashboardData.accountSummary);
-            const sampleRate = calculateSampleRate(dashboardData.accountSummary);
-            const errorRate = calculateErrorRate(dashboardData.accountSummary);
+            console.log('🧮 Using data for calculations:', calcData.length, 'rows from', dashboardData.parameterAuditCount.length > 0 ? 'Parameter_Audit_Count' : 'Account Summary');
+
+            // Calculate metrics using Parameter_Audit_Count data
+            const accuracy = calculateAccuracy(calcData);
+            const sampleRate = calculateSampleRate(calcData);
+            const errorRate = calculateErrorRate(calcData);
             
             // Overall Audit Count = Sum of "Opportunity Count"
-            const overallAuditCount = dashboardData.accountSummary.reduce((sum, row) => 
+            const overallAuditCount = calcData.reduce((sum, row) => 
                 sum + (parseFloat(row['Opportunity Count']) || 0), 0
             );
 
@@ -1594,12 +1627,34 @@
             
             // Show first 100 accounts
             tbody.innerHTML = filteredData.slice(0, 100).map((row, index) => {
-                // Calculate metrics for this account
-                const oppPass = parseFloat(row['Opportunity Pass']) || 0;
-                const oppCount = parseFloat(row['Opportunity Count']) || 0;
-                const oppNA = parseFloat(row['Opportunity NA']) || 0;
-                const oppFail = parseFloat(row['Opportunity Fail']) || 0;
-                const totalPop = parseFloat(row['Total Population']) || 0;
+                // Get account name for matching with Parameter_Audit_Count
+                const accountName = row.Account || row.Client || row['Account Name'] || '';
+                
+                // Find matching data in Parameter_Audit_Count for calculations
+                const paramData = dashboardData.parameterAuditCount.filter(p => 
+                    (p.Account || p.Client) === accountName
+                );
+                
+                // Calculate metrics from Parameter_Audit_Count data
+                let oppPass = 0, oppCount = 0, oppNA = 0, oppFail = 0, totalPop = 0;
+                
+                if (paramData.length > 0) {
+                    // Sum values for this account from Parameter_Audit_Count
+                    paramData.forEach(p => {
+                        oppPass += parseFloat(p['Opportunity Pass']) || 0;
+                        oppCount += parseFloat(p['Opportunity Count']) || 0;
+                        oppNA += parseFloat(p['Opportunity NA']) || 0;
+                        oppFail += parseFloat(p['Opportunity Fail']) || 0;
+                        totalPop += parseFloat(p['Total Population']) || 0;
+                    });
+                } else {
+                    // Fallback: try to get from Account Summary row itself
+                    oppPass = parseFloat(row['Opportunity Pass']) || 0;
+                    oppCount = parseFloat(row['Opportunity Count']) || 0;
+                    oppNA = parseFloat(row['Opportunity NA']) || 0;
+                    oppFail = parseFloat(row['Opportunity Fail']) || 0;
+                    totalPop = parseFloat(row['Total Population']) || 0;
+                }
                 
                 const accuracy = oppCount - oppNA > 0 ? ((oppPass / (oppCount - oppNA)) * 100).toFixed(2) : 0;
                 const sampleRate = totalPop > 0 ? ((oppCount / totalPop) * 100).toFixed(2) : 0;
