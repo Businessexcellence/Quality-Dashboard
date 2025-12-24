@@ -1544,13 +1544,32 @@
         }
 
         function getClosedProjectCount() {
+            console.log('🔍 getClosedProjectCount called');
+            console.log('📊 dashboardData.projects:', dashboardData.projects);
+            
             if (!dashboardData.projects || dashboardData.projects.length === 0) {
+                console.warn('⚠️ No projects data available');
                 return 0;
             }
             
+            console.log(`📊 Total Projects: ${dashboardData.projects.length}`);
+            
+            // Log all status values to see what we have
+            const allStatuses = dashboardData.projects.map((p, idx) => {
+                const status = p.Status || p.status || p.STATUS || '';
+                if (idx < 5) { // Log first 5 for debugging
+                    console.log(`Project ${idx + 1} Status:`, status, 'Type:', typeof status);
+                }
+                return status;
+            });
+            
+            console.log('📋 All unique status values:', [...new Set(allStatuses)]);
+            
             const closedCount = dashboardData.projects.filter(p => {
-                const status = p.Status || p.status || '';
-                return status && status.toString().toLowerCase().includes('closed');
+                const status = p.Status || p.status || p.STATUS || '';
+                const statusStr = status ? status.toString().toLowerCase().trim() : '';
+                const isClosed = statusStr.includes('closed') || statusStr === 'closed';
+                return isClosed;
             }).length;
             
             console.log(`📊 Closed Projects Count: ${closedCount} out of ${dashboardData.projects.length}`);
@@ -1558,13 +1577,32 @@
         }
 
         function getClosedRCACount() {
+            console.log('🔍 getClosedRCACount called');
+            console.log('📊 dashboardData.rcaCapa:', dashboardData.rcaCapa);
+            
             if (!dashboardData.rcaCapa || dashboardData.rcaCapa.length === 0) {
+                console.warn('⚠️ No RCA/CAPA data available');
                 return 0;
             }
             
+            console.log(`📊 Total RCA/CAPA: ${dashboardData.rcaCapa.length}`);
+            
+            // Log all status values to see what we have
+            const allStatuses = dashboardData.rcaCapa.map((r, idx) => {
+                const status = r.Status || r.status || r.STATUS || '';
+                if (idx < 5) { // Log first 5 for debugging
+                    console.log(`RCA/CAPA ${idx + 1} Status:`, status, 'Type:', typeof status);
+                }
+                return status;
+            });
+            
+            console.log('📋 All unique RCA/CAPA status values:', [...new Set(allStatuses)]);
+            
             const closedCount = dashboardData.rcaCapa.filter(r => {
-                const status = r.Status || r.status || '';
-                return status && status.toString().toLowerCase().includes('closed');
+                const status = r.Status || r.status || r.STATUS || '';
+                const statusStr = status ? status.toString().toLowerCase().trim() : '';
+                const isClosed = statusStr.includes('closed') || statusStr === 'closed';
+                return isClosed;
             }).length;
             
             console.log(`📊 Closed RCA/CAPA Count: ${closedCount} out of ${dashboardData.rcaCapa.length}`);
