@@ -868,9 +868,12 @@
     </div>
 
     <!-- UPLOAD MODAL -->
-    <div id="uploadModal" class="modal">
+    <div id="uploadModal" class="modal" onclick="if(event.target.id==='uploadModal') closeUploadModal()">
         <div class="modal-content">
-            <div class="modal-header">Upload Excel File</div>
+            <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <span>Upload Excel File</span>
+                <button onclick="closeUploadModal()" style="background: none; border: none; color: var(--text-primary); font-size: 24px; cursor: pointer; padding: 0; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">&times;</button>
+            </div>
             <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
                 <i class="fas fa-cloud-upload-alt"></i>
                 <p>Click to upload or drag and drop</p>
@@ -931,11 +934,23 @@
         // ==========================================
         
         function openUploadModal() {
-            document.getElementById('uploadModal').classList.add('active');
+            console.log('🎯 Opening upload modal...');
+            const modal = document.getElementById('uploadModal');
+            if (modal) {
+                modal.classList.add('active');
+                console.log('✅ Upload modal opened');
+            } else {
+                console.error('❌ Upload modal not found!');
+            }
         }
 
         function closeUploadModal() {
-            document.getElementById('uploadModal').classList.remove('active');
+            console.log('🎯 Closing upload modal...');
+            const modal = document.getElementById('uploadModal');
+            if (modal) {
+                modal.classList.remove('active');
+                console.log('✅ Upload modal closed');
+            }
         }
 
         // ==========================================
@@ -1986,6 +2001,18 @@ Total Population: ${totalPop}
         
         window.addEventListener('DOMContentLoaded', () => {
             console.log('Dashboard initialized');
+            
+            // Setup upload button click handler as backup
+            const uploadBtn = document.querySelector('.upload-btn');
+            if (uploadBtn) {
+                uploadBtn.addEventListener('click', function(e) {
+                    console.log('📤 Upload button clicked (event listener)');
+                    openUploadModal();
+                });
+                console.log('✅ Upload button event listener attached');
+            } else {
+                console.error('❌ Upload button not found!');
+            }
             
             // Check if data exists in localStorage
             const savedData = localStorage.getItem('dashboardData');
