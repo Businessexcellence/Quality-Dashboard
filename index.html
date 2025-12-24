@@ -2054,19 +2054,14 @@
                 console.warn('⚠️ No SPOC Audit data after processing');
             } else {
                 const html = sortedSPOCAudit.slice(0, 10).map(([spoc, accounts]) => `
-                    <div style="margin-bottom: 8px; padding: 6px; background: rgba(255, 140, 66, 0.05); border-radius: 4px; border-left: 3px solid var(--primary);">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                            <span style="font-size: 10px; color: var(--primary); font-weight: 700;">${spoc}</span>
-                            <span style="font-size: 10px; font-weight: 700; color: var(--primary); background: rgba(255, 140, 66, 0.2); padding: 2px 6px; border-radius: 3px;">${accounts.length}</span>
-                        </div>
-                        <div style="font-size: 8px; color: #cbd5e1; line-height: 1.4;">
-                            ${accounts.join(', ')}
-                        </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; margin-bottom: 4px; background: rgba(255, 140, 66, 0.05); border-radius: 4px; border-left: 3px solid var(--primary);">
+                        <span style="font-size: 10px; color: #f8fafc; font-weight: 600;">${spoc}</span>
+                        <span style="font-size: 11px; font-weight: 700; color: var(--primary); background: rgba(255, 140, 66, 0.2); padding: 2px 8px; border-radius: 3px;">${accounts.length}</span>
                     </div>
                 `).join('');
                 
                 beSPOCAuditContainer.innerHTML = html;
-                console.log('✅ BE SPOC Audit rendered:', sortedSPOCAudit.length, 'SPOCs with account names');
+                console.log('✅ BE SPOC Audit rendered:', sortedSPOCAudit.length, 'SPOCs with counts');
                 console.log('✅ HTML length:', html.length, 'characters');
             }
 
@@ -2100,23 +2095,18 @@
                 console.warn('⚠️ No SPOC SLA data after processing');
             } else {
                 const html = sortedSPOCSLA.slice(0, 10).map(([spoc, accounts]) => `
-                    <div style="margin-bottom: 8px; padding: 6px; background: rgba(255, 140, 66, 0.05); border-radius: 4px; border-left: 3px solid var(--primary);">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                            <span style="font-size: 10px; color: var(--primary); font-weight: 700;">${spoc}</span>
-                            <span style="font-size: 10px; font-weight: 700; color: var(--primary); background: rgba(255, 140, 66, 0.2); padding: 2px 6px; border-radius: 3px;">${accounts.length}</span>
-                        </div>
-                        <div style="font-size: 8px; color: #cbd5e1; line-height: 1.4;">
-                            ${accounts.join(', ')}
-                        </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; margin-bottom: 4px; background: rgba(255, 140, 66, 0.05); border-radius: 4px; border-left: 3px solid var(--primary);">
+                        <span style="font-size: 10px; color: #f8fafc; font-weight: 600;">${spoc}</span>
+                        <span style="font-size: 11px; font-weight: 700; color: var(--primary); background: rgba(255, 140, 66, 0.2); padding: 2px 8px; border-radius: 3px;">${accounts.length}</span>
                     </div>
                 `).join('');
                 
                 beSPOCSLAContainer.innerHTML = html;
-                console.log('✅ BE SPOC SLA rendered:', sortedSPOCSLA.length, 'SPOCs with account names');
+                console.log('✅ BE SPOC SLA rendered:', sortedSPOCSLA.length, 'SPOCs with counts');
                 console.log('✅ HTML length:', html.length, 'characters');
             }
 
-            console.log('✅ BE SPOC data rendered successfully with account names');
+            console.log('✅ BE SPOC data rendered successfully with counts only');
         }
 
         function renderRegionChart() {
