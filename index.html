@@ -17,6 +17,81 @@
     <!-- SheetJS for Excel parsing -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
+    <!-- CRITICAL: Define functions BEFORE body loads -->
+    <script>
+        // Define navigation function immediately
+        window.switchTab = function(tabId, clickedElement) {
+            console.log('🔄 Switching to tab:', tabId);
+            try {
+                // Hide all tabs
+                var tabs = document.querySelectorAll('.tab-content');
+                for (var i = 0; i < tabs.length; i++) {
+                    tabs[i].classList.remove('active');
+                }
+                
+                // Remove active from all nav items
+                var navItems = document.querySelectorAll('.nav-item');
+                for (var i = 0; i < navItems.length; i++) {
+                    navItems[i].classList.remove('active');
+                }
+                
+                // Show selected tab
+                var targetTab = document.getElementById(tabId);
+                if (targetTab) {
+                    targetTab.classList.add('active');
+                    console.log('✅ Tab activated:', tabId);
+                } else {
+                    console.error('❌ Tab not found:', tabId);
+                }
+                
+                // Activate nav item
+                if (clickedElement) {
+                    clickedElement.classList.add('active');
+                }
+            } catch (error) {
+                console.error('❌ Error switching tab:', error);
+                alert('Error switching tab: ' + error.message);
+            }
+        };
+        
+        // Define upload modal functions immediately
+        window.openUploadModal = function() {
+            console.log('🎯 Opening upload modal...');
+            try {
+                var modal = document.getElementById('uploadModal');
+                if (modal) {
+                    modal.style.display = 'flex';
+                    modal.classList.add('active');
+                    console.log('✅ Upload modal opened');
+                } else {
+                    console.error('❌ Modal not found');
+                    alert('Upload modal not found!');
+                }
+            } catch (error) {
+                console.error('❌ Error opening modal:', error);
+                alert('Error: ' + error.message);
+            }
+        };
+        
+        window.closeUploadModal = function() {
+            console.log('🎯 Closing upload modal...');
+            try {
+                var modal = document.getElementById('uploadModal');
+                if (modal) {
+                    modal.style.display = 'none';
+                    modal.classList.remove('active');
+                    console.log('✅ Upload modal closed');
+                }
+            } catch (error) {
+                console.error('❌ Error closing modal:', error);
+            }
+        };
+        
+        console.log('✅ HEAD: Critical functions defined');
+        console.log('✅ window.switchTab:', typeof window.switchTab);
+        console.log('✅ window.openUploadModal:', typeof window.openUploadModal);
+    </script>
+    
     <style>
         /* ==========================================
            MODERN PROFESSIONAL THEME
