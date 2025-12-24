@@ -1046,6 +1046,100 @@
         };
 
         // ==========================================
+        // SAFE DOM ACCESS UTILITIES
+        // ==========================================
+        
+        /**
+         * Safely get element by ID with error handling
+         * @param {string} id - Element ID
+         * @param {string} context - Context for logging (optional)
+         * @returns {HTMLElement|null} - Element or null if not found
+         */
+        function safeGetElement(id, context = '') {
+            try {
+                const element = document.getElementById(id);
+                if (!element && context) {
+                    console.warn(`⚠️ Element #${id} not found${context ? ' in ' + context : ''}`);
+                }
+                return element;
+            } catch (error) {
+                console.error(`❌ Error accessing element #${id}:`, error);
+                return null;
+            }
+        }
+
+        /**
+         * Safely set text content with null check
+         * @param {string} id - Element ID
+         * @param {string} text - Text to set
+         * @returns {boolean} - Success status
+         */
+        function safeSetText(id, text) {
+            const element = safeGetElement(id);
+            if (element) {
+                try {
+                    element.textContent = text;
+                    return true;
+                } catch (error) {
+                    console.error(`❌ Error setting text for #${id}:`, error);
+                    return false;
+                }
+            }
+            return false;
+        }
+
+        /**
+         * Safely set HTML content with null check
+         * @param {string} id - Element ID
+         * @param {string} html - HTML to set
+         * @returns {boolean} - Success status
+         */
+        function safeSetHTML(id, html) {
+            const element = safeGetElement(id);
+            if (element) {
+                try {
+                    element.innerHTML = html;
+                    return true;
+                } catch (error) {
+                    console.error(`❌ Error setting HTML for #${id}:`, error);
+                    return false;
+                }
+            }
+            return false;
+        }
+
+        /**
+         * Validate data exists before rendering
+         * @param {Array} data - Data array to validate
+         * @param {string} context - Context for error message
+         * @returns {boolean} - Validation status
+         */
+        function validateData(data, context = 'data') {
+            if (!data || !Array.isArray(data) || data.length === 0) {
+                console.warn(`⚠️ No ${context} available for rendering`);
+                return false;
+            }
+            return true;
+        }
+
+        /**
+         * Global error handler for all dashboard operations
+         * @param {Error} error - Error object
+         * @param {string} context - Context where error occurred
+         */
+        function handleError(error, context = '') {
+            console.error(`❌ Error${context ? ' in ' + context : ''}:`, error);
+            console.error('Stack trace:', error.stack);
+            
+            // Don't alert for minor errors, just log
+            if (context && (context.includes('render') || context.includes('load'))) {
+                console.warn(`Continuing despite error in ${context}`);
+            }
+        }
+
+        console.log('✅ Safe DOM utilities loaded');
+
+        // ==========================================
         // UPLOAD MODAL FUNCTIONS (Defined at top level)
         // ==========================================
         
@@ -1754,24 +1848,28 @@
         let currentAccountFilter = null;
 
         function refreshAccountSummaryTab() {
-            console.log('🔄 Refreshing Account Summary Tab...');
-            console.log('📊 Account Summary data rows:', dashboardData.accountSummary.length);
-            console.log('📊 Parameter Audit Count rows:', dashboardData.parameterAuditCount.length);
-            
-            if (!dashboardData.accountSummary.length) {
-                console.warn('⚠️ No Account Summary data available');
-                console.error('❌ Please check sheet name - looking for "Account Summary" (with space)');
-                document.getElementById('accountFilters').innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-muted);">📊 No Account Summary data. Please upload Base File.xlsx with "Account Summary" sheet</div>';
-                return;
+            try {
+                console.log('🔄 Refreshing Account Summary Tab...');
+                console.log('📊 Account Summary data rows:', dashboardData.accountSummary.length);
+                console.log('📊 Parameter Audit Count rows:', dashboardData.parameterAuditCount.length);
+                
+                if (!validateData(dashboardData.accountSummary, 'Account Summary')) {
+                    console.warn('⚠️ No Account Summary data available');
+                    console.error('❌ Please check sheet name - looking for "Account_Summary" or "Account Summary"');
+                    safeSetHTML('accountFilters', '<div style="padding: 20px; text-align: center; color: var(--text-muted);">📊 No Account Summary data. Please upload Base File.xlsx with "Account_Summary" sheet</div>');
+                    return;
+                }
+                
+                renderAccountFilters();
+                renderAccountKPIs();
+                renderBESPOC();
+                renderRegionChart();
+                renderAccountTable();
+                
+                console.log('✅ Account Summary Tab refreshed');
+            } catch (error) {
+                handleError(error, 'refreshAccountSummaryTab');
             }
-            
-            renderAccountFilters();
-            renderAccountKPIs();
-            renderBESPOC();
-            renderRegionChart();
-            renderAccountTable();
-            
-            console.log('✅ Account Summary Tab refreshed');
         }
 
         function renderAccountFilters() {
@@ -1921,29 +2019,30 @@
         }
 
         function renderAccountKPIs() {
-            // ALL accounts in Account_Summary are active accounts
-            const activeCount = dashboardData.accountSummary.length;
+            try {
+                // ALL accounts in Account_Summary are active accounts
+                const activeCount = dashboardData.accountSummary.length;
 
-            // Get unique regional heads and count accounts per region
-            const regionalHeadMap = {};
-            dashboardData.accountSummary.forEach(a => {
-                const regional = a['Regional Head'] ? String(a['Regional Head']).trim() : 'Unassigned';
-                if (!regionalHeadMap[regional]) {
-                    regionalHeadMap[regional] = [];
-                }
-                regionalHeadMap[regional].push(a.Account || a.Client);
-            });
-            
-            const uniqueRegionalHeads = Object.keys(regionalHeadMap).filter(r => r !== 'Unassigned').length;
+                // Get unique regional heads and count accounts per region
+                const regionalHeadMap = {};
+                dashboardData.accountSummary.forEach(a => {
+                    const regional = a['Regional Head'] ? String(a['Regional Head']).trim() : 'Unassigned';
+                    if (!regionalHeadMap[regional]) {
+                        regionalHeadMap[regional] = [];
+                    }
+                    regionalHeadMap[regional].push(a.Account || a.Client);
+                });
+                
+                const uniqueRegionalHeads = Object.keys(regionalHeadMap).filter(r => r !== 'Unassigned').length;
 
-            // Only update activeAccountCount (regionalCount element removed)
-            const activeCountEl = document.getElementById('activeAccountCount');
-            if (activeCountEl) {
-                activeCountEl.textContent = activeCount;
+                // Safely update activeAccountCount element
+                safeSetText('activeAccountCount', activeCount);
+
+                console.log(`📊 KPIs: Active Accounts=${activeCount}, Regional Heads=${uniqueRegionalHeads}`);
+                console.log(`📊 Regional breakdown:`, regionalHeadMap);
+            } catch (error) {
+                handleError(error, 'renderAccountKPIs');
             }
-
-            console.log(`📊 KPIs: Active Accounts=${activeCount}, Regional Heads=${uniqueRegionalHeads}`);
-            console.log(`📊 Regional breakdown:`, regionalHeadMap);
         }
 
         function renderRegionalHeadCards() {
@@ -2009,17 +2108,15 @@
         }
 
         function renderBESPOC() {
-            console.log('🔄 Starting renderBESPOC()');
-            
-            // Check if we have data
-            if (!dashboardData || !dashboardData.accountSummary || dashboardData.accountSummary.length === 0) {
-                console.warn('⚠️ No Account Summary data for BE SPOC rendering');
-                const audit = document.getElementById('beSPOCAudit');
-                const sla = document.getElementById('beSPOCSLA');
-                if (audit) audit.innerHTML = '<div style="padding: 6px; text-align: center; color: #f8fafc; font-size: 9px;">No data available. Please upload Base File.xlsx</div>';
-                if (sla) sla.innerHTML = '<div style="padding: 6px; text-align: center; color: #f8fafc; font-size: 9px;">No data available. Please upload Base File.xlsx</div>';
-                return;
-            }
+            try {
+                console.log('🔄 Starting renderBESPOC()');
+                
+                // Check if we have data
+                if (!validateData(dashboardData.accountSummary, 'Account Summary for BE SPOC')) {
+                    safeSetHTML('beSPOCAudit', '<div style="padding: 6px; text-align: center; color: #f8fafc; font-size: 9px;">No data available. Please upload Base File.xlsx</div>');
+                    safeSetHTML('beSPOCSLA', '<div style="padding: 6px; text-align: center; color: #f8fafc; font-size: 9px;">No data available. Please upload Base File.xlsx</div>');
+                    return;
+                }
             
             console.log('✅ Data available:', dashboardData.accountSummary.length, 'rows');
             console.log('📋 First row sample:', dashboardData.accountSummary[0]);
@@ -2107,6 +2204,11 @@
             }
 
             console.log('✅ BE SPOC data rendered successfully with counts only');
+            } catch (error) {
+                handleError(error, 'renderBESPOC');
+                safeSetHTML('beSPOCAudit', '<div style="padding: 6px; text-align: center; color: #ef4444; font-size: 9px;">Error loading data</div>');
+                safeSetHTML('beSPOCSLA', '<div style="padding: 6px; text-align: center; color: #ef4444; font-size: 9px;">Error loading data</div>');
+            }
         }
 
         function renderRegionChart() {
