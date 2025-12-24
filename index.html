@@ -1122,65 +1122,97 @@
         // ==========================================
         
         window.handleFileUpload = function(event) {
-            console.log('🔄 BODY: Full handleFileUpload function loaded');
-            console.log('🔄 File upload started...');
-            const file = event.target.files[0];
+            console.log('═══════════════════════════════════════');
+            console.log('🔄 handleFileUpload CALLED');
+            console.log('═══════════════════════════════════════');
             
-            if (!file) {
-                console.warn('⚠️ No file selected');
-                return;
-            }
-
-            console.log('📁 File selected:', file.name, 'Size:', (file.size / 1024 / 1024).toFixed(2) + 'MB');
-
-            // Check file type
-            if (!file.name.endsWith('.xlsx') && !file.name.endsWith('.xls')) {
-                alert('❌ Please upload an Excel file (.xlsx or .xls)');
-                return;
-            }
-
-            const reader = new FileReader();
-            const progressSection = document.getElementById('progressSection');
-            const progressFill = document.getElementById('progressFill');
-            const progressPercent = document.getElementById('progressPercent');
-            const uploadStatus = document.getElementById('uploadStatus');
-            const uploadSubStatus = document.getElementById('uploadSubStatus');
-            const uploadZone = document.getElementById('uploadZone');
-
-            // Show progress section, hide upload zone
-            uploadZone.style.display = 'none';
-            progressSection.style.display = 'block';
-            
-            // Update status
-            uploadStatus.textContent = '📁 Reading file...';
-            uploadSubStatus.textContent = file.name + ' (' + (file.size / 1024 / 1024).toFixed(2) + ' MB)';
-            progressFill.style.width = '20%';
-            progressPercent.textContent = '20%';
-            
-            console.log('📊 Starting to read file...');
-
-            reader.onload = function(e) {
-                console.log('📖 File read complete, parsing...');
-                uploadStatus.textContent = '⚙️ Parsing Excel file...';
-                uploadSubStatus.textContent = 'Extracting data from sheets';
-                progressFill.style.width = '40%';
-                progressPercent.textContent = '40%';
+            try {
+                const file = event.target.files[0];
+                console.log('📁 File object:', file);
                 
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    console.log('📦 File data loaded:', data.length, 'bytes');
+                if (!file) {
+                    console.warn('⚠️ No file selected');
+                    alert('⚠️ No file selected');
+                    return;
+                }
+
+                console.log('📁 File selected:', file.name, 'Size:', (file.size / 1024 / 1024).toFixed(2) + 'MB');
+                alert('✅ File detected: ' + file.name);
+
+                // Check file type
+                if (!file.name.endsWith('.xlsx') && !file.name.endsWith('.xls')) {
+                    alert('❌ Please upload an Excel file (.xlsx or .xls)');
+                    return;
+                }
+                
+                console.log('✅ File type validated');
+
+                const reader = new FileReader();
+                const progressSection = document.getElementById('progressSection');
+                const progressFill = document.getElementById('progressFill');
+                const progressPercent = document.getElementById('progressPercent');
+                const uploadStatus = document.getElementById('uploadStatus');
+                const uploadSubStatus = document.getElementById('uploadSubStatus');
+                const uploadZone = document.getElementById('uploadZone');
+                
+                console.log('📊 Progress elements:', {
+                    progressSection: !!progressSection,
+                    progressFill: !!progressFill,
+                    progressPercent: !!progressPercent,
+                    uploadStatus: !!uploadStatus,
+                    uploadSubStatus: !!uploadSubStatus,
+                    uploadZone: !!uploadZone
+                });
+
+                if (!progressSection || !uploadZone) {
+                    alert('❌ Progress UI elements not found!');
+                    console.error('❌ Missing UI elements');
+                    return;
+                }
+
+                // Show progress section, hide upload zone
+                console.log('🎨 Updating UI...');
+                uploadZone.style.display = 'none';
+                progressSection.style.display = 'block';
+                
+                // Update status
+                uploadStatus.textContent = '📁 Reading file...';
+                uploadSubStatus.textContent = file.name + ' (' + (file.size / 1024 / 1024).toFixed(2) + ' MB)';
+                progressFill.style.width = '20%';
+                progressPercent.textContent = '20%';
+                
+                console.log('📊 Starting to read file...');
+                alert('📊 Starting file read...');
+
+                reader.onload = function(e) {
+                    console.log('📖 File read complete, parsing...');
+                    alert('📖 File read complete!');
+                    uploadStatus.textContent = '⚙️ Parsing Excel file...';
+                    uploadSubStatus.textContent = 'Extracting data from sheets';
+                    progressFill.style.width = '40%';
+                    progressPercent.textContent = '40%';
                     
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    console.log('📊 Workbook parsed successfully');
+                    try {
+                        const data = new Uint8Array(e.target.result);
+                        console.log('📦 File data loaded:', data.length, 'bytes');
+                        
+                        if (typeof XLSX === 'undefined') {
+                            alert('❌ XLSX library not loaded!');
+                            throw new Error('XLSX library not loaded');
+                        }
+                        
+                        const workbook = XLSX.read(data, { type: 'array' });
+                        console.log('📊 Workbook parsed successfully');
+                        alert('📊 Excel parsed! Found ' + workbook.SheetNames.length + ' sheets');
 
-                    uploadStatus.textContent = '📊 Loading sheets...';
-                    uploadSubStatus.textContent = 'Found ' + workbook.SheetNames.length + ' sheets';
-                    progressFill.style.width = '60%';
-                    progressPercent.textContent = '60%';
+                        uploadStatus.textContent = '📊 Loading sheets...';
+                        uploadSubStatus.textContent = 'Found ' + workbook.SheetNames.length + ' sheets';
+                        progressFill.style.width = '60%';
+                        progressPercent.textContent = '60%';
 
-                    // Parse all sheets - try underscore variations first (user's file format)
-                    console.log('📊 Available sheets:', workbook.SheetNames);
-                    console.log('📊 Sheet names (exact):', JSON.stringify(workbook.SheetNames));
+                        // Parse all sheets - try underscore variations first (user's file format)
+                        console.log('📊 Available sheets:', workbook.SheetNames);
+                        console.log('📊 Sheet names (exact):', JSON.stringify(workbook.SheetNames));
                     
                     // Parameter_Audit_Count (for calculations) - try underscore first
                     let paramData = parseSheet(workbook, 'Parameter_Audit_Count');
@@ -1317,9 +1349,17 @@
             };
 
             reader.readAsArrayBuffer(file);
+            console.log('✅ FileReader.readAsArrayBuffer() called successfully');
+            alert('✅ Reading file... Watch for progress!');
+            
+            } catch (error) {
+                console.error('❌ CRITICAL ERROR in handleFileUpload:', error);
+                alert('❌ CRITICAL ERROR: ' + error.message);
+            }
         }
         
-        console.log('✅ handleFileUpload function fully loaded');
+        console.log('✅ handleFileUpload function definition complete');
+        console.log('✅ Type of handleFileUpload:', typeof window.handleFileUpload);
         
         // Check if there was a pending upload from HEAD
         if (window._pendingFileUpload) {
