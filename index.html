@@ -2059,63 +2059,68 @@
         }
 
         function renderRegionChart() {
+            console.log('🗺️ Starting renderRegionChart()');
             const canvas = document.getElementById('regionChart');
-            if (!canvas) return;
+            if (!canvas) {
+                console.error('❌ Canvas element #regionChart not found');
+                return;
+            }
+
+            // Check if we have data
+            if (!dashboardData || !dashboardData.accountSummary || dashboardData.accountSummary.length === 0) {
+                console.warn('⚠️ No account summary data available');
+                const container = document.getElementById('regionChartContainer');
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+                        <i class="fas fa-map-marker-alt" style="font-size: 48px; color: var(--primary); margin-bottom: 16px;"></i>
+                        <h3 style="color: var(--text-primary); margin-bottom: 8px;">No Data Available</h3>
+                        <p>Upload an Excel file to see the region distribution.</p>
+                    </div>
+                `;
+                return;
+            }
 
             // Clear existing chart if any
             if (window.regionChartInstance) {
                 window.regionChartInstance.destroy();
             }
 
-            // Create regions map based on actual Region field from Account Summary
-            const regionData = {
-                'North India': 0,
-                'South India': 0,
-                'East India': 0,
-                'West India': 0,
-                'Northeast India': 0,
-                'Central India': 0
-            };
-
-            // Count accounts per region (using Region or Regional Head field)
-            dashboardData.accountSummary.forEach(row => {
-                // Try Region field first, then Regional Head
-                const region = String(row['Region'] || row['Regional Head'] || row['Regional'] || '').trim();
-                const regionLower = region.toLowerCase();
+            // Count accounts by exact Region column values (Column E from Account_Summary sheet)
+            const regionCounts = {};
+            
+            console.log('🗺️ Processing', dashboardData.accountSummary.length, 'accounts');
+            
+            dashboardData.accountSummary.forEach((row, index) => {
+                // Get the exact value from Region column (Column E)
+                const region = row['Region'] ? String(row['Region']).trim() : null;
                 
-                // Log for debugging (first 5 rows only)
-                if (dashboardData.accountSummary.indexOf(row) < 5) {
-                    console.log('🗺️ Processing Region/Regional Head:', region);
-                }
-                
-                // Match region keywords and city names
-                if (regionLower.includes('north') && !regionLower.includes('east')) {
-                    regionData['North India']++;
-                } else if (regionLower.includes('south')) {
-                    regionData['South India']++;
-                } else if (regionLower.includes('east') && !regionLower.includes('north')) {
-                    regionData['East India']++;
-                } else if (regionLower.includes('west')) {
-                    regionData['West India']++;
-                } else if (regionLower.includes('northeast') || regionLower.includes('north east')) {
-                    regionData['Northeast India']++;
-                } else if (regionLower.includes('central') || regionLower.includes('centre')) {
-                    regionData['Central India']++;
-                } else if (regionLower.includes('mumbai') || regionLower.includes('maharashtra') || regionLower.includes('goa') || regionLower.includes('pune')) {
-                    regionData['West India']++;
-                } else if (regionLower.includes('delhi') || regionLower.includes('punjab') || regionLower.includes('haryana') || regionLower.includes('rajasthan') || regionLower.includes('chandigarh')) {
-                    regionData['North India']++;
-                } else if (regionLower.includes('bangalore') || regionLower.includes('bengaluru') || regionLower.includes('chennai') || regionLower.includes('hyderabad') || regionLower.includes('kerala') || regionLower.includes('karnataka') || regionLower.includes('tamil') || regionLower.includes('andhra')) {
-                    regionData['South India']++;
-                } else if (regionLower.includes('kolkata') || regionLower.includes('bengal') || regionLower.includes('odisha') || regionLower.includes('bihar') || regionLower.includes('jharkhand')) {
-                    regionData['East India']++;
+                if (region) {
+                    regionCounts[region] = (regionCounts[region] || 0) + 1;
+                    
+                    // Log first 5 for debugging
+                    if (index < 5) {
+                        console.log(`🗺️ Row ${index + 1} - Region:`, region);
+                    }
                 }
             });
             
-            // Log final region data
-            console.log('🗺️ Final region distribution:', regionData);
+            console.log('🗺️ Region counts:', regionCounts);
 
-            // Filter out regions with 0 accounts
+            // Check if we have any region data
+            if (Object.keys(regionCounts).length === 0) {
+                console.warn('⚠️ No region data found in Region column');
+                const container = document.getElementById('regionChartContainer');
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+                        <i class="fas fa-map-marker-alt" style="font-size: 48px; color: var(--primary); margin-bottom: 16px;"></i>
+                        <h3 style="color: var(--text-primary); margin-bottom: 8px;">No Region Data Found</h3>
+                        <p>Please ensure your Excel file has a "Region" column with data.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Prepare data for chart - use exact region names from data
             const labels = [];
             const data = [];
             const colors = [
@@ -2127,27 +2132,16 @@
                 '#FFD700'   // Golden
             ];
 
-            Object.keys(regionData).forEach((region, index) => {
-                if (regionData[region] > 0) {
+            // Sort by count (descending) and create arrays
+            Object.entries(regionCounts)
+                .sort((a, b) => b[1] - a[1])
+                .forEach(([region, count]) => {
                     labels.push(region);
-                    data.push(regionData[region]);
-                }
-            });
+                    data.push(count);
+                });
             
-            // Check if we have any data
-            if (labels.length === 0 || data.reduce((a, b) => a + b, 0) === 0) {
-                console.warn('⚠️ No region data found. Check Regional Head field values.');
-                const container = document.getElementById('regionChartContainer');
-                container.innerHTML = `
-                    <div style="text-align: center; padding: 40px; color: var(--text-muted);">
-                        <i class="fas fa-map-marker-alt" style="font-size: 48px; color: var(--primary); margin-bottom: 16px;"></i>
-                        <h3 style="color: var(--text-primary); margin-bottom: 8px;">No Region Data Available</h3>
-                        <p>Upload an Excel file with Regional Head information to see the distribution.</p>
-                        <p style="font-size: 12px; margin-top: 12px;">Expected keywords: North, South, East, West, Central, or city names like Mumbai, Delhi, Bangalore, etc.</p>
-                    </div>
-                `;
-                return;
-            }
+            console.log('🗺️ Chart labels:', labels);
+            console.log('🗺️ Chart data:', data);
 
             // Create professional donut chart
             const ctx = canvas.getContext('2d');
@@ -2236,7 +2230,7 @@
                 }
             });
 
-            console.log('📊 Region chart rendered:', regionData);
+            console.log('✅ Region chart rendered successfully with', labels.length, 'regions');
         }
 
         function filterByRegion(region) {
