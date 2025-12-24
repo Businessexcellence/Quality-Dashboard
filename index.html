@@ -800,18 +800,18 @@
 
         <!-- ACCOUNT SUMMARY TAB -->
         <div id="account-summary" class="tab-content">
-            <!-- Filter Cards Section -->
-            <div style="margin-bottom: 24px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <!-- Filter Section - Beautiful Redesign -->
+            <div style="margin-bottom: 32px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                     <h2 style="font-size: 18px; color: var(--text-primary); margin: 0;">
                         <i class="fas fa-filter"></i> Filters
                     </h2>
-                    <button onclick="clearAccountFilter()" style="background: var(--bg-card); border: 2px solid var(--border); color: var(--text-primary); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 12px; transition: all 0.3s;">
-                        <i class="fas fa-times"></i> Clear Filter
+                    <button onclick="clearAccountFilter()" style="background: var(--error); border: none; color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                        <i class="fas fa-times"></i> Clear All Filters
                     </button>
                 </div>
-                <div id="accountFilters" style="display: flex; flex-wrap: wrap; gap: 16px; overflow-x: auto;">
-                    <!-- Filter cards will be generated dynamically -->
+                <div id="accountFilters" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;">
+                    <!-- Filter dropdowns will be generated dynamically -->
                 </div>
             </div>
 
@@ -1666,16 +1666,16 @@
             const sampleRow = dashboardData.accountSummary[0];
             console.log('📋 Available Account Summary columns:', Object.keys(sampleRow));
 
-            // Create filter cards with counts - Practice Head is now a filter
+            // Define 4 main filters
             const filters = [
-                { label: 'Client Interaction', field: 'Client Interaction', icon: 'handshake', showOnlyYes: true },
+                { label: 'Client Interaction', field: 'Client Interaction', icon: 'handshake' },
                 { label: 'Practice Head', field: 'Practice Head', icon: 'user-tie' },
                 { label: 'Audit Status', field: 'Audit Status', icon: 'clipboard-check' },
-                { label: 'Audit Frequency', field: 'Audit Frequency', icon: 'calendar-alt' },
-                { label: 'Region', field: 'Regional Head', icon: 'map-marker-alt' }
+                { label: 'Audit Frequency', field: 'Audit Frequency', icon: 'calendar-alt' }
             ];
 
             container.innerHTML = filters.map(filter => {
+                // Get unique values for this filter
                 const values = [...new Set(dashboardData.accountSummary
                     .map(row => {
                         const value = row[filter.field];
@@ -1685,28 +1685,62 @@
 
                 if (values.length === 0) return '';
 
-                // For Client Interaction, only show 'Yes' count
-                const valuesToShow = filter.showOnlyYes ? values.filter(v => String(v).toLowerCase() === 'yes') : values;
-
-                return valuesToShow.map(value => {
+                // Calculate counts for each value
+                const valueCounts = values.map(value => {
                     const count = dashboardData.accountSummary.filter(r => {
                         const rowValue = r[filter.field];
                         const cleanRowValue = typeof rowValue === 'string' ? rowValue.trim() : rowValue;
                         return cleanRowValue === value;
                     }).length;
-                    
-                    return `
-                        <div class="filter-card" onclick="applyAccountFilter('${filter.field}', '${String(value).replace(/'/g, "\\'")}')">
-                            <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">${filter.label}</div>
-                            <h4 style="font-size: 14px; margin-bottom: 8px; color: var(--text-primary);">${value}</h4>
-                            <div class="filter-count">${count}</div>
-                            <div style="font-size: 10px; color: var(--text-muted); margin-top: 4px;">accounts</div>
+                    return { value, count };
+                }).sort((a, b) => b.count - a.count); // Sort by count descending
+
+                // Create beautiful filter dropdown with counts
+                return `
+                    <div style="background: var(--bg-card); border: 2px solid var(--border); border-radius: 12px; padding: 20px; transition: all 0.3s;">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
+                            <i class="fas fa-${filter.icon}" style="color: var(--primary); font-size: 18px;"></i>
+                            <h3 style="font-size: 15px; font-weight: 600; color: var(--text-primary); margin: 0;">${filter.label}</h3>
                         </div>
-                    `;
-                }).join('');
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            ${valueCounts.map(({ value, count }) => `
+                                <button 
+                                    onclick="applyAccountFilter('${filter.field}', '${String(value).replace(/'/g, "\\'")}')"
+                                    style="
+                                        display: flex;
+                                        justify-content: space-between;
+                                        align-items: center;
+                                        padding: 10px 14px;
+                                        background: var(--bg-primary);
+                                        border: 1px solid var(--border);
+                                        border-radius: 8px;
+                                        cursor: pointer;
+                                        transition: all 0.2s;
+                                        text-align: left;
+                                        width: 100%;
+                                    "
+                                    onmouseover="this.style.background='var(--bg-hover)'; this.style.borderColor='var(--primary)';"
+                                    onmouseout="this.style.background='var(--bg-primary)'; this.style.borderColor='var(--border)';"
+                                >
+                                    <span style="color: var(--text-primary); font-size: 13px; font-weight: 500;">${value}</span>
+                                    <span style="
+                                        background: var(--primary);
+                                        color: white;
+                                        padding: 4px 10px;
+                                        border-radius: 12px;
+                                        font-size: 12px;
+                                        font-weight: 700;
+                                        min-width: 35px;
+                                        text-align: center;
+                                    ">${count}</span>
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
             }).join('');
             
-            console.log('✅ Filter cards rendered with Region included');
+            console.log('✅ Beautiful filter dropdowns rendered with counts');
         }
 
         function applyAccountFilter(field, value) {
@@ -1714,19 +1748,28 @@
             currentAccountFilter = { field, value };
             renderAccountTable();
             
-            // Highlight active filter
-            document.querySelectorAll('.filter-card').forEach(card => {
-                card.classList.remove('active');
+            // Visual feedback - highlight selected filter
+            document.querySelectorAll('#accountFilters button').forEach(btn => {
+                btn.style.background = 'var(--bg-primary)';
+                btn.style.borderColor = 'var(--border)';
             });
-            event.currentTarget.classList.add('active');
+            event.currentTarget.style.background = 'var(--bg-hover)';
+            event.currentTarget.style.borderColor = 'var(--primary)';
+            event.currentTarget.style.boxShadow = '0 0 0 3px rgba(255, 102, 0, 0.2)';
         }
 
         function clearAccountFilter() {
             currentAccountFilter = null;
             renderAccountTable();
-            document.querySelectorAll('.filter-card').forEach(card => {
-                card.classList.remove('active');
+            
+            // Reset all button styles
+            document.querySelectorAll('#accountFilters button').forEach(btn => {
+                btn.style.background = 'var(--bg-primary)';
+                btn.style.borderColor = 'var(--border)';
+                btn.style.boxShadow = 'none';
             });
+            
+            console.log('✅ All filters cleared');
         }
 
         function renderAccountKPIs() {
