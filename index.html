@@ -697,7 +697,8 @@
                 <table class="data-table" id="accountTable">
                     <thead>
                         <tr>
-                            <th>Account</th>
+                            <th>#</th>
+                            <th>Account/Client</th>
                             <th>Practice Head</th>
                             <th>Regional Head</th>
                             <th>Audit Status</th>
@@ -855,12 +856,31 @@
                     const workbook = XLSX.read(data, { type: 'array' });
 
                     // Parse all sheets
+                    console.log('📊 Available sheets:', workbook.SheetNames);
+                    
                     dashboardData.parameterAuditCount = parseSheet(workbook, 'Parameter_Audit_Count');
+                    console.log('✅ Parameter_Audit_Count rows:', dashboardData.parameterAuditCount.length);
+                    
                     dashboardData.recruiterAuditCount = parseSheet(workbook, 'Recruiter_Audit_Count');
+                    console.log('✅ Recruiter_Audit_Count rows:', dashboardData.recruiterAuditCount.length);
+                    
                     dashboardData.accountSummary = parseSheet(workbook, 'Account_Summary');
+                    console.log('✅ Account_Summary rows:', dashboardData.accountSummary.length);
+                    if (dashboardData.accountSummary.length > 0) {
+                        console.log('📄 First Account_Summary row:', dashboardData.accountSummary[0]);
+                    }
+                    
                     dashboardData.rcaCapa = parseSheet(workbook, 'RCA_CAPA');
+                    console.log('✅ RCA_CAPA rows:', dashboardData.rcaCapa.length);
+                    
                     dashboardData.projects = parseSheet(workbook, 'Projects');
+                    console.log('✅ Projects rows:', dashboardData.projects.length);
+                    
                     dashboardData.csat = parseSheet(workbook, 'CSAT');
+                    console.log('✅ CSAT rows:', dashboardData.csat.length);
+
+                    // Save to localStorage
+                    localStorage.setItem('dashboardData', JSON.stringify(dashboardData));
 
                     progressFill.style.width = '100%';
 
@@ -868,7 +888,7 @@
                     setTimeout(() => {
                         closeUploadModal();
                         refreshAllTabs();
-                        alert('✅ Data loaded successfully!');
+                        alert(`✅ Data loaded successfully!\n\n📊 Summary:\n- Parameter Audits: ${dashboardData.parameterAuditCount.length}\n- Account Summary: ${dashboardData.accountSummary.length}\n- Recruiter Audits: ${dashboardData.recruiterAuditCount.length}`);
                     }, 500);
 
                 } catch (error) {
@@ -1106,16 +1126,30 @@
         // ==========================================
         
         function refreshAccountSummaryTab() {
+            console.log('🔄 Refreshing Account Summary Tab...');
+            console.log('📊 Account Summary data rows:', dashboardData.accountSummary.length);
+            
             renderAccountFilters();
             renderAccountKPIs();
             renderAccountTable();
+            
+            console.log('✅ Account Summary Tab refreshed');
         }
 
         function renderAccountFilters() {
             const container = document.getElementById('accountFilters');
             
-            if (!dashboardData.accountSummary.length) return;
+            if (!dashboardData.accountSummary.length) {
+                console.warn('⚠️ No Account Summary data for filters');
+                container.innerHTML = '<div class="empty-state">No data available. Please upload an Excel file.</div>';
+                return;
+            }
 
+            // Check available columns
+            const sampleRow = dashboardData.accountSummary[0];
+            console.log('📋 Available Account Summary columns:', Object.keys(sampleRow));
+
+            // Flexible filter mapping
             const filters = [
                 { label: 'Client Interaction', field: 'Client Interaction' },
                 { label: 'Practice Head', field: 'Practice Head' },
@@ -1128,12 +1162,15 @@
                     .map(row => row[filter.field])
                     .filter(Boolean))];
 
+                if (values.length === 0) return '';
+
                 return values.map(value => {
                     const count = dashboardData.accountSummary.filter(r => r[filter.field] === value).length;
                     return `
                         <div class="filter-card" onclick="applyAccountFilter('${filter.field}', '${value}')">
                             <h4>${value}</h4>
-                            <div class="filter-count">${count}</div>
+                            <div class="filter-count">${count} accounts</div>
+                            <small>${filter.label}</small>
                         </div>
                     `;
                 }).join('');
@@ -1167,20 +1204,27 @@
             const tbody = document.querySelector('#accountTable tbody');
             
             if (!dashboardData.accountSummary.length) {
-                tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No data available</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" class="empty-state">📊 No Account Summary data available. Please upload Base File.xlsx</td></tr>';
+                console.warn('⚠️ No Account Summary data for table');
                 return;
             }
 
-            tbody.innerHTML = dashboardData.accountSummary.slice(0, 50).map(row => `
+            console.log(`📋 Rendering ${dashboardData.accountSummary.length} accounts in table`);
+            
+            // Show first 100 accounts
+            tbody.innerHTML = dashboardData.accountSummary.slice(0, 100).map((row, index) => `
                 <tr>
-                    <td><strong>${row.Account || row.Client || 'N/A'}</strong></td>
-                    <td>${row['Practice Head'] || 'N/A'}</td>
-                    <td>${row['Regional Head'] || 'N/A'}</td>
-                    <td><span class="badge ${row['Audit Status'] === 'Yes' ? 'badge-success' : 'badge-warning'}">${row['Audit Status'] || 'N/A'}</span></td>
-                    <td>${row['Client Interaction'] || 'N/A'}</td>
-                    <td>${row['Audit Frequency'] || 'N/A'}</td>
+                    <td><strong>${index + 1}</strong></td>
+                    <td><strong>${row.Account || row.Client || row['Account Name'] || 'N/A'}</strong></td>
+                    <td>${row['Practice Head'] || row['Practice'] || 'N/A'}</td>
+                    <td>${row['Regional Head'] || row['Region'] || row['Regional'] || 'N/A'}</td>
+                    <td><span class="badge ${(row['Audit Status'] || '').toLowerCase() === 'yes' ? 'badge-success' : 'badge-warning'}">${row['Audit Status'] || 'N/A'}</span></td>
+                    <td>${row['Client Interaction'] || row['Interaction'] || 'N/A'}</td>
+                    <td>${row['Audit Frequency'] || row['Frequency'] || 'N/A'}</td>
                 </tr>
             `).join('');
+            
+            console.log('✅ Account table rendered');
         }
 
         // ==========================================
