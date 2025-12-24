@@ -828,7 +828,7 @@
             <!-- Compact Professional Layout - Everything fits in single screen -->
             
             <!-- Top Section: Filters + KPI (Single Row) -->
-            <div style="display: grid; grid-template-columns: 2.5fr 0.5fr; gap: 12px; margin-bottom: 10px;">
+            <div style="display: grid; grid-template-columns: 2.7fr 0.3fr; gap: 12px; margin-bottom: 10px;">
                 <!-- Filters (Left) -->
                 <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 10px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
@@ -844,43 +844,43 @@
                     </div>
                 </div>
                 
-                <!-- KPI Card (Right) - Single Account Count -->
-                <div class="kpi-card" onclick="showAllAccounts()" style="cursor: pointer; padding: 8px; text-align: center;">
-                    <div style="font-size: 20px; color: var(--primary); margin-bottom: 2px;"><i class="fas fa-building"></i></div>
-                    <div style="font-size: 22px; font-weight: 700; color: var(--primary);" id="activeAccountCount">0</div>
-                    <div style="font-size: 9px; color: var(--text-muted); font-weight: 600;">ACCOUNTS</div>
+                <!-- KPI Card (Right) - Smaller Account Count -->
+                <div class="kpi-card" onclick="showAllAccounts()" style="cursor: pointer; padding: 6px; text-align: center;">
+                    <div style="font-size: 16px; color: var(--primary); margin-bottom: 2px;"><i class="fas fa-building"></i></div>
+                    <div style="font-size: 18px; font-weight: 700; color: var(--primary);" id="activeAccountCount">0</div>
+                    <div style="font-size: 8px; color: var(--text-muted); font-weight: 600;">ACCOUNTS</div>
                 </div>
             </div>
 
             <!-- Middle Section: BE SPOC + Region Chart (Single Row) -->
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px;">
                 <!-- BE SPOC - Audit -->
-                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 8px; height: 160px;">
+                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 8px; height: 180px;">
                     <h3 style="font-size: 11px; margin: 0 0 6px 0; font-weight: 700; color: #f8fafc;">
                         <i class="fas fa-user-check" style="font-size: 9px; color: var(--primary);"></i> BE SPOC - AUDIT
                     </h3>
-                    <div id="beSPOCAudit" style="font-size: 10px; max-height: 130px; overflow-y: auto; overflow-x: hidden;">
+                    <div id="beSPOCAudit" style="font-size: 10px; max-height: 150px; overflow-y: auto; overflow-x: hidden;">
                         <!-- BE SPOC Audit details -->
                     </div>
                 </div>
                 
                 <!-- BE SPOC - SLAs/KPIs -->
-                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 8px; height: 160px;">
+                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 8px; height: 180px;">
                     <h3 style="font-size: 11px; margin: 0 0 6px 0; font-weight: 700; color: #f8fafc;">
                         <i class="fas fa-user-clock" style="font-size: 9px; color: var(--primary);"></i> BE SPOC - SLAs/KPIs
                     </h3>
-                    <div id="beSPOCSLA" style="font-size: 10px; max-height: 130px; overflow-y: auto; overflow-x: hidden;">
+                    <div id="beSPOCSLA" style="font-size: 10px; max-height: 150px; overflow-y: auto; overflow-x: hidden;">
                         <!-- BE SPOC SLA details -->
                     </div>
                 </div>
                 
-                <!-- Region Chart (Bigger) -->
-                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 8px; height: 160px;">
+                <!-- Region Chart (Larger) -->
+                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 8px; height: 180px;">
                     <h3 style="font-size: 11px; margin: 0 0 6px 0; font-weight: 700; color: #f8fafc;">
                         <i class="fas fa-chart-pie" style="font-size: 9px; color: var(--primary);"></i> REGION DISTRIBUTION
                     </h3>
-                    <div id="regionChartContainer" style="padding: 2px; height: 135px; display: flex; align-items: center; justify-content: center;">
-                        <canvas id="regionChart" style="max-width: 260px; max-height: 135px; margin: 0 auto; display: block;"></canvas>
+                    <div id="regionChartContainer" style="padding: 2px; height: 155px; display: flex; align-items: center; justify-content: center;">
+                        <canvas id="regionChart" style="max-width: 270px; max-height: 155px; margin: 0 auto; display: block;"></canvas>
                     </div>
                 </div>
             </div>
@@ -2006,63 +2006,81 @@
         }
 
         function renderBESPOC() {
+            console.log('🔄 Starting renderBESPOC()');
+            
             // Check if we have data
-            if (!dashboardData.accountSummary || dashboardData.accountSummary.length === 0) {
+            if (!dashboardData || !dashboardData.accountSummary || dashboardData.accountSummary.length === 0) {
                 console.warn('⚠️ No Account Summary data for BE SPOC rendering');
-                document.getElementById('beSPOCAudit').innerHTML = '<div style="padding: 12px; text-align: center; color: var(--text-muted); font-size: 12px;">No data available</div>';
-                document.getElementById('beSPOCSLA').innerHTML = '<div style="padding: 12px; text-align: center; color: var(--text-muted); font-size: 12px;">No data available</div>';
+                const audit = document.getElementById('beSPOCAudit');
+                const sla = document.getElementById('beSPOCSLA');
+                if (audit) audit.innerHTML = '<div style="padding: 6px; text-align: center; color: #f8fafc; font-size: 9px;">No data available</div>';
+                if (sla) sla.innerHTML = '<div style="padding: 6px; text-align: center; color: #f8fafc; font-size: 9px;">No data available</div>';
                 return;
             }
             
+            console.log('✅ Data available:', dashboardData.accountSummary.length, 'rows');
+            
             // BE SPOC - Audit
             const beSPOCAuditContainer = document.getElementById('beSPOCAudit');
-            const spocAuditField = 'BE SPOC - Audit' || 'BE SPOC Audit' || 'SPOC Audit';
+            if (!beSPOCAuditContainer) {
+                console.error('❌ BE SPOC Audit container not found');
+                return;
+            }
             
             const spocAuditData = {};
             dashboardData.accountSummary.forEach(row => {
-                const spoc = row[spocAuditField] || row['BE SPOC - Audit'] || row['BE SPOC Audit'] || 'Unassigned';
+                const spoc = row['BE SPOC - Audit'] || row['BE SPOC Audit'] || row['SPOC Audit'] || 'Unassigned';
                 if (!spocAuditData[spoc]) spocAuditData[spoc] = 0;
                 spocAuditData[spoc]++;
             });
+
+            console.log('📊 BE SPOC Audit data:', spocAuditData);
 
             const sortedSPOCAudit = Object.entries(spocAuditData).sort((a, b) => b[1] - a[1]);
             
             if (sortedSPOCAudit.length === 0) {
                 beSPOCAuditContainer.innerHTML = '<div style="padding: 6px; text-align: center; color: #f8fafc; font-size: 9px;">No SPOC data</div>';
             } else {
-                beSPOCAuditContainer.innerHTML = sortedSPOCAudit.slice(0, 5).map(([spoc, count]) => `
+                beSPOCAuditContainer.innerHTML = sortedSPOCAudit.slice(0, 10).map(([spoc, count]) => `
                     <div style="display: flex; justify-content: space-between; align-items: center; padding: 3px 0; border-bottom: 1px solid var(--border);">
                         <span style="font-size: 9px; color: #f8fafc; font-weight: 500;">${spoc}</span>
                         <span style="font-size: 11px; font-weight: 700; color: var(--primary);">${count}</span>
                     </div>
                 `).join('');
+                console.log('✅ BE SPOC Audit rendered:', sortedSPOCAudit.length, 'items');
             }
 
             // BE SPOC - SLAs/KPIs
             const beSPOCSLAContainer = document.getElementById('beSPOCSLA');
-            const spocSLAField = 'BE SPOC - SLAs/KPIs' || 'BE SPOC SLA' || 'SPOC SLA';
+            if (!beSPOCSLAContainer) {
+                console.error('❌ BE SPOC SLA container not found');
+                return;
+            }
             
             const spocSLAData = {};
             dashboardData.accountSummary.forEach(row => {
-                const spoc = row[spocSLAField] || row['BE SPOC - SLAs/KPIs'] || row['BE SPOC SLA'] || 'Unassigned';
+                const spoc = row['BE SPOC - SLAs/KPIs'] || row['BE SPOC SLA'] || row['SPOC SLA'] || 'Unassigned';
                 if (!spocSLAData[spoc]) spocSLAData[spoc] = 0;
                 spocSLAData[spoc]++;
             });
+
+            console.log('📊 BE SPOC SLA data:', spocSLAData);
 
             const sortedSPOCSLA = Object.entries(spocSLAData).sort((a, b) => b[1] - a[1]);
             
             if (sortedSPOCSLA.length === 0) {
                 beSPOCSLAContainer.innerHTML = '<div style="padding: 6px; text-align: center; color: #f8fafc; font-size: 9px;">No SPOC data</div>';
             } else {
-                beSPOCSLAContainer.innerHTML = sortedSPOCSLA.slice(0, 5).map(([spoc, count]) => `
+                beSPOCSLAContainer.innerHTML = sortedSPOCSLA.slice(0, 10).map(([spoc, count]) => `
                     <div style="display: flex; justify-content: space-between; align-items: center; padding: 3px 0; border-bottom: 1px solid var(--border);">
                         <span style="font-size: 9px; color: #f8fafc; font-weight: 500;">${spoc}</span>
                         <span style="font-size: 11px; font-weight: 700; color: var(--primary);">${count}</span>
                     </div>
                 `).join('');
+                console.log('✅ BE SPOC SLA rendered:', sortedSPOCSLA.length, 'items');
             }
 
-            console.log('📊 BE SPOC data rendered');
+            console.log('✅ BE SPOC data rendered successfully');
         }
 
         function renderRegionChart() {
