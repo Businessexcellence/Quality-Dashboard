@@ -2015,56 +2015,71 @@
                 }
             });
 
-            // Create map HTML with background image and overlays
+            // Create map HTML with proper India map image and region overlays
             container.innerHTML = `
-                <div style="position: relative; width: 100%; max-width: 500px; margin: 0 auto;">
-                    <img src="https://www.genspark.ai/api/files/s/4b6pnjoc" 
+                <div style="position: relative; width: 100%; max-width: 600px; margin: 0 auto; background: #f8f9fa; padding: 20px; border-radius: 12px;">
+                    <img src="/india-map.png" 
                          alt="India Map" 
-                         style="width: 100%; height: auto; display: block;">
+                         style="width: 100%; height: auto; display: block; border-radius: 8px;">
                     
-                    <!-- North Zone Overlay -->
-                    <div style="position: absolute; top: 15%; left: 40%; transform: translate(-50%, -50%); text-align: center; cursor: pointer; background: rgba(0,0,0,0.7); padding: 8px 12px; border-radius: 8px; border: 2px solid ${regionData['North Zone'].color};" 
-                         onclick="showZoneDetails('North Zone', ${regionData['North Zone'].accounts.length}, ${regionData['North Zone'].accuracy})">
-                        <div style="color: ${regionData['North Zone'].color}; font-weight: 700; font-size: 16px;">North Zone</div>
-                        <div style="color: white; font-size: 14px; margin-top: 4px;">${regionData['North Zone'].accounts.length} accounts</div>
-                        <div style="color: #10b981; font-weight: 700; font-size: 18px; margin-top: 4px;">${regionData['North Zone'].accuracy}%</div>
-                        <div style="color: var(--text-muted); font-size: 11px;">Accuracy</div>
+                    <!-- North India Overlay -->
+                    <div style="position: absolute; top: 18%; left: 50%; transform: translate(-50%, -50%); text-align: center; cursor: pointer; background: rgba(255, 102, 0, 0.95); padding: 10px 16px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: all 0.3s; min-width: 140px;" 
+                         onclick="filterByRegion('North India')"
+                         onmouseover="this.style.transform='translate(-50%, -50%) scale(1.05)'; this.style.boxShadow='0 6px 16px rgba(255,102,0,0.4)';"
+                         onmouseout="this.style.transform='translate(-50%, -50%) scale(1)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.3)';">
+                        <div style="color: white; font-weight: 700; font-size: 15px; margin-bottom: 4px;">North India</div>
+                        <div style="color: #ffffff; font-weight: 800; font-size: 24px;">${regionData['North Zone'].accounts.length}</div>
+                        <div style="color: rgba(255,255,255,0.9); font-size: 11px; margin-top: 2px;">Accounts</div>
                     </div>
                     
-                    <!-- West Zone Overlay -->
-                    <div style="position: absolute; top: 40%; left: 15%; transform: translate(-50%, -50%); text-align: center; cursor: pointer; background: rgba(0,0,0,0.7); padding: 8px 12px; border-radius: 8px; border: 2px solid ${regionData['West Zone'].color};" 
-                         onclick="showZoneDetails('West Zone', ${regionData['West Zone'].accounts.length}, ${regionData['West Zone'].accuracy})">
-                        <div style="color: ${regionData['West Zone'].color}; font-weight: 700; font-size: 16px;">West Zone</div>
-                        <div style="color: white; font-size: 14px; margin-top: 4px;">${regionData['West Zone'].accounts.length} accounts</div>
-                        <div style="color: #10b981; font-weight: 700; font-size: 18px; margin-top: 4px;">${regionData['West Zone'].accuracy}%</div>
-                        <div style="color: var(--text-muted); font-size: 11px;">Accuracy</div>
+                    <!-- West India Overlay -->
+                    <div style="position: absolute; top: 48%; left: 25%; transform: translate(-50%, -50%); text-align: center; cursor: pointer; background: rgba(255, 102, 0, 0.95); padding: 10px 16px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: all 0.3s; min-width: 140px;" 
+                         onclick="filterByRegion('West India')"
+                         onmouseover="this.style.transform='translate(-50%, -50%) scale(1.05)'; this.style.boxShadow='0 6px 16px rgba(255,102,0,0.4)';"
+                         onmouseout="this.style.transform='translate(-50%, -50%) scale(1)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.3)';">
+                        <div style="color: white; font-weight: 700; font-size: 15px; margin-bottom: 4px;">West India</div>
+                        <div style="color: #ffffff; font-weight: 800; font-size: 24px;">${regionData['West Zone'].accounts.length}</div>
+                        <div style="color: rgba(255,255,255,0.9); font-size: 11px; margin-top: 2px;">Accounts</div>
                     </div>
                     
-                    <!-- East Zone Overlay -->
-                    <div style="position: absolute; top: 45%; left: 75%; transform: translate(-50%, -50%); text-align: center; cursor: pointer; background: rgba(0,0,0,0.7); padding: 8px 12px; border-radius: 8px; border: 2px solid ${regionData['East Zone'].color};" 
-                         onclick="showZoneDetails('East Zone', ${regionData['East Zone'].accounts.length}, ${regionData['East Zone'].accuracy})">
-                        <div style="color: ${regionData['East Zone'].color}; font-weight: 700; font-size: 16px;">East Zone</div>
-                        <div style="color: white; font-size: 14px; margin-top: 4px;">${regionData['East Zone'].accounts.length} accounts</div>
-                        <div style="color: #10b981; font-weight: 700; font-size: 18px; margin-top: 4px;">${regionData['East Zone'].accuracy}%</div>
-                        <div style="color: var(--text-muted); font-size: 11px;">Accuracy</div>
+                    <!-- Central India Overlay -->
+                    <div style="position: absolute; top: 48%; left: 50%; transform: translate(-50%, -50%); text-align: center; cursor: pointer; background: rgba(255, 102, 0, 0.95); padding: 10px 16px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: all 0.3s; min-width: 140px;" 
+                         onclick="filterByRegion('Central India')"
+                         onmouseover="this.style.transform='translate(-50%, -50%) scale(1.05)'; this.style.boxShadow='0 6px 16px rgba(255,102,0,0.4)';"
+                         onmouseout="this.style.transform='translate(-50%, -50%) scale(1)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.3)';">
+                        <div style="color: white; font-weight: 700; font-size: 15px; margin-bottom: 4px;">Central India</div>
+                        <div style="color: #ffffff; font-weight: 800; font-size: 24px;">0</div>
+                        <div style="color: rgba(255,255,255,0.9); font-size: 11px; margin-top: 2px;">Accounts</div>
                     </div>
                     
-                    <!-- North East Overlay -->
-                    <div style="position: absolute; top: 20%; left: 85%; transform: translate(-50%, -50%); text-align: center; cursor: pointer; background: rgba(0,0,0,0.7); padding: 8px 12px; border-radius: 8px; border: 2px solid ${regionData['North East'].color};" 
-                         onclick="showZoneDetails('North East', ${regionData['North East'].accounts.length}, ${regionData['North East'].accuracy})">
-                        <div style="color: ${regionData['North East'].color}; font-weight: 700; font-size: 16px;">North East</div>
-                        <div style="color: white; font-size: 14px; margin-top: 4px;">${regionData['North East'].accounts.length} accounts</div>
-                        <div style="color: #10b981; font-weight: 700; font-size: 18px; margin-top: 4px;">${regionData['North East'].accuracy}%</div>
-                        <div style="color: var(--text-muted); font-size: 11px;">Accuracy</div>
+                    <!-- East India Overlay -->
+                    <div style="position: absolute; top: 48%; left: 75%; transform: translate(-50%, -50%); text-align: center; cursor: pointer; background: rgba(255, 102, 0, 0.95); padding: 10px 16px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: all 0.3s; min-width: 140px;" 
+                         onclick="filterByRegion('East India')"
+                         onmouseover="this.style.transform='translate(-50%, -50%) scale(1.05)'; this.style.boxShadow='0 6px 16px rgba(255,102,0,0.4)';"
+                         onmouseout="this.style.transform='translate(-50%, -50%) scale(1)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.3)';">
+                        <div style="color: white; font-weight: 700; font-size: 15px; margin-bottom: 4px;">East India</div>
+                        <div style="color: #ffffff; font-weight: 800; font-size: 24px;">${regionData['East Zone'].accounts.length}</div>
+                        <div style="color: rgba(255,255,255,0.9); font-size: 11px; margin-top: 2px;">Accounts</div>
                     </div>
                     
-                    <!-- South Zone Overlay -->
-                    <div style="position: absolute; top: 75%; left: 45%; transform: translate(-50%, -50%); text-align: center; cursor: pointer; background: rgba(0,0,0,0.7); padding: 8px 12px; border-radius: 8px; border: 2px solid ${regionData['South Zone'].color};" 
-                         onclick="showZoneDetails('South Zone', ${regionData['South Zone'].accounts.length}, ${regionData['South Zone'].accuracy})">
-                        <div style="color: ${regionData['South Zone'].color}; font-weight: 700; font-size: 16px;">South Zone</div>
-                        <div style="color: white; font-size: 14px; margin-top: 4px;">${regionData['South Zone'].accounts.length} accounts</div>
-                        <div style="color: #10b981; font-weight: 700; font-size: 18px; margin-top: 4px;">${regionData['South Zone'].accuracy}%</div>
-                        <div style="color: var(--text-muted); font-size: 11px;">Accuracy</div>
+                    <!-- Northeast India Overlay -->
+                    <div style="position: absolute; top: 25%; left: 85%; transform: translate(-50%, -50%); text-align: center; cursor: pointer; background: rgba(255, 102, 0, 0.95); padding: 10px 16px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: all 0.3s; min-width: 140px;" 
+                         onclick="filterByRegion('Northeast India')"
+                         onmouseover="this.style.transform='translate(-50%, -50%) scale(1.05)'; this.style.boxShadow='0 6px 16px rgba(255,102,0,0.4)';"
+                         onmouseout="this.style.transform='translate(-50%, -50%) scale(1)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.3)';">
+                        <div style="color: white; font-weight: 700; font-size: 15px; margin-bottom: 4px;">Northeast India</div>
+                        <div style="color: #ffffff; font-weight: 800; font-size: 24px;">${regionData['North East'].accounts.length}</div>
+                        <div style="color: rgba(255,255,255,0.9); font-size: 11px; margin-top: 2px;">Accounts</div>
+                    </div>
+                    
+                    <!-- South India Overlay -->
+                    <div style="position: absolute; top: 78%; left: 50%; transform: translate(-50%, -50%); text-align: center; cursor: pointer; background: rgba(255, 102, 0, 0.95); padding: 10px 16px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: all 0.3s; min-width: 140px;" 
+                         onclick="filterByRegion('South India')"
+                         onmouseover="this.style.transform='translate(-50%, -50%) scale(1.05)'; this.style.boxShadow='0 6px 16px rgba(255,102,0,0.4)';"
+                         onmouseout="this.style.transform='translate(-50%, -50%) scale(1)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.3)';">
+                        <div style="color: white; font-weight: 700; font-size: 15px; margin-bottom: 4px;">South India</div>
+                        <div style="color: #ffffff; font-weight: 800; font-size: 24px;">${regionData['South Zone'].accounts.length}</div>
+                        <div style="color: rgba(255,255,255,0.9); font-size: 11px; margin-top: 2px;">Accounts</div>
                     </div>
                 </div>
             `;
@@ -2072,9 +2087,14 @@
             console.log('🗺️ India map rendered with accuracy data:', regionData);
         }
 
-        function showZoneDetails(zone, count, accuracy) {
-            console.log(`📍 Zone: ${zone}, Accounts: ${count}, Accuracy: ${accuracy}%`);
-            alert(`${zone}\n━━━━━━━━━━━━━━━━━━━━\n\nAccounts: ${count}\nAverage Accuracy: ${accuracy}%\n\n💡 Click to see zone-specific insights`);
+        function filterByRegion(region) {
+            console.log(`📍 Filtering by region: ${region}`);
+            
+            // Apply region filter
+            applyAccountFilter('Region', region);
+            
+            // Scroll to Account Details table
+            document.getElementById('accountTable').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
         function renderAccountTable() {
