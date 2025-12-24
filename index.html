@@ -90,6 +90,12 @@
         console.log('✅ HEAD: Critical functions defined');
         console.log('✅ window.switchTab:', typeof window.switchTab);
         console.log('✅ window.openUploadModal:', typeof window.openUploadModal);
+        
+        // Placeholder for handleFileUpload - will be replaced with full version in body
+        window.handleFileUpload = function(event) {
+            console.log('📁 File selected, preparing upload...');
+            // This will be replaced by the full version in the body script
+        };
     </script>
     
     <style>
@@ -969,7 +975,7 @@
                     </a>
                 </p>
             </div>
-            <input type="file" id="fileInput" accept=".xlsx,.xls" style="display: none;" onchange="handleFileUpload(event)">
+            <input type="file" id="fileInput" accept=".xlsx,.xls" style="display: none;" onchange="console.log('📁 File selected:', this.files[0]?.name); if(typeof window.handleFileUpload === 'function') { window.handleFileUpload(event); } else { alert('❌ Upload function not loaded! Please refresh the page.'); }">
             
             <!-- Enhanced Progress Section -->
             <div id="progressSection" style="display: none; padding: 20px;">
@@ -1111,7 +1117,7 @@
         // FILE UPLOAD & PARSING
         // ==========================================
         
-        function handleFileUpload(event) {
+        window.handleFileUpload = function(event) {
             console.log('🔄 File upload started...');
             const file = event.target.files[0];
             
