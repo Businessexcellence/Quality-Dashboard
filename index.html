@@ -91,10 +91,12 @@
         console.log('✅ window.switchTab:', typeof window.switchTab);
         console.log('✅ window.openUploadModal:', typeof window.openUploadModal);
         
-        // Placeholder for handleFileUpload - will be replaced with full version in body
+        // Initialize handleFileUpload as a deferred function
         window.handleFileUpload = function(event) {
-            console.log('📁 File selected, preparing upload...');
-            // This will be replaced by the full version in the body script
+            console.log('⚠️ HEAD: handleFileUpload called before full definition loaded');
+            console.log('📁 File:', event.target.files[0]?.name);
+            // Store the event for later processing
+            window._pendingFileUpload = event;
         };
     </script>
     
@@ -975,7 +977,7 @@
                     </a>
                 </p>
             </div>
-            <input type="file" id="fileInput" accept=".xlsx,.xls" style="display: none;" onchange="console.log('📁 File selected:', this.files[0]?.name); if(typeof window.handleFileUpload === 'function') { window.handleFileUpload(event); } else { alert('❌ Upload function not loaded! Please refresh the page.'); }">
+            <input type="file" id="fileInput" accept=".xlsx,.xls" style="display: none;" onchange="window.handleFileUpload(event)">
             
             <!-- Enhanced Progress Section -->
             <div id="progressSection" style="display: none; padding: 20px;">
@@ -1116,8 +1118,11 @@
         // ==========================================
         // FILE UPLOAD & PARSING
         // ==========================================
+        // FILE UPLOAD & PARSING
+        // ==========================================
         
         window.handleFileUpload = function(event) {
+            console.log('🔄 BODY: Full handleFileUpload function loaded');
             console.log('🔄 File upload started...');
             const file = event.target.files[0];
             
@@ -1312,6 +1317,16 @@
             };
 
             reader.readAsArrayBuffer(file);
+        }
+        
+        console.log('✅ handleFileUpload function fully loaded');
+        
+        // Check if there was a pending upload from HEAD
+        if (window._pendingFileUpload) {
+            console.log('📁 Processing pending file upload...');
+            const pendingEvent = window._pendingFileUpload;
+            window._pendingFileUpload = null;
+            window.handleFileUpload(pendingEvent);
         }
 
         function parseSheet(workbook, sheetName) {
