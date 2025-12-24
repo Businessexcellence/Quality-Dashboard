@@ -988,29 +988,41 @@
                     const workbook = XLSX.read(data, { type: 'array' });
                     console.log('📊 Workbook parsed successfully');
 
-                    // Parse all sheets - try multiple name variations
+                    // Parse all sheets - try underscore variations first (user's file format)
                     console.log('📊 Available sheets:', workbook.SheetNames);
                     console.log('📊 Sheet names (exact):', JSON.stringify(workbook.SheetNames));
                     
-                    // Parameter Audit Count (for calculations)
-                    dashboardData.parameterAuditCount = parseSheet(workbook, 'Parameter_Audit_Count') || 
-                                                       parseSheet(workbook, 'Parameter Audit Count') ||
-                                                       parseSheet(workbook, 'ParameterAuditCount') || [];
+                    // Parameter_Audit_Count (for calculations) - try underscore first
+                    let paramData = parseSheet(workbook, 'Parameter_Audit_Count');
+                    if (!paramData || paramData.length === 0) {
+                        paramData = parseSheet(workbook, 'Parameter Audit Count');
+                    }
+                    dashboardData.parameterAuditCount = paramData || [];
                     console.log('✅ Parameter_Audit_Count rows:', dashboardData.parameterAuditCount.length);
                     
-                    // Recruiter Audit Count
-                    dashboardData.recruiterAuditCount = parseSheet(workbook, 'Recruiter_Audit_Count') ||
-                                                       parseSheet(workbook, 'Recruiter Audit Count') || [];
+                    // Recruiter_Audit_Count - try underscore first
+                    let recruiterData = parseSheet(workbook, 'Recruiter_Audit_Count');
+                    if (!recruiterData || recruiterData.length === 0) {
+                        recruiterData = parseSheet(workbook, 'Recruiter Audit Count');
+                    }
+                    dashboardData.recruiterAuditCount = recruiterData || [];
                     console.log('✅ Recruiter_Audit_Count rows:', dashboardData.recruiterAuditCount.length);
                     
                     // Account Summary (THE CRITICAL ONE)
                     console.log('🔍 Searching for Account Summary sheet...');
-                    dashboardData.accountSummary = parseSheet(workbook, 'Account Summary') || 
-                                                  parseSheet(workbook, 'Account_Summary') ||
-                                                  parseSheet(workbook, 'AccountSummary') ||
-                                                  parseSheet(workbook, 'Account summary') || [];
+                    // Try with underscore first (your file uses this)
+                    let accountSummaryData = parseSheet(workbook, 'Account_Summary');
+                    if (!accountSummaryData || accountSummaryData.length === 0) {
+                        console.log('🔍 Trying with space instead of underscore...');
+                        accountSummaryData = parseSheet(workbook, 'Account Summary');
+                    }
+                    if (!accountSummaryData || accountSummaryData.length === 0) {
+                        console.log('🔍 Trying without space/underscore...');
+                        accountSummaryData = parseSheet(workbook, 'AccountSummary');
+                    }
                     
-                    console.log('✅ Account Summary rows:', dashboardData.accountSummary.length);
+                    dashboardData.accountSummary = accountSummaryData || [];
+                    console.log('✅ Account_Summary rows:', dashboardData.accountSummary.length);
                     if (dashboardData.accountSummary.length > 0) {
                         console.log('📄 First Account Summary row:', dashboardData.accountSummary[0]);
                         console.log('📋 Account Summary columns:', Object.keys(dashboardData.accountSummary[0]));
@@ -1023,12 +1035,19 @@
                         alert(`⚠️ Account Summary sheet not found!\n\nAvailable sheets in your file:\n${workbook.SheetNames.join('\n')}\n\nPlease ensure you have a sheet named:\n- "Account Summary" (with space)\nor\n- "Account_Summary" (with underscore)`);
                     }
                     
-                    dashboardData.rcaCapa = parseSheet(workbook, 'RCA_CAPA') || parseSheet(workbook, 'RCA CAPA') || [];
+                    // RCA_CAPA
+                    let rcaData = parseSheet(workbook, 'RCA_CAPA');
+                    if (!rcaData || rcaData.length === 0) {
+                        rcaData = parseSheet(workbook, 'RCA CAPA');
+                    }
+                    dashboardData.rcaCapa = rcaData || [];
                     console.log('✅ RCA_CAPA rows:', dashboardData.rcaCapa.length);
                     
+                    // Projects
                     dashboardData.projects = parseSheet(workbook, 'Projects') || [];
                     console.log('✅ Projects rows:', dashboardData.projects.length);
                     
+                    // CSAT
                     dashboardData.csat = parseSheet(workbook, 'CSAT') || [];
                     console.log('✅ CSAT rows:', dashboardData.csat.length);
 
