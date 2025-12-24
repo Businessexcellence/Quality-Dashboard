@@ -12,6 +12,8 @@ const server = http.createServer((req, res) => {
     let filePath;
     if (req.url === '/test' || req.url === '/test.html') {
         filePath = path.join(__dirname, 'test.html');
+    } else if (req.url === '/upload-test' || req.url === '/upload-test.html') {
+        filePath = path.join(__dirname, 'upload-test.html');
     } else {
         filePath = path.join(__dirname, 'index.html');
     }
@@ -36,5 +38,6 @@ const server = http.createServer((req, res) => {
 server.listen(PORT, HOST, () => {
     console.log(`Server running at http://${HOST}:${PORT}/`);
     console.log(`Test page at http://${HOST}:${PORT}/test`);
+    console.log(`Upload test at http://${HOST}:${PORT}/upload-test`);
     console.log(`Press Ctrl+C to stop`);
 });
