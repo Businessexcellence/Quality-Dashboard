@@ -827,8 +827,8 @@
         <div id="account-summary" class="tab-content">
             <!-- Compact Professional Layout - Everything fits in single screen -->
             
-            <!-- Top Section: Filters + KPIs (Single Row) -->
-            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 12px; margin-bottom: 10px;">
+            <!-- Top Section: Filters + KPI (Single Row) -->
+            <div style="display: grid; grid-template-columns: 2.5fr 0.5fr; gap: 12px; margin-bottom: 10px;">
                 <!-- Filters (Left) -->
                 <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 10px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
@@ -839,55 +839,48 @@
                             <i class="fas fa-times"></i> Clear
                         </button>
                     </div>
-                    <div id="accountFilters" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;">
-                        <!-- Filters generated dynamically -->
+                    <div id="accountFilters" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px;">
+                        <!-- 6 Filters generated dynamically -->
                     </div>
                 </div>
                 
-                <!-- KPI Cards (Right) -->
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                    <div class="kpi-card" onclick="showAllAccounts()" style="cursor: pointer; padding: 8px; text-align: center;">
-                        <div style="font-size: 20px; color: var(--primary); margin-bottom: 2px;"><i class="fas fa-building"></i></div>
-                        <div style="font-size: 22px; font-weight: 700; color: var(--primary);" id="activeAccountCount">0</div>
-                        <div style="font-size: 9px; color: var(--text-muted); font-weight: 600;">ACCOUNTS</div>
-                    </div>
-                    <div class="kpi-card" onclick="showRegionalBreakdown()" style="cursor: pointer; padding: 8px; text-align: center;">
-                        <div style="font-size: 20px; color: var(--primary); margin-bottom: 2px;"><i class="fas fa-map-marked-alt"></i></div>
-                        <div style="font-size: 22px; font-weight: 700; color: var(--primary);" id="regionalCount">0</div>
-                        <div style="font-size: 9px; color: var(--text-muted); font-weight: 600;">REGIONS</div>
-                    </div>
+                <!-- KPI Card (Right) - Single Account Count -->
+                <div class="kpi-card" onclick="showAllAccounts()" style="cursor: pointer; padding: 8px; text-align: center;">
+                    <div style="font-size: 20px; color: var(--primary); margin-bottom: 2px;"><i class="fas fa-building"></i></div>
+                    <div style="font-size: 22px; font-weight: 700; color: var(--primary);" id="activeAccountCount">0</div>
+                    <div style="font-size: 9px; color: var(--text-muted); font-weight: 600;">ACCOUNTS</div>
                 </div>
             </div>
 
             <!-- Middle Section: BE SPOC + Region Chart (Single Row) -->
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px;">
                 <!-- BE SPOC - Audit -->
-                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 8px; max-height: 140px;">
+                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 8px; height: 160px;">
                     <h3 style="font-size: 11px; margin: 0 0 6px 0; font-weight: 700; color: #f8fafc;">
                         <i class="fas fa-user-check" style="font-size: 9px; color: var(--primary);"></i> BE SPOC - AUDIT
                     </h3>
-                    <div id="beSPOCAudit" style="font-size: 10px; max-height: 110px; overflow-y: auto;">
+                    <div id="beSPOCAudit" style="font-size: 10px; max-height: 130px; overflow-y: auto; overflow-x: hidden;">
                         <!-- BE SPOC Audit details -->
                     </div>
                 </div>
                 
                 <!-- BE SPOC - SLAs/KPIs -->
-                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 8px; max-height: 140px;">
+                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 8px; height: 160px;">
                     <h3 style="font-size: 11px; margin: 0 0 6px 0; font-weight: 700; color: #f8fafc;">
                         <i class="fas fa-user-clock" style="font-size: 9px; color: var(--primary);"></i> BE SPOC - SLAs/KPIs
                     </h3>
-                    <div id="beSPOCSLA" style="font-size: 10px; max-height: 110px; overflow-y: auto;">
+                    <div id="beSPOCSLA" style="font-size: 10px; max-height: 130px; overflow-y: auto; overflow-x: hidden;">
                         <!-- BE SPOC SLA details -->
                     </div>
                 </div>
                 
-                <!-- Region Chart (Compact) -->
-                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 8px; max-height: 140px;">
+                <!-- Region Chart (Bigger) -->
+                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 8px; height: 160px;">
                     <h3 style="font-size: 11px; margin: 0 0 6px 0; font-weight: 700; color: #f8fafc;">
                         <i class="fas fa-chart-pie" style="font-size: 9px; color: var(--primary);"></i> REGION DISTRIBUTION
                     </h3>
-                    <div id="regionChartContainer" style="padding: 2px;">
-                        <canvas id="regionChart" style="max-width: 250px; max-height: 110px; margin: 0 auto; display: block;"></canvas>
+                    <div id="regionChartContainer" style="padding: 2px; height: 135px; display: flex; align-items: center; justify-content: center;">
+                        <canvas id="regionChart" style="max-width: 260px; max-height: 135px; margin: 0 auto; display: block;"></canvas>
                     </div>
                 </div>
             </div>
@@ -1805,13 +1798,14 @@
             const sampleRow = dashboardData.accountSummary[0];
             console.log('📋 Available Account Summary columns:', Object.keys(sampleRow));
 
-            // Define 5 main filters - added Region
+            // Define 6 main filters - added Regional Head
             const filters = [
                 { label: 'Client Interaction', field: 'Client Interaction', icon: 'handshake' },
                 { label: 'Practice Head', field: 'Practice Head', icon: 'user-tie' },
                 { label: 'Audit Status', field: 'Audit Status', icon: 'clipboard-check' },
                 { label: 'Audit Frequency', field: 'Audit Frequency', icon: 'calendar-alt' },
-                { label: 'Region', field: 'Region', icon: 'map-marker-alt' }
+                { label: 'Region', field: 'Region', icon: 'map-marker-alt' },
+                { label: 'Regional Head', field: 'Regional Head', icon: 'user-shield' }
             ];
 
             container.innerHTML = filters.map(filter => {
