@@ -1304,11 +1304,6 @@
                     uploadZone.style.display = 'block';
                 }, 1500);
             };
-                alert('❌ Error reading file. Please try again.');
-                progressBar.style.display = 'none';
-                progressFill.style.width = '0%';
-                document.getElementById('fileInput').value = '';
-            };
 
             reader.readAsArrayBuffer(file);
         }
