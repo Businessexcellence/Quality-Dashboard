@@ -1271,10 +1271,18 @@
                     }
                     dashboardData.rcaCapa = rcaData || [];
                     console.log('✅ RCA_CAPA rows:', dashboardData.rcaCapa.length);
+                    if (dashboardData.rcaCapa.length > 0) {
+                        console.log('📋 RCA_CAPA sample row:', dashboardData.rcaCapa[0]);
+                        console.log('📋 RCA_CAPA columns:', Object.keys(dashboardData.rcaCapa[0]));
+                    }
                     
                     // Projects
                     dashboardData.projects = parseSheet(workbook, 'Projects') || [];
                     console.log('✅ Projects rows:', dashboardData.projects.length);
+                    if (dashboardData.projects.length > 0) {
+                        console.log('📋 Projects sample row:', dashboardData.projects[0]);
+                        console.log('📋 Projects columns:', Object.keys(dashboardData.projects[0]));
+                    }
                     
                     // CSAT
                     dashboardData.csat = parseSheet(workbook, 'CSAT') || [];
@@ -1536,15 +1544,31 @@
         }
 
         function getClosedProjectCount() {
-            return dashboardData.projects.filter(p => 
-                p.Status && p.Status.toLowerCase().includes('closed')
-            ).length;
+            if (!dashboardData.projects || dashboardData.projects.length === 0) {
+                return 0;
+            }
+            
+            const closedCount = dashboardData.projects.filter(p => {
+                const status = p.Status || p.status || '';
+                return status && status.toString().toLowerCase().includes('closed');
+            }).length;
+            
+            console.log(`📊 Closed Projects Count: ${closedCount} out of ${dashboardData.projects.length}`);
+            return closedCount;
         }
 
         function getClosedRCACount() {
-            return dashboardData.rcaCapa.filter(r => 
-                r.Status && r.Status.toLowerCase().includes('closed')
-            ).length;
+            if (!dashboardData.rcaCapa || dashboardData.rcaCapa.length === 0) {
+                return 0;
+            }
+            
+            const closedCount = dashboardData.rcaCapa.filter(r => {
+                const status = r.Status || r.status || '';
+                return status && status.toString().toLowerCase().includes('closed');
+            }).length;
+            
+            console.log(`📊 Closed RCA/CAPA Count: ${closedCount} out of ${dashboardData.rcaCapa.length}`);
+            return closedCount;
         }
 
         function renderTopAccounts() {
