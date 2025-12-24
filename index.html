@@ -1955,36 +1955,40 @@
             // Clear existing content
             container.innerHTML = '';
 
-            // Create regions map with regional head mapping and calculate accuracy
+            // Create regions map based on actual Region field from Account Summary
             const regionData = {
-                'North Zone': { accounts: [], accuracy: 0, color: '#D4A017' },
-                'South Zone': { accounts: [], accuracy: 0, color: '#228B22' },
-                'East Zone': { accounts: [], accuracy: 0, color: '#9370DB' },
-                'West Zone': { accounts: [], accuracy: 0, color: '#1E90FF' },
-                'North East': { accounts: [], accuracy: 0, color: '#20B2AA' }
+                'North India': { accounts: [], accuracy: 0 },
+                'South India': { accounts: [], accuracy: 0 },
+                'East India': { accounts: [], accuracy: 0 },
+                'West India': { accounts: [], accuracy: 0 },
+                'Northeast India': { accounts: [], accuracy: 0 },
+                'Central India': { accounts: [], accuracy: 0 }
             };
 
-            // Map accounts to zones and calculate accuracy from Parameter_Audit_Count
+            // Map accounts to regions directly from Region field
             dashboardData.accountSummary.forEach(row => {
-                const regionalHead = String(row['Regional Head'] || row['Region'] || '').trim();
+                const region = String(row['Region'] || '').trim();
                 const accountName = row.Account || row.Client || '';
                 
-                let zone = null;
+                // Map the region value to our display names
+                let displayRegion = null;
+                const regionLower = region.toLowerCase();
                 
-                // Map to zones based on regional head
-                if (regionalHead.match(/north|delhi|punjab|haryana|chandigarh|rajasthan|uttar pradesh|uttarakhand|himachal|jammu|kashmir/i)) {
-                    zone = 'North Zone';
-                } else if (regionalHead.match(/south|bangalore|chennai|hyderabad|kerala|tamil nadu|karnataka|andhra pradesh|telangana|pondicherry/i)) {
-                    zone = 'South Zone';
-                } else if (regionalHead.match(/east|kolkata|bhubaneswar|odisha|west bengal|bihar|jharkhand/i)) {
-                    zone = 'East Zone';
-                } else if (regionalHead.match(/west|mumbai|pune|ahmedabad|maharashtra|gujarat|goa|rajasthan/i)) {
-                    zone = 'West Zone';
-                } else if (regionalHead.match(/north.?east|assam|meghalaya|manipur|mizoram|nagaland|tripura|arunachal|sikkim/i)) {
-                    zone = 'North East';
+                if (regionLower.includes('north') && !regionLower.includes('east')) {
+                    displayRegion = 'North India';
+                } else if (regionLower.includes('south')) {
+                    displayRegion = 'South India';
+                } else if (regionLower.includes('east') && !regionLower.includes('north')) {
+                    displayRegion = 'East India';
+                } else if (regionLower.includes('west')) {
+                    displayRegion = 'West India';
+                } else if (regionLower.includes('northeast') || regionLower.includes('north east')) {
+                    displayRegion = 'Northeast India';
+                } else if (regionLower.includes('central')) {
+                    displayRegion = 'Central India';
                 }
                 
-                if (zone) {
+                if (displayRegion && regionData[displayRegion]) {
                     // Get parameter audit data for this account
                     const paramData = dashboardData.parameterAuditCount.filter(p => 
                         (p.Account || p.Client) === accountName
@@ -2002,7 +2006,7 @@
                         accuracy = denominator > 0 ? (totalPass / denominator * 100) : 0;
                     }
                     
-                    regionData[zone].accounts.push({ name: accountName, accuracy });
+                    regionData[displayRegion].accounts.push({ name: accountName, accuracy });
                 }
             });
 
@@ -2028,7 +2032,7 @@
                          onmouseover="this.style.transform='translate(-50%, -50%) scale(1.05)'; this.style.boxShadow='0 6px 16px rgba(255,102,0,0.4)';"
                          onmouseout="this.style.transform='translate(-50%, -50%) scale(1)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.3)';">
                         <div style="color: white; font-weight: 700; font-size: 15px; margin-bottom: 4px;">North India</div>
-                        <div style="color: #ffffff; font-weight: 800; font-size: 24px;">${regionData['North Zone'].accounts.length}</div>
+                        <div style="color: #ffffff; font-weight: 800; font-size: 24px;">${regionData['North India'].accounts.length}</div>
                         <div style="color: rgba(255,255,255,0.9); font-size: 11px; margin-top: 2px;">Accounts</div>
                     </div>
                     
@@ -2038,7 +2042,7 @@
                          onmouseover="this.style.transform='translate(-50%, -50%) scale(1.05)'; this.style.boxShadow='0 6px 16px rgba(255,102,0,0.4)';"
                          onmouseout="this.style.transform='translate(-50%, -50%) scale(1)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.3)';">
                         <div style="color: white; font-weight: 700; font-size: 15px; margin-bottom: 4px;">West India</div>
-                        <div style="color: #ffffff; font-weight: 800; font-size: 24px;">${regionData['West Zone'].accounts.length}</div>
+                        <div style="color: #ffffff; font-weight: 800; font-size: 24px;">${regionData['West India'].accounts.length}</div>
                         <div style="color: rgba(255,255,255,0.9); font-size: 11px; margin-top: 2px;">Accounts</div>
                     </div>
                     
@@ -2048,7 +2052,7 @@
                          onmouseover="this.style.transform='translate(-50%, -50%) scale(1.05)'; this.style.boxShadow='0 6px 16px rgba(255,102,0,0.4)';"
                          onmouseout="this.style.transform='translate(-50%, -50%) scale(1)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.3)';">
                         <div style="color: white; font-weight: 700; font-size: 15px; margin-bottom: 4px;">Central India</div>
-                        <div style="color: #ffffff; font-weight: 800; font-size: 24px;">0</div>
+                        <div style="color: #ffffff; font-weight: 800; font-size: 24px;">${regionData['Central India'].accounts.length}</div>
                         <div style="color: rgba(255,255,255,0.9); font-size: 11px; margin-top: 2px;">Accounts</div>
                     </div>
                     
@@ -2058,7 +2062,7 @@
                          onmouseover="this.style.transform='translate(-50%, -50%) scale(1.05)'; this.style.boxShadow='0 6px 16px rgba(255,102,0,0.4)';"
                          onmouseout="this.style.transform='translate(-50%, -50%) scale(1)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.3)';">
                         <div style="color: white; font-weight: 700; font-size: 15px; margin-bottom: 4px;">East India</div>
-                        <div style="color: #ffffff; font-weight: 800; font-size: 24px;">${regionData['East Zone'].accounts.length}</div>
+                        <div style="color: #ffffff; font-weight: 800; font-size: 24px;">${regionData['East India'].accounts.length}</div>
                         <div style="color: rgba(255,255,255,0.9); font-size: 11px; margin-top: 2px;">Accounts</div>
                     </div>
                     
@@ -2068,7 +2072,7 @@
                          onmouseover="this.style.transform='translate(-50%, -50%) scale(1.05)'; this.style.boxShadow='0 6px 16px rgba(255,102,0,0.4)';"
                          onmouseout="this.style.transform='translate(-50%, -50%) scale(1)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.3)';">
                         <div style="color: white; font-weight: 700; font-size: 15px; margin-bottom: 4px;">Northeast India</div>
-                        <div style="color: #ffffff; font-weight: 800; font-size: 24px;">${regionData['North East'].accounts.length}</div>
+                        <div style="color: #ffffff; font-weight: 800; font-size: 24px;">${regionData['Northeast India'].accounts.length}</div>
                         <div style="color: rgba(255,255,255,0.9); font-size: 11px; margin-top: 2px;">Accounts</div>
                     </div>
                     
@@ -2078,7 +2082,7 @@
                          onmouseover="this.style.transform='translate(-50%, -50%) scale(1.05)'; this.style.boxShadow='0 6px 16px rgba(255,102,0,0.4)';"
                          onmouseout="this.style.transform='translate(-50%, -50%) scale(1)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.3)';">
                         <div style="color: white; font-weight: 700; font-size: 15px; margin-bottom: 4px;">South India</div>
-                        <div style="color: #ffffff; font-weight: 800; font-size: 24px;">${regionData['South Zone'].accounts.length}</div>
+                        <div style="color: #ffffff; font-weight: 800; font-size: 24px;">${regionData['South India'].accounts.length}</div>
                         <div style="color: rgba(255,255,255,0.9); font-size: 11px; margin-top: 2px;">Accounts</div>
                     </div>
                 </div>
