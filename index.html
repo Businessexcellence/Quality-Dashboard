@@ -732,26 +732,16 @@
                 <h2 style="margin-bottom: 16px; font-size: 18px; color: var(--text-primary);">
                     <i class="fas fa-chart-bar"></i> Key Metrics
                 </h2>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
-                    <div class="kpi-card" onclick="filterByActiveStatus()" style="cursor: pointer;">
-                        <div class="kpi-icon"><i class="fas fa-check-circle"></i></div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+                    <div class="kpi-card" onclick="showAllAccounts()" style="cursor: pointer;">
+                        <div class="kpi-icon"><i class="fas fa-building"></i></div>
                         <div class="kpi-value" id="activeAccountCount">0</div>
-                        <div class="kpi-label">Active Accounts</div>
+                        <div class="kpi-label">Active Accounts (Total)</div>
                     </div>
                     <div class="kpi-card" onclick="showRegionalBreakdown()" style="cursor: pointer;">
                         <div class="kpi-icon"><i class="fas fa-map-marked-alt"></i></div>
                         <div class="kpi-value" id="regionalCount">0</div>
-                        <div class="kpi-label">Regional Heads</div>
-                    </div>
-                    <div class="kpi-card" onclick="filterByClientInteraction()" style="cursor: pointer;">
-                        <div class="kpi-icon"><i class="fas fa-handshake"></i></div>
-                        <div class="kpi-value" id="clientInteractionCount">0</div>
-                        <div class="kpi-label">Client Interactions (Yes)</div>
-                    </div>
-                    <div class="kpi-card" onclick="filterByAuditStatus()" style="cursor: pointer;">
-                        <div class="kpi-icon"><i class="fas fa-clipboard-check"></i></div>
-                        <div class="kpi-value" id="auditStatusCount">0</div>
-                        <div class="kpi-label">Audit Status (Yes)</div>
+                        <div class="kpi-label">Regional Head Count</div>
                     </div>
                 </div>
             </div>
@@ -1397,29 +1387,51 @@
                 return;
             }
 
+            // Clean data: trim all string values to remove extra spaces
+            dashboardData.accountSummary = dashboardData.accountSummary.map(row => {
+                const cleanRow = {};
+                for (const key in row) {
+                    if (typeof row[key] === 'string') {
+                        cleanRow[key] = row[key].trim();
+                    } else {
+                        cleanRow[key] = row[key];
+                    }
+                }
+                return cleanRow;
+            });
+
             // Check available columns
             const sampleRow = dashboardData.accountSummary[0];
             console.log('📋 Available Account Summary columns:', Object.keys(sampleRow));
 
-            // Create filter cards with counts
+            // Create filter cards with counts - NOW INCLUDING REGION
             const filters = [
                 { label: 'Client Interaction', field: 'Client Interaction', icon: 'handshake' },
                 { label: 'Practice Head', field: 'Practice Head', icon: 'user-tie' },
                 { label: 'Audit Status', field: 'Audit Status', icon: 'clipboard-check' },
-                { label: 'Audit Frequency', field: 'Audit Frequency', icon: 'calendar-alt' }
+                { label: 'Audit Frequency', field: 'Audit Frequency', icon: 'calendar-alt' },
+                { label: 'Region', field: 'Regional Head', icon: 'map-marker-alt' }
             ];
 
             container.innerHTML = filters.map(filter => {
                 const values = [...new Set(dashboardData.accountSummary
-                    .map(row => row[filter.field])
+                    .map(row => {
+                        const value = row[filter.field];
+                        return typeof value === 'string' ? value.trim() : value;
+                    })
                     .filter(Boolean))];
 
                 if (values.length === 0) return '';
 
                 return values.map(value => {
-                    const count = dashboardData.accountSummary.filter(r => r[filter.field] === value).length;
+                    const count = dashboardData.accountSummary.filter(r => {
+                        const rowValue = r[filter.field];
+                        const cleanRowValue = typeof rowValue === 'string' ? rowValue.trim() : rowValue;
+                        return cleanRowValue === value;
+                    }).length;
+                    
                     return `
-                        <div class="filter-card" onclick="applyAccountFilter('${filter.field}', '${value.replace(/'/g, "\\'")}')">
+                        <div class="filter-card" onclick="applyAccountFilter('${filter.field}', '${String(value).replace(/'/g, "\\'")}')">
                             <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">${filter.label}</div>
                             <h4 style="font-size: 14px; margin-bottom: 8px; color: var(--text-primary);">${value}</h4>
                             <div class="filter-count">${count}</div>
@@ -1428,6 +1440,8 @@
                     `;
                 }).join('');
             }).join('');
+            
+            console.log('✅ Filter cards rendered with Region included');
         }
 
         function applyAccountFilter(field, value) {
@@ -1451,30 +1465,27 @@
         }
 
         function renderAccountKPIs() {
-            // Active Accounts (Audit Status = Yes)
-            const activeCount = dashboardData.accountSummary.filter(a => 
-                a['Audit Status'] && a['Audit Status'].toString().toLowerCase() === 'yes'
-            ).length;
+            // ALL accounts in Account_Summary are active accounts
+            const activeCount = dashboardData.accountSummary.length;
 
-            // Regional Heads count
-            const regions = [...new Set(dashboardData.accountSummary
-                .map(a => a['Regional Head'])
-                .filter(Boolean))].length;
-
-            // Client Interaction = Yes
-            const clientInteraction = dashboardData.accountSummary.filter(a => 
-                a['Client Interaction'] && a['Client Interaction'].toString().toLowerCase() === 'yes'
-            ).length;
-
-            // Audit Status = Yes (same as active, but separate metric)
-            const auditStatusYes = activeCount;
+            // Get unique regional heads and count accounts per region
+            const regionalHeadMap = {};
+            dashboardData.accountSummary.forEach(a => {
+                const regional = a['Regional Head'] ? String(a['Regional Head']).trim() : 'Unassigned';
+                if (!regionalHeadMap[regional]) {
+                    regionalHeadMap[regional] = [];
+                }
+                regionalHeadMap[regional].push(a.Account || a.Client);
+            });
+            
+            const uniqueRegionalHeads = Object.keys(regionalHeadMap).filter(r => r !== 'Unassigned').length;
 
             document.getElementById('activeAccountCount').textContent = activeCount;
-            document.getElementById('regionalCount').textContent = regions;
-            document.getElementById('clientInteractionCount').textContent = clientInteraction;
-            document.getElementById('auditStatusCount').textContent = auditStatusYes;
+            document.getElementById('regionalCount').textContent = uniqueRegionalHeads;
 
-            console.log(`📊 KPIs: Active=${activeCount}, Regions=${regions}, Client Int=${clientInteraction}`);
+            console.log(`📊 KPIs: Active Accounts=${activeCount}, Regional Heads=${uniqueRegionalHeads}`);
+            console.log(`📊 Regional breakdown:`, regionalHeadMap);
+        }
         }
 
         function renderAccountCalculations() {
@@ -1729,17 +1740,21 @@
                 const sampleRate = totalPop > 0 ? ((oppCount / totalPop) * 100).toFixed(2) : 0;
                 const errorRate = oppCount > 0 ? ((oppFail / oppCount) * 100).toFixed(2) : 0;
                 
+                // Properly check Audit Status - trim and check for Yes/No
+                const auditStatus = row['Audit Status'] ? String(row['Audit Status']).trim() : '';
+                const isAuditYes = auditStatus.toLowerCase() === 'yes';
+                
                 return `
                     <tr onclick="showAccountDetails(${index})" style="cursor: pointer;">
                         <td><strong>${index + 1}</strong></td>
-                        <td><strong>${row.Account || row.Client || row['Account Name'] || 'N/A'}</strong></td>
-                        <td>${row['Practice Head'] || row['Practice'] || 'N/A'}</td>
-                        <td>${row['Regional Head'] || row['Region'] || row['Regional'] || 'N/A'}</td>
-                        <td><span class="badge ${(row['Audit Status'] || '').toString().toLowerCase() === 'yes' ? 'badge-success' : 'badge-warning'}">${row['Audit Status'] || 'N/A'}</span></td>
-                        <td>${row['Client Interaction'] || row['Interaction'] || 'N/A'}</td>
-                        <td>${row['Audit Frequency'] || row['Frequency'] || 'N/A'}</td>
-                        <td>${row['BE SPOC - Audit'] || row['BE SPOC Audit'] || 'N/A'}</td>
-                        <td>${row['BE SPOC - SLAs/KPIs'] || row['BE SPOC SLA'] || 'N/A'}</td>
+                        <td><strong>${(row.Account || row.Client || row['Account Name'] || 'N/A')}</strong></td>
+                        <td>${(row['Practice Head'] || row['Practice'] || 'N/A')}</td>
+                        <td>${(row['Regional Head'] || row['Region'] || row['Regional'] || 'N/A')}</td>
+                        <td><span class="badge ${isAuditYes ? 'badge-success' : 'badge-warning'}">${auditStatus || 'N/A'}</span></td>
+                        <td>${(row['Client Interaction'] || row['Interaction'] || 'N/A')}</td>
+                        <td>${(row['Audit Frequency'] || row['Frequency'] || 'N/A')}</td>
+                        <td>${(row['BE SPOC - Audit'] || row['BE SPOC Audit'] || 'N/A')}</td>
+                        <td>${(row['BE SPOC - SLAs/KPIs'] || row['BE SPOC SLA'] || 'N/A')}</td>
                         <td><span style="color: #10b981; font-weight: 600;">${accuracy}%</span></td>
                         <td><span style="color: #3b82f6; font-weight: 600;">${sampleRate}%</span></td>
                         <td><span style="color: #ef4444; font-weight: 600;">${errorRate}%</span></td>
@@ -1748,14 +1763,14 @@
                 `;
             }).join('');
             
-            console.log('✅ Account table rendered');
+            console.log('✅ Account table rendered with proper Audit Status checking');
         }
 
         // Interactive click handlers
-        function filterByActiveStatus() {
-            console.log('🔍 Filtering by Active Status');
-            currentAccountFilter = { field: 'Audit Status', value: 'Yes' };
-            renderAccountTable();
+        function showAllAccounts() {
+            console.log('📊 Showing all active accounts');
+            clearAccountFilter();
+            alert(`Active Accounts\n\nTotal: ${dashboardData.accountSummary.length} accounts\n\nNote: All accounts in Account_Summary sheet are considered active accounts.\n\nClick any filter to view specific subsets.`);
         }
 
         function filterByClientInteraction() {
