@@ -158,6 +158,7 @@
             overflow: hidden;
             transition: width 0.3s ease;
             z-index: 999;
+            pointer-events: auto;
         }
 
         .nav-sidebar:hover {
@@ -173,6 +174,7 @@
             transition: all 0.3s ease;
             border-left: 3px solid transparent;
             white-space: nowrap;
+            pointer-events: auto;
         }
 
         .nav-item:hover {
@@ -638,39 +640,39 @@
 
     <!-- NAVIGATION SIDEBAR -->
     <nav class="nav-sidebar">
-        <div class="nav-item active" onclick="switchTab('home')">
+        <div class="nav-item active" onclick="console.log('Click: Home'); window.switchTab('home', this)">
             <i class="fas fa-home"></i>
             <span>Home</span>
         </div>
-        <div class="nav-item" onclick="switchTab('account-summary')">
+        <div class="nav-item" onclick="console.log('Click: Account Summary'); window.switchTab('account-summary', this)">
             <i class="fas fa-building"></i>
             <span>Account Summary</span>
         </div>
-        <div class="nav-item" onclick="switchTab('transactional')">
+        <div class="nav-item" onclick="console.log('Click: Transactional'); window.switchTab('transactional', this)">
             <i class="fas fa-exchange-alt"></i>
             <span>Transactional Overview</span>
         </div>
-        <div class="nav-item" onclick="switchTab('audit-summary')">
+        <div class="nav-item" onclick="console.log('Click: Audit Summary'); window.switchTab('audit-summary', this)">
             <i class="fas fa-clipboard-check"></i>
             <span>Audit Summary</span>
         </div>
-        <div class="nav-item" onclick="switchTab('recruiter')">
+        <div class="nav-item" onclick="console.log('Click: Recruiter'); window.switchTab('recruiter', this)">
             <i class="fas fa-users"></i>
             <span>Recruiter Insights</span>
         </div>
-        <div class="nav-item" onclick="switchTab('strategic')">
+        <div class="nav-item" onclick="console.log('Click: Strategic'); window.switchTab('strategic', this)">
             <i class="fas fa-chart-line"></i>
             <span>Strategic Overview</span>
         </div>
-        <div class="nav-item" onclick="switchTab('projects')">
+        <div class="nav-item" onclick="console.log('Click: Projects'); window.switchTab('projects', this)">
             <i class="fas fa-project-diagram"></i>
             <span>Project Summary</span>
         </div>
-        <div class="nav-item" onclick="switchTab('rca-capa')">
+        <div class="nav-item" onclick="console.log('Click: RCA'); window.switchTab('rca-capa', this)">
             <i class="fas fa-tools"></i>
             <span>RCA & CAPA</span>
         </div>
-        <div class="nav-item" onclick="switchTab('csat')">
+        <div class="nav-item" onclick="console.log('Click: CSAT'); window.switchTab('csat', this)">
             <i class="fas fa-smile"></i>
             <span>Customer Satisfaction</span>
         </div>
@@ -967,23 +969,48 @@
         // NAVIGATION
         // ==========================================
         
-        function switchTab(tabId) {
-            // Hide all tabs
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
+        window.switchTab = function(tabId, clickedElement) {
+            console.log('🔄 Switching to tab:', tabId);
+            try {
+                // Hide all tabs
+                document.querySelectorAll('.tab-content').forEach(tab => {
+                    tab.classList.remove('active');
+                });
 
-            // Remove active class from all nav items
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
+                // Remove active class from all nav items
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.classList.remove('active');
+                });
 
-            // Show selected tab
-            document.getElementById(tabId).classList.add('active');
+                // Show selected tab
+                const targetTab = document.getElementById(tabId);
+                if (targetTab) {
+                    targetTab.classList.add('active');
+                    console.log('✅ Tab activated:', tabId);
+                } else {
+                    console.error('❌ Tab not found:', tabId);
+                }
 
-            // Activate nav item
-            event.currentTarget.classList.add('active');
-        }
+                // Activate nav item - use event if available, otherwise use clickedElement
+                const navItem = clickedElement || event?.currentTarget;
+                if (navItem) {
+                    navItem.classList.add('active');
+                }
+            } catch (error) {
+                console.error('❌ Error switching tab:', error);
+                alert('Error switching tab: ' + error.message);
+            }
+        };
+        
+        console.log('✅ Navigation functions defined');
+        console.log('window.switchTab:', typeof window.switchTab);
+        
+        // Test tab switching
+        window.testTabSwitch = function() {
+            console.log('✅ Testing tab switch function...');
+            alert('Tab function is working! Switching to Account Summary...');
+            window.switchTab('account-summary');
+        };
 
         // ==========================================
         // UPLOAD MODAL
