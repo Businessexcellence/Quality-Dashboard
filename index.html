@@ -2226,24 +2226,35 @@ Total Population: ${totalPop}
         // ==========================================
         
         window.addEventListener('DOMContentLoaded', () => {
-            console.log('Dashboard initialized');
+            console.log('🚀🚀🚀 Dashboard initialized - DOMContentLoaded fired');
+            alert('Dashboard loaded! Check console (F12) for logs.');
             
             // CRITICAL: Attach file input change listener (like working test page)
             const fileInput = document.getElementById('fileInput');
+            console.log('📁 File input element:', fileInput);
+            
             if (fileInput) {
+                console.log('✅ File input found, attaching listener...');
                 fileInput.addEventListener('change', function(event) {
-                    console.log('📁 FILE INPUT CHANGED (event listener)');
+                    console.log('🎉🎉🎉 FILE INPUT CHANGED (event listener)');
+                    alert('File selected: ' + event.target.files[0]?.name);
                     console.log('📁 File selected:', event.target.files[0]?.name);
+                    console.log('📁 Files array:', event.target.files);
+                    
                     if (typeof window.handleFileUpload === 'function') {
+                        console.log('✅ Calling window.handleFileUpload...');
                         window.handleFileUpload(event);
                     } else {
                         console.error('❌ handleFileUpload not defined!');
+                        console.error('❌ Type:', typeof window.handleFileUpload);
                         alert('Upload function not loaded. Please refresh the page.');
                     }
                 });
-                console.log('✅ File input event listener attached');
+                console.log('✅ File input event listener attached successfully');
+                alert('File input listener attached! Try selecting a file.');
             } else {
                 console.error('❌ File input not found!');
+                alert('ERROR: File input not found!');
             }
             
             // Setup upload button click handler as backup
