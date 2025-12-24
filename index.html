@@ -879,11 +879,11 @@
                 </div>
             </div>
 
-            <!-- Region-wise India Map -->
+            <!-- Region-wise Account Distribution Chart -->
             <div class="widget-card" style="margin-bottom: 24px;">
-                <h3><i class="fas fa-map"></i> Region-wise Account Distribution & Accuracy (India)</h3>
-                <div id="indiaMapContainer" style="min-height: 400px; padding: 20px; text-align: center;">
-                    <!-- Map will be rendered here -->
+                <h3><i class="fas fa-chart-pie"></i> Region-wise Account Distribution</h3>
+                <div id="regionChartContainer" style="padding: 20px;">
+                    <canvas id="regionChart" style="max-width: 500px; max-height: 500px; margin: 0 auto; display: block;"></canvas>
                 </div>
             </div>
 
@@ -1608,6 +1608,7 @@
         function renderInsights() {
             const positiveContainer = document.getElementById('positiveInsights');
             const negativeContainer = document.getElementById('negativeInsights');
+            const bottomAccountsContainer = document.getElementById('bottomAccounts');
 
             const accounts = calculateAccountAccuracy();
             const avgAccuracy = accounts.length > 0 
@@ -1628,6 +1629,49 @@
                 <p style="margin-bottom: 8px;">⚠️ <strong>${getClosedRCACount()}</strong> pending RCA/CAPA items</p>
                 <p>⚠️ Action required for underperforming accounts</p>
             `;
+
+            // Populate Needs Attention section with lowest performing accounts
+            const lowestPerformers = accounts
+                .sort((a, b) => a.accuracy - b.accuracy)
+                .slice(0, 5);
+
+            if (lowestPerformers.length > 0) {
+                bottomAccountsContainer.innerHTML = `
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid var(--border); background: rgba(255,102,0,0.05);">
+                                <th style="padding: 10px; text-align: left; font-size: 11px; font-weight: 700; color: var(--text-primary);">#</th>
+                                <th style="padding: 10px; text-align: left; font-size: 11px; font-weight: 700; color: var(--text-primary);">Account</th>
+                                <th style="padding: 10px; text-align: right; font-size: 11px; font-weight: 700; color: var(--text-primary);">Accuracy</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${lowestPerformers.map((acc, index) => `
+                                <tr style="border-bottom: 1px solid var(--border); transition: background 0.2s;" 
+                                    onmouseover="this.style.background='var(--bg-hover)'" 
+                                    onmouseout="this.style.background='transparent'">
+                                    <td style="padding: 10px; font-size: 12px; color: var(--text-secondary);">${index + 1}</td>
+                                    <td style="padding: 10px; font-size: 12px; color: var(--text-primary); font-weight: 500;">${acc.name}</td>
+                                    <td style="padding: 10px; text-align: right;">
+                                        <span style="
+                                            background: ${acc.accuracy < 70 ? '#ef4444' : acc.accuracy < 80 ? '#f59e0b' : '#10b981'}; 
+                                            color: white; 
+                                            padding: 4px 10px; 
+                                            border-radius: 12px; 
+                                            font-size: 13px; 
+                                            font-weight: 700;
+                                        ">${acc.accuracy.toFixed(1)}%</span>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            } else {
+                bottomAccountsContainer.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-muted); font-size: 13px;">📊 No account data available. Please upload Base File.xlsx</div>';
+            }
+
+            console.log(`📊 Needs Attention populated with ${lowestPerformers.length} low-performing accounts`);
         }
 
         // ==========================================
@@ -1655,7 +1699,7 @@
             renderAccountFilters();
             renderAccountKPIs();
             renderBESPOC();
-            renderIndiaMap();
+            renderRegionChart();
             renderAccountTable();
             
             console.log('✅ Account Summary Tab refreshed');
@@ -1952,186 +1996,152 @@
             console.log('📊 BE SPOC data rendered');
         }
 
-        function renderIndiaMap() {
-            const container = document.getElementById('indiaMapContainer');
-            if (!container) return;
+        function renderRegionChart() {
+            const canvas = document.getElementById('regionChart');
+            if (!canvas) return;
 
-            // Clear existing content
-            container.innerHTML = '';
+            // Clear existing chart if any
+            if (window.regionChartInstance) {
+                window.regionChartInstance.destroy();
+            }
 
             // Create regions map based on actual Region field from Account Summary
             const regionData = {
-                'North India': { accounts: [], accuracy: 0 },
-                'South India': { accounts: [], accuracy: 0 },
-                'East India': { accounts: [], accuracy: 0 },
-                'West India': { accounts: [], accuracy: 0 },
-                'Northeast India': { accounts: [], accuracy: 0 },
-                'Central India': { accounts: [], accuracy: 0 }
+                'North India': 0,
+                'South India': 0,
+                'East India': 0,
+                'West India': 0,
+                'Northeast India': 0,
+                'Central India': 0
             };
 
-            // Map accounts to regions directly from Region field
+            // Count accounts per region
             dashboardData.accountSummary.forEach(row => {
                 const region = String(row['Region'] || '').trim();
-                const accountName = row.Account || row.Client || '';
-                
-                // Map the region value to our display names
-                let displayRegion = null;
                 const regionLower = region.toLowerCase();
                 
                 if (regionLower.includes('north') && !regionLower.includes('east')) {
-                    displayRegion = 'North India';
+                    regionData['North India']++;
                 } else if (regionLower.includes('south')) {
-                    displayRegion = 'South India';
+                    regionData['South India']++;
                 } else if (regionLower.includes('east') && !regionLower.includes('north')) {
-                    displayRegion = 'East India';
+                    regionData['East India']++;
                 } else if (regionLower.includes('west')) {
-                    displayRegion = 'West India';
+                    regionData['West India']++;
                 } else if (regionLower.includes('northeast') || regionLower.includes('north east')) {
-                    displayRegion = 'Northeast India';
+                    regionData['Northeast India']++;
                 } else if (regionLower.includes('central')) {
-                    displayRegion = 'Central India';
+                    regionData['Central India']++;
                 }
-                
-                if (displayRegion && regionData[displayRegion]) {
-                    // Get parameter audit data for this account
-                    const paramData = dashboardData.parameterAuditCount.filter(p => 
-                        (p.Account || p.Client) === accountName
-                    );
-                    
-                    let accuracy = 0;
-                    if (paramData.length > 0) {
-                        let totalPass = 0, totalCount = 0, totalNA = 0;
-                        paramData.forEach(p => {
-                            totalPass += parseFloat(p['Opportunity Pass']) || 0;
-                            totalCount += parseFloat(p['Opportunity Count']) || 0;
-                            totalNA += parseFloat(p['Opportunity NA']) || 0;
-                        });
-                        const denominator = totalCount - totalNA;
-                        accuracy = denominator > 0 ? (totalPass / denominator * 100) : 0;
+            });
+
+            // Filter out regions with 0 accounts
+            const labels = [];
+            const data = [];
+            const colors = [
+                '#FF6600',  // Orange - TAGGD brand color
+                '#FF8C42',  // Light Orange
+                '#FFA500',  // Gold
+                '#FFB84D',  // Amber
+                '#FFC266',  // Light Amber
+                '#FFD700'   // Golden
+            ];
+
+            Object.keys(regionData).forEach((region, index) => {
+                if (regionData[region] > 0) {
+                    labels.push(region);
+                    data.push(regionData[region]);
+                }
+            });
+
+            // Create professional donut chart
+            const ctx = canvas.getContext('2d');
+            window.regionChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: colors.slice(0, labels.length),
+                        borderColor: '#ffffff',
+                        borderWidth: 3,
+                        hoverOffset: 15
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                padding: 20,
+                                font: {
+                                    size: 13,
+                                    family: "'Inter', 'Segoe UI', sans-serif",
+                                    weight: '600'
+                                },
+                                color: '#1a202c',
+                                usePointStyle: true,
+                                pointStyle: 'circle',
+                                generateLabels: function(chart) {
+                                    const data = chart.data;
+                                    if (data.labels.length && data.datasets.length) {
+                                        return data.labels.map((label, i) => {
+                                            const value = data.datasets[0].data[i];
+                                            const total = data.datasets[0].data.reduce((a, b) => a + b, 0);
+                                            const percentage = ((value / total) * 100).toFixed(1);
+                                            return {
+                                                text: `${label}: ${value} (${percentage}%)`,
+                                                fillStyle: data.datasets[0].backgroundColor[i],
+                                                hidden: false,
+                                                index: i
+                                            };
+                                        });
+                                    }
+                                    return [];
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 12,
+                            titleFont: {
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            bodyFont: {
+                                size: 13
+                            },
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((value / total) * 100).toFixed(1);
+                                    return `${label}: ${value} accounts (${percentage}%)`;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '65%',
+                    animation: {
+                        animateRotate: true,
+                        animateScale: true,
+                        duration: 1000,
+                        easing: 'easeInOutQuart'
+                    },
+                    onClick: (event, elements) => {
+                        if (elements.length > 0) {
+                            const index = elements[0].index;
+                            const region = labels[index];
+                            filterByRegion(region);
+                        }
                     }
-                    
-                    regionData[displayRegion].accounts.push({ name: accountName, accuracy });
                 }
             });
 
-            // Calculate average accuracy per zone
-            Object.keys(regionData).forEach(zone => {
-                const accounts = regionData[zone].accounts;
-                if (accounts.length > 0) {
-                    const avgAccuracy = accounts.reduce((sum, acc) => sum + acc.accuracy, 0) / accounts.length;
-                    regionData[zone].accuracy = avgAccuracy.toFixed(2);
-                }
-            });
-
-            // Create map HTML with embedded base64 India map image and region overlays
-            const indiaMapBase64 = `data:image/png;base64,${window.indiaMapImageData || ''}`;
-            
-            container.innerHTML = `
-                <div style="
-                    position: relative; 
-                    width: 100%; 
-                    max-width: 700px; 
-                    margin: 0 auto; 
-                    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); 
-                    padding: 30px; 
-                    border-radius: 16px;
-                    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-                ">
-                    <div style="
-                        position: relative;
-                        width: 100%;
-                        padding-bottom: 100%;
-                        overflow: visible;
-                    ">
-                        <img src="${indiaMapBase64}" 
-                             alt="India Map" 
-                             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
-                             style="
-                                position: absolute;
-                                top: 0;
-                                left: 0;
-                                width: 100%;
-                                height: 100%;
-                                object-fit: contain;
-                                object-position: center;
-                                border-radius: 8px;
-                             ">
-                        <div style="
-                            display: none;
-                            position: absolute;
-                            top: 50%;
-                            left: 50%;
-                            transform: translate(-50%, -50%);
-                            text-align: center;
-                            color: var(--text-muted);
-                        ">
-                            <i class="fas fa-map" style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"></i>
-                            <p style="font-size: 14px;">India Map Loading...</p>
-                        </div>
-                    
-                    <!-- North India Overlay -->
-                    <div style="position: absolute; top: 18%; left: 50%; transform: translate(-50%, -50%); text-align: center; cursor: pointer; background: rgba(255, 102, 0, 0.95); padding: 10px 16px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: all 0.3s; min-width: 140px;" 
-                         onclick="filterByRegion('North India')"
-                         onmouseover="this.style.transform='translate(-50%, -50%) scale(1.05)'; this.style.boxShadow='0 6px 16px rgba(255,102,0,0.4)';"
-                         onmouseout="this.style.transform='translate(-50%, -50%) scale(1)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.3)';">
-                        <div style="color: white; font-weight: 700; font-size: 15px; margin-bottom: 4px;">North India</div>
-                        <div style="color: #ffffff; font-weight: 800; font-size: 24px;">${regionData['North India'].accounts.length}</div>
-                        <div style="color: rgba(255,255,255,0.9); font-size: 11px; margin-top: 2px;">Accounts</div>
-                    </div>
-                    
-                    <!-- West India Overlay -->
-                    <div style="position: absolute; top: 48%; left: 25%; transform: translate(-50%, -50%); text-align: center; cursor: pointer; background: rgba(255, 102, 0, 0.95); padding: 10px 16px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: all 0.3s; min-width: 140px;" 
-                         onclick="filterByRegion('West India')"
-                         onmouseover="this.style.transform='translate(-50%, -50%) scale(1.05)'; this.style.boxShadow='0 6px 16px rgba(255,102,0,0.4)';"
-                         onmouseout="this.style.transform='translate(-50%, -50%) scale(1)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.3)';">
-                        <div style="color: white; font-weight: 700; font-size: 15px; margin-bottom: 4px;">West India</div>
-                        <div style="color: #ffffff; font-weight: 800; font-size: 24px;">${regionData['West India'].accounts.length}</div>
-                        <div style="color: rgba(255,255,255,0.9); font-size: 11px; margin-top: 2px;">Accounts</div>
-                    </div>
-                    
-                    <!-- Central India Overlay -->
-                    <div style="position: absolute; top: 48%; left: 50%; transform: translate(-50%, -50%); text-align: center; cursor: pointer; background: rgba(255, 102, 0, 0.95); padding: 10px 16px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: all 0.3s; min-width: 140px;" 
-                         onclick="filterByRegion('Central India')"
-                         onmouseover="this.style.transform='translate(-50%, -50%) scale(1.05)'; this.style.boxShadow='0 6px 16px rgba(255,102,0,0.4)';"
-                         onmouseout="this.style.transform='translate(-50%, -50%) scale(1)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.3)';">
-                        <div style="color: white; font-weight: 700; font-size: 15px; margin-bottom: 4px;">Central India</div>
-                        <div style="color: #ffffff; font-weight: 800; font-size: 24px;">${regionData['Central India'].accounts.length}</div>
-                        <div style="color: rgba(255,255,255,0.9); font-size: 11px; margin-top: 2px;">Accounts</div>
-                    </div>
-                    
-                    <!-- East India Overlay -->
-                    <div style="position: absolute; top: 48%; left: 75%; transform: translate(-50%, -50%); text-align: center; cursor: pointer; background: rgba(255, 102, 0, 0.95); padding: 10px 16px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: all 0.3s; min-width: 140px;" 
-                         onclick="filterByRegion('East India')"
-                         onmouseover="this.style.transform='translate(-50%, -50%) scale(1.05)'; this.style.boxShadow='0 6px 16px rgba(255,102,0,0.4)';"
-                         onmouseout="this.style.transform='translate(-50%, -50%) scale(1)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.3)';">
-                        <div style="color: white; font-weight: 700; font-size: 15px; margin-bottom: 4px;">East India</div>
-                        <div style="color: #ffffff; font-weight: 800; font-size: 24px;">${regionData['East India'].accounts.length}</div>
-                        <div style="color: rgba(255,255,255,0.9); font-size: 11px; margin-top: 2px;">Accounts</div>
-                    </div>
-                    
-                    <!-- Northeast India Overlay -->
-                    <div style="position: absolute; top: 25%; left: 85%; transform: translate(-50%, -50%); text-align: center; cursor: pointer; background: rgba(255, 102, 0, 0.95); padding: 10px 16px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: all 0.3s; min-width: 140px;" 
-                         onclick="filterByRegion('Northeast India')"
-                         onmouseover="this.style.transform='translate(-50%, -50%) scale(1.05)'; this.style.boxShadow='0 6px 16px rgba(255,102,0,0.4)';"
-                         onmouseout="this.style.transform='translate(-50%, -50%) scale(1)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.3)';">
-                        <div style="color: white; font-weight: 700; font-size: 15px; margin-bottom: 4px;">Northeast India</div>
-                        <div style="color: #ffffff; font-weight: 800; font-size: 24px;">${regionData['Northeast India'].accounts.length}</div>
-                        <div style="color: rgba(255,255,255,0.9); font-size: 11px; margin-top: 2px;">Accounts</div>
-                    </div>
-                    
-                    <!-- South India Overlay -->
-                    <div style="position: absolute; top: 78%; left: 50%; transform: translate(-50%, -50%); text-align: center; cursor: pointer; background: rgba(255, 102, 0, 0.95); padding: 10px 16px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: all 0.3s; min-width: 140px;" 
-                         onclick="filterByRegion('South India')"
-                         onmouseover="this.style.transform='translate(-50%, -50%) scale(1.05)'; this.style.boxShadow='0 6px 16px rgba(255,102,0,0.4)';"
-                         onmouseout="this.style.transform='translate(-50%, -50%) scale(1)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.3)';">
-                        <div style="color: white; font-weight: 700; font-size: 15px; margin-bottom: 4px;">South India</div>
-                        <div style="color: #ffffff; font-weight: 800; font-size: 24px;">${regionData['South India'].accounts.length}</div>
-                        <div style="color: rgba(255,255,255,0.9); font-size: 11px; margin-top: 2px;">Accounts</div>
-                    </div>
-                </div>
-            `;
-
-            console.log('🗺️ India map rendered with accuracy data:', regionData);
+            console.log('📊 Region chart rendered:', regionData);
         }
 
         function filterByRegion(region) {
