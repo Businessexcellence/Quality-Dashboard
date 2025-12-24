@@ -2077,11 +2077,18 @@
                 'Central India': 0
             };
 
-            // Count accounts per region
+            // Count accounts per region (using Region or Regional Head field)
             dashboardData.accountSummary.forEach(row => {
-                const region = String(row['Region'] || '').trim();
+                // Try Region field first, then Regional Head
+                const region = String(row['Region'] || row['Regional Head'] || row['Regional'] || '').trim();
                 const regionLower = region.toLowerCase();
                 
+                // Log for debugging (first 5 rows only)
+                if (dashboardData.accountSummary.indexOf(row) < 5) {
+                    console.log('🗺️ Processing Region/Regional Head:', region);
+                }
+                
+                // Match region keywords and city names
                 if (regionLower.includes('north') && !regionLower.includes('east')) {
                     regionData['North India']++;
                 } else if (regionLower.includes('south')) {
@@ -2092,10 +2099,21 @@
                     regionData['West India']++;
                 } else if (regionLower.includes('northeast') || regionLower.includes('north east')) {
                     regionData['Northeast India']++;
-                } else if (regionLower.includes('central')) {
+                } else if (regionLower.includes('central') || regionLower.includes('centre')) {
                     regionData['Central India']++;
+                } else if (regionLower.includes('mumbai') || regionLower.includes('maharashtra') || regionLower.includes('goa') || regionLower.includes('pune')) {
+                    regionData['West India']++;
+                } else if (regionLower.includes('delhi') || regionLower.includes('punjab') || regionLower.includes('haryana') || regionLower.includes('rajasthan') || regionLower.includes('chandigarh')) {
+                    regionData['North India']++;
+                } else if (regionLower.includes('bangalore') || regionLower.includes('bengaluru') || regionLower.includes('chennai') || regionLower.includes('hyderabad') || regionLower.includes('kerala') || regionLower.includes('karnataka') || regionLower.includes('tamil') || regionLower.includes('andhra')) {
+                    regionData['South India']++;
+                } else if (regionLower.includes('kolkata') || regionLower.includes('bengal') || regionLower.includes('odisha') || regionLower.includes('bihar') || regionLower.includes('jharkhand')) {
+                    regionData['East India']++;
                 }
             });
+            
+            // Log final region data
+            console.log('🗺️ Final region distribution:', regionData);
 
             // Filter out regions with 0 accounts
             const labels = [];
@@ -2115,6 +2133,21 @@
                     data.push(regionData[region]);
                 }
             });
+            
+            // Check if we have any data
+            if (labels.length === 0 || data.reduce((a, b) => a + b, 0) === 0) {
+                console.warn('⚠️ No region data found. Check Regional Head field values.');
+                const container = document.getElementById('regionChartContainer');
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+                        <i class="fas fa-map-marker-alt" style="font-size: 48px; color: var(--primary); margin-bottom: 16px;"></i>
+                        <h3 style="color: var(--text-primary); margin-bottom: 8px;">No Region Data Available</h3>
+                        <p>Upload an Excel file with Regional Head information to see the distribution.</p>
+                        <p style="font-size: 12px; margin-top: 12px;">Expected keywords: North, South, East, West, Central, or city names like Mumbai, Delhi, Bangalore, etc.</p>
+                    </div>
+                `;
+                return;
+            }
 
             // Create professional donut chart
             const ctx = canvas.getContext('2d');
