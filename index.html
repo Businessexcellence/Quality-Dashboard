@@ -862,32 +862,32 @@
             <!-- Middle Section: BE SPOC + Region Chart (Single Row) -->
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px;">
                 <!-- BE SPOC - Audit -->
-                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 10px;">
-                    <h3 style="font-size: 11px; margin: 0 0 8px 0; font-weight: 700; color: var(--text-primary);">
-                        <i class="fas fa-user-check" style="font-size: 9px;"></i> BE SPOC - AUDIT
+                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 8px; max-height: 140px;">
+                    <h3 style="font-size: 11px; margin: 0 0 6px 0; font-weight: 700; color: #f8fafc;">
+                        <i class="fas fa-user-check" style="font-size: 9px; color: var(--primary);"></i> BE SPOC - AUDIT
                     </h3>
-                    <div id="beSPOCAudit" style="font-size: 10px;">
+                    <div id="beSPOCAudit" style="font-size: 10px; max-height: 110px; overflow-y: auto;">
                         <!-- BE SPOC Audit details -->
                     </div>
                 </div>
                 
                 <!-- BE SPOC - SLAs/KPIs -->
-                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 10px;">
-                    <h3 style="font-size: 11px; margin: 0 0 8px 0; font-weight: 700; color: var(--text-primary);">
-                        <i class="fas fa-user-clock" style="font-size: 9px;"></i> BE SPOC - SLAs/KPIs
+                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 8px; max-height: 140px;">
+                    <h3 style="font-size: 11px; margin: 0 0 6px 0; font-weight: 700; color: #f8fafc;">
+                        <i class="fas fa-user-clock" style="font-size: 9px; color: var(--primary);"></i> BE SPOC - SLAs/KPIs
                     </h3>
-                    <div id="beSPOCSLA" style="font-size: 10px;">
+                    <div id="beSPOCSLA" style="font-size: 10px; max-height: 110px; overflow-y: auto;">
                         <!-- BE SPOC SLA details -->
                     </div>
                 </div>
                 
                 <!-- Region Chart (Compact) -->
-                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 10px;">
-                    <h3 style="font-size: 11px; margin: 0 0 8px 0; font-weight: 700; color: var(--text-primary);">
-                        <i class="fas fa-chart-pie" style="font-size: 9px;"></i> REGION DISTRIBUTION
+                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 8px; max-height: 140px;">
+                    <h3 style="font-size: 11px; margin: 0 0 6px 0; font-weight: 700; color: #f8fafc;">
+                        <i class="fas fa-chart-pie" style="font-size: 9px; color: var(--primary);"></i> REGION DISTRIBUTION
                     </h3>
-                    <div id="regionChartContainer" style="padding: 5px;">
-                        <canvas id="regionChart" style="max-width: 280px; max-height: 200px; margin: 0 auto; display: block;"></canvas>
+                    <div id="regionChartContainer" style="padding: 2px;">
+                        <canvas id="regionChart" style="max-width: 250px; max-height: 110px; margin: 0 auto; display: block;"></canvas>
                     </div>
                 </div>
             </div>
@@ -2034,12 +2034,12 @@
             const sortedSPOCAudit = Object.entries(spocAuditData).sort((a, b) => b[1] - a[1]);
             
             if (sortedSPOCAudit.length === 0) {
-                beSPOCAuditContainer.innerHTML = '<div style="padding: 6px; text-align: center; color: var(--text-muted); font-size: 9px;">No SPOC data</div>';
+                beSPOCAuditContainer.innerHTML = '<div style="padding: 6px; text-align: center; color: #f8fafc; font-size: 9px;">No SPOC data</div>';
             } else {
                 beSPOCAuditContainer.innerHTML = sortedSPOCAudit.slice(0, 5).map(([spoc, count]) => `
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid var(--border);">
-                        <span style="font-size: 9px; color: var(--text-primary); font-weight: 500;">${spoc}</span>
-                        <span style="font-size: 12px; font-weight: 700; color: var(--primary);">${count}</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 3px 0; border-bottom: 1px solid var(--border);">
+                        <span style="font-size: 9px; color: #f8fafc; font-weight: 500;">${spoc}</span>
+                        <span style="font-size: 11px; font-weight: 700; color: var(--primary);">${count}</span>
                     </div>
                 `).join('');
             }
@@ -2058,12 +2058,12 @@
             const sortedSPOCSLA = Object.entries(spocSLAData).sort((a, b) => b[1] - a[1]);
             
             if (sortedSPOCSLA.length === 0) {
-                beSPOCSLAContainer.innerHTML = '<div style="padding: 6px; text-align: center; color: var(--text-muted); font-size: 9px;">No SPOC data</div>';
+                beSPOCSLAContainer.innerHTML = '<div style="padding: 6px; text-align: center; color: #f8fafc; font-size: 9px;">No SPOC data</div>';
             } else {
                 beSPOCSLAContainer.innerHTML = sortedSPOCSLA.slice(0, 5).map(([spoc, count]) => `
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid var(--border);">
-                        <span style="font-size: 9px; color: var(--text-primary); font-weight: 500;">${spoc}</span>
-                        <span style="font-size: 12px; font-weight: 700; color: var(--primary);">${count}</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 3px 0; border-bottom: 1px solid var(--border);">
+                        <span style="font-size: 9px; color: #f8fafc; font-weight: 500;">${spoc}</span>
+                        <span style="font-size: 11px; font-weight: 700; color: var(--primary);">${count}</span>
                     </div>
                 `).join('');
             }
