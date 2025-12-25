@@ -5530,10 +5530,10 @@ Total Population: ${totalPop}
         window.getRcaCapaStatus = function(item) {
             const keys = Object.keys(item);
             
-            // Try different possible column references for Column I (9th column, index 8):
+            // Column I (9th column, index 8) - Status
             const possibleKeys = [
-                '__EMPTY_8',  // XLSX headerless column naming
                 'I',          // Direct column letter
+                '__EMPTY_8',  // XLSX headerless column naming
                 keys[8],      // 9th column by index
                 'Status',
                 'status',
@@ -5543,8 +5543,8 @@ Total Population: ${totalPop}
             ];
             
             for (const key of possibleKeys) {
-                if (key && item[key]) {
-                    return String(item[key]);
+                if (key && item[key] !== null && item[key] !== undefined && item[key] !== '') {
+                    return String(item[key]).trim();
                 }
             }
             
@@ -5554,10 +5554,11 @@ Total Population: ${totalPop}
         window.getErrorType = function(item) {
             const keys = Object.keys(item);
             
+            // Column C (3rd column, index 2) - Error Type
             const possibleKeys = [
-                '__EMPTY_2',  // XLSX headerless column naming (Column C = 2nd empty column)
-                'C',
-                keys[2],
+                'C',          // Direct column letter
+                '__EMPTY_2',  // XLSX headerless column naming
+                keys[2],      // 3rd column by index
                 'Error Type',
                 'ERROR TYPE',
                 'ErrorType',
@@ -5566,8 +5567,8 @@ Total Population: ${totalPop}
             ];
             
             for (const key of possibleKeys) {
-                if (key && item[key]) {
-                    return String(item[key]);
+                if (key && item[key] !== null && item[key] !== undefined && item[key] !== '') {
+                    return String(item[key]).trim();
                 }
             }
             
@@ -5577,10 +5578,11 @@ Total Population: ${totalPop}
         window.getImpact = function(item) {
             const keys = Object.keys(item);
             
+            // Column D (4th column, index 3) - Impact
             const possibleKeys = [
-                '__EMPTY_3',  // XLSX headerless column naming (Column D = 3rd empty column)
-                'D',
-                keys[3],
+                'D',          // Direct column letter
+                '__EMPTY_3',  // XLSX headerless column naming
+                keys[3],      // 4th column by index
                 'Impact',
                 'IMPACT',
                 'Impact Level',
@@ -5588,8 +5590,76 @@ Total Population: ${totalPop}
             ];
             
             for (const key of possibleKeys) {
-                if (key && item[key]) {
-                    return String(item[key]);
+                if (key && item[key] !== null && item[key] !== undefined && item[key] !== '') {
+                    return String(item[key]).trim();
+                }
+            }
+            
+            return '';
+        };
+
+        window.getRcaPracticeHead = function(item) {
+            const keys = Object.keys(item);
+            
+            // Column E (5th column, index 4) - Practice Head
+            const possibleKeys = [
+                'E',          // Direct column letter
+                '__EMPTY_4',  // XLSX headerless column naming
+                keys[4],      // 5th column by index
+                'Practice Head',
+                'PRACTICE HEAD',
+                'PracticeHead',
+                'Practice'
+            ];
+            
+            for (const key of possibleKeys) {
+                if (key && item[key] !== null && item[key] !== undefined && item[key] !== '') {
+                    return String(item[key]).trim();
+                }
+            }
+            
+            return '';
+        };
+
+        window.getRcaFinancialYear = function(item) {
+            const keys = Object.keys(item);
+            
+            // Column H (8th column, index 7) - Financial Year
+            const possibleKeys = [
+                'H',          // Direct column letter
+                '__EMPTY_7',  // XLSX headerless column naming
+                keys[7],      // 8th column by index
+                'Financial Year',
+                'FINANCIAL YEAR',
+                'FinancialYear',
+                'FY',
+                'Year'
+            ];
+            
+            for (const key of possibleKeys) {
+                if (key && item[key] !== null && item[key] !== undefined && item[key] !== '') {
+                    return String(item[key]).trim();
+                }
+            }
+            
+            return '';
+        };
+
+        window.getRcaRegion = function(item) {
+            const keys = Object.keys(item);
+            
+            // Column J (10th column, index 9) - Region
+            const possibleKeys = [
+                'J',          // Direct column letter
+                '__EMPTY_9',  // XLSX headerless column naming
+                keys[9],      // 10th column by index
+                'Region',
+                'REGION'
+            ];
+            
+            for (const key of possibleKeys) {
+                if (key && item[key] !== null && item[key] !== undefined && item[key] !== '') {
+                    return String(item[key]).trim();
                 }
             }
             
@@ -6633,6 +6703,12 @@ Total Population: ${totalPop}
                         let value;
                         if (filter.field === 'Status') {
                             value = window.getRcaCapaStatus(item);
+                        } else if (filter.field === 'Region') {
+                            value = window.getRcaRegion(item);
+                        } else if (filter.field === 'Financial Year') {
+                            value = window.getRcaFinancialYear(item);
+                        } else if (filter.field === 'Practice Head') {
+                            value = window.getRcaPracticeHead(item);
                         } else {
                             value = item[filter.field];
                         }
@@ -6651,6 +6727,12 @@ Total Population: ${totalPop}
                             let itemValue;
                             if (filter.field === 'Status') {
                                 itemValue = window.getRcaCapaStatus(item);
+                            } else if (filter.field === 'Region') {
+                                itemValue = window.getRcaRegion(item);
+                            } else if (filter.field === 'Financial Year') {
+                                itemValue = window.getRcaFinancialYear(item);
+                            } else if (filter.field === 'Practice Head') {
+                                itemValue = window.getRcaPracticeHead(item);
                             } else {
                                 itemValue = item[filter.field];
                             }
@@ -6893,6 +6975,12 @@ Total Population: ${totalPop}
                         let itemValue;
                         if (field === 'Status') {
                             itemValue = window.getRcaCapaStatus(item);
+                        } else if (field === 'Region') {
+                            itemValue = window.getRcaRegion(item);
+                        } else if (field === 'Financial Year') {
+                            itemValue = window.getRcaFinancialYear(item);
+                        } else if (field === 'Practice Head') {
+                            itemValue = window.getRcaPracticeHead(item);
                         } else {
                             itemValue = item[field];
                         }
@@ -7211,7 +7299,9 @@ Total Population: ${totalPop}
                                     const errorType = window.getErrorType(item) || 'N/A';
                                     const impact = window.getImpact(item) || 'N/A';
                                     const status = window.getRcaCapaStatus(item) || 'N/A';
-                                    const region = item['Region'] || 'N/A';
+                                    const region = window.getRcaRegion(item) || 'N/A';
+                                    const practiceHead = window.getRcaPracticeHead(item) || 'N/A';
+                                    const financialYear = window.getRcaFinancialYear(item) || 'N/A';
                                     
                                     // Get Problem Statement
                                     const problemStatement = item['Problem Statement'] || item['Description'] || item['Issue Description'] || 'N/A';
@@ -7317,9 +7407,9 @@ Total Population: ${totalPop}
                 const errorType = window.getErrorType(item) || 'N/A';
                 const impact = window.getImpact(item) || 'N/A';
                 const status = window.getRcaCapaStatus(item) || 'N/A';
-                const region = item['Region'] || 'N/A';
-                const financialYear = item['Financial Year'] || 'N/A';
-                const practiceHead = item['Practice Head'] || 'N/A';
+                const region = window.getRcaRegion(item) || 'N/A';
+                const financialYear = window.getRcaFinancialYear(item) || 'N/A';
+                const practiceHead = window.getRcaPracticeHead(item) || 'N/A';
                 
                 // Get Problem Statement (COMPLETE - no truncation)
                 const problemStatement = item['Problem Statement'] || item['Description'] || item['Issue Description'] || 'N/A';
