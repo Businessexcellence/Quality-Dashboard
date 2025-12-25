@@ -5030,40 +5030,40 @@ Total Population: ${totalPop}
                 if (!window.activeStrategicFilters) {
                     window.activeStrategicFilters = {};
                 }
-                window.activeStrategicFilters[field] = value;
                 
-                // Apply filters
-                applyStrategicFilters();
-                
-                // Reset ALL buttons first
-                document.querySelectorAll('.strategic-filter-btn').forEach(btn => {
+                // First, reset only buttons in the SAME field (deselect previous option in this field)
+                document.querySelectorAll(`.strategic-filter-btn[data-field="${field}"]`).forEach(btn => {
                     btn.classList.remove('active');
                     btn.style.background = '#faf5ff';
                     btn.style.borderColor = '#d8b4fe';
-                    const textSpan = btn.querySelector('span');
+                    const textSpan = btn.querySelector('span:first-child');
                     if (textSpan) textSpan.style.color = '#1e293b';
                     const badgeSpan = btn.querySelector('span:last-child');
                     if (badgeSpan) badgeSpan.style.background = 'linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%)';
                 });
                 
-                // Now highlight all active filters
-                if (window.activeStrategicFilters) {
-                    document.querySelectorAll('.strategic-filter-btn').forEach(btn => {
-                        const btnField = btn.getAttribute('data-field');
-                        const btnValue = btn.getAttribute('data-value');
-                        
-                        // Check if this button matches any active filter
-                        if (btnField && window.activeStrategicFilters[btnField] === btnValue) {
-                            btn.classList.add('active');
-                            btn.style.background = 'linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%)';
-                            btn.style.borderColor = '#5b21b6';
-                            const textSpan = btn.querySelector('span');
-                            if (textSpan) textSpan.style.color = 'white';
-                            const badgeSpan = btn.querySelector('span:last-child');
-                            if (badgeSpan) badgeSpan.style.background = 'rgba(255,255,255,0.3)';
-                        }
-                    });
-                }
+                // Now set the new active filter
+                window.activeStrategicFilters[field] = value;
+                
+                // Apply filters
+                applyStrategicFilters();
+                
+                // Highlight the clicked button
+                document.querySelectorAll('.strategic-filter-btn').forEach(btn => {
+                    const btnField = btn.getAttribute('data-field');
+                    const btnValue = btn.getAttribute('data-value');
+                    
+                    // Check if this button matches any active filter
+                    if (btnField && window.activeStrategicFilters[btnField] === btnValue) {
+                        btn.classList.add('active');
+                        btn.style.background = 'linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%)';
+                        btn.style.borderColor = '#5b21b6';
+                        const textSpan = btn.querySelector('span:first-child');
+                        if (textSpan) textSpan.style.color = 'white';
+                        const badgeSpan = btn.querySelector('span:last-child');
+                        if (badgeSpan) badgeSpan.style.background = 'rgba(255,255,255,0.3)';
+                    }
+                });
             } catch (error) {
                 handleError(error, 'applyStrategicFilter');
             }
@@ -5552,7 +5552,7 @@ Total Population: ${totalPop}
                     btn.classList.remove('active');
                     btn.style.background = '#faf5ff';
                     btn.style.borderColor = '#d8b4fe';
-                    const textSpan = btn.querySelector('span');
+                    const textSpan = btn.querySelector('span:first-child');
                     if (textSpan) textSpan.style.color = '#1e293b';
                     const badgeSpan = btn.querySelector('span:last-child');
                     if (badgeSpan) badgeSpan.style.background = 'linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%)';
