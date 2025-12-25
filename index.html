@@ -1535,39 +1535,39 @@
             <!-- Filters Section -->
             <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 8px; padding: 8px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                    <h2 style="font-size: 10px; color: #1e40af; margin: 0; font-weight: 700;">
+                    <h2 style="font-size: 10px; color: #1e40af; margin: 0; font-weight: 700; line-height: 24px;">
                         <i class="fas fa-filter" style="font-size: 8px;"></i> PROJECT FILTERS
                     </h2>
                     <div style="display: flex; gap: 6px; align-items: center;">
                         <!-- Universal Search Input -->
-                        <div style="position: relative; display: flex; align-items: center;">
-                            <input 
-                                type="text" 
-                                id="projectUniversalSearch" 
-                                placeholder="🔍 Search all filters..."
-                                style="
-                                    padding: 4px 8px 4px 24px;
-                                    border: 2px solid #93c5fd;
-                                    border-radius: 4px;
-                                    font-size: 9px;
-                                    width: 180px;
-                                    background: white;
-                                    color: #1e293b;
-                                    outline: none;
-                                    height: 24px;
-                                    box-sizing: border-box;
-                                "
-                                oninput="filterProjectOptions(this.value)"
-                            />
-                            <i class="fas fa-search" style="position: absolute; left: 8px; color: #3b82f6; font-size: 8px; pointer-events: none;"></i>
-                        </div>
-                        <button onclick="clearProjectFilters()" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); border: none; color: white; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 8px; font-weight: 600; height: 24px; box-sizing: border-box; display: flex; align-items: center; gap: 4px;">
-                            <i class="fas fa-times"></i> Clear All
+                        <input 
+                            type="text" 
+                            id="projectUniversalSearch" 
+                            placeholder="🔍 Search all filters..."
+                            style="
+                                padding: 4px 8px 4px 24px;
+                                border: 2px solid #93c5fd;
+                                border-radius: 4px;
+                                font-size: 9px;
+                                width: 180px;
+                                background: white url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2216%22 height=%2216%22 viewBox=%220 0 16 16%22><path fill=%22%233b82f6%22 d=%22M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z%22/></svg>') no-repeat 6px center;
+                                background-size: 12px 12px;
+                                color: #1e293b;
+                                outline: none;
+                                height: 24px;
+                                line-height: 24px;
+                                box-sizing: border-box;
+                                vertical-align: middle;
+                            "
+                            oninput="filterProjectOptions(this.value)"
+                        />
+                        <button onclick="clearProjectFilters()" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); border: none; color: white; padding: 0 8px; border-radius: 4px; cursor: pointer; font-size: 8px; font-weight: 600; height: 24px; line-height: 24px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; gap: 4px; vertical-align: middle;">
+                            <i class="fas fa-times" style="font-size: 8px;"></i> Clear All
                         </button>
                     </div>
                 </div>
-                <div id="projectFilters" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;">
-                    <!-- 5 Filters generated dynamically with counts -->
+                <div id="projectFilters" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px;">
+                    <!-- 6 Filters generated dynamically with counts -->
                 </div>
             </div>
 
@@ -5783,11 +5783,10 @@ Total Population: ${totalPop}
                     { field: 'Account', label: 'Account', icon: 'building' },
                     { field: 'Financial Year', label: 'Financial Year', icon: 'calendar' },
                     { field: 'Region', label: 'Region', icon: 'globe' },
-                    { field: 'Practice Head', label: 'Practice Head', icon: 'user-tie' }
+                    { field: 'Practice Head', label: 'Practice Head', icon: 'user-tie' },
+                    { field: 'Quarter', label: 'Quarter', icon: 'calendar-alt' },
+                    { field: 'Project Type', label: 'Project Type', icon: 'tags' }
                 ];
-                
-                // Add Project Type filter (with intelligent detection)
-                filters.push({ field: 'Project Type', label: 'Project Type', icon: 'tags' });
                 
                 const filtersHTML = filters.map(filter => {
                     // Get unique values for this field
@@ -5798,6 +5797,9 @@ Total Population: ${totalPop}
                         if (filter.field === 'Project Type') {
                             // Use intelligent project type detection
                             value = getProjectType(p);
+                        } else if (filter.field === 'Quarter') {
+                            // Try multiple possible column names for Quarter (Column D)
+                            value = p['Quarter'] || p['Q'] || p['__EMPTY_3'] || p['D'];
                         } else {
                             value = p[filter.field];
                         }
@@ -5818,6 +5820,8 @@ Total Population: ${totalPop}
                             let pValue;
                             if (filter.field === 'Project Type') {
                                 pValue = getProjectType(p);
+                            } else if (filter.field === 'Quarter') {
+                                pValue = p['Quarter'] || p['Q'] || p['__EMPTY_3'] || p['D'];
                             } else {
                                 pValue = p[filter.field];
                             }
@@ -6000,6 +6004,8 @@ Total Population: ${totalPop}
                         let projectValue;
                         if (field === 'Project Type') {
                             projectValue = getProjectType(project);
+                        } else if (field === 'Quarter') {
+                            projectValue = project['Quarter'] || project['Q'] || project['__EMPTY_3'] || project['D'];
                         } else {
                             projectValue = project[field];
                         }
