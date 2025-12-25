@@ -65,6 +65,8 @@
                         window.refreshTransactionalTab();
                     } else if (tabId === 'audit-summary' && typeof window.refreshParameterPerformanceTab === 'function') {
                         window.refreshParameterPerformanceTab();
+                    } else if (tabId === 'recruiter' && typeof window.refreshRecruiterTab === 'function') {
+                        window.refreshRecruiterTab();
                     }
                 }
             } catch (error) {
@@ -1199,10 +1201,108 @@
         </div>
 
         <div id="recruiter" class="tab-content">
-            <div class="empty-state">
-                <i class="fas fa-users"></i>
-                <h3>Recruiter Insights</h3>
-                <p>Coming soon...</p>
+            <!-- Filters Section -->
+            <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 8px; margin-bottom: 10px;">
+                <div style="display: grid; grid-template-columns: repeat(5, 1fr) auto; gap: 8px; align-items: center;">
+                    <select id="recruiterFilterAccount" onchange="applyRecruiterFilters()" style="padding: 6px; font-size: 10px; border: 1px solid var(--border); border-radius: 4px; background: white;">
+                        <option value="">All Accounts</option>
+                    </select>
+                    <select id="recruiterFilterMonth" onchange="applyRecruiterFilters()" style="padding: 6px; font-size: 10px; border: 1px solid var(--border); border-radius: 4px; background: white;">
+                        <option value="">All Months</option>
+                    </select>
+                    <select id="recruiterFilterRegionalHead" onchange="applyRecruiterFilters()" style="padding: 6px; font-size: 10px; border: 1px solid var(--border); border-radius: 4px; background: white;">
+                        <option value="">All Regional Heads</option>
+                    </select>
+                    <select id="recruiterFilterProgramManager" onchange="applyRecruiterFilters()" style="padding: 6px; font-size: 10px; border: 1px solid var(--border); border-radius: 4px; background: white;">
+                        <option value="">All Program Managers</option>
+                    </select>
+                    <select id="recruiterFilterRegion" onchange="applyRecruiterFilters()" style="padding: 6px; font-size: 10px; border: 1px solid var(--border); border-radius: 4px; background: white;">
+                        <option value="">All Regions</option>
+                    </select>
+                    <button onclick="clearRecruiterFilters()" style="padding: 6px 12px; font-size: 10px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">
+                        Clear
+                    </button>
+                </div>
+            </div>
+
+            <!-- Summary Section -->
+            <div id="recruiterSummarySection" style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 12px; margin-bottom: 10px;">
+                <!-- Summary will be populated here -->
+            </div>
+
+            <!-- KPI Cards -->
+            <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 10px;">
+                <div style="background: linear-gradient(135deg, #10b981 0%, #047857 100%); border-radius: 6px; padding: 8px; color: white;">
+                    <div style="font-size: 9px; opacity: 0.85; margin-bottom: 3px;">TOTAL RECRUITERS</div>
+                    <div style="font-size: 22px; font-weight: 700;" id="recruiterTotalCount">0</div>
+                </div>
+                <div style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); border-radius: 6px; padding: 8px; color: white;">
+                    <div style="font-size: 9px; opacity: 0.85; margin-bottom: 3px;">OVERALL ACCURACY</div>
+                    <div style="font-size: 22px; font-weight: 700;" id="recruiterOverallAccuracy">0%</div>
+                </div>
+                <div style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); border-radius: 6px; padding: 8px; color: white;">
+                    <div style="font-size: 9px; opacity: 0.85; margin-bottom: 3px;">TOTAL AUDITS</div>
+                    <div style="font-size: 22px; font-weight: 700;" id="recruiterTotalAudits">0</div>
+                </div>
+                <div style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border-radius: 6px; padding: 8px; color: white;">
+                    <div style="font-size: 9px; opacity: 0.85; margin-bottom: 3px;">CRITICAL ACCURACY</div>
+                    <div style="font-size: 22px; font-weight: 700;" id="recruiterCriticalAccuracy">0%</div>
+                </div>
+                <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 6px; padding: 8px; color: white;">
+                    <div style="font-size: 9px; opacity: 0.85; margin-bottom: 3px;">NON-CRITICAL ACC</div>
+                    <div style="font-size: 22px; font-weight: 700;" id="recruiterNonCriticalAccuracy">0%</div>
+                </div>
+                <div style="background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%); border-radius: 6px; padding: 8px; color: white;">
+                    <div style="font-size: 9px; opacity: 0.85; margin-bottom: 3px;">AVG AUDITS/RECRUITER</div>
+                    <div style="font-size: 22px; font-weight: 700;" id="recruiterAvgAudits">0</div>
+                </div>
+            </div>
+
+            <!-- Main Content: 3 sections -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                <!-- Critical vs Non-Critical Performance -->
+                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 10px;">
+                    <h3 style="font-size: 12px; font-weight: 700; color: var(--text-primary); margin: 0 0 8px 0;">
+                        <i class="fas fa-exclamation-triangle" style="color: var(--primary); font-size: 11px;"></i> Critical vs Non-Critical Performance
+                    </h3>
+                    <div style="height: 250px; position: relative;">
+                        <canvas id="recruiterCriticalChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Stage-wise Performance -->
+                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 10px;">
+                    <h3 style="font-size: 12px; font-weight: 700; color: var(--text-primary); margin: 0 0 8px 0;">
+                        <i class="fas fa-layer-group" style="color: var(--primary); font-size: 11px;"></i> Stage-wise Performance
+                    </h3>
+                    <div style="height: 250px; position: relative;">
+                        <canvas id="recruiterStageChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recruiter-wise Performance Table -->
+            <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 10px; margin-bottom: 10px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <h3 style="font-size: 12px; font-weight: 700; color: var(--text-primary); margin: 0;">
+                        <i class="fas fa-user-tie" style="color: var(--primary); font-size: 11px;"></i> Recruiter-wise Performance
+                    </h3>
+                    <input type="text" id="recruiterSearch" placeholder="Search recruiter..." onkeyup="filterRecruiterTable()" 
+                        style="padding: 4px 8px; font-size: 10px; border: 1px solid var(--border); border-radius: 4px; width: 200px;">
+                </div>
+                <div id="recruiterTableContainer" style="max-height: 400px; overflow-y: auto;">
+                    <!-- Table will be populated here -->
+                </div>
+            </div>
+
+            <!-- Recruiter-Parameter Detailed View -->
+            <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 10px;">
+                <h3 style="font-size: 12px; font-weight: 700; color: var(--text-primary); margin: 0 0 8px 0;">
+                    <i class="fas fa-th" style="color: var(--primary); font-size: 11px;"></i> Recruiter-Parameter Detailed Performance
+                </h3>
+                <div id="recruiterParameterTableContainer" style="max-height: 500px; overflow-y: auto;">
+                    <!-- Detailed table will be populated here -->
+                </div>
             </div>
         </div>
 
@@ -4550,6 +4650,651 @@ Total Population: ${totalPop}
         }
 
         // ==========================================
+        // RECRUITER INSIGHT TAB
+        // Data source: Recruiter_Audit_Count sheet
+        // Custom accuracy calculation: Count("1") / (Count("1"+"0"+"NA") - Count("NA"))
+        // ==========================================
+
+        let recruiterCriticalChartInstance = null;
+        let recruiterStageChartInstance = null;
+        let recruiterTableData = [];
+        let recruiterParameterData = [];
+
+        function refreshRecruiterTab() {
+            try {
+                console.log('🔄 Refreshing Recruiter Insight tab');
+                
+                if (!dashboardData || !dashboardData.recruiterAuditCount) {
+                    console.log('⚠️ No Recruiter Audit Count data available');
+                    return;
+                }
+
+                // Populate filters
+                populateRecruiterFilters();
+                
+                // Apply filters (will show all data initially)
+                applyRecruiterFilters();
+                
+                console.log('✅ Recruiter Insight tab refreshed');
+            } catch (error) {
+                handleError(error, 'refreshRecruiterTab');
+            }
+        }
+
+        function populateRecruiterFilters() {
+            try {
+                const data = dashboardData.recruiterAuditCount;
+                
+                // Get unique values from correct columns
+                // Column A - Account
+                const accounts = [...new Set(data.map(row => String(row['Account'] || '').trim()))].filter(v => v).sort();
+                // Column C - Month
+                const months = [...new Set(data.map(row => String(row['Month'] || '').trim()))].filter(v => v);
+                // Column G - Program Manager
+                const programManagers = [...new Set(data.map(row => String(row['Program Manager'] || '').trim()))].filter(v => v).sort();
+                // Column N - Region
+                const regions = [...new Set(data.map(row => String(row['Region'] || '').trim()))].filter(v => v).sort();
+                // Regional Head - need to check column
+                const regionalHeads = [...new Set(data.map(row => String(row['Regional Head'] || '').trim()))].filter(v => v).sort();
+                
+                // Sort months chronologically
+                const monthOrder = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                months.sort((a, b) => monthOrder.indexOf(a) - monthOrder.indexOf(b));
+                
+                // Populate Account filter
+                const accountSelect = document.getElementById('recruiterFilterAccount');
+                if (accountSelect) {
+                    accountSelect.innerHTML = '<option value="">All Accounts</option>';
+                    accounts.forEach(account => {
+                        accountSelect.innerHTML += `<option value="${account}">${account}</option>`;
+                    });
+                }
+                
+                // Populate Month filter
+                const monthSelect = document.getElementById('recruiterFilterMonth');
+                if (monthSelect) {
+                    monthSelect.innerHTML = '<option value="">All Months</option>';
+                    months.forEach(month => {
+                        monthSelect.innerHTML += `<option value="${month}">${month}</option>`;
+                    });
+                }
+                
+                // Populate Regional Head filter
+                const regionalHeadSelect = document.getElementById('recruiterFilterRegionalHead');
+                if (regionalHeadSelect) {
+                    regionalHeadSelect.innerHTML = '<option value="">All Regional Heads</option>';
+                    regionalHeads.forEach(rh => {
+                        regionalHeadSelect.innerHTML += `<option value="${rh}">${rh}</option>`;
+                    });
+                }
+                
+                // Populate Program Manager filter
+                const programManagerSelect = document.getElementById('recruiterFilterProgramManager');
+                if (programManagerSelect) {
+                    programManagerSelect.innerHTML = '<option value="">All Program Managers</option>';
+                    programManagers.forEach(pm => {
+                        programManagerSelect.innerHTML += `<option value="${pm}">${pm}</option>`;
+                    });
+                }
+                
+                // Populate Region filter
+                const regionSelect = document.getElementById('recruiterFilterRegion');
+                if (regionSelect) {
+                    regionSelect.innerHTML = '<option value="">All Regions</option>';
+                    regions.forEach(region => {
+                        regionSelect.innerHTML += `<option value="${region}">${region}</option>`;
+                    });
+                }
+                
+                console.log('✅ Recruiter filters populated:', {
+                    accounts: accounts.length,
+                    months: months.length,
+                    regionalHeads: regionalHeads.length,
+                    programManagers: programManagers.length,
+                    regions: regions.length
+                });
+            } catch (error) {
+                handleError(error, 'populateRecruiterFilters');
+            }
+        }
+
+        function applyRecruiterFilters() {
+            try {
+                const accountFilter = document.getElementById('recruiterFilterAccount')?.value || '';
+                const monthFilter = document.getElementById('recruiterFilterMonth')?.value || '';
+                const regionalHeadFilter = document.getElementById('recruiterFilterRegionalHead')?.value || '';
+                const programManagerFilter = document.getElementById('recruiterFilterProgramManager')?.value || '';
+                const regionFilter = document.getElementById('recruiterFilterRegion')?.value || '';
+                
+                let filteredData = dashboardData.recruiterAuditCount.filter(row => {
+                    return (!accountFilter || String(row['Account'] || '').trim() === accountFilter) &&
+                           (!monthFilter || String(row['Month'] || '').trim() === monthFilter) &&
+                           (!regionalHeadFilter || String(row['Regional Head'] || '').trim() === regionalHeadFilter) &&
+                           (!programManagerFilter || String(row['Program Manager'] || '').trim() === programManagerFilter) &&
+                           (!regionFilter || String(row['Region'] || '').trim() === regionFilter);
+                });
+                
+                console.log(`🔍 Filters applied: ${filteredData.length} rows`);
+                
+                // Calculate and display metrics
+                calculateRecruiterMetrics(filteredData);
+                generateRecruiterSummary(filteredData);
+                generateCriticalNonCriticalChart(filteredData);
+                generateStageChart(filteredData);
+                generateRecruiterTable(filteredData);
+                generateRecruiterParameterTable(filteredData);
+                
+            } catch (error) {
+                handleError(error, 'applyRecruiterFilters');
+            }
+        }
+
+        function clearRecruiterFilters() {
+            try {
+                document.getElementById('recruiterFilterAccount').value = '';
+                document.getElementById('recruiterFilterMonth').value = '';
+                document.getElementById('recruiterFilterRegionalHead').value = '';
+                document.getElementById('recruiterFilterProgramManager').value = '';
+                document.getElementById('recruiterFilterRegion').value = '';
+                applyRecruiterFilters();
+                console.log('✅ Recruiter filters cleared');
+            } catch (error) {
+                handleError(error, 'clearRecruiterFilters');
+            }
+        }
+
+        function calculateRecruiterMetrics(data) {
+            try {
+                // Custom Accuracy Calculation: Count("1") / (Count("1"+"0"+"NA") - Count("NA"))
+                // Column K contains: "1" (pass), "0" (fail), "NA" (not applicable)
+                
+                let totalCount1 = 0;
+                let totalCount0 = 0;
+                let totalCountNA = 0;
+                let criticalCount1 = 0, criticalCount0 = 0, criticalCountNA = 0;
+                let nonCriticalCount1 = 0, nonCriticalCount0 = 0, nonCriticalCountNA = 0;
+                
+                const uniqueRecruiters = new Set();
+                
+                data.forEach(row => {
+                    const accuracy = String(row['Accuracy'] || '').trim(); // Column K
+                    const criticalType = String(row['Critical/Non Critical'] || '').trim();
+                    const recruiter = String(row['Recruiter Name'] || '').trim();
+                    
+                    if (recruiter) uniqueRecruiters.add(recruiter);
+                    
+                    if (accuracy === '1') {
+                        totalCount1++;
+                        if (criticalType === 'Critical') criticalCount1++;
+                        if (criticalType === 'Non Critical') nonCriticalCount1++;
+                    } else if (accuracy === '0') {
+                        totalCount0++;
+                        if (criticalType === 'Critical') criticalCount0++;
+                        if (criticalType === 'Non Critical') nonCriticalCount0++;
+                    } else if (accuracy === 'NA') {
+                        totalCountNA++;
+                        if (criticalType === 'Critical') criticalCountNA++;
+                        if (criticalType === 'Non Critical') nonCriticalCountNA++;
+                    }
+                });
+                
+                // Overall Accuracy: Count("1") / (Count("1"+"0"+"NA") - Count("NA"))
+                const totalAll = totalCount1 + totalCount0 + totalCountNA;
+                const overallDenominator = totalAll - totalCountNA;
+                const overallAccuracy = overallDenominator > 0 ? (totalCount1 / overallDenominator * 100) : 0;
+                
+                // Critical Accuracy
+                const criticalAll = criticalCount1 + criticalCount0 + criticalCountNA;
+                const criticalDenominator = criticalAll - criticalCountNA;
+                const criticalAccuracy = criticalDenominator > 0 ? (criticalCount1 / criticalDenominator * 100) : 0;
+                
+                // Non-Critical Accuracy
+                const nonCriticalAll = nonCriticalCount1 + nonCriticalCount0 + nonCriticalCountNA;
+                const nonCriticalDenominator = nonCriticalAll - nonCriticalCountNA;
+                const nonCriticalAccuracy = nonCriticalDenominator > 0 ? (nonCriticalCount1 / nonCriticalDenominator * 100) : 0;
+                
+                // Total audits (all rows)
+                const totalAudits = data.length;
+                
+                // Average audits per recruiter
+                const avgAudits = uniqueRecruiters.size > 0 ? Math.round(totalAudits / uniqueRecruiters.size) : 0;
+                
+                // Update KPIs
+                safeSetText('recruiterTotalCount', uniqueRecruiters.size);
+                safeSetText('recruiterOverallAccuracy', overallAccuracy.toFixed(1) + '%');
+                safeSetText('recruiterTotalAudits', totalAudits.toLocaleString());
+                safeSetText('recruiterCriticalAccuracy', criticalAccuracy.toFixed(1) + '%');
+                safeSetText('recruiterNonCriticalAccuracy', nonCriticalAccuracy.toFixed(1) + '%');
+                safeSetText('recruiterAvgAudits', avgAudits.toLocaleString());
+                
+                console.log('✅ Recruiter metrics calculated:', {
+                    recruiters: uniqueRecruiters.size,
+                    overallAccuracy: overallAccuracy.toFixed(1) + '%',
+                    criticalAccuracy: criticalAccuracy.toFixed(1) + '%',
+                    nonCriticalAccuracy: nonCriticalAccuracy.toFixed(1) + '%',
+                    totalAudits: totalAudits,
+                    avgAudits: avgAudits
+                });
+            } catch (error) {
+                handleError(error, 'calculateRecruiterMetrics');
+            }
+        }
+
+        function generateRecruiterSummary(data) {
+            try {
+                // Calculate metrics for summary
+                const uniqueRecruiters = [...new Set(data.map(row => String(row['Recruiter Name'] || '').trim()))].filter(v => v);
+                const uniqueAccounts = [...new Set(data.map(row => String(row['Account'] || '').trim()))].filter(v => v);
+                const uniqueRegions = [...new Set(data.map(row => String(row['Region'] || '').trim()))].filter(v => v);
+                
+                // Calculate overall accuracy
+                let count1 = 0, count0 = 0, countNA = 0;
+                data.forEach(row => {
+                    const acc = String(row['Accuracy'] || '').trim();
+                    if (acc === '1') count1++;
+                    else if (acc === '0') count0++;
+                    else if (acc === 'NA') countNA++;
+                });
+                
+                const totalAll = count1 + count0 + countNA;
+                const denominator = totalAll - countNA;
+                const overallAccuracy = denominator > 0 ? (count1 / denominator * 100) : 0;
+                
+                // Performance rating
+                let rating = '', ratingColor = '';
+                if (overallAccuracy >= 95) {
+                    rating = 'Excellent';
+                    ratingColor = '#10b981';
+                } else if (overallAccuracy >= 85) {
+                    rating = 'Good';
+                    ratingColor = '#3b82f6';
+                } else if (overallAccuracy >= 75) {
+                    rating = 'Satisfactory';
+                    ratingColor = '#f59e0b';
+                } else {
+                    rating = 'Needs Improvement';
+                    ratingColor = '#ef4444';
+                }
+                
+                const html = `
+                    <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                        <i class="fas fa-users" style="color: var(--primary); font-size: 14px; margin-right: 8px;"></i>
+                        <h3 style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin: 0;">Recruiter Performance Summary</h3>
+                    </div>
+                    <div style="font-size: 11px; line-height: 1.7; color: var(--text-secondary);">
+                        <p style="margin: 0 0 8px 0;">
+                            <span style="font-weight: 700; color: var(--text-primary);">Overall Rating:</span> 
+                            <span style="background: ${ratingColor}; color: white; padding: 2px 8px; border-radius: 10px; font-weight: 700; font-size: 10px;">${rating}</span>
+                            with <strong>${overallAccuracy.toFixed(1)}%</strong> accuracy across <strong>${data.length.toLocaleString()}</strong> audits.
+                        </p>
+                        <p style="margin: 0;">
+                            <span style="font-weight: 700; color: var(--text-primary);">Coverage:</span> 
+                            <strong>${uniqueRecruiters.length}</strong> recruiters audited across <strong>${uniqueAccounts.length}</strong> account(s) 
+                            and <strong>${uniqueRegions.length}</strong> region(s). 
+                            Average of <strong>${Math.round(data.length / uniqueRecruiters.length)}</strong> audits per recruiter.
+                        </p>
+                    </div>
+                `;
+                
+                safeSetHTML('recruiterSummarySection', html);
+            } catch (error) {
+                handleError(error, 'generateRecruiterSummary');
+            }
+        }
+
+        function generateCriticalNonCriticalChart(data) {
+            try {
+                // Calculate Critical and Non-Critical accuracy
+                let criticalCount1 = 0, criticalCount0 = 0, criticalCountNA = 0;
+                let nonCriticalCount1 = 0, nonCriticalCount0 = 0, nonCriticalCountNA = 0;
+                
+                data.forEach(row => {
+                    const accuracy = String(row['Accuracy'] || '').trim();
+                    const criticalType = String(row['Critical/Non Critical'] || '').trim();
+                    
+                    if (criticalType === 'Critical') {
+                        if (accuracy === '1') criticalCount1++;
+                        else if (accuracy === '0') criticalCount0++;
+                        else if (accuracy === 'NA') criticalCountNA++;
+                    } else if (criticalType === 'Non Critical') {
+                        if (accuracy === '1') nonCriticalCount1++;
+                        else if (accuracy === '0') nonCriticalCount0++;
+                        else if (accuracy === 'NA') nonCriticalCountNA++;
+                    }
+                });
+                
+                const criticalAll = criticalCount1 + criticalCount0 + criticalCountNA;
+                const criticalDenom = criticalAll - criticalCountNA;
+                const criticalAcc = criticalDenom > 0 ? (criticalCount1 / criticalDenom * 100) : 0;
+                
+                const nonCriticalAll = nonCriticalCount1 + nonCriticalCount0 + nonCriticalCountNA;
+                const nonCriticalDenom = nonCriticalAll - nonCriticalCountNA;
+                const nonCriticalAcc = nonCriticalDenom > 0 ? (nonCriticalCount1 / nonCriticalDenom * 100) : 0;
+                
+                // Destroy existing chart
+                if (recruiterCriticalChartInstance) {
+                    recruiterCriticalChartInstance.destroy();
+                }
+                
+                const ctx = document.getElementById('recruiterCriticalChart');
+                if (!ctx) return;
+                
+                recruiterCriticalChartInstance = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Critical', 'Non-Critical'],
+                        datasets: [{
+                            label: 'Accuracy %',
+                            data: [criticalAcc.toFixed(1), nonCriticalAcc.toFixed(1)],
+                            backgroundColor: ['rgba(239, 68, 68, 0.8)', 'rgba(16, 185, 129, 0.8)'],
+                            borderColor: ['rgba(239, 68, 68, 1)', 'rgba(16, 185, 129, 1)'],
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                ticks: { font: { size: 10 } }
+                            },
+                            x: {
+                                ticks: { font: { size: 10 } }
+                            }
+                        },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: (context) => `Accuracy: ${context.parsed.y}%`
+                                }
+                            }
+                        }
+                    }
+                });
+                
+                console.log('✅ Critical/Non-Critical chart generated');
+            } catch (error) {
+                handleError(error, 'generateCriticalNonCriticalChart');
+            }
+        }
+
+        function generateStageChart(data) {
+            try {
+                // Group by Stage and calculate accuracy
+                const stageStats = {};
+                
+                data.forEach(row => {
+                    const stage = String(row['Stage'] || '').trim();
+                    const accuracy = String(row['Accuracy'] || '').trim();
+                    
+                    if (!stage) return;
+                    
+                    if (!stageStats[stage]) {
+                        stageStats[stage] = { count1: 0, count0: 0, countNA: 0 };
+                    }
+                    
+                    if (accuracy === '1') stageStats[stage].count1++;
+                    else if (accuracy === '0') stageStats[stage].count0++;
+                    else if (accuracy === 'NA') stageStats[stage].countNA++;
+                });
+                
+                const stages = Object.keys(stageStats);
+                const accuracies = stages.map(stage => {
+                    const stats = stageStats[stage];
+                    const totalAll = stats.count1 + stats.count0 + stats.countNA;
+                    const denom = totalAll - stats.countNA;
+                    return denom > 0 ? (stats.count1 / denom * 100).toFixed(1) : 0;
+                });
+                
+                // Destroy existing chart
+                if (recruiterStageChartInstance) {
+                    recruiterStageChartInstance.destroy();
+                }
+                
+                const ctx = document.getElementById('recruiterStageChart');
+                if (!ctx) return;
+                
+                recruiterStageChartInstance = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: stages,
+                        datasets: [{
+                            label: 'Accuracy %',
+                            data: accuracies,
+                            backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                            borderColor: 'rgba(59, 130, 246, 1)',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                ticks: { font: { size: 10 } }
+                            },
+                            x: {
+                                ticks: { font: { size: 10 } }
+                            }
+                        },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: (context) => `Accuracy: ${context.parsed.y}%`
+                                }
+                            }
+                        }
+                    }
+                });
+                
+                console.log('✅ Stage chart generated');
+            } catch (error) {
+                handleError(error, 'generateStageChart');
+            }
+        }
+
+        function generateRecruiterTable(data) {
+            try {
+                // Group by Recruiter
+                const recruiterStats = {};
+                
+                data.forEach(row => {
+                    const recruiter = String(row['Recruiter Name'] || '').trim();
+                    const accuracy = String(row['Accuracy'] || '').trim();
+                    
+                    if (!recruiter) return;
+                    
+                    if (!recruiterStats[recruiter]) {
+                        recruiterStats[recruiter] = { count1: 0, count0: 0, countNA: 0, totalAudits: 0 };
+                    }
+                    
+                    recruiterStats[recruiter].totalAudits++;
+                    
+                    if (accuracy === '1') recruiterStats[recruiter].count1++;
+                    else if (accuracy === '0') recruiterStats[recruiter].count0++;
+                    else if (accuracy === 'NA') recruiterStats[recruiter].countNA++;
+                });
+                
+                // Calculate accuracy for each recruiter
+                recruiterTableData = Object.entries(recruiterStats).map(([recruiter, stats]) => {
+                    const totalAll = stats.count1 + stats.count0 + stats.countNA;
+                    const denom = totalAll - stats.countNA;
+                    const accuracy = denom > 0 ? (stats.count1 / denom * 100) : null;
+                    return {
+                        recruiter: recruiter,
+                        accuracy: accuracy,
+                        totalAudits: stats.totalAudits,
+                        count1: stats.count1,
+                        count0: stats.count0,
+                        countNA: stats.countNA
+                    };
+                }).sort((a, b) => {
+                    if (a.accuracy === null && b.accuracy === null) return 0;
+                    if (a.accuracy === null) return 1;
+                    if (b.accuracy === null) return -1;
+                    return b.accuracy - a.accuracy;
+                });
+                
+                const html = `
+                    <table style="width: 100%; border-collapse: collapse; font-size: 10px;">
+                        <thead style="position: sticky; top: 0; background: white; z-index: 10;">
+                            <tr style="border-bottom: 2px solid var(--border); background: rgba(255, 140, 66, 0.05);">
+                                <th style="padding: 6px 8px; text-align: left; font-size: 10px; font-weight: 700; color: #000;">Recruiter Name</th>
+                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: #000;">Accuracy %</th>
+                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: #000;">Total Audits</th>
+                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: #000;">Pass (1)</th>
+                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: #000;">Fail (0)</th>
+                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: #000;">NA</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${recruiterTableData.map(row => `
+                                <tr class="recruiter-row" data-recruiter="${row.recruiter.toLowerCase()}" style="border-bottom: 1px solid var(--border);">
+                                    <td style="padding: 6px 8px; font-size: 10px; color: var(--text-primary); font-weight: 600;">${row.recruiter}</td>
+                                    <td style="padding: 6px 8px; text-align: center;">
+                                        ${row.accuracy === null ? '<span style="color: #6b7280; font-size: 9px; font-weight: 700;">NA</span>' : 
+                                        `<span style="background: ${row.accuracy >= 90 ? '#10b981' : row.accuracy >= 70 ? '#f59e0b' : '#ef4444'}; color: white; padding: 3px 8px; border-radius: 10px; font-size: 9px; font-weight: 700;">${row.accuracy.toFixed(1)}%</span>`}
+                                    </td>
+                                    <td style="padding: 6px 8px; text-align: center; font-size: 10px; color: var(--text-primary);">${row.totalAudits}</td>
+                                    <td style="padding: 6px 8px; text-align: center; font-size: 10px; color: #10b981; font-weight: 600;">${row.count1}</td>
+                                    <td style="padding: 6px 8px; text-align: center; font-size: 10px; color: #ef4444; font-weight: 600;">${row.count0}</td>
+                                    <td style="padding: 6px 8px; text-align: center; font-size: 10px; color: #6b7280;">${row.countNA}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                
+                safeSetHTML('recruiterTableContainer', html);
+                console.log('✅ Recruiter table generated:', recruiterTableData.length, 'recruiters');
+            } catch (error) {
+                handleError(error, 'generateRecruiterTable');
+            }
+        }
+
+        function generateRecruiterParameterTable(data) {
+            try {
+                // Group by Recruiter and Parameter
+                const recruiterParamStats = {};
+                
+                data.forEach(row => {
+                    const recruiter = String(row['Recruiter Name'] || '').trim();
+                    const parameter = String(row['Parameter'] || '').trim();
+                    const accuracy = String(row['Accuracy'] || '').trim();
+                    
+                    if (!recruiter || !parameter) return;
+                    
+                    const key = `${recruiter}|||${parameter}`;
+                    
+                    if (!recruiterParamStats[key]) {
+                        recruiterParamStats[key] = {
+                            recruiter: recruiter,
+                            parameter: parameter,
+                            count1: 0,
+                            count0: 0,
+                            countNA: 0,
+                            totalAudits: 0
+                        };
+                    }
+                    
+                    recruiterParamStats[key].totalAudits++;
+                    
+                    if (accuracy === '1') recruiterParamStats[key].count1++;
+                    else if (accuracy === '0') recruiterParamStats[key].count0++;
+                    else if (accuracy === 'NA') recruiterParamStats[key].countNA++;
+                });
+                
+                // Calculate accuracy for each recruiter-parameter combination
+                recruiterParameterData = Object.values(recruiterParamStats).map(stats => {
+                    const totalAll = stats.count1 + stats.count0 + stats.countNA;
+                    const denom = totalAll - stats.countNA;
+                    const accuracy = denom > 0 ? (stats.count1 / denom * 100) : null;
+                    return {
+                        recruiter: stats.recruiter,
+                        parameter: stats.parameter,
+                        accuracy: accuracy,
+                        totalAudits: stats.totalAudits,
+                        count1: stats.count1,
+                        count0: stats.count0,
+                        countNA: stats.countNA
+                    };
+                }).sort((a, b) => {
+                    // Sort by recruiter, then accuracy
+                    if (a.recruiter !== b.recruiter) return a.recruiter.localeCompare(b.recruiter);
+                    if (a.accuracy === null && b.accuracy === null) return 0;
+                    if (a.accuracy === null) return 1;
+                    if (b.accuracy === null) return -1;
+                    return b.accuracy - a.accuracy;
+                });
+                
+                const html = `
+                    <table style="width: 100%; border-collapse: collapse; font-size: 10px;">
+                        <thead style="position: sticky; top: 0; background: white; z-index: 10;">
+                            <tr style="border-bottom: 2px solid var(--border); background: rgba(59, 130, 246, 0.05);">
+                                <th style="padding: 6px 8px; text-align: left; font-size: 10px; font-weight: 700; color: #000;">Recruiter Name</th>
+                                <th style="padding: 6px 8px; text-align: left; font-size: 10px; font-weight: 700; color: #000;">Parameter</th>
+                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: #000;">Accuracy %</th>
+                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: #000;">Audit Count</th>
+                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: #000;">Pass (1)</th>
+                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: #000;">Fail (0)</th>
+                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: #000;">NA</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${recruiterParameterData.map((row, idx) => {
+                                const prevRow = idx > 0 ? recruiterParameterData[idx - 1] : null;
+                                const showRecruiter = !prevRow || prevRow.recruiter !== row.recruiter;
+                                return `
+                                <tr style="border-bottom: 1px solid var(--border);">
+                                    <td style="padding: 6px 8px; font-size: 10px; color: var(--text-primary); font-weight: ${showRecruiter ? '700' : '400'}; ${showRecruiter ? 'border-top: 2px solid var(--border);' : ''}">${showRecruiter ? row.recruiter : ''}</td>
+                                    <td style="padding: 6px 8px; font-size: 10px; color: var(--text-secondary);">${row.parameter}</td>
+                                    <td style="padding: 6px 8px; text-align: center;">
+                                        ${row.accuracy === null ? '<span style="color: #6b7280; font-size: 9px; font-weight: 700;">NA</span>' : 
+                                        `<span style="background: ${row.accuracy >= 90 ? '#10b981' : row.accuracy >= 70 ? '#f59e0b' : '#ef4444'}; color: white; padding: 3px 8px; border-radius: 10px; font-size: 9px; font-weight: 700;">${row.accuracy.toFixed(1)}%</span>`}
+                                    </td>
+                                    <td style="padding: 6px 8px; text-align: center; font-size: 10px; color: var(--text-primary);">${row.totalAudits}</td>
+                                    <td style="padding: 6px 8px; text-align: center; font-size: 10px; color: #10b981; font-weight: 600;">${row.count1}</td>
+                                    <td style="padding: 6px 8px; text-align: center; font-size: 10px; color: #ef4444; font-weight: 600;">${row.count0}</td>
+                                    <td style="padding: 6px 8px; text-align: center; font-size: 10px; color: #6b7280;">${row.countNA}</td>
+                                </tr>
+                            `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                `;
+                
+                safeSetHTML('recruiterParameterTableContainer', html);
+                console.log('✅ Recruiter-Parameter table generated:', recruiterParameterData.length, 'rows');
+            } catch (error) {
+                handleError(error, 'generateRecruiterParameterTable');
+            }
+        }
+
+        function filterRecruiterTable() {
+            try {
+                const searchValue = document.getElementById('recruiterSearch').value.toLowerCase();
+                const rows = document.querySelectorAll('.recruiter-row');
+                
+                rows.forEach(row => {
+                    const recruiterName = row.getAttribute('data-recruiter');
+                    if (recruiterName.includes(searchValue)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            } catch (error) {
+                handleError(error, 'filterRecruiterTable');
+            }
+        }
+
+        // ==========================================
         // 🔄 INDEPENDENT TAB SYSTEM
         // Each tab is now refreshed independently when switched to
         // This function is kept for backward compatibility (initial data load)
@@ -4559,6 +5304,7 @@ Total Population: ${totalPop}
             refreshAccountSummaryTab();
             refreshTransactionalTab();
             refreshParameterPerformanceTab(); // Parameter Performance Tab
+            refreshRecruiterTab(); // Recruiter Insight Tab
         }
 
         // ==========================================
