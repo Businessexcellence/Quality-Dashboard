@@ -5544,15 +5544,16 @@ Total Population: ${totalPop}
             const keys = Object.keys(item);
             
             // Column I (9th column, index 8) - Status
+            // PRIORITY: Header names first (most common when Excel has headers)
             const possibleKeys = [
-                'I',          // Direct column letter
-                '__EMPTY_8',  // XLSX headerless column naming
-                keys[8],      // 9th column by index
                 'Status',
                 'status',
                 'RCA STATUS',
                 'CAPA STATUS',
-                'STATUS'
+                'STATUS',
+                'I',          // Direct column letter
+                '__EMPTY_8',  // XLSX headerless column naming
+                keys[8]       // 9th column by index
             ];
             
             for (const key of possibleKeys) {
@@ -5568,15 +5569,16 @@ Total Population: ${totalPop}
             const keys = Object.keys(item);
             
             // Column C (3rd column, index 2) - Error Type
+            // PRIORITY: Header names first (most common when Excel has headers)
             const possibleKeys = [
-                'C',          // Direct column letter
-                '__EMPTY_2',  // XLSX headerless column naming
-                keys[2],      // 3rd column by index
                 'Error Type',
                 'ERROR TYPE',
                 'ErrorType',
                 'Error',
-                'Type'
+                'Type',
+                'C',          // Direct column letter
+                '__EMPTY_2',  // XLSX headerless column naming
+                keys[2]       // 3rd column by index
             ];
             
             for (const key of possibleKeys) {
@@ -5592,14 +5594,15 @@ Total Population: ${totalPop}
             const keys = Object.keys(item);
             
             // Column D (4th column, index 3) - Impact
+            // PRIORITY: Header names first (most common when Excel has headers)
             const possibleKeys = [
-                'D',          // Direct column letter
-                '__EMPTY_3',  // XLSX headerless column naming
-                keys[3],      // 4th column by index
                 'Impact',
                 'IMPACT',
                 'Impact Level',
-                'Severity'
+                'Severity',
+                'D',          // Direct column letter
+                '__EMPTY_3',  // XLSX headerless column naming
+                keys[3]       // 4th column by index
             ];
             
             for (const key of possibleKeys) {
@@ -5615,14 +5618,15 @@ Total Population: ${totalPop}
             const keys = Object.keys(item);
             
             // Column E (5th column, index 4) - Practice Head
+            // PRIORITY: Header names first (most common when Excel has headers)
             const possibleKeys = [
-                'E',          // Direct column letter
-                '__EMPTY_4',  // XLSX headerless column naming
-                keys[4],      // 5th column by index
                 'Practice Head',
                 'PRACTICE HEAD',
                 'PracticeHead',
-                'Practice'
+                'Practice',
+                'E',          // Direct column letter
+                '__EMPTY_4',  // XLSX headerless column naming
+                keys[4]       // 5th column by index
             ];
             
             for (const key of possibleKeys) {
@@ -5638,15 +5642,16 @@ Total Population: ${totalPop}
             const keys = Object.keys(item);
             
             // Column H (8th column, index 7) - Financial Year
+            // PRIORITY: Header names first (most common when Excel has headers)
             const possibleKeys = [
-                'H',          // Direct column letter
-                '__EMPTY_7',  // XLSX headerless column naming
-                keys[7],      // 8th column by index
                 'Financial Year',
                 'FINANCIAL YEAR',
                 'FinancialYear',
                 'FY',
-                'Year'
+                'Year',
+                'H',          // Direct column letter
+                '__EMPTY_7',  // XLSX headerless column naming
+                keys[7]       // 8th column by index
             ];
             
             for (const key of possibleKeys) {
@@ -5662,12 +5667,13 @@ Total Population: ${totalPop}
             const keys = Object.keys(item);
             
             // Column J (10th column, index 9) - Region
+            // PRIORITY: Header names first (most common when Excel has headers)
             const possibleKeys = [
+                'Region',
+                'REGION',
                 'J',          // Direct column letter
                 '__EMPTY_9',  // XLSX headerless column naming
-                keys[9],      // 10th column by index
-                'Region',
-                'REGION'
+                keys[9]       // 10th column by index
             ];
             
             for (const key of possibleKeys) {
