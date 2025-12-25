@@ -2191,15 +2191,28 @@
                     }
                     
                     // RCA_CAPA
+                    console.log('🔍 Searching for RCA & CAPA sheet...');
                     let rcaData = parseSheet(workbook, 'RCA_CAPA');
                     if (!rcaData || rcaData.length === 0) {
+                        console.log('🔍 Trying "RCA CAPA" (with space)...');
                         rcaData = parseSheet(workbook, 'RCA CAPA');
+                    }
+                    if (!rcaData || rcaData.length === 0) {
+                        console.log('🔍 Trying "RCA&CAPA" (with ampersand)...');
+                        rcaData = parseSheet(workbook, 'RCA&CAPA');
+                    }
+                    if (!rcaData || rcaData.length === 0) {
+                        console.log('🔍 Trying "RCACAPA" (no separator)...');
+                        rcaData = parseSheet(workbook, 'RCACAPA');
                     }
                     window.dashboardData.rcaCapa = rcaData || [];
                     console.log('✅ RCA_CAPA rows:', window.dashboardData.rcaCapa.length);
                     if (window.dashboardData.rcaCapa.length > 0) {
                         console.log('📋 RCA_CAPA sample row:', window.dashboardData.rcaCapa[0]);
                         console.log('📋 RCA_CAPA columns:', Object.keys(window.dashboardData.rcaCapa[0]));
+                    } else {
+                        console.warn('⚠️ RCA_CAPA sheet not found or empty');
+                        console.warn('📋 Available sheets:', workbook.SheetNames.join(', '));
                     }
                     
                     // Projects
@@ -6675,6 +6688,15 @@ Total Population: ${totalPop}
                 
                 const rcaCapaData = window.dashboardData.rcaCapa;
                 console.log(`📊 RCA & CAPA data loaded: ${rcaCapaData.length} items`);
+                
+                // CRITICAL: Set window.allRcaCapa for global access
+                window.allRcaCapa = rcaCapaData;
+                console.log('✅ window.allRcaCapa set with', window.allRcaCapa.length, 'items');
+                
+                if (rcaCapaData.length > 0) {
+                    console.log('📋 Sample RCA item:', rcaCapaData[0]);
+                    console.log('📋 RCA columns:', Object.keys(rcaCapaData[0]));
+                }
                 
                 // Populate filters
                 populateRcaCapaFilters(rcaCapaData);
