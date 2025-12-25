@@ -7500,8 +7500,8 @@ Total Population: ${totalPop}
                 const item = window.filteredRcaCapa[index];
                 console.log('📄 Showing RCA & CAPA details:', item);
                 
-                // Extract details
-                const account = item['Account'] || 'N/A';
+                // Extract details using helper functions
+                const account = window.getRcaAccount(item) || 'N/A';
                 const errorType = window.getErrorType(item) || 'N/A';
                 const impact = window.getImpact(item) || 'N/A';
                 const status = window.getRcaCapaStatus(item) || 'N/A';
@@ -7511,10 +7511,6 @@ Total Population: ${totalPop}
                 
                 // Get Problem Statement (COMPLETE - no truncation)
                 const problemStatement = item['Problem Statement'] || item['Description'] || item['Issue Description'] || 'N/A';
-                const rootCause = item['Root Cause'] || item['RCA'] || 'N/A';
-                const correctiveAction = item['Corrective Action'] || item['CAPA'] || item['Action'] || 'N/A';
-                const owner = item['Owner'] || item['Assigned To'] || 'N/A';
-                const dueDate = item['Due Date'] || item['Target Date'] || 'N/A';
                 
                 // Status color
                 let statusColor = '#64748b';
