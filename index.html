@@ -4970,6 +4970,12 @@ Total Population: ${totalPop}
 
         function applyStrategicFilters() {
             try {
+                const strategicData = window.dashboardData;
+                if (!strategicData || !strategicData.projects || !strategicData.rcaCapa) {
+                    console.error('❌ Strategic data not available');
+                    return;
+                }
+
                 const regionFilter = document.getElementById('strategicFilterRegion')?.value || '';
                 const accountFilter = document.getElementById('strategicFilterAccount')?.value || '';
                 const yearFilter = document.getElementById('strategicFilterYear')?.value || '';
@@ -4991,182 +4997,324 @@ Total Population: ${totalPop}
                            (!practiceHeadFilter || String(row['Practice Head'] || '').trim() === practiceHeadFilter);
                 });
 
-                // Apply status filter
-                if (currentStatusFilter !== 'all') {
-                    filteredProjects = filterByStatusLogic(filteredProjects, currentStatusFilter);
-                    filteredRcaCapa = filterByStatusLogic(filteredRcaCapa, currentStatusFilter);
-                }
+                // Generate executive dashboard components
+                generateExecutiveSummary(filteredProjects, filteredRcaCapa);
+                generateStatusChart(filteredProjects, filteredRcaCapa);
+                generateKeyMetrics(filteredProjects, filteredRcaCapa);
+                generateProjectsSummary(filteredProjects);
+                generateRcaCapaSummary(filteredRcaCapa);
 
-                // Update status counts
-                updateStatusCounts(filteredProjects, filteredRcaCapa);
-
-                // Generate tables
-                generateProjectTable(filteredProjects);
-                generateRcaCapaTable(filteredRcaCapa);
-
-                console.log(`🔍 Strategic filters applied: ${filteredProjects.length} projects, ${filteredRcaCapa.length} RCA/CAPA`);
+                console.log(`📊 Strategic executive view updated: ${filteredProjects.length} projects, ${filteredRcaCapa.length} RCA/CAPA`);
             } catch (error) {
                 handleError(error, 'applyStrategicFilters');
             }
         }
 
-        function filterByStatusLogic(data, status) {
-            if (status === 'all') return data;
-            if (status === 'open') return data.filter(row => String(row['Status'] || '').toLowerCase().includes('open'));
-            if (status === 'closed') return data.filter(row => String(row['Status'] || '').toLowerCase().includes('closed') || String(row['Status'] || '').toLowerCase().includes('complete'));
-            if (status === 'progress') return data.filter(row => String(row['Status'] || '').toLowerCase().includes('progress') || String(row['Status'] || '').toLowerCase().includes('ongoing'));
-            return data;
-        }
-
-        function filterByStatus(status) {
-            currentStatusFilter = status;
-            
-            // Update card highlights
-            document.querySelectorAll('[id^="statusCard"]').forEach(card => {
-                card.style.opacity = '0.6';
-                card.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
-            });
-            
-            const selectedCard = document.getElementById(`statusCard${status.charAt(0).toUpperCase() + status.slice(1)}`);
-            if (selectedCard) {
-                selectedCard.style.opacity = '1';
-                selectedCard.style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)';
-            }
-            
-            applyStrategicFilters();
-        }
-
-        function updateStatusCounts(projects, rcaCapa) {
-            const allData = [...projects, ...rcaCapa];
-            
-            const countAll = allData.length;
-            const countOpen = allData.filter(row => String(row['Status'] || '').toLowerCase().includes('open')).length;
-            const countClosed = allData.filter(row => String(row['Status'] || '').toLowerCase().includes('closed') || String(row['Status'] || '').toLowerCase().includes('complete')).length;
-            const countProgress = allData.filter(row => String(row['Status'] || '').toLowerCase().includes('progress') || String(row['Status'] || '').toLowerCase().includes('ongoing')).length;
-
-            safeSetText('statusCountAll', countAll);
-            safeSetText('statusCountOpen', countOpen);
-            safeSetText('statusCountClosed', countClosed);
-            safeSetText('statusCountProgress', countProgress);
-        }
-
-        function generateProjectTable(data) {
+        function generateExecutiveSummary(projects, rcaCapa) {
             try {
-                const html = `
-                    <table style="width: 100%; border-collapse: collapse; font-size: 10px;">
-                        <thead style="position: sticky; top: 0; background: white; z-index: 10;">
-                            <tr style="border-bottom: 2px solid var(--border); background: rgba(99, 102, 241, 0.05);">
-                                <th style="padding: 6px 8px; text-align: left; font-size: 10px; font-weight: 700; color: #000;">Project Name</th>
-                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: #000;">Status</th>
-                                <th style="padding: 6px 8px; text-align: left; font-size: 10px; font-weight: 700; color: #000;">Region</th>
-                                <th style="padding: 6px 8px; text-align: left; font-size: 10px; font-weight: 700; color: #000;">Account</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${data.length === 0 ? '<tr><td colspan="4" style="text-align: center; padding: 20px; color: #6b7280;">No projects found</td></tr>' : 
-                            data.map(row => {
-                                const projectName = String(row['Project Name'] || row['Project'] || 'N/A');
-                                const status = String(row['Status'] || 'N/A');
-                                const region = String(row['Region'] || 'N/A');
-                                const account = String(row['Account'] || 'N/A');
-                                
-                                let statusColor = '#6b7280';
-                                if (status.toLowerCase().includes('closed') || status.toLowerCase().includes('complete')) statusColor = '#f59e0b';
-                                else if (status.toLowerCase().includes('open')) statusColor = '#10b981';
-                                else if (status.toLowerCase().includes('progress')) statusColor = '#3b82f6';
+                const totalInitiatives = projects.length + rcaCapa.length;
+                
+                // Count completed/closed initiatives
+                const completedProjects = projects.filter(p => {
+                    const status = String(p['Status'] || '').toLowerCase();
+                    return status.includes('closed') || status.includes('complete');
+                }).length;
+                
+                const completedRcaCapa = rcaCapa.filter(r => {
+                    const status = String(r['Status'] || '').toLowerCase();
+                    return status.includes('closed') || status.includes('complete');
+                }).length;
+                
+                const totalCompleted = completedProjects + completedRcaCapa;
+                const completionRate = totalInitiatives > 0 ? Math.round((totalCompleted / totalInitiatives) * 100) : 0;
+                
+                // Count active initiatives
+                const activeProjects = projects.filter(p => {
+                    const status = String(p['Status'] || '').toLowerCase();
+                    return status.includes('open') || status.includes('progress');
+                }).length;
+                
+                const activeRcaCapa = rcaCapa.filter(r => {
+                    const status = String(r['Status'] || '').toLowerCase();
+                    return status.includes('open') || status.includes('progress');
+                }).length;
+                
+                const totalActive = activeProjects + activeRcaCapa;
+                
+                // Count unique regions and accounts for coverage
+                const uniqueRegions = new Set();
+                const uniqueAccounts = new Set();
+                
+                projects.forEach(p => {
+                    if (p['Region']) uniqueRegions.add(p['Region']);
+                    if (p['Account']) uniqueAccounts.add(p['Account']);
+                });
+                
+                rcaCapa.forEach(r => {
+                    if (r['Region']) uniqueRegions.add(r['Region']);
+                    if (r['Account']) uniqueAccounts.add(r['Account']);
+                });
+                
+                const coverage = `${uniqueRegions.size} Regions, ${uniqueAccounts.size} Accounts`;
+                
+                // Update KPI cards
+                safeSetText('strategicTotalInitiatives', totalInitiatives);
+                safeSetText('strategicCompletionRate', completionRate + '%');
+                safeSetText('strategicActive', totalActive);
+                safeSetText('strategicCoverage', coverage);
+                
+                console.log('✅ Executive summary updated:', { totalInitiatives, completionRate, totalActive, coverage });
+            } catch (error) {
+                handleError(error, 'generateExecutiveSummary');
+            }
+        }
 
-                                return `
-                                <tr class="project-row" style="border-bottom: 1px solid var(--border);">
-                                    <td style="padding: 6px 8px; font-size: 10px; color: var(--text-primary); font-weight: 600;">${projectName}</td>
-                                    <td style="padding: 6px 8px; text-align: center;">
-                                        <span style="background: ${statusColor}; color: white; padding: 2px 6px; border-radius: 8px; font-size: 8px; font-weight: 700;">${status}</span>
-                                    </td>
-                                    <td style="padding: 6px 8px; font-size: 10px; color: var(--text-secondary);">${region}</td>
-                                    <td style="padding: 6px 8px; font-size: 10px; color: var(--text-secondary);">${account}</td>
-                                </tr>
-                            `}).join('')}
-                        </tbody>
-                    </table>
+        function generateStatusChart(projects, rcaCapa) {
+            try {
+                const allData = [...projects, ...rcaCapa];
+                
+                // Count by status
+                let openCount = 0;
+                let closedCount = 0;
+                let inProgressCount = 0;
+                
+                allData.forEach(item => {
+                    const status = String(item['Status'] || '').toLowerCase();
+                    if (status.includes('open')) {
+                        openCount++;
+                    } else if (status.includes('closed') || status.includes('complete')) {
+                        closedCount++;
+                    } else if (status.includes('progress')) {
+                        inProgressCount++;
+                    }
+                });
+                
+                // Destroy existing chart if exists
+                const canvas = document.getElementById('strategicStatusChart');
+                if (!canvas) return;
+                
+                if (window.strategicChartInstance) {
+                    window.strategicChartInstance.destroy();
+                }
+                
+                const ctx = canvas.getContext('2d');
+                window.strategicChartInstance = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Open', 'Closed', 'In Progress'],
+                        datasets: [{
+                            data: [openCount, closedCount, inProgressCount],
+                            backgroundColor: ['#10b981', '#f59e0b', '#3b82f6'],
+                            borderWidth: 2,
+                            borderColor: '#fff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    font: { size: 10 },
+                                    padding: 8,
+                                    usePointStyle: true
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const label = context.label || '';
+                                        const value = context.parsed || 0;
+                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        const percentage = total > 0 ? Math.round((value / total) * 100) : 0;
+                                        return `${label}: ${value} (${percentage}%)`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+                
+                console.log('✅ Status chart generated:', { openCount, closedCount, inProgressCount });
+            } catch (error) {
+                handleError(error, 'generateStatusChart');
+            }
+        }
+
+        function generateKeyMetrics(projects, rcaCapa) {
+            try {
+                // Calculate average completion time (mock calculation - would need date fields)
+                const avgCompletionTime = '45 days'; // Placeholder
+                
+                // High priority count
+                const highPriorityProjects = projects.filter(p => {
+                    const priority = String(p['Priority'] || '').toLowerCase();
+                    return priority.includes('high') || priority.includes('critical');
+                }).length;
+                
+                const highPriorityRca = rcaCapa.filter(r => {
+                    const priority = String(r['Priority'] || '').toLowerCase();
+                    return priority.includes('high') || priority.includes('critical');
+                }).length;
+                
+                const highPriority = highPriorityProjects + highPriorityRca;
+                
+                // At-risk count (overdue or delayed)
+                const atRiskProjects = projects.filter(p => {
+                    const status = String(p['Status'] || '').toLowerCase();
+                    return status.includes('delay') || status.includes('overdue') || status.includes('risk');
+                }).length;
+                
+                const atRiskRca = rcaCapa.filter(r => {
+                    const status = String(r['Status'] || '').toLowerCase();
+                    return status.includes('delay') || status.includes('overdue') || status.includes('risk');
+                }).length;
+                
+                const atRisk = atRiskProjects + atRiskRca;
+                
+                // Recent updates (mock - would need date fields)
+                const recentUpdates = Math.min(projects.length + rcaCapa.length, 12);
+                
+                const html = `
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                        <div style="background: white; padding: 12px; border-radius: 6px; border-left: 3px solid #8b5cf6;">
+                            <div style="color: #64748b; font-size: 9px; font-weight: 600; margin-bottom: 4px;">AVG COMPLETION</div>
+                            <div style="color: #1e293b; font-size: 16px; font-weight: 700;">${avgCompletionTime}</div>
+                        </div>
+                        <div style="background: white; padding: 12px; border-radius: 6px; border-left: 3px solid #ef4444;">
+                            <div style="color: #64748b; font-size: 9px; font-weight: 600; margin-bottom: 4px;">HIGH PRIORITY</div>
+                            <div style="color: #1e293b; font-size: 16px; font-weight: 700;">${highPriority}</div>
+                        </div>
+                        <div style="background: white; padding: 12px; border-radius: 6px; border-left: 3px solid #f59e0b;">
+                            <div style="color: #64748b; font-size: 9px; font-weight: 600; margin-bottom: 4px;">AT RISK</div>
+                            <div style="color: #1e293b; font-size: 16px; font-weight: 700;">${atRisk}</div>
+                        </div>
+                        <div style="background: white; padding: 12px; border-radius: 6px; border-left: 3px solid #10b981;">
+                            <div style="color: #64748b; font-size: 9px; font-weight: 600; margin-bottom: 4px;">RECENT UPDATES</div>
+                            <div style="color: #1e293b; font-size: 16px; font-weight: 700;">${recentUpdates}</div>
+                        </div>
+                    </div>
                 `;
                 
-                safeSetHTML('projectTableContainer', html);
-                console.log('✅ Project table generated:', data.length, 'rows');
+                safeSetHTML('strategicKeyMetrics', html);
+                console.log('✅ Key metrics generated:', { highPriority, atRisk, recentUpdates });
             } catch (error) {
-                handleError(error, 'generateProjectTable');
+                handleError(error, 'generateKeyMetrics');
             }
         }
 
-        function generateRcaCapaTable(data) {
+        function generateProjectsSummary(projects) {
             try {
+                // Count by status
+                const statusCounts = {};
+                projects.forEach(p => {
+                    const status = String(p['Status'] || 'Unknown');
+                    statusCounts[status] = (statusCounts[status] || 0) + 1;
+                });
+                
+                // Get top statuses
+                const sortedStatuses = Object.entries(statusCounts)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 3);
+                
+                let statusBreakdownHTML = sortedStatuses.map(([status, count]) => {
+                    const statusLower = status.toLowerCase();
+                    let color = '#64748b';
+                    if (statusLower.includes('closed') || statusLower.includes('complete')) color = '#f59e0b';
+                    else if (statusLower.includes('open')) color = '#10b981';
+                    else if (statusLower.includes('progress')) color = '#3b82f6';
+                    
+                    return `
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                            <span style="color: #64748b; font-size: 10px;">${status}</span>
+                            <span style="color: ${color}; font-size: 10px; font-weight: 600;">${count}</span>
+                        </div>
+                    `;
+                }).join('');
+                
+                // Get regions
+                const regions = new Set();
+                projects.forEach(p => {
+                    if (p['Region']) regions.add(p['Region']);
+                });
+                
                 const html = `
-                    <table style="width: 100%; border-collapse: collapse; font-size: 10px;">
-                        <thead style="position: sticky; top: 0; background: white; z-index: 10;">
-                            <tr style="border-bottom: 2px solid var(--border); background: rgba(99, 102, 241, 0.05);">
-                                <th style="padding: 6px 8px; text-align: left; font-size: 10px; font-weight: 700; color: #000;">RCA/CAPA ID</th>
-                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: #000;">Status</th>
-                                <th style="padding: 6px 8px; text-align: left; font-size: 10px; font-weight: 700; color: #000;">Region</th>
-                                <th style="padding: 6px 8px; text-align: left; font-size: 10px; font-weight: 700; color: #000;">Account</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${data.length === 0 ? '<tr><td colspan="4" style="text-align: center; padding: 20px; color: #6b7280;">No RCA/CAPA found</td></tr>' : 
-                            data.map(row => {
-                                const rcaCapaId = String(row['RCA/CAPA ID'] || row['ID'] || 'N/A');
-                                const status = String(row['Status'] || 'N/A');
-                                const region = String(row['Region'] || 'N/A');
-                                const account = String(row['Account'] || 'N/A');
-                                
-                                let statusColor = '#6b7280';
-                                if (status.toLowerCase().includes('closed') || status.toLowerCase().includes('complete')) statusColor = '#f59e0b';
-                                else if (status.toLowerCase().includes('open')) statusColor = '#10b981';
-                                else if (status.toLowerCase().includes('progress')) statusColor = '#3b82f6';
-
-                                return `
-                                <tr class="rca-capa-row" style="border-bottom: 1px solid var(--border);">
-                                    <td style="padding: 6px 8px; font-size: 10px; color: var(--text-primary); font-weight: 600;">${rcaCapaId}</td>
-                                    <td style="padding: 6px 8px; text-align: center;">
-                                        <span style="background: ${statusColor}; color: white; padding: 2px 6px; border-radius: 8px; font-size: 8px; font-weight: 700;">${status}</span>
-                                    </td>
-                                    <td style="padding: 6px 8px; font-size: 10px; color: var(--text-secondary);">${region}</td>
-                                    <td style="padding: 6px 8px; font-size: 10px; color: var(--text-secondary);">${account}</td>
-                                </tr>
-                            `}).join('')}
-                        </tbody>
-                    </table>
+                    <div style="margin-bottom: 12px;">
+                        <div style="color: #1e293b; font-size: 20px; font-weight: 700; margin-bottom: 4px;">${projects.length}</div>
+                        <div style="color: #64748b; font-size: 10px;">Total Projects</div>
+                    </div>
+                    <div style="margin-bottom: 12px;">
+                        <div style="color: #64748b; font-size: 9px; font-weight: 600; margin-bottom: 6px; text-transform: uppercase;">Status Breakdown</div>
+                        ${statusBreakdownHTML || '<div style="color: #94a3b8; font-size: 10px;">No data</div>'}
+                    </div>
+                    <div style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); padding: 8px; border-radius: 4px; border-left: 3px solid #8b5cf6;">
+                        <div style="color: #64748b; font-size: 9px; font-weight: 600; margin-bottom: 2px;">COVERAGE</div>
+                        <div style="color: #1e293b; font-size: 11px; font-weight: 600;">${regions.size} Region${regions.size !== 1 ? 's' : ''}</div>
+                    </div>
                 `;
                 
-                safeSetHTML('rcaCapaTableContainer', html);
-                console.log('✅ RCA/CAPA table generated:', data.length, 'rows');
+                safeSetHTML('strategicProjectsSummary', html);
+                console.log('✅ Projects summary generated:', projects.length);
             } catch (error) {
-                handleError(error, 'generateRcaCapaTable');
+                handleError(error, 'generateProjectsSummary');
             }
         }
 
-        function filterProjectTable() {
+        function generateRcaCapaSummary(rcaCapa) {
             try {
-                const searchValue = document.getElementById('projectSearch').value.toLowerCase();
-                const rows = document.querySelectorAll('.project-row');
-                
-                rows.forEach(row => {
-                    const text = row.textContent.toLowerCase();
-                    row.style.display = text.includes(searchValue) ? '' : 'none';
+                // Count by status
+                const statusCounts = {};
+                rcaCapa.forEach(r => {
+                    const status = String(r['Status'] || 'Unknown');
+                    statusCounts[status] = (statusCounts[status] || 0) + 1;
                 });
-            } catch (error) {
-                handleError(error, 'filterProjectTable');
-            }
-        }
-
-        function filterRcaCapaTable() {
-            try {
-                const searchValue = document.getElementById('rcaCapaSearch').value.toLowerCase();
-                const rows = document.querySelectorAll('.rca-capa-row');
                 
-                rows.forEach(row => {
-                    const text = row.textContent.toLowerCase();
-                    row.style.display = text.includes(searchValue) ? '' : 'none';
+                // Get top statuses
+                const sortedStatuses = Object.entries(statusCounts)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 3);
+                
+                let statusBreakdownHTML = sortedStatuses.map(([status, count]) => {
+                    const statusLower = status.toLowerCase();
+                    let color = '#64748b';
+                    if (statusLower.includes('closed') || statusLower.includes('complete')) color = '#f59e0b';
+                    else if (statusLower.includes('open')) color = '#10b981';
+                    else if (statusLower.includes('progress')) color = '#3b82f6';
+                    
+                    return `
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                            <span style="color: #64748b; font-size: 10px;">${status}</span>
+                            <span style="color: ${color}; font-size: 10px; font-weight: 600;">${count}</span>
+                        </div>
+                    `;
+                }).join('');
+                
+                // Get accounts
+                const accounts = new Set();
+                rcaCapa.forEach(r => {
+                    if (r['Account']) accounts.add(r['Account']);
                 });
+                
+                const html = `
+                    <div style="margin-bottom: 12px;">
+                        <div style="color: #1e293b; font-size: 20px; font-weight: 700; margin-bottom: 4px;">${rcaCapa.length}</div>
+                        <div style="color: #64748b; font-size: 10px;">Total RCA/CAPA</div>
+                    </div>
+                    <div style="margin-bottom: 12px;">
+                        <div style="color: #64748b; font-size: 9px; font-weight: 600; margin-bottom: 6px; text-transform: uppercase;">Status Breakdown</div>
+                        ${statusBreakdownHTML || '<div style="color: #94a3b8; font-size: 10px;">No data</div>'}
+                    </div>
+                    <div style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); padding: 8px; border-radius: 4px; border-left: 3px solid #8b5cf6;">
+                        <div style="color: #64748b; font-size: 9px; font-weight: 600; margin-bottom: 2px;">COVERAGE</div>
+                        <div style="color: #1e293b; font-size: 11px; font-weight: 600;">${accounts.size} Account${accounts.size !== 1 ? 's' : ''}</div>
+                    </div>
+                `;
+                
+                safeSetHTML('strategicRcaCapaSummary', html);
+                console.log('✅ RCA/CAPA summary generated:', rcaCapa.length);
             } catch (error) {
-                handleError(error, 'filterRcaCapaTable');
+                handleError(error, 'generateRcaCapaSummary');
             }
         }
 
@@ -5176,18 +5324,341 @@ Total Population: ${totalPop}
                 document.getElementById('strategicFilterAccount').value = '';
                 document.getElementById('strategicFilterYear').value = '';
                 document.getElementById('strategicFilterPracticeHead').value = '';
-                currentStatusFilter = 'all';
-                
-                // Reset card highlights
-                document.querySelectorAll('[id^="statusCard"]').forEach(card => {
-                    card.style.opacity = '1';
-                    card.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
-                });
                 
                 applyStrategicFilters();
                 console.log('✅ Strategic filters cleared');
             } catch (error) {
                 handleError(error, 'clearStrategicFilters');
+            }
+        }
+
+        function generateExecutiveSummary(projects, rcaCapa) {
+            try {
+                const allData = [...projects, ...rcaCapa];
+                
+                // Total Initiatives
+                const totalInitiatives = allData.length;
+                const totalProjects = projects.length;
+                const totalRcaCapa = rcaCapa.length;
+                
+                // Completion Rate
+                const closedCount = allData.filter(row => {
+                    const status = String(row['Status'] || '').toLowerCase();
+                    return status.includes('closed') || status.includes('complete');
+                }).length;
+                const completionRate = totalInitiatives > 0 ? ((closedCount / totalInitiatives) * 100).toFixed(1) : 0;
+                
+                // Active (Open + In Progress)
+                const activeCount = allData.filter(row => {
+                    const status = String(row['Status'] || '').toLowerCase();
+                    return status.includes('open') || status.includes('progress') || status.includes('ongoing');
+                }).length;
+                
+                // Coverage
+                const uniqueRegions = [...new Set(allData.map(row => String(row['Region'] || '').trim()))].filter(v => v).length;
+                const uniqueAccounts = [...new Set(allData.map(row => String(row['Account'] || '').trim()))].filter(v => v).length;
+                
+                // Update cards
+                safeSetText('totalInitiatives', totalInitiatives);
+                safeSetText('totalProjects', totalProjects);
+                safeSetText('totalRcaCapa', totalRcaCapa);
+                safeSetText('completionRate', completionRate + '%');
+                safeSetText('closedCount', closedCount);
+                safeSetText('totalCount', totalInitiatives);
+                safeSetText('activeCount', activeCount);
+                safeSetText('coverageRegions', uniqueRegions);
+                safeSetText('coverageAccounts', uniqueAccounts);
+                
+                console.log('✅ Executive summary generated');
+            } catch (error) {
+                handleError(error, 'generateExecutiveSummary');
+            }
+        }
+
+        function generateStatusChart(projects, rcaCapa) {
+            try {
+                const allData = [...projects, ...rcaCapa];
+                
+                // Count by status
+                const statusCounts = {
+                    'Open': 0,
+                    'In Progress': 0,
+                    'Closed': 0,
+                    'Other': 0
+                };
+                
+                allData.forEach(row => {
+                    const status = String(row['Status'] || '').toLowerCase();
+                    if (status.includes('open')) {
+                        statusCounts['Open']++;
+                    } else if (status.includes('progress') || status.includes('ongoing')) {
+                        statusCounts['In Progress']++;
+                    } else if (status.includes('closed') || status.includes('complete')) {
+                        statusCounts['Closed']++;
+                    } else {
+                        statusCounts['Other']++;
+                    }
+                });
+                
+                // Destroy existing chart
+                if (strategicStatusChartInstance) {
+                    strategicStatusChartInstance.destroy();
+                }
+                
+                // Create new chart
+                const ctx = document.getElementById('strategicStatusChart');
+                if (!ctx) return;
+                
+                strategicStatusChartInstance = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(statusCounts),
+                        datasets: [{
+                            label: 'Count',
+                            data: Object.values(statusCounts),
+                            backgroundColor: [
+                                'rgba(16, 185, 129, 0.8)',
+                                'rgba(59, 130, 246, 0.8)',
+                                'rgba(245, 158, 11, 0.8)',
+                                'rgba(107, 114, 128, 0.8)'
+                            ],
+                            borderColor: [
+                                'rgba(16, 185, 129, 1)',
+                                'rgba(59, 130, 246, 1)',
+                                'rgba(245, 158, 11, 1)',
+                                'rgba(107, 114, 128, 1)'
+                            ],
+                            borderWidth: 2,
+                            borderRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                padding: 8,
+                                titleFont: {
+                                    size: 11
+                                },
+                                bodyFont: {
+                                    size: 10
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    font: {
+                                        size: 10
+                                    },
+                                    stepSize: 1
+                                },
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.05)'
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    font: {
+                                        size: 10
+                                    }
+                                },
+                                grid: {
+                                    display: false
+                                }
+                            }
+                        }
+                    }
+                });
+                
+                console.log('✅ Status chart generated');
+            } catch (error) {
+                handleError(error, 'generateStatusChart');
+            }
+        }
+
+        function generateKeyMetrics(projects, rcaCapa) {
+            try {
+                const allData = [...projects, ...rcaCapa];
+                
+                // Calculate metrics
+                const avgCompletionTime = 'N/A'; // Placeholder
+                const onTimeCompletion = allData.filter(row => {
+                    const status = String(row['Status'] || '').toLowerCase();
+                    return status.includes('closed') || status.includes('complete');
+                }).length;
+                const totalClosed = onTimeCompletion;
+                const onTimeRate = totalClosed > 0 ? '100%' : 'N/A';
+                
+                // Top region by activity
+                const regionCounts = {};
+                allData.forEach(row => {
+                    const region = String(row['Region'] || 'Unknown').trim();
+                    regionCounts[region] = (regionCounts[region] || 0) + 1;
+                });
+                const topRegion = Object.keys(regionCounts).reduce((a, b) => 
+                    regionCounts[a] > regionCounts[b] ? a : b, 'N/A'
+                );
+                
+                // Generate HTML
+                const html = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: rgba(99, 102, 241, 0.05); border-radius: 6px; border-left: 3px solid #6366f1;">
+                        <div>
+                            <div style="font-size: 9px; color: var(--text-muted); margin-bottom: 2px;">Projects</div>
+                            <div style="font-size: 18px; font-weight: 700; color: #3b82f6;">${projects.length}</div>
+                        </div>
+                        <i class="fas fa-project-diagram" style="font-size: 20px; color: #3b82f6; opacity: 0.3;"></i>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: rgba(16, 185, 129, 0.05); border-radius: 6px; border-left: 3px solid #10b981;">
+                        <div>
+                            <div style="font-size: 9px; color: var(--text-muted); margin-bottom: 2px;">RCA/CAPA</div>
+                            <div style="font-size: 18px; font-weight: 700; color: #10b981;">${rcaCapa.length}</div>
+                        </div>
+                        <i class="fas fa-clipboard-check" style="font-size: 20px; color: #10b981; opacity: 0.3;"></i>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: rgba(245, 158, 11, 0.05); border-radius: 6px; border-left: 3px solid #f59e0b;">
+                        <div>
+                            <div style="font-size: 9px; color: var(--text-muted); margin-bottom: 2px;">Top Region</div>
+                            <div style="font-size: 14px; font-weight: 700; color: #f59e0b;">${topRegion}</div>
+                        </div>
+                        <i class="fas fa-trophy" style="font-size: 20px; color: #f59e0b; opacity: 0.3;"></i>
+                    </div>
+                `;
+                
+                safeSetHTML('keyMetricsContainer', html);
+                console.log('✅ Key metrics generated');
+            } catch (error) {
+                handleError(error, 'generateKeyMetrics');
+            }
+        }
+
+        function generateProjectsSummary(projects) {
+            try {
+                const total = projects.length;
+                
+                // Count by status
+                const open = projects.filter(row => String(row['Status'] || '').toLowerCase().includes('open')).length;
+                const closed = projects.filter(row => {
+                    const status = String(row['Status'] || '').toLowerCase();
+                    return status.includes('closed') || status.includes('complete');
+                }).length;
+                const inProgress = projects.filter(row => {
+                    const status = String(row['Status'] || '').toLowerCase();
+                    return status.includes('progress') || status.includes('ongoing');
+                }).length;
+                
+                // Get top accounts
+                const accountCounts = {};
+                projects.forEach(row => {
+                    const account = String(row['Account'] || 'Unknown').trim();
+                    accountCounts[account] = (accountCounts[account] || 0) + 1;
+                });
+                const topAccounts = Object.entries(accountCounts)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 3);
+                
+                // Generate HTML
+                const html = `
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
+                        <div style="text-align: center;">
+                            <div style="font-size: 9px; color: var(--text-muted); margin-bottom: 4px;">Open</div>
+                            <div style="font-size: 20px; font-weight: 700; color: #10b981;">${open}</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 9px; color: var(--text-muted); margin-bottom: 4px;">In Progress</div>
+                            <div style="font-size: 20px; font-weight: 700; color: #3b82f6;">${inProgress}</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 9px; color: var(--text-muted); margin-bottom: 4px;">Closed</div>
+                            <div style="font-size: 20px; font-weight: 700; color: #f59e0b;">${closed}</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 12px;">
+                        <div style="font-size: 10px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px;">Top Accounts</div>
+                        ${topAccounts.length > 0 ? topAccounts.map(([account, count]) => `
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,0.05);">
+                                <span style="font-size: 10px; color: var(--text-secondary);">${account}</span>
+                                <span style="font-size: 10px; font-weight: 600; color: #3b82f6;">${count}</span>
+                            </div>
+                        `).join('') : '<div style="font-size: 10px; color: var(--text-muted); text-align: center; padding: 10px;">No data available</div>'}
+                    </div>
+                `;
+                
+                safeSetText('projectsTotal', total);
+                safeSetHTML('projectsSummary', html);
+                console.log('✅ Projects summary generated');
+            } catch (error) {
+                handleError(error, 'generateProjectsSummary');
+            }
+        }
+
+        function generateRcaCapaSummary(rcaCapa) {
+            try {
+                const total = rcaCapa.length;
+                
+                // Count by status
+                const open = rcaCapa.filter(row => String(row['Status'] || '').toLowerCase().includes('open')).length;
+                const closed = rcaCapa.filter(row => {
+                    const status = String(row['Status'] || '').toLowerCase();
+                    return status.includes('closed') || status.includes('complete');
+                }).length;
+                const inProgress = rcaCapa.filter(row => {
+                    const status = String(row['Status'] || '').toLowerCase();
+                    return status.includes('progress') || status.includes('ongoing');
+                }).length;
+                
+                // Get top regions
+                const regionCounts = {};
+                rcaCapa.forEach(row => {
+                    const region = String(row['Region'] || 'Unknown').trim();
+                    regionCounts[region] = (regionCounts[region] || 0) + 1;
+                });
+                const topRegions = Object.entries(regionCounts)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 3);
+                
+                // Generate HTML
+                const html = `
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
+                        <div style="text-align: center;">
+                            <div style="font-size: 9px; color: var(--text-muted); margin-bottom: 4px;">Open</div>
+                            <div style="font-size: 20px; font-weight: 700; color: #10b981;">${open}</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 9px; color: var(--text-muted); margin-bottom: 4px;">In Progress</div>
+                            <div style="font-size: 20px; font-weight: 700; color: #3b82f6;">${inProgress}</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 9px; color: var(--text-muted); margin-bottom: 4px;">Closed</div>
+                            <div style="font-size: 20px; font-weight: 700; color: #f59e0b;">${closed}</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 12px;">
+                        <div style="font-size: 10px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px;">Top Regions</div>
+                        ${topRegions.length > 0 ? topRegions.map(([region, count]) => `
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,0.05);">
+                                <span style="font-size: 10px; color: var(--text-secondary);">${region}</span>
+                                <span style="font-size: 10px; font-weight: 600; color: #10b981;">${count}</span>
+                            </div>
+                        `).join('') : '<div style="font-size: 10px; color: var(--text-muted); text-align: center; padding: 10px;">No data available</div>'}
+                    </div>
+                `;
+                
+                safeSetText('rcaCapaTotal', total);
+                safeSetHTML('rcaCapaSummary', html);
+                console.log('✅ RCA/CAPA summary generated');
+            } catch (error) {
+                handleError(error, 'generateRcaCapaSummary');
             }
         }
 
