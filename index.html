@@ -6911,11 +6911,234 @@ Total Population: ${totalPop}
                 
                 console.log(`📊 Filtered RCA & CAPA: ${filteredRcaCapa.length} of ${allRcaCapa.length}`);
                 
+                // Generate KPIs and Chart
+                generateRcaKPIs(filteredRcaCapa);
+                generateMonthlyRcaChart(filteredRcaCapa);
+                
                 // Update list
                 generateRcaCapaList(filteredRcaCapa);
                 
             } catch (error) {
                 handleError(error, 'applyRcaCapaFilters');
+            }
+        }
+        
+        function generateRcaKPIs(rcaCapaItems) {
+            try {
+                // Total Count
+                safeSetText('rcaTotalCount', rcaCapaItems.length);
+                
+                // Error Type Breakdown
+                const errorTypeCounts = {};
+                rcaCapaItems.forEach(item => {
+                    const errorType = window.getErrorType(item) || 'Unknown';
+                    errorTypeCounts[errorType] = (errorTypeCounts[errorType] || 0) + 1;
+                });
+                
+                const sortedErrorTypes = Object.entries(errorTypeCounts)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 5);
+                
+                safeSetText('rcaErrorTypeCount', Object.keys(errorTypeCounts).length);
+                
+                const errorTypeHTML = sortedErrorTypes.map(([type, count]) => {
+                    const percentage = rcaCapaItems.length > 0 ? Math.round((count / rcaCapaItems.length) * 100) : 0;
+                    return `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 3px 0; border-bottom: 1px solid #fee2e2;">
+                            <span style="color: #1e293b; font-weight: 600; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${type}">${type}</span>
+                            <span style="color: #64748b; margin: 0 4px;">${percentage}%</span>
+                            <span style="background: #ef4444; color: white; padding: 1px 4px; border-radius: 4px; font-weight: 700; font-size: 6px;">${count}</span>
+                        </div>
+                    `;
+                }).join('');
+                
+                safeSetHTML('rcaErrorTypeBreakdown', errorTypeHTML || '<div style="color: #94a3b8; text-align: center; padding: 8px;">No data</div>');
+                
+                // Impact Breakdown
+                const impactCounts = {};
+                rcaCapaItems.forEach(item => {
+                    const impact = window.getImpact(item) || 'Unknown';
+                    impactCounts[impact] = (impactCounts[impact] || 0) + 1;
+                });
+                
+                const sortedImpacts = Object.entries(impactCounts)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 5);
+                
+                safeSetText('rcaImpactCount', Object.keys(impactCounts).length);
+                
+                const impactHTML = sortedImpacts.map(([impact, count]) => {
+                    const percentage = rcaCapaItems.length > 0 ? Math.round((count / rcaCapaItems.length) * 100) : 0;
+                    const impactUpper = String(impact).toUpperCase();
+                    let color = '#64748b';
+                    if (impactUpper.includes('HIGH') || impactUpper.includes('CRITICAL')) color = '#dc2626';
+                    else if (impactUpper.includes('MEDIUM')) color = '#f59e0b';
+                    else if (impactUpper.includes('LOW')) color = '#10b981';
+                    
+                    return `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 3px 0; border-bottom: 1px solid #fee2e2;">
+                            <span style="color: #1e293b; font-weight: 600; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${impact}">${impact}</span>
+                            <span style="color: #64748b; margin: 0 4px;">${percentage}%</span>
+                            <span style="background: ${color}; color: white; padding: 1px 4px; border-radius: 4px; font-weight: 700; font-size: 6px;">${count}</span>
+                        </div>
+                    `;
+                }).join('');
+                
+                safeSetHTML('rcaImpactBreakdown', impactHTML || '<div style="color: #94a3b8; text-align: center; padding: 8px;">No data</div>');
+                
+                // Status Breakdown
+                const statusCounts = {};
+                rcaCapaItems.forEach(item => {
+                    const status = window.getRcaCapaStatus(item) || 'Unknown';
+                    statusCounts[status] = (statusCounts[status] || 0) + 1;
+                });
+                
+                const statusHTML = Object.entries(statusCounts)
+                    .sort((a, b) => b[1] - a[1])
+                    .map(([status, count]) => {
+                        const statusUpper = String(status).toUpperCase();
+                        let color = '#64748b';
+                        if (statusUpper === 'CLOSED' || statusUpper.includes('COMPLETE')) color = '#10b981';
+                        else if (statusUpper === 'OPEN' || statusUpper.includes('PROGRESS')) color = '#ef4444';
+                        
+                        return `
+                            <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 2px;">
+                                <div style="width: 6px; height: 6px; background: ${color}; border-radius: 50%;"></div>
+                                <span style="color: #1e293b; font-size: 8px; font-weight: 600;">${status}:</span>
+                                <span style="color: #64748b; font-size: 8px;">${count}</span>
+                            </div>
+                        `;
+                    }).join('');
+                
+                safeSetHTML('rcaStatusBreakdown', statusHTML || '<div style="color: #94a3b8;">No data</div>');
+                
+                console.log('✅ RCA KPIs generated');
+            } catch (error) {
+                handleError(error, 'generateRcaKPIs');
+            }
+        }
+        
+        function generateMonthlyRcaChart(rcaCapaItems) {
+            try {
+                // Destroy existing chart if any
+                if (window.rcaMonthlyChart) {
+                    window.rcaMonthlyChart.destroy();
+                }
+                
+                const canvas = document.getElementById('rcaMonthlyChart');
+                if (!canvas) {
+                    console.error('❌ Monthly RCA chart canvas not found');
+                    return;
+                }
+                
+                // Group by month
+                const monthlyCounts = {};
+                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                
+                rcaCapaItems.forEach(item => {
+                    // Try to find date field
+                    const dateFields = [
+                        item['Date'],
+                        item['Created Date'],
+                        item['Date Created'],
+                        item['Timestamp'],
+                        item['Entry Date']
+                    ];
+                    
+                    let dateValue = null;
+                    for (const field of dateFields) {
+                        if (field) {
+                            dateValue = field;
+                            break;
+                        }
+                    }
+                    
+                    if (dateValue) {
+                        let date;
+                        if (typeof dateValue === 'number') {
+                            // Excel serial date
+                            date = new Date((dateValue - 25569) * 86400 * 1000);
+                        } else {
+                            date = new Date(dateValue);
+                        }
+                        
+                        if (!isNaN(date.getTime())) {
+                            const monthKey = `${months[date.getMonth()]} ${date.getFullYear()}`;
+                            monthlyCounts[monthKey] = (monthlyCounts[monthKey] || 0) + 1;
+                        }
+                    }
+                });
+                
+                // Sort by date
+                const sortedMonths = Object.entries(monthlyCounts)
+                    .sort((a, b) => {
+                        const dateA = new Date(a[0]);
+                        const dateB = new Date(b[0]);
+                        return dateA - dateB;
+                    })
+                    .slice(-12); // Last 12 months
+                
+                const labels = sortedMonths.map(([month]) => month);
+                const data = sortedMonths.map(([, count]) => count);
+                
+                const ctx = canvas.getContext('2d');
+                window.rcaMonthlyChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'RCA Count',
+                            data: data,
+                            borderColor: '#ef4444',
+                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return 'Count: ' + context.parsed.y;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    font: { size: 8 },
+                                    stepSize: 1
+                                },
+                                grid: {
+                                    color: '#fee2e2'
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    font: { size: 8 },
+                                    maxRotation: 45,
+                                    minRotation: 45
+                                },
+                                grid: {
+                                    display: false
+                                }
+                            }
+                        }
+                    }
+                });
+                
+                console.log('✅ Monthly RCA chart generated');
+            } catch (error) {
+                handleError(error, 'generateMonthlyRcaChart');
             }
         }
         
@@ -6990,6 +7213,10 @@ Total Population: ${totalPop}
                                     const status = window.getRcaCapaStatus(item) || 'N/A';
                                     const region = item['Region'] || 'N/A';
                                     
+                                    // Get Problem Statement
+                                    const problemStatement = item['Problem Statement'] || item['Description'] || item['Issue Description'] || 'N/A';
+                                    const shortStatement = problemStatement.split(' ').slice(0, 5).join(' ') + (problemStatement.split(' ').length > 5 ? '...' : '');
+                                    
                                     // Status color
                                     let statusColor = '#64748b';
                                     const statusUpper = String(status).toUpperCase();
@@ -7021,8 +7248,8 @@ Total Population: ${totalPop}
                                         >
                                             <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 4px;">
                                                 <div style="flex: 1;">
-                                                    <div style="color: #1e293b; font-size: 9px; font-weight: 700; margin-bottom: 3px;">
-                                                        ${errorType}
+                                                    <div style="color: #1e293b; font-size: 9px; font-weight: 700; margin-bottom: 3px;" title="${problemStatement}">
+                                                        ${shortStatement}
                                                     </div>
                                                     <div style="color: #64748b; font-size: 7px;">
                                                         <i class="fas fa-map-marker-alt" style="font-size: 6px; margin-right: 2px;"></i>${region}
@@ -7032,7 +7259,10 @@ Total Population: ${totalPop}
                                                     ${status}
                                                 </div>
                                             </div>
-                                            <div style="display: flex; gap: 6px; align-items: center;">
+                                            <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+                                                <span style="background: #fef2f2; color: #ef4444; padding: 2px 6px; border-radius: 3px; font-size: 7px; font-weight: 600; border: 1px solid #fca5a5;">
+                                                    <i class="fas fa-exclamation-triangle" style="font-size: 6px; margin-right: 2px;"></i>${errorType}
+                                                </span>
                                                 <span style="background: ${impactColor}; color: white; padding: 2px 6px; border-radius: 3px; font-size: 7px; font-weight: 600;">
                                                     <i class="fas fa-bolt" style="font-size: 6px; margin-right: 2px;"></i>${impact}
                                                 </span>
@@ -7091,8 +7321,8 @@ Total Population: ${totalPop}
                 const financialYear = item['Financial Year'] || 'N/A';
                 const practiceHead = item['Practice Head'] || 'N/A';
                 
-                // Get additional fields if available
-                const description = item['Description'] || item['Issue Description'] || item['Problem Statement'] || 'N/A';
+                // Get Problem Statement (COMPLETE - no truncation)
+                const problemStatement = item['Problem Statement'] || item['Description'] || item['Issue Description'] || 'N/A';
                 const rootCause = item['Root Cause'] || item['RCA'] || 'N/A';
                 const correctiveAction = item['Corrective Action'] || item['CAPA'] || item['Action'] || 'N/A';
                 const owner = item['Owner'] || item['Assigned To'] || 'N/A';
@@ -7129,6 +7359,14 @@ Total Population: ${totalPop}
                     
                     <div style="display: flex; flex-direction: column; gap: 10px;">
                         
+                        <!-- Problem Statement (COMPLETE) -->
+                        <div style="background: #fef2f2; border-radius: 6px; padding: 8px; border-left: 3px solid #3b82f6;">
+                            <div style="color: #64748b; font-size: 8px; font-weight: 700; text-transform: uppercase; margin-bottom: 3px;">
+                                <i class="fas fa-file-alt" style="margin-right: 4px;"></i>Problem Statement
+                            </div>
+                            <div style="color: #1e293b; font-size: 9px; line-height: 1.4;">${problemStatement}</div>
+                        </div>
+                        
                         <!-- Error Type -->
                         <div style="background: #fef2f2; border-radius: 6px; padding: 8px; border-left: 3px solid #ef4444;">
                             <div style="color: #64748b; font-size: 8px; font-weight: 700; text-transform: uppercase; margin-bottom: 3px;">
@@ -7137,7 +7375,7 @@ Total Population: ${totalPop}
                             <div style="color: #1e293b; font-size: 10px; font-weight: 600;">${errorType}</div>
                         </div>
                         
-                        <!-- Impact -->
+                        <!-- Impact Level -->
                         <div style="background: #fef2f2; border-radius: 6px; padding: 8px; border-left: 3px solid ${impactColor};">
                             <div style="color: #64748b; font-size: 8px; font-weight: 700; text-transform: uppercase; margin-bottom: 3px;">
                                 <i class="fas fa-bolt" style="margin-right: 4px;"></i>Impact Level
@@ -7145,15 +7383,23 @@ Total Population: ${totalPop}
                             <div style="color: #1e293b; font-size: 10px; font-weight: 600;">${impact}</div>
                         </div>
                         
-                        <!-- Description -->
-                        <div style="background: #fef2f2; border-radius: 6px; padding: 8px; border-left: 3px solid #3b82f6;">
+                        <!-- Practice Head -->
+                        <div style="background: #fef2f2; border-radius: 6px; padding: 8px; border-left: 3px solid #8b5cf6;">
                             <div style="color: #64748b; font-size: 8px; font-weight: 700; text-transform: uppercase; margin-bottom: 3px;">
-                                <i class="fas fa-file-alt" style="margin-right: 4px;"></i>Description
+                                <i class="fas fa-user-tie" style="margin-right: 4px;"></i>Practice Head
                             </div>
-                            <div style="color: #1e293b; font-size: 9px; line-height: 1.4;">${description}</div>
+                            <div style="color: #1e293b; font-size: 10px; font-weight: 600;">${practiceHead}</div>
                         </div>
                         
-                        <!-- Root Cause -->
+                        <!-- Region -->
+                        <div style="background: #fef2f2; border-radius: 6px; padding: 8px; border-left: 3px solid #06b6d4;">
+                            <div style="color: #64748b; font-size: 8px; font-weight: 700; text-transform: uppercase; margin-bottom: 3px;">
+                                <i class="fas fa-globe" style="margin-right: 4px;"></i>Region
+                            </div>
+                            <div style="color: #1e293b; font-size: 10px; font-weight: 600;">${region}</div>
+                        </div>
+                        
+                        <!-- Root Cause Analysis -->
                         <div style="background: #fef2f2; border-radius: 6px; padding: 8px; border-left: 3px solid #f59e0b;">
                             <div style="color: #64748b; font-size: 8px; font-weight: 700; text-transform: uppercase; margin-bottom: 3px;">
                                 <i class="fas fa-search" style="margin-right: 4px;"></i>Root Cause Analysis
@@ -7170,7 +7416,7 @@ Total Population: ${totalPop}
                         </div>
                         
                         <!-- Owner -->
-                        <div style="background: #fef2f2; border-radius: 6px; padding: 8px; border-left: 3px solid #8b5cf6;">
+                        <div style="background: #fef2f2; border-radius: 6px; padding: 8px; border-left: 3px solid #ec4899;">
                             <div style="color: #64748b; font-size: 8px; font-weight: 700; text-transform: uppercase; margin-bottom: 3px;">
                                 <i class="fas fa-user" style="margin-right: 4px;"></i>Owner
                             </div>
@@ -7178,19 +7424,11 @@ Total Population: ${totalPop}
                         </div>
                         
                         <!-- Due Date -->
-                        <div style="background: #fef2f2; border-radius: 6px; padding: 8px; border-left: 3px solid #ec4899;">
+                        <div style="background: #fef2f2; border-radius: 6px; padding: 8px; border-left: 3px solid #6366f1;">
                             <div style="color: #64748b; font-size: 8px; font-weight: 700; text-transform: uppercase; margin-bottom: 3px;">
                                 <i class="fas fa-calendar-check" style="margin-right: 4px;"></i>Due Date
                             </div>
                             <div style="color: #1e293b; font-size: 10px; font-weight: 600;">${dueDate}</div>
-                        </div>
-                        
-                        <!-- Practice Head -->
-                        <div style="background: #fef2f2; border-radius: 6px; padding: 8px; border-left: 3px solid #06b6d4;">
-                            <div style="color: #64748b; font-size: 8px; font-weight: 700; text-transform: uppercase; margin-bottom: 3px;">
-                                <i class="fas fa-user-tie" style="margin-right: 4px;"></i>Practice Head
-                            </div>
-                            <div style="color: #1e293b; font-size: 10px; font-weight: 600;">${practiceHead}</div>
                         </div>
                     </div>
                 `;
