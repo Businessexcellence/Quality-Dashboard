@@ -4892,16 +4892,17 @@ Total Population: ${totalPop}
         function refreshStrategicTab() {
             try {
                 console.log('🔄 Refreshing Strategic Overview tab');
+                console.log('🔍 window.dashboardData:', window.dashboardData);
                 console.log('📊 Dashboard data check:', {
-                    hasProjects: !!dashboardData?.projects,
-                    projectsLength: dashboardData?.projects?.length || 0,
-                    hasRcaCapa: !!dashboardData?.rcaCapa,
-                    rcaCapaLength: dashboardData?.rcaCapa?.length || 0
+                    hasProjects: !!window.dashboardData?.projects,
+                    projectsLength: window.dashboardData?.projects?.length || 0,
+                    hasRcaCapa: !!window.dashboardData?.rcaCapa,
+                    rcaCapaLength: window.dashboardData?.rcaCapa?.length || 0
                 });
                 
-                if (!dashboardData || !dashboardData.projects || !dashboardData.rcaCapa) {
+                if (!window.dashboardData || !window.dashboardData.projects || !window.dashboardData.rcaCapa) {
                     console.warn('⚠️ No Projects or RCA_CAPA data available');
-                    console.log('Available data keys:', dashboardData ? Object.keys(dashboardData) : 'dashboardData is null');
+                    console.log('Available data keys:', window.dashboardData ? Object.keys(window.dashboardData) : 'dashboardData is null');
                     
                     // Show empty state
                     safeSetText('projectsTotal', 0);
@@ -4913,13 +4914,21 @@ Total Population: ${totalPop}
                     return;
                 }
 
-                strategicData.projects = dashboardData.projects;
-                strategicData.rcaCapa = dashboardData.rcaCapa;
+                strategicData.projects = window.dashboardData.projects;
+                strategicData.rcaCapa = window.dashboardData.rcaCapa;
 
                 console.log('📊 Strategic data loaded:', {
                     projects: strategicData.projects.length,
                     rcaCapa: strategicData.rcaCapa.length
                 });
+                
+                // Log sample data
+                if (strategicData.projects.length > 0) {
+                    console.log('📋 Sample project:', strategicData.projects[0]);
+                }
+                if (strategicData.rcaCapa.length > 0) {
+                    console.log('📋 Sample RCA/CAPA:', strategicData.rcaCapa[0]);
+                }
 
                 populateStrategicFilters();
                 applyStrategicFilters();
