@@ -6771,6 +6771,7 @@ Total Population: ${totalPop}
                 ];
                 
                 const filtersHTML = filters.map(filter => {
+                    console.log(`📊 Building filter for: ${filter.field}`);
                     // Get unique values for this filter
                     const valueSet = new Set();
                     rcaCapaData.forEach(item => {
@@ -6794,6 +6795,8 @@ Total Population: ${totalPop}
                             }
                         }
                     });
+                    
+                    console.log(`  → Found ${valueSet.size} unique values for ${filter.field}:`, Array.from(valueSet));
                     
                     // Count occurrences for each value
                     const valueCounts = Array.from(valueSet).map(value => {
@@ -6879,7 +6882,19 @@ Total Population: ${totalPop}
                     `;
                 }).join('');
                 
+                console.log(`📊 Generated filters HTML length: ${filtersHTML.length} characters`);
+                console.log(`📊 Setting filters to element: rcaCapaFilters`);
                 safeSetHTML('rcaCapaFilters', filtersHTML);
+                
+                // Verify it was set
+                const filterElement = document.getElementById('rcaCapaFilters');
+                if (filterElement) {
+                    console.log(`✅ Filter element found, innerHTML length: ${filterElement.innerHTML.length}`);
+                    console.log(`✅ Filter element has ${filterElement.children.length} child elements`);
+                } else {
+                    console.error('❌ Filter element NOT FOUND!');
+                }
+                
                 console.log('✅ RCA & CAPA filters populated');
             } catch (error) {
                 handleError(error, 'populateRcaCapaFilters');
