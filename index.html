@@ -1070,13 +1070,36 @@
                 </div>
             </div>
 
-            <!-- Regional Head Wise Overview (Full Width) -->
+            <!-- Regional Head Wise and Practice Head Wise Overview (Side by Side) -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
+                <!-- Regional Head Wise Overview -->
+                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 10px;">
+                    <h3 style="font-size: 12px; font-weight: 700; color: var(--text-primary); margin: 0 0 8px 0;">
+                        <i class="fas fa-user-tie" style="color: var(--primary); font-size: 11px;"></i> Regional Head Wise Overview
+                    </h3>
+                    <div id="regionalHeadBreakdown" style="overflow-x: auto;">
+                        <!-- Regional Head table will be populated -->
+                    </div>
+                </div>
+
+                <!-- Practice Head Wise Overview -->
+                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 10px;">
+                    <h3 style="font-size: 12px; font-weight: 700; color: var(--text-primary); margin: 0 0 8px 0;">
+                        <i class="fas fa-user-circle" style="color: var(--secondary); font-size: 11px;"></i> Practice Head Wise Overview
+                    </h3>
+                    <div id="practiceHeadBreakdown" style="overflow-x: auto;">
+                        <!-- Practice Head table will be populated -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Month Wise Accuracy & Audit Count Chart -->
             <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 10px; margin-top: 10px;">
                 <h3 style="font-size: 12px; font-weight: 700; color: var(--text-primary); margin: 0 0 8px 0;">
-                    <i class="fas fa-user-tie" style="color: var(--primary); font-size: 11px;"></i> Regional Head Wise Overview
+                    <i class="fas fa-chart-line" style="color: var(--primary); font-size: 11px;"></i> Month Wise Accuracy Score & Audit Count
                 </h3>
-                <div id="regionalHeadBreakdown" style="overflow-x: auto;">
-                    <!-- Regional Head table will be populated -->
+                <div style="position: relative; height: 300px;">
+                    <canvas id="monthWiseChart"></canvas>
                 </div>
             </div>
         </div>
@@ -2949,6 +2972,8 @@ Total Population: ${totalPop}
                 calculateCriticalBreakdown(filteredData);
                 calculateStageBreakdown(filteredData);
                 calculateRegionalHeadBreakdown(filteredData);
+                calculatePracticeHeadBreakdown(filteredData);
+                calculateMonthWiseChart(filteredData);
                 
             } catch (error) {
                 handleError(error, 'applyTransactionalFilters');
@@ -3464,6 +3489,337 @@ Total Population: ${totalPop}
                 console.log('✅ Regional Head breakdown rendered:', regionalHeadRows.length, 'regional heads');
             } catch (error) {
                 handleError(error, 'calculateRegionalHeadBreakdown');
+            }
+        }
+
+        function calculatePracticeHeadBreakdown(data = null) {
+            try {
+                data = data || dashboardData.parameterAuditCount;
+                
+                // Check if client mapping is available
+                if (!window.clientToAccountMapping || Object.keys(window.clientToAccountMapping).length === 0) {
+                    // Show empty state if mapping is not available
+                    const emptyHtml = `
+                        <div style="padding: 20px; text-align: center; color: var(--text-secondary); font-size: 11px;">
+                            <i class="fas fa-info-circle" style="font-size: 24px; opacity: 0.3; margin-bottom: 8px;"></i>
+                            <div>Practice Head data not available</div>
+                            <div style="font-size: 9px; opacity: 0.7; margin-top: 4px;">Mapped from Account_Summary sheet</div>
+                        </div>
+                    `;
+                    safeSetHTML('practiceHeadBreakdown', emptyHtml);
+                    console.log('⚠️ Practice Head mapping not available');
+                    return;
+                }
+                
+                const practiceHeadStats = {};
+
+                // Group by Practice Head using client mapping
+                data.forEach(row => {
+                    const client = String(row['Client'] || '').trim();
+                    const mapping = window.clientToAccountMapping?.[client];
+                    const practiceHead = mapping?.practiceHead || null;
+                    
+                    // Skip if no practice head mapping found
+                    if (!practiceHead) return;
+                    
+                    if (!practiceHeadStats[practiceHead]) {
+                        practiceHeadStats[practiceHead] = {
+                            opportunityPass: 0,
+                            opportunityCount: 0,
+                            opportunityNA: 0,
+                            opportunityFail: 0,
+                            totalPopulation: 0
+                        };
+                    }
+
+                    practiceHeadStats[practiceHead].opportunityPass += parseFloat(row['Opportunity Pass']) || 0;
+                    practiceHeadStats[practiceHead].opportunityCount += parseFloat(row['Opportunity Count']) || 0;
+                    practiceHeadStats[practiceHead].opportunityNA += parseFloat(row['Opportunity NA']) || 0;
+                    practiceHeadStats[practiceHead].opportunityFail += parseFloat(row['Opportunity Fail']) || 0;
+                    practiceHeadStats[practiceHead].totalPopulation += parseFloat(row['Total Population']) || 0;
+                });
+
+                // Calculate metrics for each practice head
+                const practiceHeadRows = Object.entries(practiceHeadStats).map(([practiceHead, stats]) => {
+                    const denominator = stats.opportunityCount - stats.opportunityNA;
+                    const accuracy = denominator > 0 ? (stats.opportunityPass / denominator * 100) : 0;
+                    const sample = stats.totalPopulation > 0 ? (stats.opportunityCount / stats.totalPopulation * 100) : 0;
+                    const error = stats.opportunityCount > 0 ? (stats.opportunityFail / stats.opportunityCount * 100) : 0;
+                    
+                    return {
+                        practiceHead,
+                        accuracy: accuracy.toFixed(1),
+                        sample: sample.toFixed(1),
+                        error: error.toFixed(1),
+                        auditCount: stats.opportunityCount
+                    };
+                }).sort((a, b) => b.auditCount - a.auditCount);
+                
+                // Show empty state if no practice heads found
+                if (practiceHeadRows.length === 0) {
+                    const emptyHtml = `
+                        <div style="padding: 20px; text-align: center; color: var(--text-secondary); font-size: 11px;">
+                            <i class="fas fa-info-circle" style="font-size: 24px; opacity: 0.3; margin-bottom: 8px;"></i>
+                            <div>No Practice Head data available for filtered results</div>
+                        </div>
+                    `;
+                    safeSetHTML('practiceHeadBreakdown', emptyHtml);
+                    console.log('⚠️ No Practice Heads found in filtered data');
+                    return;
+                }
+
+                // Render table
+                const html = `
+                    <table style="width: 100%; border-collapse: collapse; font-size: 10px;">
+                        <thead>
+                            <tr style="border-bottom: 1px solid var(--border); background: rgba(255, 102, 0, 0.05);">
+                                <th style="padding: 6px 8px; text-align: left; font-size: 10px; font-weight: 700; color: var(--text-primary);">Practice Head</th>
+                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: var(--text-primary);">Accuracy %</th>
+                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: var(--text-primary);">Sample %</th>
+                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: var(--text-primary);">Error %</th>
+                                <th style="padding: 6px 8px; text-align: right; font-size: 10px; font-weight: 700; color: var(--text-primary);">Audit Count</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${practiceHeadRows.map(row => `
+                                <tr style="border-bottom: 1px solid var(--border); transition: background 0.2s;" 
+                                    onmouseover="this.style.background='var(--bg-hover)'" 
+                                    onmouseout="this.style.background='transparent'">
+                                    <td style="padding: 6px 8px; font-size: 11px; color: var(--text-primary); font-weight: 600;">👥 ${row.practiceHead}</td>
+                                    <td style="padding: 6px 8px; text-align: center;">
+                                        <span style="background: #10b981; color: white; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: 700;">${row.accuracy}%</span>
+                                    </td>
+                                    <td style="padding: 6px 8px; text-align: center;">
+                                        <span style="background: #3b82f6; color: white; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: 700;">${row.sample}%</span>
+                                    </td>
+                                    <td style="padding: 6px 8px; text-align: center;">
+                                        <span style="background: #ef4444; color: white; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: 700;">${row.error}%</span>
+                                    </td>
+                                    <td style="padding: 6px 8px; text-align: right; font-size: 11px; color: var(--text-primary); font-weight: 700;">${row.auditCount.toLocaleString()}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+
+                safeSetHTML('practiceHeadBreakdown', html);
+                console.log('✅ Practice Head breakdown rendered:', practiceHeadRows.length, 'practice heads');
+            } catch (error) {
+                handleError(error, 'calculatePracticeHeadBreakdown');
+            }
+        }
+
+        // Global chart instance for Month Wise chart
+        let monthWiseChartInstance = null;
+
+        function calculateMonthWiseChart(data = null) {
+            try {
+                data = data || dashboardData.parameterAuditCount;
+                
+                // Group by Month
+                const monthStats = {};
+                
+                // Month order for sorting
+                const monthOrder = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                
+                data.forEach(row => {
+                    const month = String(row['Month'] || '').trim();
+                    if (!month) return;
+                    
+                    if (!monthStats[month]) {
+                        monthStats[month] = {
+                            opportunityPass: 0,
+                            opportunityCount: 0,
+                            opportunityNA: 0
+                        };
+                    }
+                    
+                    monthStats[month].opportunityPass += parseFloat(row['Opportunity Pass']) || 0;
+                    monthStats[month].opportunityCount += parseFloat(row['Opportunity Count']) || 0;
+                    monthStats[month].opportunityNA += parseFloat(row['Opportunity NA']) || 0;
+                });
+                
+                // Calculate metrics and sort by month order
+                const monthData = Object.entries(monthStats)
+                    .map(([month, stats]) => {
+                        const denominator = stats.opportunityCount - stats.opportunityNA;
+                        const accuracy = denominator > 0 ? (stats.opportunityPass / denominator * 100) : 0;
+                        const auditCount = stats.opportunityCount;
+                        
+                        return {
+                            month,
+                            accuracy: accuracy,
+                            auditCount: auditCount,
+                            order: monthOrder.indexOf(month) !== -1 ? monthOrder.indexOf(month) : 999
+                        };
+                    })
+                    .sort((a, b) => a.order - b.order);
+                
+                // Prepare chart data
+                const labels = monthData.map(d => d.month);
+                const accuracyData = monthData.map(d => d.accuracy.toFixed(1));
+                const auditCountData = monthData.map(d => d.auditCount);
+                
+                // Destroy existing chart if it exists
+                if (monthWiseChartInstance) {
+                    monthWiseChartInstance.destroy();
+                }
+                
+                // Create chart
+                const ctx = document.getElementById('monthWiseChart');
+                if (!ctx) {
+                    console.error('❌ Chart canvas not found');
+                    return;
+                }
+                
+                monthWiseChartInstance = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Accuracy Score (%)',
+                                data: accuracyData,
+                                backgroundColor: 'rgba(16, 185, 129, 0.7)',
+                                borderColor: 'rgba(16, 185, 129, 1)',
+                                borderWidth: 2,
+                                yAxisID: 'y',
+                                order: 2
+                            },
+                            {
+                                label: 'Audit Count',
+                                data: auditCountData,
+                                type: 'line',
+                                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                                borderColor: 'rgba(59, 130, 246, 1)',
+                                borderWidth: 3,
+                                pointBackgroundColor: 'rgba(59, 130, 246, 1)',
+                                pointBorderColor: '#fff',
+                                pointBorderWidth: 2,
+                                pointRadius: 5,
+                                pointHoverRadius: 7,
+                                yAxisID: 'y1',
+                                order: 1,
+                                tension: 0.3
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top',
+                                labels: {
+                                    font: {
+                                        size: 11,
+                                        weight: '600'
+                                    },
+                                    padding: 15,
+                                    usePointStyle: true
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                titleFont: {
+                                    size: 12,
+                                    weight: 'bold'
+                                },
+                                bodyFont: {
+                                    size: 11
+                                },
+                                padding: 10,
+                                displayColors: true,
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        if (context.datasetIndex === 0) {
+                                            // Accuracy
+                                            label += context.parsed.y.toFixed(1) + '%';
+                                        } else {
+                                            // Audit Count
+                                            label += context.parsed.y.toLocaleString();
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                type: 'linear',
+                                display: true,
+                                position: 'left',
+                                title: {
+                                    display: true,
+                                    text: 'Accuracy Score (%)',
+                                    font: {
+                                        size: 11,
+                                        weight: '600'
+                                    }
+                                },
+                                ticks: {
+                                    font: {
+                                        size: 10
+                                    },
+                                    callback: function(value) {
+                                        return value + '%';
+                                    }
+                                },
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.05)'
+                                }
+                            },
+                            y1: {
+                                type: 'linear',
+                                display: true,
+                                position: 'right',
+                                title: {
+                                    display: true,
+                                    text: 'Audit Count',
+                                    font: {
+                                        size: 11,
+                                        weight: '600'
+                                    }
+                                },
+                                ticks: {
+                                    font: {
+                                        size: 10
+                                    },
+                                    callback: function(value) {
+                                        return value.toLocaleString();
+                                    }
+                                },
+                                grid: {
+                                    drawOnChartArea: false
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    font: {
+                                        size: 10,
+                                        weight: '600'
+                                    }
+                                },
+                                grid: {
+                                    display: false
+                                }
+                            }
+                        }
+                    }
+                });
+                
+                console.log('✅ Month Wise chart rendered:', monthData.length, 'months');
+            } catch (error) {
+                handleError(error, 'calculateMonthWiseChart');
             }
         }
 
