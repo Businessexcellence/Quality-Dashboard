@@ -40,16 +40,17 @@ A comprehensive business excellence dashboard for quality management, audit trac
 - ✅ **Account Details Table** - 9 columns, 100 accounts, row numbers, badges, filtering
 - ✅ All elements are clickable and interactive
 
-### 4. **RCA & CAPA Tab** ⭐ NEW - FIXED (2025-12-25)
+### 4. **RCA & CAPA Tab** ⭐ REDESIGNED (2025-12-25)
 - ✅ **4 Smart Filters** - Practice Head (E), Financial Year (H), Region (J), Status (I) with intelligent column detection
-- ✅ **3 KPI Cards** - Error Type breakdown, Impact levels, Status distribution (all with counts and percentages)
-- ✅ **Monthly RCA Chart** - Line chart showing month-wise RCA count trends
+- ✅ **4 KPI Cards** - Error Type breakdown, Impact levels, Total count, Status distribution (all with counts and percentages)
+- ✅ **Region-wise Bar Chart** - Colorful bar chart showing RCA & CAPA count by region
 - ✅ **Account Dropdown List** - Collapsible accounts with first 5 words of Problem Statement
 - ✅ **Complete Details Panel** - Full Problem Statement, Error Type, Impact, Practice Head, Region, RCA, CAPA, Owner, Due Date
 - ✅ **Helper Functions** - Robust column detection handling multiple Excel naming conventions
 - ✅ **Multi-Select Filtering** - OR logic within fields, AND logic across fields
 - ✅ **Universal Search** - Filters across all RCA & CAPA fields
-- ✅ **Issue Fixed**: "No numbers showing" resolved with comprehensive column detection system
+- ✅ **Debug Panel** - Visible yellow panel showing data status and helper function tests
+- ✅ **Issue Fixed**: "No numbers showing" resolved with comprehensive column detection system and header priority
 
 ### 5. **Theme & Design**
 - ✅ **Pure Black Backgrounds**: #0d0d0d, #1a1a1a, #2a2a2a
