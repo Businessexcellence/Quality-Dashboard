@@ -962,7 +962,7 @@
             </div>
 
             <!-- KPI Cards -->
-            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 10px;">
+            <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 10px;">
                 <!-- Accuracy Score Card -->
                 <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 6px; padding: 10px; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
@@ -1001,6 +1001,26 @@
                     </div>
                     <div style="font-size: 24px; font-weight: 700; margin-bottom: 2px;" id="overallAuditCount">0</div>
                     <div style="font-size: 9px; opacity: 0.85;">Total Audits</div>
+                </div>
+
+                <!-- Critical Count Card -->
+                <div style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); border-radius: 6px; padding: 10px; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                        <i class="fas fa-exclamation-circle" style="font-size: 18px; opacity: 0.9;"></i>
+                        <span style="font-size: 9px; opacity: 0.9; font-weight: 600;">CRITICAL</span>
+                    </div>
+                    <div style="font-size: 24px; font-weight: 700; margin-bottom: 2px;" id="criticalCount">0</div>
+                    <div style="font-size: 9px; opacity: 0.85;">Critical Audits</div>
+                </div>
+
+                <!-- Non-Critical Count Card -->
+                <div style="background: linear-gradient(135deg, #10b981 0%, #047857 100%); border-radius: 6px; padding: 10px; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                        <i class="fas fa-check-double" style="font-size: 18px; opacity: 0.9;"></i>
+                        <span style="font-size: 9px; opacity: 0.9; font-weight: 600;">NON-CRITICAL</span>
+                    </div>
+                    <div style="font-size: 24px; font-weight: 700; margin-bottom: 2px;" id="nonCriticalCount">0</div>
+                    <div style="font-size: 9px; opacity: 0.85;">Non-Critical Audits</div>
                 </div>
             </div>
 
@@ -2953,6 +2973,8 @@ Total Population: ${totalPop}
                 let totalOpportunityNA = 0;
                 let totalOpportunityFail = 0;
                 let totalPopulation = 0;
+                let criticalOpportunityCount = 0;
+                let nonCriticalOpportunityCount = 0;
 
                 data.forEach(row => {
                     totalOpportunityPass += parseFloat(row['Opportunity Pass']) || 0;
@@ -2960,6 +2982,15 @@ Total Population: ${totalPop}
                     totalOpportunityNA += parseFloat(row['Opportunity NA']) || 0;
                     totalOpportunityFail += parseFloat(row['Opportunity Fail']) || 0;
                     totalPopulation += parseFloat(row['Total Population']) || 0;
+                    
+                    // Count Critical and Non-Critical
+                    const criticalType = String(row['Critical/Non Critical'] || '').trim();
+                    const oppCount = parseFloat(row['Opportunity Count']) || 0;
+                    if (criticalType === 'Critical') {
+                        criticalOpportunityCount += oppCount;
+                    } else if (criticalType === 'Non Critical') {
+                        nonCriticalOpportunityCount += oppCount;
+                    }
                 });
 
                 // Calculate metrics as per formulas
@@ -2981,12 +3012,16 @@ Total Population: ${totalPop}
                 safeSetText('overallSample', samplePercent.toFixed(1) + '%');
                 safeSetText('overallError', errorPercent.toFixed(1) + '%');
                 safeSetText('overallAuditCount', auditCount.toLocaleString());
+                safeSetText('criticalCount', criticalOpportunityCount.toLocaleString());
+                safeSetText('nonCriticalCount', nonCriticalOpportunityCount.toLocaleString());
 
                 console.log('📊 Overall Metrics:', {
                     accuracy: accuracyPercent.toFixed(1) + '%',
                     sample: samplePercent.toFixed(1) + '%',
                     error: errorPercent.toFixed(1) + '%',
-                    auditCount: auditCount
+                    auditCount: auditCount,
+                    critical: criticalOpportunityCount,
+                    nonCritical: nonCriticalOpportunityCount
                 });
             } catch (error) {
                 handleError(error, 'calculateOverallMetrics');
@@ -3229,11 +3264,29 @@ Total Population: ${totalPop}
                 const totalRecords = data.length;
                 const uniqueClients = [...new Set(data.map(row => row['Client']))].filter(c => c).length;
                 const uniqueRegions = [...new Set(data.map(row => row['Region']))].filter(r => r).length;
+                const uniqueParameters = [...new Set(data.map(row => row['Parameter']))].filter(p => p).length;
+                const uniqueStages = [...new Set(data.map(row => row['Stage']))].filter(s => s).length;
                 
-                let summary = `Showing <strong>${totalRecords.toLocaleString()} records</strong>`;
+                // Count Critical and Non-Critical
+                const criticalCount = data.filter(row => String(row['Critical/Non Critical'] || '').trim() === 'Critical').length;
+                const nonCriticalCount = data.filter(row => String(row['Critical/Non Critical'] || '').trim() === 'Non Critical').length;
                 
+                // Get Regional Heads for filtered data
+                const regionalHeadsInData = new Set();
+                data.forEach(row => {
+                    const client = String(row['Client'] || '').trim();
+                    const mapping = window.clientToAccountMapping?.[client];
+                    if (mapping?.regionalHead) {
+                        regionalHeadsInData.add(mapping.regionalHead);
+                    }
+                });
+                
+                let summary = `<strong style="font-size: 11px;">📊 Audit Data Summary</strong><br>`;
+                summary += `<div style="margin-top: 6px; padding: 6px; background: rgba(255,140,66,0.05); border-radius: 4px;">`;
+                
+                // Filters badges
                 if (clientFilter || practiceHeadFilter || yearFilter || monthFilter || weekFilter) {
-                    summary += ' filtered by: ';
+                    summary += '<div style="margin-bottom: 6px;"><strong>Filters:</strong> ';
                     const filters = [];
                     if (clientFilter) filters.push(`<span style="background: #3b82f6; color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px;">Client: ${clientFilter}</span>`);
                     if (practiceHeadFilter) filters.push(`<span style="background: #8b5cf6; color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px;">Practice Head: ${practiceHeadFilter}</span>`);
@@ -3241,11 +3294,24 @@ Total Population: ${totalPop}
                     if (monthFilter) filters.push(`<span style="background: #f59e0b; color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px;">Month: ${monthFilter}</span>`);
                     if (weekFilter) filters.push(`<span style="background: #ef4444; color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px;">Week: ${weekFilter}</span>`);
                     summary += filters.join(' ');
-                } else {
-                    summary += ' <span style="color: var(--text-muted);">(No filters applied)</span>';
+                    summary += '</div>';
                 }
                 
-                summary += `<br><span style="color: var(--text-muted); font-size: 9px;">Covering ${uniqueClients} client(s) across ${uniqueRegions} region(s)</span>`;
+                // Audit details
+                summary += `
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; font-size: 10px;">
+                        <div><strong>${totalRecords.toLocaleString()}</strong> Records</div>
+                        <div><strong>${uniqueParameters}</strong> Parameters</div>
+                        <div><strong>${uniqueClients}</strong> Clients</div>
+                        <div><strong>${uniqueRegions}</strong> Regions</div>
+                        <div><strong>${regionalHeadsInData.size}</strong> Regional Heads</div>
+                        <div><strong>${uniqueStages}</strong> Stages</div>
+                        <div style="color: #dc2626;"><strong>${criticalCount.toLocaleString()}</strong> Critical</div>
+                        <div style="color: #10b981;"><strong>${nonCriticalCount.toLocaleString()}</strong> Non-Critical</div>
+                    </div>
+                `;
+                
+                summary += `</div>`;
                 
                 safeSetHTML('summaryContent', summary);
             } catch (error) {
