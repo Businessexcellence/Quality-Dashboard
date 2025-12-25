@@ -1656,8 +1656,79 @@
                         </button>
                     </div>
                 </div>
-                <div id="rcaCapaFilters" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px;">
-                    <!-- 6 Filters generated dynamically with counts -->
+                <div id="rcaCapaFilters" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;">
+                    <!-- 4 Filters generated dynamically with counts -->
+                </div>
+            </div>
+
+            <!-- KPI Cards and Chart Section -->
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr) 2fr; gap: 12px; margin-bottom: 12px;">
+                <!-- Error Type Card -->
+                <div style="background: white; border-radius: 10px; padding: 10px; box-shadow: 0 3px 10px rgba(239,68,68,0.15); border-left: 5px solid #ef4444;">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                        <div style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-exclamation-triangle" style="color: white; font-size: 14px;"></i>
+                        </div>
+                        <div>
+                            <div style="color: #64748b; font-size: 8px; font-weight: 700; text-transform: uppercase;">Error Types</div>
+                            <div id="rcaErrorTypeCount" style="color: #1e293b; font-size: 20px; font-weight: 800;">0</div>
+                        </div>
+                    </div>
+                    <div id="rcaErrorTypeBreakdown" style="max-height: 120px; overflow-y: auto; font-size: 7px;">
+                        <!-- Error type breakdown -->
+                    </div>
+                </div>
+
+                <!-- Impact Levels Card -->
+                <div style="background: white; border-radius: 10px; padding: 10px; box-shadow: 0 3px 10px rgba(239,68,68,0.15); border-left: 5px solid #f59e0b;">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                        <div style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-bolt" style="color: white; font-size: 14px;"></i>
+                        </div>
+                        <div>
+                            <div style="color: #64748b; font-size: 8px; font-weight: 700; text-transform: uppercase;">Impact Levels</div>
+                            <div id="rcaImpactCount" style="color: #1e293b; font-size: 20px; font-weight: 800;">0</div>
+                        </div>
+                    </div>
+                    <div id="rcaImpactBreakdown" style="max-height: 120px; overflow-y: auto; font-size: 7px;">
+                        <!-- Impact breakdown -->
+                    </div>
+                </div>
+
+                <!-- Total RCA Count -->
+                <div style="background: white; border-radius: 10px; padding: 10px; box-shadow: 0 3px 10px rgba(239,68,68,0.15); border-left: 5px solid #3b82f6;">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                        <div style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-list-alt" style="color: white; font-size: 14px;"></i>
+                        </div>
+                        <div>
+                            <div style="color: #64748b; font-size: 8px; font-weight: 700; text-transform: uppercase;">Total Items</div>
+                            <div id="rcaTotalCount" style="color: #1e293b; font-size: 20px; font-weight: 800;">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Status Card -->
+                <div style="background: white; border-radius: 10px; padding: 10px; box-shadow: 0 3px 10px rgba(239,68,68,0.15); border-left: 5px solid #10b981;">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                        <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-check-circle" style="color: white; font-size: 14px;"></i>
+                        </div>
+                        <div>
+                            <div style="color: #64748b; font-size: 8px; font-weight: 700; text-transform: uppercase;">Status</div>
+                            <div id="rcaStatusBreakdown" style="color: #1e293b; font-size: 9px; font-weight: 600; margin-top: 4px;">
+                                <!-- Status breakdown -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Monthly RCA Chart -->
+                <div style="background: white; border-radius: 10px; padding: 10px; box-shadow: 0 3px 10px rgba(239,68,68,0.15); border-left: 5px solid #8b5cf6;">
+                    <div style="color: #64748b; font-size: 8px; font-weight: 700; text-transform: uppercase; margin-bottom: 8px;">
+                        <i class="fas fa-chart-line" style="margin-right: 4px;"></i>Monthly RCA Count
+                    </div>
+                    <canvas id="rcaMonthlyChart" style="max-height: 120px;"></canvas>
                 </div>
             </div>
 
@@ -1679,7 +1750,7 @@
                     </div>
                     
                     <!-- RCA & CAPA Cards -->
-                    <div id="rcaCapaListContainer" style="max-height: calc(100vh - 280px); overflow-y: auto; padding-right: 6px;">
+                    <div id="rcaCapaListContainer" style="max-height: calc(100vh - 500px); overflow-y: auto; padding-right: 6px;">
                         <!-- RCA & CAPA cards will be populated here -->
                     </div>
                 </div>
@@ -1693,7 +1764,7 @@
                         RCA & CAPA DETAILS
                     </h2>
                     
-                    <div id="rcaCapaDetailsContainer" style="max-height: calc(100vh - 280px); overflow-y: auto; padding-right: 6px;">
+                    <div id="rcaCapaDetailsContainer" style="max-height: calc(100vh - 500px); overflow-y: auto; padding-right: 6px;">
                         <!-- RCA & CAPA details will be populated here -->
                         <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 300px; color: #94a3b8; text-align: center;">
                             <i class="fas fa-mouse-pointer" style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"></i>
@@ -6549,12 +6620,10 @@ Total Population: ${totalPop}
         function populateRcaCapaFilters(rcaCapaData) {
             try {
                 const filters = [
-                    { field: 'Account', label: 'Account', icon: 'building' },
-                    { field: 'Financial Year', label: 'Financial Year', icon: 'calendar' },
                     { field: 'Region', label: 'Region', icon: 'globe' },
+                    { field: 'Financial Year', label: 'Financial Year', icon: 'calendar' },
                     { field: 'Practice Head', label: 'Practice Head', icon: 'user-tie' },
-                    { field: 'Error Type', label: 'Error Type', icon: 'exclamation-triangle' },
-                    { field: 'Impact', label: 'Impact', icon: 'bolt' }
+                    { field: 'Status', label: 'Status', icon: 'check-circle' }
                 ];
                 
                 const filtersHTML = filters.map(filter => {
@@ -6562,10 +6631,8 @@ Total Population: ${totalPop}
                     const valueSet = new Set();
                     rcaCapaData.forEach(item => {
                         let value;
-                        if (filter.field === 'Error Type') {
-                            value = window.getErrorType(item);
-                        } else if (filter.field === 'Impact') {
-                            value = window.getImpact(item);
+                        if (filter.field === 'Status') {
+                            value = window.getRcaCapaStatus(item);
                         } else {
                             value = item[filter.field];
                         }
@@ -6582,10 +6649,8 @@ Total Population: ${totalPop}
                     const valueCounts = Array.from(valueSet).map(value => {
                         const count = rcaCapaData.filter(item => {
                             let itemValue;
-                            if (filter.field === 'Error Type') {
-                                itemValue = window.getErrorType(item);
-                            } else if (filter.field === 'Impact') {
-                                itemValue = window.getImpact(item);
+                            if (filter.field === 'Status') {
+                                itemValue = window.getRcaCapaStatus(item);
                             } else {
                                 itemValue = item[filter.field];
                             }
@@ -6826,10 +6891,8 @@ Total Population: ${totalPop}
                         if (values.length === 0) continue;
                         
                         let itemValue;
-                        if (field === 'Error Type') {
-                            itemValue = window.getErrorType(item);
-                        } else if (field === 'Impact') {
-                            itemValue = window.getImpact(item);
+                        if (field === 'Status') {
+                            itemValue = window.getRcaCapaStatus(item);
                         } else {
                             itemValue = item[field];
                         }
