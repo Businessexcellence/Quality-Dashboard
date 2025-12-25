@@ -1230,8 +1230,8 @@
                 <!-- Summary will be populated here -->
             </div>
 
-            <!-- KPI Cards -->
-            <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 10px;">
+            <!-- KPI Cards - 5 cards -->
+            <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 10px;">
                 <div style="background: linear-gradient(135deg, #10b981 0%, #047857 100%); border-radius: 6px; padding: 8px; color: white;">
                     <div style="font-size: 9px; opacity: 0.85; margin-bottom: 3px;">TOTAL RECRUITERS</div>
                     <div style="font-size: 22px; font-weight: 700;" id="recruiterTotalCount">0</div>
@@ -1251,33 +1251,6 @@
                 <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 6px; padding: 8px; color: white;">
                     <div style="font-size: 9px; opacity: 0.85; margin-bottom: 3px;">NON-CRITICAL ACC</div>
                     <div style="font-size: 22px; font-weight: 700;" id="recruiterNonCriticalAccuracy">0%</div>
-                </div>
-                <div style="background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%); border-radius: 6px; padding: 8px; color: white;">
-                    <div style="font-size: 9px; opacity: 0.85; margin-bottom: 3px;">AVG AUDITS/RECRUITER</div>
-                    <div style="font-size: 22px; font-weight: 700;" id="recruiterAvgAudits">0</div>
-                </div>
-            </div>
-
-            <!-- Main Content: 3 sections -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
-                <!-- Critical vs Non-Critical Performance -->
-                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 10px;">
-                    <h3 style="font-size: 12px; font-weight: 700; color: var(--text-primary); margin: 0 0 8px 0;">
-                        <i class="fas fa-exclamation-triangle" style="color: var(--primary); font-size: 11px;"></i> Critical vs Non-Critical Performance
-                    </h3>
-                    <div style="height: 250px; position: relative;">
-                        <canvas id="recruiterCriticalChart"></canvas>
-                    </div>
-                </div>
-
-                <!-- Stage-wise Performance -->
-                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 10px;">
-                    <h3 style="font-size: 12px; font-weight: 700; color: var(--text-primary); margin: 0 0 8px 0;">
-                        <i class="fas fa-layer-group" style="color: var(--primary); font-size: 11px;"></i> Stage-wise Performance
-                    </h3>
-                    <div style="height: 250px; position: relative;">
-                        <canvas id="recruiterStageChart"></canvas>
-                    </div>
                 </div>
             </div>
 
@@ -4779,8 +4752,6 @@ Total Population: ${totalPop}
                 // Calculate and display metrics
                 calculateRecruiterMetrics(filteredData);
                 generateRecruiterSummary(filteredData);
-                generateCriticalNonCriticalChart(filteredData);
-                generateStageChart(filteredData);
                 generateRecruiterTable(filteredData);
                 generateRecruiterParameterTable(filteredData);
                 
@@ -4860,24 +4831,19 @@ Total Population: ${totalPop}
                 // Total audits (all rows)
                 const totalAudits = data.length;
                 
-                // Average audits per recruiter
-                const avgAudits = uniqueRecruiters.size > 0 ? Math.round(totalAudits / uniqueRecruiters.size) : 0;
-                
                 // Update KPIs
                 safeSetText('recruiterTotalCount', uniqueRecruiters.size);
                 safeSetText('recruiterOverallAccuracy', overallAccuracy.toFixed(1) + '%');
                 safeSetText('recruiterTotalAudits', totalAudits.toLocaleString());
                 safeSetText('recruiterCriticalAccuracy', criticalAccuracy.toFixed(1) + '%');
                 safeSetText('recruiterNonCriticalAccuracy', nonCriticalAccuracy.toFixed(1) + '%');
-                safeSetText('recruiterAvgAudits', avgAudits.toLocaleString());
                 
                 console.log('✅ Recruiter metrics calculated:', {
                     recruiters: uniqueRecruiters.size,
                     overallAccuracy: overallAccuracy.toFixed(1) + '%',
                     criticalAccuracy: criticalAccuracy.toFixed(1) + '%',
                     nonCriticalAccuracy: nonCriticalAccuracy.toFixed(1) + '%',
-                    totalAudits: totalAudits,
-                    avgAudits: avgAudits
+                    totalAudits: totalAudits
                 });
             } catch (error) {
                 handleError(error, 'calculateRecruiterMetrics');
@@ -5129,19 +5095,23 @@ Total Population: ${totalPop}
 
         function generateRecruiterTable(data) {
             try {
-                // Group by Recruiter
+                // Group by Recruiter with Critical/Non-Critical breakdown
                 const recruiterStats = {};
                 
                 data.forEach(row => {
                     const recruiter = String(row['Recruiter Name'] || '').trim();
-                    // Column K can contain numbers (0, 1) or strings ("0", "1", "NA")
                     const accuracyRaw = row['Accuracy'];
-                    const accuracy = String(accuracyRaw || '').trim(); // Column K
+                    const accuracy = String(accuracyRaw || '').trim();
+                    const criticalType = String(row['Critical/Non Critical'] || '').trim();
                     
                     if (!recruiter) return;
                     
                     if (!recruiterStats[recruiter]) {
-                        recruiterStats[recruiter] = { count1: 0, count0: 0, countNA: 0, totalAudits: 0 };
+                        recruiterStats[recruiter] = { 
+                            count1: 0, count0: 0, countNA: 0, totalAudits: 0,
+                            criticalCount1: 0, criticalCount0: 0, criticalCountNA: 0,
+                            nonCriticalCount1: 0, nonCriticalCount0: 0, nonCriticalCountNA: 0
+                        };
                     }
                     
                     recruiterStats[recruiter].totalAudits++;
@@ -5149,25 +5119,43 @@ Total Population: ${totalPop}
                     // Count values from Column K: 1, 0, "1", "0", "NA"
                     if (accuracyRaw === 1 || accuracy === '1') {
                         recruiterStats[recruiter].count1++;
+                        if (criticalType === 'Critical') recruiterStats[recruiter].criticalCount1++;
+                        if (criticalType === 'Non Critical') recruiterStats[recruiter].nonCriticalCount1++;
                     } else if (accuracyRaw === 0 || accuracy === '0') {
                         recruiterStats[recruiter].count0++;
+                        if (criticalType === 'Critical') recruiterStats[recruiter].criticalCount0++;
+                        if (criticalType === 'Non Critical') recruiterStats[recruiter].nonCriticalCount0++;
                     } else if (accuracy === 'NA' || accuracy === '') {
-                        // Treat empty cells as NA
                         recruiterStats[recruiter].countNA++;
+                        if (criticalType === 'Critical') recruiterStats[recruiter].criticalCountNA++;
+                        if (criticalType === 'Non Critical') recruiterStats[recruiter].nonCriticalCountNA++;
                     } else {
-                        // Log unexpected values for debugging
                         console.warn('Unexpected accuracy value:', accuracyRaw, '(type:', typeof accuracyRaw + ')', 'string:', accuracy, 'for recruiter:', recruiter);
                     }
                 });
                 
                 // Calculate accuracy for each recruiter
                 recruiterTableData = Object.entries(recruiterStats).map(([recruiter, stats]) => {
+                    // Overall accuracy
                     const totalAll = stats.count1 + stats.count0 + stats.countNA;
                     const denom = totalAll - stats.countNA;
                     const accuracy = denom > 0 ? (stats.count1 / denom * 100) : null;
+                    
+                    // Critical accuracy
+                    const criticalAll = stats.criticalCount1 + stats.criticalCount0 + stats.criticalCountNA;
+                    const criticalDenom = criticalAll - stats.criticalCountNA;
+                    const criticalAccuracy = criticalDenom > 0 ? (stats.criticalCount1 / criticalDenom * 100) : null;
+                    
+                    // Non-Critical accuracy
+                    const nonCriticalAll = stats.nonCriticalCount1 + stats.nonCriticalCount0 + stats.nonCriticalCountNA;
+                    const nonCriticalDenom = nonCriticalAll - stats.nonCriticalCountNA;
+                    const nonCriticalAccuracy = nonCriticalDenom > 0 ? (stats.nonCriticalCount1 / nonCriticalDenom * 100) : null;
+                    
                     return {
                         recruiter: recruiter,
                         accuracy: accuracy,
+                        criticalAccuracy: criticalAccuracy,
+                        nonCriticalAccuracy: nonCriticalAccuracy,
                         totalAudits: stats.totalAudits,
                         count1: stats.count1,
                         count0: stats.count0,
@@ -5185,8 +5173,10 @@ Total Population: ${totalPop}
                         <thead style="position: sticky; top: 0; background: white; z-index: 10;">
                             <tr style="border-bottom: 2px solid var(--border); background: rgba(255, 140, 66, 0.05);">
                                 <th style="padding: 6px 8px; text-align: left; font-size: 10px; font-weight: 700; color: #000;">Recruiter Name</th>
-                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: #000;">Accuracy %</th>
                                 <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: #000;">Total Audits</th>
+                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: #000;">Overall Accuracy %</th>
+                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: #000;">Critical Accuracy %</th>
+                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: #000;">Non-Critical Acc %</th>
                                 <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: #000;">Pass (1)</th>
                                 <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: #000;">Fail (0)</th>
                                 <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: #000;">NA</th>
@@ -5196,11 +5186,19 @@ Total Population: ${totalPop}
                             ${recruiterTableData.map(row => `
                                 <tr class="recruiter-row" data-recruiter="${row.recruiter.toLowerCase()}" style="border-bottom: 1px solid var(--border);">
                                     <td style="padding: 6px 8px; font-size: 10px; color: var(--text-primary); font-weight: 600;">${row.recruiter}</td>
+                                    <td style="padding: 6px 8px; text-align: center; font-size: 10px; color: var(--text-primary);">${row.totalAudits}</td>
                                     <td style="padding: 6px 8px; text-align: center;">
                                         ${row.accuracy === null ? '<span style="color: #6b7280; font-size: 9px; font-weight: 700;">NA</span>' : 
                                         `<span style="background: ${row.accuracy >= 90 ? '#10b981' : row.accuracy >= 70 ? '#f59e0b' : '#ef4444'}; color: white; padding: 3px 8px; border-radius: 10px; font-size: 9px; font-weight: 700;">${row.accuracy.toFixed(1)}%</span>`}
                                     </td>
-                                    <td style="padding: 6px 8px; text-align: center; font-size: 10px; color: var(--text-primary);">${row.totalAudits}</td>
+                                    <td style="padding: 6px 8px; text-align: center;">
+                                        ${row.criticalAccuracy === null ? '<span style="color: #6b7280; font-size: 9px; font-weight: 700;">NA</span>' : 
+                                        `<span style="background: ${row.criticalAccuracy >= 90 ? '#10b981' : row.criticalAccuracy >= 70 ? '#f59e0b' : '#ef4444'}; color: white; padding: 3px 8px; border-radius: 10px; font-size: 9px; font-weight: 700;">${row.criticalAccuracy.toFixed(1)}%</span>`}
+                                    </td>
+                                    <td style="padding: 6px 8px; text-align: center;">
+                                        ${row.nonCriticalAccuracy === null ? '<span style="color: #6b7280; font-size: 9px; font-weight: 700;">NA</span>' : 
+                                        `<span style="background: ${row.nonCriticalAccuracy >= 90 ? '#10b981' : row.nonCriticalAccuracy >= 70 ? '#f59e0b' : '#ef4444'}; color: white; padding: 3px 8px; border-radius: 10px; font-size: 9px; font-weight: 700;">${row.nonCriticalAccuracy.toFixed(1)}%</span>`}
+                                    </td>
                                     <td style="padding: 6px 8px; text-align: center; font-size: 10px; color: #10b981; font-weight: 600;">${row.count1}</td>
                                     <td style="padding: 6px 8px; text-align: center; font-size: 10px; color: #ef4444; font-weight: 600;">${row.count0}</td>
                                     <td style="padding: 6px 8px; text-align: center; font-size: 10px; color: #6b7280;">${row.countNA}</td>
