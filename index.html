@@ -69,6 +69,10 @@
                         window.refreshRecruiterTab();
                     } else if (tabId === 'strategic' && typeof window.refreshStrategicTab === 'function') {
                         window.refreshStrategicTab();
+                    } else if (tabId === 'projects' && typeof window.refreshProjectsTab === 'function') {
+                        window.refreshProjectsTab();
+                    } else if (tabId === 'rca-capa' && typeof window.refreshRcaCapaTab === 'function') {
+                        window.refreshRcaCapaTab();
                     }
                 }
             } catch (error) {
@@ -1615,10 +1619,88 @@
         </div>
 
         <div id="rca-capa" class="tab-content">
-            <div class="empty-state">
-                <i class="fas fa-tools"></i>
-                <h3>RCA & CAPA</h3>
-                <p>Coming soon...</p>
+            <!-- RCA & CAPA FILTERS -->
+            <div style="background: white; border-radius: 10px; padding: 10px; margin-bottom: 12px; box-shadow: 0 3px 10px rgba(239,68,68,0.15); border-left: 5px solid #ef4444;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <h2 style="font-size: 12px; font-weight: 800; color: #dc2626; margin: 0; display: flex; align-items: center;">
+                        <div style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 8px; box-shadow: 0 3px 6px rgba(239,68,68,0.3);">
+                            <i class="fas fa-filter" style="color: white; font-size: 9px;"></i>
+                        </div>
+                        RCA & CAPA FILTERS
+                    </h2>
+                    <div style="display: flex; gap: 6px; align-items: center;">
+                        <!-- Universal Search Input -->
+                        <input 
+                            type="text" 
+                            id="rcaCapaUniversalSearch" 
+                            placeholder="🔍 Search all filters..."
+                            style="
+                                padding: 4px 8px 4px 24px;
+                                border: 2px solid #fca5a5;
+                                border-radius: 4px;
+                                font-size: 9px;
+                                width: 180px;
+                                background: white url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2216%22 height=%2216%22 viewBox=%220 0 16 16%22><path fill=%22%23ef4444%22 d=%22M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z%22/></svg>') no-repeat 6px center;
+                                background-size: 12px 12px;
+                                color: #1e293b;
+                                outline: none;
+                                height: 24px;
+                                line-height: 24px;
+                                box-sizing: border-box;
+                                vertical-align: middle;
+                            "
+                            oninput="filterRcaCapaOptions(this.value)"
+                        />
+                        <button onclick="clearRcaCapaFilters()" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); border: none; color: white; padding: 0 8px; border-radius: 4px; cursor: pointer; font-size: 8px; font-weight: 600; height: 24px; line-height: 24px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; gap: 4px; vertical-align: middle;">
+                            <i class="fas fa-times" style="font-size: 8px;"></i> Clear All
+                        </button>
+                    </div>
+                </div>
+                <div id="rcaCapaFilters" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px;">
+                    <!-- 6 Filters generated dynamically with counts -->
+                </div>
+            </div>
+
+            <!-- RCA & CAPA Details Section -->
+            <div style="display: grid; grid-template-columns: 1fr 400px; gap: 12px;">
+                
+                <!-- Left: RCA & CAPA List -->
+                <div style="background: white; border-radius: 10px; padding: 10px; box-shadow: 0 3px 10px rgba(239,68,68,0.15); border-left: 5px solid #ef4444;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <h2 style="font-size: 12px; font-weight: 800; color: #dc2626; margin: 0; display: flex; align-items: center;">
+                            <div style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 8px; box-shadow: 0 3px 6px rgba(239,68,68,0.3);">
+                                <i class="fas fa-list" style="color: white; font-size: 12px;"></i>
+                            </div>
+                            RCA & CAPA LIST
+                        </h2>
+                        <div style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 700;">
+                            <span id="rcaCapaListCount">0</span> Items
+                        </div>
+                    </div>
+                    
+                    <!-- RCA & CAPA Cards -->
+                    <div id="rcaCapaListContainer" style="max-height: calc(100vh - 280px); overflow-y: auto; padding-right: 6px;">
+                        <!-- RCA & CAPA cards will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Right: RCA & CAPA Details Panel -->
+                <div style="background: white; border-radius: 10px; padding: 10px; box-shadow: 0 3px 10px rgba(239,68,68,0.15); border-left: 5px solid #ef4444;">
+                    <h2 style="font-size: 12px; font-weight: 800; color: #dc2626; margin: 0 0 8px 0; display: flex; align-items: center;">
+                        <div style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 8px; box-shadow: 0 3px 6px rgba(239,68,68,0.3);">
+                            <i class="fas fa-info-circle" style="color: white; font-size: 12px;"></i>
+                        </div>
+                        RCA & CAPA DETAILS
+                    </h2>
+                    
+                    <div id="rcaCapaDetailsContainer" style="max-height: calc(100vh - 280px); overflow-y: auto; padding-right: 6px;">
+                        <!-- RCA & CAPA details will be populated here -->
+                        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 300px; color: #94a3b8; text-align: center;">
+                            <i class="fas fa-mouse-pointer" style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"></i>
+                            <p style="font-size: 12px; margin: 0;">Select an item from the list to view details</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -5373,6 +5455,76 @@ Total Population: ${totalPop}
             return '';
         };
 
+        // Global helper functions for RCA & CAPA
+        window.getRcaCapaStatus = function(item) {
+            const keys = Object.keys(item);
+            
+            // Try different possible column references for Column I (9th column, index 8):
+            const possibleKeys = [
+                '__EMPTY_8',  // XLSX headerless column naming
+                'I',          // Direct column letter
+                keys[8],      // 9th column by index
+                'Status',
+                'status',
+                'RCA STATUS',
+                'CAPA STATUS',
+                'STATUS'
+            ];
+            
+            for (const key of possibleKeys) {
+                if (key && item[key]) {
+                    return String(item[key]);
+                }
+            }
+            
+            return '';
+        };
+
+        window.getErrorType = function(item) {
+            const keys = Object.keys(item);
+            
+            const possibleKeys = [
+                '__EMPTY_2',  // XLSX headerless column naming (Column C = 2nd empty column)
+                'C',
+                keys[2],
+                'Error Type',
+                'ERROR TYPE',
+                'ErrorType',
+                'Error',
+                'Type'
+            ];
+            
+            for (const key of possibleKeys) {
+                if (key && item[key]) {
+                    return String(item[key]);
+                }
+            }
+            
+            return '';
+        };
+
+        window.getImpact = function(item) {
+            const keys = Object.keys(item);
+            
+            const possibleKeys = [
+                '__EMPTY_3',  // XLSX headerless column naming (Column D = 3rd empty column)
+                'D',
+                keys[3],
+                'Impact',
+                'IMPACT',
+                'Impact Level',
+                'Severity'
+            ];
+            
+            for (const key of possibleKeys) {
+                if (key && item[key]) {
+                    return String(item[key]);
+                }
+            }
+            
+            return '';
+        };
+
         function generateProjectsSection(projects) {
             try {
                 console.log('📊 generateProjectsSection called with', projects.length, 'projects');
@@ -6318,6 +6470,612 @@ Total Population: ${totalPop}
                 console.log('✅ Project filters and details cleared');
             } catch (error) {
                 handleError(error, 'clearProjectFilters');
+            }
+        }
+
+
+        // ============================================
+        // RCA & CAPA TAB FUNCTIONS
+        // ============================================
+        
+        function refreshRcaCapaTab() {
+            try {
+                console.log('🔄 Refreshing RCA & CAPA tab...');
+                
+                if (!window.dashboardData || !window.dashboardData.rcaCapa) {
+                    console.warn('⚠️ No RCA & CAPA data available');
+                    return;
+                }
+                
+                const rcaCapaData = window.dashboardData.rcaCapa;
+                console.log(`📊 RCA & CAPA data loaded: ${rcaCapaData.length} items`);
+                
+                // Populate filters
+                populateRcaCapaFilters(rcaCapaData);
+                
+                // Apply filters (will show all initially)
+                applyRcaCapaFilters();
+                
+            } catch (error) {
+                handleError(error, 'refreshRcaCapaTab');
+            }
+        }
+        
+        function populateRcaCapaFilters(rcaCapaData) {
+            try {
+                const filters = [
+                    { field: 'Account', label: 'Account', icon: 'building' },
+                    { field: 'Financial Year', label: 'Financial Year', icon: 'calendar' },
+                    { field: 'Region', label: 'Region', icon: 'globe' },
+                    { field: 'Practice Head', label: 'Practice Head', icon: 'user-tie' },
+                    { field: 'Error Type', label: 'Error Type', icon: 'exclamation-triangle' },
+                    { field: 'Impact', label: 'Impact', icon: 'bolt' }
+                ];
+                
+                const filtersHTML = filters.map(filter => {
+                    // Get unique values for this filter
+                    const valueSet = new Set();
+                    rcaCapaData.forEach(item => {
+                        let value;
+                        if (filter.field === 'Error Type') {
+                            value = window.getErrorType(item);
+                        } else if (filter.field === 'Impact') {
+                            value = window.getImpact(item);
+                        } else {
+                            value = item[filter.field];
+                        }
+                        
+                        if (value !== null && value !== undefined && value !== '') {
+                            const trimmedValue = typeof value === 'string' ? value.trim() : value;
+                            if (trimmedValue !== '') {
+                                valueSet.add(trimmedValue);
+                            }
+                        }
+                    });
+                    
+                    // Count occurrences for each value
+                    const valueCounts = Array.from(valueSet).map(value => {
+                        const count = rcaCapaData.filter(item => {
+                            let itemValue;
+                            if (filter.field === 'Error Type') {
+                                itemValue = window.getErrorType(item);
+                            } else if (filter.field === 'Impact') {
+                                itemValue = window.getImpact(item);
+                            } else {
+                                itemValue = item[filter.field];
+                            }
+                            const cleanItemValue = typeof itemValue === 'string' ? itemValue.trim() : itemValue;
+                            return cleanItemValue === value;
+                        }).length;
+                        return { value, count };
+                    }).sort((a, b) => b.count - a.count);
+                    
+                    return `
+                        <div style="background: #fef2f2; border: 2px solid #fca5a5; border-radius: 6px; padding: 6px;">
+                            <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 4px; padding-bottom: 4px; border-bottom: 1px solid #fca5a5;">
+                                <i class="fas fa-${filter.icon}" style="color: #ef4444; font-size: 9px;"></i>
+                                <span style="color: #dc2626; font-size: 9px; font-weight: 700; text-transform: uppercase;">${filter.label}</span>
+                            </div>
+                            <div 
+                                class="rcacapa-filter-options"
+                                data-filter-field="${filter.field}"
+                                style="
+                                    display: flex;
+                                    flex-direction: column;
+                                    gap: 2px;
+                                    max-height: 90px;
+                                    overflow-y: auto;
+                                    padding-right: 3px;
+                                ">
+                                ${valueCounts.map(({ value, count }) => {
+                                    const escapedValue = String(value).replace(/'/g, "\\'");
+                                    const searchText = String(value).toLowerCase().replace(/\s+/g, ' ').trim();
+                                    return `
+                                    <button 
+                                        onclick="toggleRcaCapaFilter('${filter.field}', '${escapedValue}')"
+                                        class="rcacapa-filter-btn"
+                                        data-field="${filter.field}"
+                                        data-value="${escapedValue}"
+                                        data-search-text="${searchText}"
+                                        style="
+                                            display: flex;
+                                            justify-content: space-between;
+                                            align-items: center;
+                                            padding: 3px 5px;
+                                            background: #fef2f2;
+                                            border: 1px solid #fca5a5;
+                                            border-radius: 3px;
+                                            cursor: pointer;
+                                            transition: all 0.2s;
+                                            text-align: left;
+                                            width: 100%;
+                                        "
+                                        onmouseover="if(!this.classList.contains('active')){ this.style.background='#fee2e2'; this.style.borderColor='#ef4444'; }"
+                                        onmouseout="if(!this.classList.contains('active')){ this.style.background='#fef2f2'; this.style.borderColor='#fca5a5'; }"
+                                    >
+                                        <span style="color: #1e293b; font-size: 8px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;" title="${value}">${value}</span>
+                                        <span style="
+                                            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+                                            color: white;
+                                            padding: 1px 4px;
+                                            border-radius: 8px;
+                                            font-size: 7px;
+                                            font-weight: 700;
+                                            margin-left: 4px;
+                                            min-width: 20px;
+                                            text-align: center;
+                                        ">${count}</span>
+                                    </button>
+                                `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                safeSetHTML('rcaCapaFilters', filtersHTML);
+                console.log('✅ RCA & CAPA filters populated');
+            } catch (error) {
+                handleError(error, 'populateRcaCapaFilters');
+            }
+        }
+        
+        function filterRcaCapaOptions(searchText) {
+            try {
+                // Normalize search text: lowercase and preserve spaces
+                const lowerSearch = searchText.toLowerCase().trim();
+                
+                if (!lowerSearch) {
+                    document.querySelectorAll('.rcacapa-filter-btn').forEach(btn => {
+                        btn.style.display = 'flex';
+                    });
+                    return;
+                }
+                
+                document.querySelectorAll('.rcacapa-filter-btn').forEach(btn => {
+                    // Get the searchable text and normalize it
+                    const searchableText = (btn.getAttribute('data-search-text') || '').toLowerCase();
+                    const buttonValue = (btn.getAttribute('data-value') || '').toLowerCase();
+                    
+                    // Check if search text matches either the data-search-text or data-value
+                    if (searchableText.includes(lowerSearch) || buttonValue.includes(lowerSearch)) {
+                        btn.style.display = 'flex';
+                    } else {
+                        btn.style.display = 'none';
+                    }
+                });
+                
+                console.log(`🔍 RCA & CAPA filters searched: "${searchText}"`);
+            } catch (error) {
+                handleError(error, 'filterRcaCapaOptions');
+            }
+        }
+        
+        function toggleRcaCapaFilter(field, value) {
+            try {
+                // Normalize the value to ensure consistent string comparison
+                const normalizedValue = String(value || '').trim();
+                console.log(`🔍 RCA & CAPA filter toggled: ${field} = ${normalizedValue}`);
+                
+                if (!window.activeRcaCapaFilters) {
+                    window.activeRcaCapaFilters = {};
+                }
+                
+                if (!window.activeRcaCapaFilters[field]) {
+                    window.activeRcaCapaFilters[field] = [];
+                }
+                
+                const valueIndex = window.activeRcaCapaFilters[field].indexOf(normalizedValue);
+                if (valueIndex > -1) {
+                    window.activeRcaCapaFilters[field].splice(valueIndex, 1);
+                    if (window.activeRcaCapaFilters[field].length === 0) {
+                        delete window.activeRcaCapaFilters[field];
+                    }
+                } else {
+                    window.activeRcaCapaFilters[field].push(normalizedValue);
+                }
+                
+                console.log('📊 Active RCA & CAPA filters:', window.activeRcaCapaFilters);
+                
+                applyRcaCapaFilters();
+                
+                // Update button styles
+                document.querySelectorAll('.rcacapa-filter-btn').forEach(btn => {
+                    const btnField = btn.getAttribute('data-field');
+                    const btnValue = String(btn.getAttribute('data-value') || '').trim();
+                    
+                    const isActive = window.activeRcaCapaFilters[btnField] && 
+                                    window.activeRcaCapaFilters[btnField].includes(btnValue);
+                    
+                    if (isActive) {
+                        btn.classList.add('active');
+                        btn.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+                        btn.style.borderColor = '#dc2626';
+                        const textSpan = btn.querySelector('span:first-child');
+                        if (textSpan) textSpan.style.color = 'white';
+                        const badgeSpan = btn.querySelector('span:last-child');
+                        if (badgeSpan) badgeSpan.style.background = 'rgba(255,255,255,0.3)';
+                    } else {
+                        btn.classList.remove('active');
+                        btn.style.background = '#fef2f2';
+                        btn.style.borderColor = '#fca5a5';
+                        const textSpan = btn.querySelector('span:first-child');
+                        if (textSpan) textSpan.style.color = '#1e293b';
+                        const badgeSpan = btn.querySelector('span:last-child');
+                        if (badgeSpan) badgeSpan.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+                    }
+                });
+                
+            } catch (error) {
+                handleError(error, 'toggleRcaCapaFilter');
+            }
+        }
+        
+        function applyRcaCapaFilters() {
+            try {
+                console.log('🔍 Applying RCA & CAPA filters...');
+                
+                if (!window.dashboardData || !window.dashboardData.rcaCapa) {
+                    console.error('❌ RCA & CAPA data not available');
+                    return;
+                }
+                
+                const allRcaCapa = window.dashboardData.rcaCapa;
+                const activeFilters = window.activeRcaCapaFilters || {};
+                
+                console.log('🔍 Active filters:', activeFilters);
+                
+                // Filter items with OR logic within field, AND logic across fields
+                const filteredRcaCapa = allRcaCapa.filter(item => {
+                    for (const [field, values] of Object.entries(activeFilters)) {
+                        if (values.length === 0) continue;
+                        
+                        let itemValue;
+                        if (field === 'Error Type') {
+                            itemValue = window.getErrorType(item);
+                        } else if (field === 'Impact') {
+                            itemValue = window.getImpact(item);
+                        } else {
+                            itemValue = item[field];
+                        }
+                        
+                        // Normalize both item value and filter values for comparison
+                        const cleanItemValue = String(itemValue || '').trim();
+                        const normalizedValues = values.map(v => String(v || '').trim());
+                        
+                        // Must match at least one value in this field (OR within field)
+                        if (!normalizedValues.includes(cleanItemValue)) {
+                            return false;
+                        }
+                    }
+                    return true;
+                });
+                
+                console.log(`📊 Filtered RCA & CAPA: ${filteredRcaCapa.length} of ${allRcaCapa.length}`);
+                
+                // Update list
+                generateRcaCapaList(filteredRcaCapa);
+                
+            } catch (error) {
+                handleError(error, 'applyRcaCapaFilters');
+            }
+        }
+        
+        function generateRcaCapaList(rcaCapaItems) {
+            try {
+                // Update count
+                safeSetText('rcaCapaListCount', rcaCapaItems.length);
+                
+                if (rcaCapaItems.length === 0) {
+                    safeSetHTML('rcaCapaListContainer', `
+                        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 200px; color: #94a3b8; text-align: center;">
+                            <i class="fas fa-inbox" style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"></i>
+                            <p style="font-size: 12px; margin: 0;">No items found matching the selected filters</p>
+                        </div>
+                    `);
+                    return;
+                }
+                
+                // Group by account
+                const itemsByAccount = {};
+                rcaCapaItems.forEach((item, index) => {
+                    const account = item['Account'] || 'N/A';
+                    if (!itemsByAccount[account]) {
+                        itemsByAccount[account] = [];
+                    }
+                    itemsByAccount[account].push({ item, index });
+                });
+                
+                // Store filtered items for details view
+                window.filteredRcaCapa = rcaCapaItems;
+                
+                // Generate HTML for grouped items
+                const accountCards = Object.entries(itemsByAccount).map(([account, itemList]) => {
+                    const accountId = `rcacapa_account_${account.replace(/[^a-zA-Z0-9]/g, '_')}`;
+                    
+                    return `
+                        <div style="margin-bottom: 6px;">
+                            <!-- Account Header -->
+                            <div 
+                                onclick="toggleAccountRcaCapa('${accountId}')"
+                                style="
+                                    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+                                    color: white;
+                                    padding: 8px;
+                                    border-radius: 6px;
+                                    cursor: pointer;
+                                    display: flex;
+                                    justify-content: space-between;
+                                    align-items: center;
+                                    transition: all 0.2s;
+                                "
+                                onmouseover="this.style.boxShadow='0 4px 12px rgba(239,68,68,0.4)'; this.style.transform='translateY(-1px)';"
+                                onmouseout="this.style.boxShadow='none'; this.style.transform='translateY(0)';"
+                            >
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <i class="fas fa-building" style="font-size: 10px;"></i>
+                                    <span style="font-size: 11px; font-weight: 700;">${account}</span>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span style="background: rgba(255,255,255,0.3); padding: 2px 8px; border-radius: 10px; font-size: 9px; font-weight: 700;">
+                                        ${itemList.length} ${itemList.length === 1 ? 'Item' : 'Items'}
+                                    </span>
+                                    <i id="${accountId}_icon" class="fas fa-chevron-down" style="font-size: 9px; transition: transform 0.2s;"></i>
+                                </div>
+                            </div>
+                            
+                            <!-- Items List (Collapsible) -->
+                            <div id="${accountId}" style="display: none; margin-top: 4px; margin-left: 8px;">
+                                ${itemList.map(({ item, index }) => {
+                                    const errorType = window.getErrorType(item) || 'N/A';
+                                    const impact = window.getImpact(item) || 'N/A';
+                                    const status = window.getRcaCapaStatus(item) || 'N/A';
+                                    const region = item['Region'] || 'N/A';
+                                    
+                                    // Status color
+                                    let statusColor = '#64748b';
+                                    const statusUpper = String(status).toUpperCase();
+                                    if (statusUpper === 'CLOSED' || statusUpper.includes('COMPLETE')) statusColor = '#f59e0b';
+                                    else if (statusUpper === 'OPEN' || statusUpper.includes('PROGRESS')) statusColor = '#ef4444';
+                                    
+                                    // Impact color
+                                    let impactColor = '#64748b';
+                                    const impactUpper = String(impact).toUpperCase();
+                                    if (impactUpper.includes('HIGH') || impactUpper.includes('CRITICAL')) impactColor = '#dc2626';
+                                    else if (impactUpper.includes('MEDIUM')) impactColor = '#f59e0b';
+                                    else if (impactUpper.includes('LOW')) impactColor = '#10b981';
+                                    
+                                    return `
+                                        <div 
+                                            onclick="showRcaCapaDetails(${index}); event.stopPropagation();"
+                                            style="
+                                                background: white;
+                                                border: 2px solid #fecaca;
+                                                border-left: 4px solid ${statusColor};
+                                                border-radius: 6px;
+                                                padding: 8px;
+                                                margin-bottom: 4px;
+                                                cursor: pointer;
+                                                transition: all 0.2s;
+                                            "
+                                            onmouseover="this.style.background='#fef2f2'; this.style.borderColor='#ef4444'; this.style.boxShadow='0 2px 8px rgba(239,68,68,0.2)';"
+                                            onmouseout="this.style.background='white'; this.style.borderColor='#fecaca'; this.style.boxShadow='none';"
+                                        >
+                                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 4px;">
+                                                <div style="flex: 1;">
+                                                    <div style="color: #1e293b; font-size: 9px; font-weight: 700; margin-bottom: 3px;">
+                                                        ${errorType}
+                                                    </div>
+                                                    <div style="color: #64748b; font-size: 7px;">
+                                                        <i class="fas fa-map-marker-alt" style="font-size: 6px; margin-right: 2px;"></i>${region}
+                                                    </div>
+                                                </div>
+                                                <div style="background: ${statusColor}; color: white; padding: 2px 6px; border-radius: 4px; font-size: 7px; font-weight: 700;">
+                                                    ${status}
+                                                </div>
+                                            </div>
+                                            <div style="display: flex; gap: 6px; align-items: center;">
+                                                <span style="background: ${impactColor}; color: white; padding: 2px 6px; border-radius: 3px; font-size: 7px; font-weight: 600;">
+                                                    <i class="fas fa-bolt" style="font-size: 6px; margin-right: 2px;"></i>${impact}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                safeSetHTML('rcaCapaListContainer', accountCards);
+                
+                console.log(`✅ RCA & CAPA list generated: ${rcaCapaItems.length} items in ${Object.keys(itemsByAccount).length} accounts`);
+            } catch (error) {
+                handleError(error, 'generateRcaCapaList');
+            }
+        }
+        
+        function toggleAccountRcaCapa(accountId) {
+            try {
+                const container = document.getElementById(accountId);
+                const icon = document.getElementById(`${accountId}_icon`);
+                
+                if (container && icon) {
+                    if (container.style.display === 'none') {
+                        container.style.display = 'block';
+                        icon.style.transform = 'rotate(180deg)';
+                    } else {
+                        container.style.display = 'none';
+                        icon.style.transform = 'rotate(0deg)';
+                    }
+                }
+            } catch (error) {
+                handleError(error, 'toggleAccountRcaCapa');
+            }
+        }
+        
+        function showRcaCapaDetails(index) {
+            try {
+                if (!window.filteredRcaCapa || !window.filteredRcaCapa[index]) {
+                    console.error('❌ RCA & CAPA item not found at index', index);
+                    return;
+                }
+                
+                const item = window.filteredRcaCapa[index];
+                console.log('📄 Showing RCA & CAPA details:', item);
+                
+                // Extract details
+                const account = item['Account'] || 'N/A';
+                const errorType = window.getErrorType(item) || 'N/A';
+                const impact = window.getImpact(item) || 'N/A';
+                const status = window.getRcaCapaStatus(item) || 'N/A';
+                const region = item['Region'] || 'N/A';
+                const financialYear = item['Financial Year'] || 'N/A';
+                const practiceHead = item['Practice Head'] || 'N/A';
+                
+                // Get additional fields if available
+                const description = item['Description'] || item['Issue Description'] || item['Problem Statement'] || 'N/A';
+                const rootCause = item['Root Cause'] || item['RCA'] || 'N/A';
+                const correctiveAction = item['Corrective Action'] || item['CAPA'] || item['Action'] || 'N/A';
+                const owner = item['Owner'] || item['Assigned To'] || 'N/A';
+                const dueDate = item['Due Date'] || item['Target Date'] || 'N/A';
+                
+                // Status color
+                let statusColor = '#64748b';
+                const statusUpper = String(status).toUpperCase();
+                if (statusUpper === 'CLOSED' || statusUpper.includes('COMPLETE')) statusColor = '#f59e0b';
+                else if (statusUpper === 'OPEN' || statusUpper.includes('PROGRESS')) statusColor = '#ef4444';
+                
+                // Impact color
+                let impactColor = '#64748b';
+                const impactUpper = String(impact).toUpperCase();
+                if (impactUpper.includes('HIGH') || impactUpper.includes('CRITICAL')) impactColor = '#dc2626';
+                else if (impactUpper.includes('MEDIUM')) impactColor = '#f59e0b';
+                else if (impactUpper.includes('LOW')) impactColor = '#10b981';
+                
+                const detailsHTML = `
+                    <div style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; padding: 12px; border-radius: 8px; margin-bottom: 12px;">
+                        <div style="font-size: 14px; font-weight: 800; margin-bottom: 4px;">${account}</div>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <span style="background: rgba(255,255,255,0.2); padding: 3px 8px; border-radius: 4px; font-size: 8px; font-weight: 600;">
+                                <i class="fas fa-map-marker-alt" style="font-size: 7px; margin-right: 3px;"></i>${region}
+                            </span>
+                            <span style="background: rgba(255,255,255,0.2); padding: 3px 8px; border-radius: 4px; font-size: 8px; font-weight: 600;">
+                                <i class="fas fa-calendar" style="font-size: 7px; margin-right: 3px;"></i>${financialYear}
+                            </span>
+                            <span style="background: ${statusColor}; padding: 3px 8px; border-radius: 4px; font-size: 8px; font-weight: 700;">
+                                ${status}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        
+                        <!-- Error Type -->
+                        <div style="background: #fef2f2; border-radius: 6px; padding: 8px; border-left: 3px solid #ef4444;">
+                            <div style="color: #64748b; font-size: 8px; font-weight: 700; text-transform: uppercase; margin-bottom: 3px;">
+                                <i class="fas fa-exclamation-triangle" style="margin-right: 4px;"></i>Error Type
+                            </div>
+                            <div style="color: #1e293b; font-size: 10px; font-weight: 600;">${errorType}</div>
+                        </div>
+                        
+                        <!-- Impact -->
+                        <div style="background: #fef2f2; border-radius: 6px; padding: 8px; border-left: 3px solid ${impactColor};">
+                            <div style="color: #64748b; font-size: 8px; font-weight: 700; text-transform: uppercase; margin-bottom: 3px;">
+                                <i class="fas fa-bolt" style="margin-right: 4px;"></i>Impact Level
+                            </div>
+                            <div style="color: #1e293b; font-size: 10px; font-weight: 600;">${impact}</div>
+                        </div>
+                        
+                        <!-- Description -->
+                        <div style="background: #fef2f2; border-radius: 6px; padding: 8px; border-left: 3px solid #3b82f6;">
+                            <div style="color: #64748b; font-size: 8px; font-weight: 700; text-transform: uppercase; margin-bottom: 3px;">
+                                <i class="fas fa-file-alt" style="margin-right: 4px;"></i>Description
+                            </div>
+                            <div style="color: #1e293b; font-size: 9px; line-height: 1.4;">${description}</div>
+                        </div>
+                        
+                        <!-- Root Cause -->
+                        <div style="background: #fef2f2; border-radius: 6px; padding: 8px; border-left: 3px solid #f59e0b;">
+                            <div style="color: #64748b; font-size: 8px; font-weight: 700; text-transform: uppercase; margin-bottom: 3px;">
+                                <i class="fas fa-search" style="margin-right: 4px;"></i>Root Cause Analysis
+                            </div>
+                            <div style="color: #1e293b; font-size: 9px; line-height: 1.4;">${rootCause}</div>
+                        </div>
+                        
+                        <!-- Corrective Action -->
+                        <div style="background: #fef2f2; border-radius: 6px; padding: 8px; border-left: 3px solid #10b981;">
+                            <div style="color: #64748b; font-size: 8px; font-weight: 700; text-transform: uppercase; margin-bottom: 3px;">
+                                <i class="fas fa-tools" style="margin-right: 4px;"></i>Corrective Action
+                            </div>
+                            <div style="color: #1e293b; font-size: 9px; line-height: 1.4;">${correctiveAction}</div>
+                        </div>
+                        
+                        <!-- Owner -->
+                        <div style="background: #fef2f2; border-radius: 6px; padding: 8px; border-left: 3px solid #8b5cf6;">
+                            <div style="color: #64748b; font-size: 8px; font-weight: 700; text-transform: uppercase; margin-bottom: 3px;">
+                                <i class="fas fa-user" style="margin-right: 4px;"></i>Owner
+                            </div>
+                            <div style="color: #1e293b; font-size: 10px; font-weight: 600;">${owner}</div>
+                        </div>
+                        
+                        <!-- Due Date -->
+                        <div style="background: #fef2f2; border-radius: 6px; padding: 8px; border-left: 3px solid #ec4899;">
+                            <div style="color: #64748b; font-size: 8px; font-weight: 700; text-transform: uppercase; margin-bottom: 3px;">
+                                <i class="fas fa-calendar-check" style="margin-right: 4px;"></i>Due Date
+                            </div>
+                            <div style="color: #1e293b; font-size: 10px; font-weight: 600;">${dueDate}</div>
+                        </div>
+                        
+                        <!-- Practice Head -->
+                        <div style="background: #fef2f2; border-radius: 6px; padding: 8px; border-left: 3px solid #06b6d4;">
+                            <div style="color: #64748b; font-size: 8px; font-weight: 700; text-transform: uppercase; margin-bottom: 3px;">
+                                <i class="fas fa-user-tie" style="margin-right: 4px;"></i>Practice Head
+                            </div>
+                            <div style="color: #1e293b; font-size: 10px; font-weight: 600;">${practiceHead}</div>
+                        </div>
+                    </div>
+                `;
+                
+                safeSetHTML('rcaCapaDetailsContainer', detailsHTML);
+                
+            } catch (error) {
+                handleError(error, 'showRcaCapaDetails');
+            }
+        }
+        
+        function clearRcaCapaFilters() {
+            try {
+                window.activeRcaCapaFilters = {};
+                
+                const searchInput = document.getElementById('rcaCapaUniversalSearch');
+                if (searchInput) {
+                    searchInput.value = '';
+                    filterRcaCapaOptions('');
+                }
+                
+                document.querySelectorAll('.rcacapa-filter-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                    btn.style.background = '#fef2f2';
+                    btn.style.borderColor = '#fca5a5';
+                    const textSpan = btn.querySelector('span:first-child');
+                    if (textSpan) textSpan.style.color = '#1e293b';
+                    const badgeSpan = btn.querySelector('span:last-child');
+                    if (badgeSpan) badgeSpan.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+                });
+                
+                // Clear RCA & CAPA DETAILS section
+                safeSetHTML('rcaCapaDetailsContainer', `
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 300px; color: #94a3b8; text-align: center;">
+                        <i class="fas fa-mouse-pointer" style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"></i>
+                        <p style="font-size: 12px; margin: 0;">Select an item from the list to view details</p>
+                    </div>
+                `);
+                
+                applyRcaCapaFilters();
+                console.log('✅ RCA & CAPA filters and details cleared');
+            } catch (error) {
+                handleError(error, 'clearRcaCapaFilters');
             }
         }
 
