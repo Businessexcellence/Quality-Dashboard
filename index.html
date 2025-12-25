@@ -1133,27 +1133,40 @@
                 </div>
             </div>
 
-            <!-- KPI Cards -->
-            <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 10px;">
-                <div style="background: linear-gradient(135deg, #10b981 0%, #047857 100%); border-radius: 6px; padding: 10px; color: white;">
-                    <div style="font-size: 9px; opacity: 0.85; margin-bottom: 4px;">TOTAL PARAMETERS</div>
-                    <div style="font-size: 24px; font-weight: 700;" id="paramTotalCount">0</div>
+            <!-- Summary Section -->
+            <div id="paramSummarySection" style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 12px; margin-bottom: 10px;">
+                <!-- Summary will be populated here -->
+            </div>
+
+            <!-- KPI Cards - All in One Line (7 cards) -->
+            <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-bottom: 10px;">
+                <div style="background: linear-gradient(135deg, #10b981 0%, #047857 100%); border-radius: 6px; padding: 8px; color: white;">
+                    <div style="font-size: 9px; opacity: 0.85; margin-bottom: 3px;">TOTAL PARAMETERS</div>
+                    <div style="font-size: 22px; font-weight: 700;" id="paramTotalCount">0</div>
                 </div>
-                <div style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); border-radius: 6px; padding: 10px; color: white;">
-                    <div style="font-size: 9px; opacity: 0.85; margin-bottom: 4px;">ACCURACY %</div>
-                    <div style="font-size: 24px; font-weight: 700;" id="paramAvgAccuracy">0%</div>
+                <div style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); border-radius: 6px; padding: 8px; color: white;">
+                    <div style="font-size: 9px; opacity: 0.85; margin-bottom: 3px;">ACCURACY %</div>
+                    <div style="font-size: 22px; font-weight: 700;" id="paramAvgAccuracy">0%</div>
                 </div>
-                <div style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border-radius: 6px; padding: 10px; color: white;">
-                    <div style="font-size: 9px; opacity: 0.85; margin-bottom: 4px;">SAMPLE %</div>
-                    <div style="font-size: 24px; font-weight: 700;" id="paramAvgSample">0%</div>
+                <div style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border-radius: 6px; padding: 8px; color: white;">
+                    <div style="font-size: 9px; opacity: 0.85; margin-bottom: 3px;">SAMPLE %</div>
+                    <div style="font-size: 22px; font-weight: 700;" id="paramAvgSample">0%</div>
                 </div>
-                <div style="background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%); border-radius: 6px; padding: 10px; color: white;">
-                    <div style="font-size: 9px; opacity: 0.85; margin-bottom: 4px;">ERROR %</div>
-                    <div style="font-size: 24px; font-weight: 700;" id="paramAvgError">0%</div>
+                <div style="background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%); border-radius: 6px; padding: 8px; color: white;">
+                    <div style="font-size: 9px; opacity: 0.85; margin-bottom: 3px;">ERROR %</div>
+                    <div style="font-size: 22px; font-weight: 700;" id="paramAvgError">0%</div>
                 </div>
-                <div style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); border-radius: 6px; padding: 10px; color: white;">
-                    <div style="font-size: 9px; opacity: 0.85; margin-bottom: 4px;">TOTAL AUDITS</div>
-                    <div style="font-size: 24px; font-weight: 700;" id="paramTotalAudits">0</div>
+                <div style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); border-radius: 6px; padding: 8px; color: white;">
+                    <div style="font-size: 9px; opacity: 0.85; margin-bottom: 3px;">TOTAL AUDITS</div>
+                    <div style="font-size: 22px; font-weight: 700;" id="paramTotalAudits">0</div>
+                </div>
+                <div style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); border-radius: 6px; padding: 8px; color: white;">
+                    <div style="font-size: 9px; opacity: 0.85; margin-bottom: 3px;">CRITICAL PARAMS</div>
+                    <div style="font-size: 22px; font-weight: 700;" id="paramCriticalCount">0</div>
+                </div>
+                <div style="background: linear-gradient(135deg, #059669 0%, #047857 100%); border-radius: 6px; padding: 8px; color: white;">
+                    <div style="font-size: 9px; opacity: 0.85; margin-bottom: 3px;">NON-CRITICAL PARAMS</div>
+                    <div style="font-size: 22px; font-weight: 700;" id="paramNonCriticalCount">0</div>
                 </div>
             </div>
 
@@ -4057,6 +4070,10 @@ Total Population: ${totalPop}
                 let totalOpportunityFail = 0;
                 let totalPopulation = 0;
                 
+                // Count Critical and Non-Critical parameters
+                const criticalParams = new Set();
+                const nonCriticalParams = new Set();
+                
                 // Sum ALL rows in filtered data
                 data.forEach(row => {
                     totalOpportunityPass += parseFloat(row['Opportunity Pass']) || 0;
@@ -4064,6 +4081,17 @@ Total Population: ${totalPop}
                     totalOpportunityNA += parseFloat(row['Opportunity NA']) || 0;
                     totalOpportunityFail += parseFloat(row['Opportunity Fail']) || 0;
                     totalPopulation += parseFloat(row['Total Population']) || 0;
+                    
+                    // Track Critical/Non-Critical parameters
+                    const param = String(row['Parameter'] || '').trim();
+                    const criticalType = String(row['Critical/Non Critical'] || '').trim();
+                    if (param) {
+                        if (criticalType === 'Critical') {
+                            criticalParams.add(param);
+                        } else if (criticalType === 'Non Critical') {
+                            nonCriticalParams.add(param);
+                        }
+                    }
                 });
                 
                 // Calculate metrics using specified formulas
@@ -4089,16 +4117,153 @@ Total Population: ${totalPop}
                 safeSetText('paramAvgSample', samplePercent.toFixed(1) + '%');
                 safeSetText('paramAvgError', errorPercent.toFixed(1) + '%');
                 safeSetText('paramTotalAudits', auditCount.toLocaleString());
+                safeSetText('paramCriticalCount', criticalParams.size);
+                safeSetText('paramNonCriticalCount', nonCriticalParams.size);
+                
+                // Generate Summary Statement
+                generateParameterSummary(data, accuracyPercent, samplePercent, errorPercent, auditCount, uniqueParams, criticalParams.size, nonCriticalParams.size);
                 
                 console.log('✅ Parameter metrics calculated:', {
                     uniqueParams,
                     accuracy: accuracyPercent.toFixed(1) + '%',
                     sample: samplePercent.toFixed(1) + '%',
                     error: errorPercent.toFixed(1) + '%',
-                    auditCount: auditCount
+                    auditCount: auditCount,
+                    criticalParams: criticalParams.size,
+                    nonCriticalParams: nonCriticalParams.size
                 });
             } catch (error) {
                 handleError(error, 'calculateParameterMetrics');
+            }
+        }
+
+        function generateParameterSummary(data, accuracy, sample, error, auditCount, totalParams, criticalCount, nonCriticalCount) {
+            try {
+                // Get unique clients, regions, stages
+                const clients = [...new Set(data.map(row => String(row['Client'] || '').trim()))].filter(v => v);
+                const regions = [...new Set(data.map(row => String(row['Region'] || '').trim()))].filter(v => v);
+                const stages = [...new Set(data.map(row => String(row['Stage'] || '').trim()))].filter(v => v);
+                const months = [...new Set(data.map(row => String(row['Month'] || '').trim()))].filter(v => v);
+                
+                // Calculate parameter-level stats for summary insights
+                const paramStats = {};
+                data.forEach(row => {
+                    const param = String(row['Parameter'] || '').trim();
+                    if (!param) return;
+                    
+                    if (!paramStats[param]) {
+                        paramStats[param] = {
+                            opportunityPass: 0,
+                            opportunityCount: 0,
+                            opportunityNA: 0,
+                            opportunityFail: 0
+                        };
+                    }
+                    
+                    paramStats[param].opportunityPass += parseFloat(row['Opportunity Pass']) || 0;
+                    paramStats[param].opportunityCount += parseFloat(row['Opportunity Count']) || 0;
+                    paramStats[param].opportunityNA += parseFloat(row['Opportunity NA']) || 0;
+                    paramStats[param].opportunityFail += parseFloat(row['Opportunity Fail']) || 0;
+                });
+                
+                // Calculate accuracy for each parameter
+                const paramAccuracies = Object.entries(paramStats).map(([param, stats]) => {
+                    const denom = stats.opportunityCount - stats.opportunityNA;
+                    const acc = denom > 0 ? (stats.opportunityPass / denom * 100) : null;
+                    return { param, accuracy: acc, auditCount: stats.opportunityCount };
+                }).filter(p => p.accuracy !== null);
+                
+                // Get best and worst performers
+                paramAccuracies.sort((a, b) => b.accuracy - a.accuracy);
+                const bestParam = paramAccuracies[0];
+                const worstParam = paramAccuracies[paramAccuracies.length - 1];
+                
+                // Count high/low performers
+                const highPerformers = paramAccuracies.filter(p => p.accuracy >= 90).length;
+                const lowPerformers = paramAccuracies.filter(p => p.accuracy < 70).length;
+                const mediumPerformers = paramAccuracies.filter(p => p.accuracy >= 70 && p.accuracy < 90).length;
+                
+                // Performance rating
+                let performanceRating = '';
+                let ratingColor = '';
+                if (accuracy >= 95) {
+                    performanceRating = 'Excellent';
+                    ratingColor = '#10b981';
+                } else if (accuracy >= 85) {
+                    performanceRating = 'Good';
+                    ratingColor = '#3b82f6';
+                } else if (accuracy >= 75) {
+                    performanceRating = 'Satisfactory';
+                    ratingColor = '#f59e0b';
+                } else {
+                    performanceRating = 'Needs Improvement';
+                    ratingColor = '#ef4444';
+                }
+                
+                // Build comprehensive summary
+                const html = `
+                    <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                        <i class="fas fa-chart-line" style="color: var(--primary); font-size: 14px; margin-right: 8px;"></i>
+                        <h3 style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin: 0;">Parameter Performance Summary</h3>
+                    </div>
+                    <div style="font-size: 11px; line-height: 1.7; color: var(--text-secondary);">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                            <div>
+                                <p style="margin: 0 0 8px 0;">
+                                    <span style="font-weight: 700; color: var(--text-primary);">Overall Performance Rating:</span> 
+                                    <span style="background: ${ratingColor}; color: white; padding: 2px 8px; border-radius: 10px; font-weight: 700; font-size: 10px;">${performanceRating}</span>
+                                </p>
+                                <p style="margin: 0 0 8px 0;">
+                                    <span style="font-weight: 700; color: var(--text-primary);">Coverage:</span> 
+                                    Audited <strong>${totalParams}</strong> unique parameters (${criticalCount} Critical, ${nonCriticalCount} Non-Critical) across 
+                                    <strong>${clients.length}</strong> client(s), <strong>${regions.length}</strong> region(s), and <strong>${stages.length}</strong> stage(s).
+                                </p>
+                                <p style="margin: 0 0 8px 0;">
+                                    <span style="font-weight: 700; color: var(--text-primary);">Audit Volume:</span> 
+                                    Conducted <strong>${auditCount.toLocaleString()}</strong> total audits with <strong>${sample.toFixed(1)}%</strong> sample coverage.
+                                </p>
+                                <p style="margin: 0 0 0 0;">
+                                    <span style="font-weight: 700; color: var(--text-primary);">Quality Metrics:</span> 
+                                    Overall accuracy of <strong>${accuracy.toFixed(1)}%</strong> with error rate at <strong>${error.toFixed(1)}%</strong>.
+                                </p>
+                            </div>
+                            <div>
+                                ${bestParam ? `
+                                <p style="margin: 0 0 8px 0;">
+                                    <span style="font-weight: 700; color: var(--text-primary);">Best Performer:</span> 
+                                    <strong>${bestParam.param}</strong> achieved <span style="background: #10b981; color: white; padding: 2px 6px; border-radius: 8px; font-size: 9px;">${bestParam.accuracy.toFixed(1)}%</span> accuracy 
+                                    (${bestParam.auditCount.toLocaleString()} audits).
+                                </p>
+                                ` : ''}
+                                ${worstParam ? `
+                                <p style="margin: 0 0 8px 0;">
+                                    <span style="font-weight: 700; color: var(--text-primary);">Needs Attention:</span> 
+                                    <strong>${worstParam.param}</strong> at <span style="background: #ef4444; color: white; padding: 2px 6px; border-radius: 8px; font-size: 9px;">${worstParam.accuracy.toFixed(1)}%</span> accuracy 
+                                    (${worstParam.auditCount.toLocaleString()} audits) requires improvement.
+                                </p>
+                                ` : ''}
+                                <p style="margin: 0 0 8px 0;">
+                                    <span style="font-weight: 700; color: var(--text-primary);">Performance Distribution:</span> 
+                                    <span style="color: #10b981; font-weight: 600;">${highPerformers}</span> high (≥90%), 
+                                    <span style="color: #f59e0b; font-weight: 600;">${mediumPerformers}</span> medium (70-89%), 
+                                    <span style="color: #ef4444; font-weight: 600;">${lowPerformers}</span> low (<70%).
+                                </p>
+                                <p style="margin: 0;">
+                                    <span style="font-weight: 700; color: var(--text-primary);">Recommendation:</span> 
+                                    ${lowPerformers > 0 
+                                        ? `Focus on improving <strong>${lowPerformers}</strong> low-performing parameter(s) to enhance overall quality.`
+                                        : `Maintain current quality standards and monitor parameter consistency.`
+                                    }
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                safeSetHTML('paramSummarySection', html);
+                console.log('✅ Parameter summary generated');
+            } catch (error) {
+                handleError(error, 'generateParameterSummary');
             }
         }
 
@@ -4164,16 +4329,16 @@ Total Population: ${totalPop}
                         <thead style="position: sticky; top: 0; background: white; z-index: 10;">
                             <tr style="border-bottom: 2px solid var(--border); background: rgba(255, 140, 66, 0.05);">
                                 <th style="padding: 6px 8px; text-align: left; font-size: 10px; font-weight: 700; color: #000; cursor: pointer;" onclick="sortParameterTable('parameter')">
-                                    Parameter <i class="fas fa-sort" style="font-size: 8px; opacity: 0.5;"></i>
+                                    Parameter
                                 </th>
                                 <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: #000; cursor: pointer;" onclick="sortParameterTable('accuracy')">
-                                    Accuracy % <i class="fas fa-sort" style="font-size: 8px; opacity: 0.5;"></i>
+                                    Accuracy %
                                 </th>
                                 <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: #000; cursor: pointer;" onclick="sortParameterTable('error')">
-                                    Error % <i class="fas fa-sort" style="font-size: 8px; opacity: 0.5;"></i>
+                                    Error %
                                 </th>
                                 <th style="padding: 6px 8px; text-align: right; font-size: 10px; font-weight: 700; color: #000; cursor: pointer;" onclick="sortParameterTable('auditCount')">
-                                    Audits <i class="fas fa-sort" style="font-size: 8px; opacity: 0.5;"></i>
+                                    Audits
                                 </th>
                             </tr>
                         </thead>
