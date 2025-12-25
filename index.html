@@ -3985,7 +3985,7 @@ Total Population: ${totalPop}
 
         function calculateParameterMetrics(data) {
             try {
-                // Group by parameter
+                // Group by parameter - using same methodology as Transactional Overview
                 const paramStats = {};
                 
                 data.forEach(row => {
@@ -4002,6 +4002,7 @@ Total Population: ${totalPop}
                         };
                     }
                     
+                    // Sum all metrics per parameter from Parameter_Audit_Count sheet
                     paramStats[param].opportunityPass += parseFloat(row['Opportunity Pass']) || 0;
                     paramStats[param].opportunityCount += parseFloat(row['Opportunity Count']) || 0;
                     paramStats[param].opportunityNA += parseFloat(row['Opportunity NA']) || 0;
@@ -4009,7 +4010,7 @@ Total Population: ${totalPop}
                     paramStats[param].totalPopulation += parseFloat(row['Total Population']) || 0;
                 });
                 
-                // Calculate averages
+                // Calculate averages using SAME formulas as Transactional Overview
                 const params = Object.keys(paramStats);
                 let totalAccuracy = 0;
                 let totalSample = 0;
@@ -4019,21 +4020,28 @@ Total Population: ${totalPop}
                 
                 params.forEach(param => {
                     const stats = paramStats[param];
+                    
+                    // Accuracy% = Sum of "Opportunity Pass" / (Sum of "Opportunity Count" - Sum of "Opportunity NA")
                     const denominator = stats.opportunityCount - stats.opportunityNA;
                     const accuracy = denominator > 0 ? (stats.opportunityPass / denominator * 100) : 0;
+                    
+                    // Sample% = Sum of "Opportunity Count" / Sum of "Total Population"
                     const sample = stats.totalPopulation > 0 ? (stats.opportunityCount / stats.totalPopulation * 100) : 0;
+                    
+                    // Error% = Sum of "Opportunity Fail" / Sum of "Opportunity Count"
                     const error = stats.opportunityCount > 0 ? (stats.opportunityFail / stats.opportunityCount * 100) : 0;
                     
                     if (stats.opportunityCount > 0) {
                         totalAccuracy += accuracy;
                         totalSample += sample;
                         totalError += error;
+                        // Audit Count = Sum of "Opportunity Count"
                         totalAudits += stats.opportunityCount;
                         validParams++;
                     }
                 });
                 
-                // Update KPIs
+                // Update KPIs with averages
                 safeSetText('paramTotalCount', params.length);
                 safeSetText('paramAvgAccuracy', validParams > 0 ? (totalAccuracy / validParams).toFixed(1) + '%' : '0%');
                 safeSetText('paramAvgSample', validParams > 0 ? (totalSample / validParams).toFixed(1) + '%' : '0%');
@@ -4048,7 +4056,7 @@ Total Population: ${totalPop}
 
         function generateParameterTable(data) {
             try {
-                // Group by parameter
+                // Group by parameter - using same methodology as Transactional Overview
                 const paramStats = {};
                 
                 data.forEach(row => {
@@ -4065,6 +4073,7 @@ Total Population: ${totalPop}
                         };
                     }
                     
+                    // Sum all metrics per parameter from Parameter_Audit_Count sheet
                     paramStats[param].opportunityPass += parseFloat(row['Opportunity Pass']) || 0;
                     paramStats[param].opportunityCount += parseFloat(row['Opportunity Count']) || 0;
                     paramStats[param].opportunityNA += parseFloat(row['Opportunity NA']) || 0;
@@ -4072,11 +4081,16 @@ Total Population: ${totalPop}
                     paramStats[param].totalPopulation += parseFloat(row['Total Population']) || 0;
                 });
                 
-                // Calculate metrics for each parameter
+                // Calculate metrics for each parameter using SAME formulas as Transactional Overview
                 parameterTableData = Object.entries(paramStats).map(([param, stats]) => {
+                    // Accuracy% = Sum of "Opportunity Pass" / (Sum of "Opportunity Count" - Sum of "Opportunity NA")
                     const denominator = stats.opportunityCount - stats.opportunityNA;
                     const accuracy = denominator > 0 ? (stats.opportunityPass / denominator * 100) : 0;
+                    
+                    // Sample% = Sum of "Opportunity Count" / Sum of "Total Population"
                     const sample = stats.totalPopulation > 0 ? (stats.opportunityCount / stats.totalPopulation * 100) : 0;
+                    
+                    // Error% = Sum of "Opportunity Fail" / Sum of "Opportunity Count"
                     const error = stats.opportunityCount > 0 ? (stats.opportunityFail / stats.opportunityCount * 100) : 0;
                     
                     return {
@@ -4084,6 +4098,7 @@ Total Population: ${totalPop}
                         accuracy: accuracy,
                         sample: sample,
                         error: error,
+                        // Audit Count = Sum of "Opportunity Count"
                         auditCount: stats.opportunityCount
                     };
                 }).sort((a, b) => b.accuracy - a.accuracy);
@@ -4187,7 +4202,7 @@ Total Population: ${totalPop}
 
         function generateTopBottomChart(data) {
             try {
-                // Group by parameter
+                // Group by parameter - using same methodology as Transactional Overview
                 const paramStats = {};
                 
                 data.forEach(row => {
@@ -4202,12 +4217,14 @@ Total Population: ${totalPop}
                         };
                     }
                     
+                    // Sum metrics per parameter from Parameter_Audit_Count sheet
                     paramStats[param].opportunityPass += parseFloat(row['Opportunity Pass']) || 0;
                     paramStats[param].opportunityCount += parseFloat(row['Opportunity Count']) || 0;
                     paramStats[param].opportunityNA += parseFloat(row['Opportunity NA']) || 0;
                 });
                 
-                // Calculate accuracy for each parameter
+                // Calculate accuracy using SAME formula as Transactional Overview
+                // Accuracy% = Sum of "Opportunity Pass" / (Sum of "Opportunity Count" - Sum of "Opportunity NA")
                 const paramData = Object.entries(paramStats).map(([param, stats]) => {
                     const denominator = stats.opportunityCount - stats.opportunityNA;
                     const accuracy = denominator > 0 ? (stats.opportunityPass / denominator * 100) : 0;
