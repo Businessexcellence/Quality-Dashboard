@@ -1449,115 +1449,103 @@
                 </div>
             </div>
 
-            <!-- Executive Summary Cards - Top Row -->
-            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 10px;">
-                <!-- Total Initiatives Card -->
-                <div style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); border-radius: 8px; padding: 16px; color: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
-                        <div>
-                            <div style="font-size: 10px; opacity: 0.85; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px;">Total Initiatives</div>
-                            <div style="font-size: 32px; font-weight: 700; line-height: 1;" id="totalInitiatives">0</div>
-                        </div>
-                        <i class="fas fa-layer-group" style="font-size: 32px; opacity: 0.2;"></i>
+            <!-- PROJECTS SECTION -->
+            <div style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border: 2px solid #3b82f6; border-radius: 8px; padding: 16px; margin-bottom: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                <h2 style="font-size: 16px; font-weight: 700; color: #1e40af; margin: 0 0 16px 0; display: flex; align-items: center;">
+                    <i class="fas fa-project-diagram" style="margin-right: 8px;"></i>
+                    PROJECTS
+                </h2>
+                
+                <!-- Project KPI Cards -->
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 12px;">
+                    <!-- Total Projects -->
+                    <div style="background: white; border-radius: 6px; padding: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                        <div style="color: #64748b; font-size: 9px; font-weight: 600; margin-bottom: 4px;">TOTAL PROJECTS</div>
+                        <div style="color: #1e293b; font-size: 24px; font-weight: 700;" id="projectsTotal">0</div>
                     </div>
-                    <div style="font-size: 9px; opacity: 0.85; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 8px;">
-                        <span id="totalProjects">0</span> Projects + <span id="totalRcaCapa">0</span> RCA/CAPA
+                    
+                    <!-- Open Projects -->
+                    <div style="background: white; border-radius: 6px; padding: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                        <div style="color: #64748b; font-size: 9px; font-weight: 600; margin-bottom: 4px;">OPEN</div>
+                        <div style="color: #10b981; font-size: 24px; font-weight: 700;" id="projectsOpen">0</div>
                     </div>
-                </div>
-
-                <!-- Completion Rate Card -->
-                <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 8px; padding: 16px; color: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
-                        <div>
-                            <div style="font-size: 10px; opacity: 0.85; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px;">Completion Rate</div>
-                            <div style="font-size: 32px; font-weight: 700; line-height: 1;" id="completionRate">0%</div>
-                        </div>
-                        <i class="fas fa-chart-pie" style="font-size: 32px; opacity: 0.2;"></i>
+                    
+                    <!-- Closed Projects -->
+                    <div style="background: white; border-radius: 6px; padding: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                        <div style="color: #64748b; font-size: 9px; font-weight: 600; margin-bottom: 4px;">CLOSED</div>
+                        <div style="color: #f59e0b; font-size: 24px; font-weight: 700;" id="projectsClosed">0</div>
                     </div>
-                    <div style="font-size: 9px; opacity: 0.85; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 8px;">
-                        <span id="closedCount">0</span> Closed / <span id="totalCount">0</span> Total
-                    </div>
-                </div>
-
-                <!-- Active Initiatives Card -->
-                <div style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); border-radius: 8px; padding: 16px; color: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
-                        <div>
-                            <div style="font-size: 10px; opacity: 0.85; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px;">Active</div>
-                            <div style="font-size: 32px; font-weight: 700; line-height: 1;" id="activeCount">0</div>
-                        </div>
-                        <i class="fas fa-spinner" style="font-size: 32px; opacity: 0.2;"></i>
-                    </div>
-                    <div style="font-size: 9px; opacity: 0.85; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 8px;">
-                        Open + In Progress
+                    
+                    <!-- In Progress Projects -->
+                    <div style="background: white; border-radius: 6px; padding: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                        <div style="color: #64748b; font-size: 9px; font-weight: 600; margin-bottom: 4px;">IN PROGRESS</div>
+                        <div style="color: #3b82f6; font-size: 24px; font-weight: 700;" id="projectsInProgress">0</div>
                     </div>
                 </div>
-
-                <!-- Coverage Card -->
-                <div style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); border-radius: 8px; padding: 16px; color: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
-                        <div>
-                            <div style="font-size: 10px; opacity: 0.85; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px;">Coverage</div>
-                            <div style="font-size: 32px; font-weight: 700; line-height: 1;" id="coverageRegions">0</div>
-                        </div>
-                        <i class="fas fa-globe" style="font-size: 32px; opacity: 0.2;"></i>
-                    </div>
-                    <div style="font-size: 9px; opacity: 0.85; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 8px;">
-                        Regions · <span id="coverageAccounts">0</span> Accounts
-                    </div>
+                
+                <!-- Project Status Distribution -->
+                <div style="background: white; border-radius: 6px; padding: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                    <h3 style="font-size: 12px; font-weight: 700; color: #1e293b; margin: 0 0 12px 0;">Status Distribution</h3>
+                    <div id="projectsStatusBreakdown"></div>
                 </div>
             </div>
 
-            <!-- Status Distribution and Key Metrics -->
-            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 10px; margin-bottom: 10px;">
-                <!-- Status Distribution Chart -->
-                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                    <h3 style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin: 0 0 12px 0;">
-                        <i class="fas fa-chart-bar" style="color: var(--primary); font-size: 12px; margin-right: 6px;"></i>
-                        Status Distribution
-                    </h3>
-                    <canvas id="strategicStatusChart" style="max-height: 200px;"></canvas>
-                </div>
-
-                <!-- Key Metrics -->
-                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                    <h3 style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin: 0 0 12px 0;">
-                        <i class="fas fa-bullseye" style="color: var(--primary); font-size: 12px; margin-right: 6px;"></i>
-                        Key Metrics
-                    </h3>
-                    <div id="keyMetricsContainer" style="display: flex; flex-direction: column; gap: 10px;">
-                        <!-- Metrics will be populated here -->
+            <!-- RCA_CAPA SECTION -->
+            <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 2px solid #10b981; border-radius: 8px; padding: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                <h2 style="font-size: 16px; font-weight: 700; color: #065f46; margin: 0 0 16px 0; display: flex; align-items: center;">
+                    <i class="fas fa-clipboard-check" style="margin-right: 8px;"></i>
+                    RCA / CAPA
+                </h2>
+                
+                <!-- RCA/CAPA KPI Cards -->
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 12px;">
+                    <!-- Total RCA/CAPA -->
+                    <div style="background: white; border-radius: 6px; padding: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                        <div style="color: #64748b; font-size: 9px; font-weight: 600; margin-bottom: 4px;">TOTAL RCA/CAPA</div>
+                        <div style="color: #1e293b; font-size: 24px; font-weight: 700;" id="rcaCapaTotal">0</div>
+                    </div>
+                    
+                    <!-- Open RCA/CAPA -->
+                    <div style="background: white; border-radius: 6px; padding: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                        <div style="color: #64748b; font-size: 9px; font-weight: 600; margin-bottom: 4px;">OPEN</div>
+                        <div style="color: #10b981; font-size: 24px; font-weight: 700;" id="rcaCapaOpen">0</div>
+                    </div>
+                    
+                    <!-- Closed RCA/CAPA -->
+                    <div style="background: white; border-radius: 6px; padding: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                        <div style="color: #64748b; font-size: 9px; font-weight: 600; margin-bottom: 4px;">CLOSED</div>
+                        <div style="color: #f59e0b; font-size: 24px; font-weight: 700;" id="rcaCapaClosed">0</div>
+                    </div>
+                    
+                    <!-- In Progress RCA/CAPA -->
+                    <div style="background: white; border-radius: 6px; padding: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                        <div style="color: #64748b; font-size: 9px; font-weight: 600; margin-bottom: 4px;">IN PROGRESS</div>
+                        <div style="color: #3b82f6; font-size: 24px; font-weight: 700;" id="rcaCapaInProgress">0</div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Projects and RCA/CAPA Summary Cards -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                <!-- Projects Summary -->
-                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                        <h3 style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin: 0;">
-                            <i class="fas fa-project-diagram" style="color: #3b82f6; font-size: 12px; margin-right: 6px;"></i>
-                            Projects Overview
+                
+                <!-- Error Type and Impact Cards -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <!-- Error Type Card -->
+                    <div style="background: white; border-radius: 6px; padding: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                        <h3 style="font-size: 12px; font-weight: 700; color: #1e293b; margin: 0 0 12px 0; display: flex; align-items: center;">
+                            <i class="fas fa-exclamation-triangle" style="color: #ef4444; margin-right: 6px;"></i>
+                            Error Type
                         </h3>
-                        <span style="font-size: 20px; font-weight: 700; color: #3b82f6;" id="projectsTotal">0</span>
+                        <div id="rcaCapaErrorType" style="display: flex; flex-direction: column; gap: 8px;">
+                            <!-- Error type breakdown will be populated here -->
+                        </div>
                     </div>
-                    <div id="projectsSummary" style="display: flex; flex-direction: column; gap: 8px;">
-                        <!-- Summary will be populated here -->
-                    </div>
-                </div>
-
-                <!-- RCA/CAPA Summary -->
-                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                        <h3 style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin: 0;">
-                            <i class="fas fa-clipboard-check" style="color: #10b981; font-size: 12px; margin-right: 6px;"></i>
-                            RCA/CAPA Overview
+                    
+                    <!-- Impact Card -->
+                    <div style="background: white; border-radius: 6px; padding: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                        <h3 style="font-size: 12px; font-weight: 700; color: #1e293b; margin: 0 0 12px 0; display: flex; align-items: center;">
+                            <i class="fas fa-bolt" style="color: #f59e0b; margin-right: 6px;"></i>
+                            Impact
                         </h3>
-                        <span style="font-size: 20px; font-weight: 700; color: #10b981;" id="rcaCapaTotal">0</span>
-                    </div>
-                    <div id="rcaCapaSummary" style="display: flex; flex-direction: column; gap: 8px;">
-                        <!-- Summary will be populated here -->
+                        <div id="rcaCapaImpact" style="display: flex; flex-direction: column; gap: 8px;">
+                            <!-- Impact breakdown will be populated here -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -4997,324 +4985,166 @@ Total Population: ${totalPop}
                            (!practiceHeadFilter || String(row['Practice Head'] || '').trim() === practiceHeadFilter);
                 });
 
-                // Generate executive dashboard components
-                generateExecutiveSummary(filteredProjects, filteredRcaCapa);
-                generateStatusChart(filteredProjects, filteredRcaCapa);
-                generateKeyMetrics(filteredProjects, filteredRcaCapa);
-                generateProjectsSummary(filteredProjects);
-                generateRcaCapaSummary(filteredRcaCapa);
+                // Generate separate sections
+                generateProjectsSection(filteredProjects);
+                generateRcaCapaSection(filteredRcaCapa);
 
-                console.log(`📊 Strategic executive view updated: ${filteredProjects.length} projects, ${filteredRcaCapa.length} RCA/CAPA`);
+                console.log(`📊 Strategic view updated: ${filteredProjects.length} projects, ${filteredRcaCapa.length} RCA/CAPA`);
             } catch (error) {
                 handleError(error, 'applyStrategicFilters');
             }
         }
 
-        function generateExecutiveSummary(projects, rcaCapa) {
+        function generateProjectsSection(projects) {
             try {
-                const totalInitiatives = projects.length + rcaCapa.length;
-                
-                // Count completed/closed initiatives
-                const completedProjects = projects.filter(p => {
+                // Count by status
+                const total = projects.length;
+                const open = projects.filter(p => String(p['Status'] || '').toLowerCase().includes('open')).length;
+                const closed = projects.filter(p => {
                     const status = String(p['Status'] || '').toLowerCase();
                     return status.includes('closed') || status.includes('complete');
                 }).length;
-                
-                const completedRcaCapa = rcaCapa.filter(r => {
-                    const status = String(r['Status'] || '').toLowerCase();
-                    return status.includes('closed') || status.includes('complete');
-                }).length;
-                
-                const totalCompleted = completedProjects + completedRcaCapa;
-                const completionRate = totalInitiatives > 0 ? Math.round((totalCompleted / totalInitiatives) * 100) : 0;
-                
-                // Count active initiatives
-                const activeProjects = projects.filter(p => {
+                const inProgress = projects.filter(p => {
                     const status = String(p['Status'] || '').toLowerCase();
-                    return status.includes('open') || status.includes('progress');
+                    return status.includes('progress');
                 }).length;
-                
-                const activeRcaCapa = rcaCapa.filter(r => {
-                    const status = String(r['Status'] || '').toLowerCase();
-                    return status.includes('open') || status.includes('progress');
-                }).length;
-                
-                const totalActive = activeProjects + activeRcaCapa;
-                
-                // Count unique regions and accounts for coverage
-                const uniqueRegions = new Set();
-                const uniqueAccounts = new Set();
-                
-                projects.forEach(p => {
-                    if (p['Region']) uniqueRegions.add(p['Region']);
-                    if (p['Account']) uniqueAccounts.add(p['Account']);
-                });
-                
-                rcaCapa.forEach(r => {
-                    if (r['Region']) uniqueRegions.add(r['Region']);
-                    if (r['Account']) uniqueAccounts.add(r['Account']);
-                });
-                
-                const coverage = `${uniqueRegions.size} Regions, ${uniqueAccounts.size} Accounts`;
                 
                 // Update KPI cards
-                safeSetText('strategicTotalInitiatives', totalInitiatives);
-                safeSetText('strategicCompletionRate', completionRate + '%');
-                safeSetText('strategicActive', totalActive);
-                safeSetText('strategicCoverage', coverage);
+                safeSetText('projectsTotal', total);
+                safeSetText('projectsOpen', open);
+                safeSetText('projectsClosed', closed);
+                safeSetText('projectsInProgress', inProgress);
                 
-                console.log('✅ Executive summary updated:', { totalInitiatives, completionRate, totalActive, coverage });
-            } catch (error) {
-                handleError(error, 'generateExecutiveSummary');
-            }
-        }
-
-        function generateStatusChart(projects, rcaCapa) {
-            try {
-                const allData = [...projects, ...rcaCapa];
-                
-                // Count by status
-                let openCount = 0;
-                let closedCount = 0;
-                let inProgressCount = 0;
-                
-                allData.forEach(item => {
-                    const status = String(item['Status'] || '').toLowerCase();
-                    if (status.includes('open')) {
-                        openCount++;
-                    } else if (status.includes('closed') || status.includes('complete')) {
-                        closedCount++;
-                    } else if (status.includes('progress')) {
-                        inProgressCount++;
-                    }
-                });
-                
-                // Destroy existing chart if exists
-                const canvas = document.getElementById('strategicStatusChart');
-                if (!canvas) return;
-                
-                if (window.strategicChartInstance) {
-                    window.strategicChartInstance.destroy();
-                }
-                
-                const ctx = canvas.getContext('2d');
-                window.strategicChartInstance = new Chart(ctx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Open', 'Closed', 'In Progress'],
-                        datasets: [{
-                            data: [openCount, closedCount, inProgressCount],
-                            backgroundColor: ['#10b981', '#f59e0b', '#3b82f6'],
-                            borderWidth: 2,
-                            borderColor: '#fff'
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: true,
-                        plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: {
-                                    font: { size: 10 },
-                                    padding: 8,
-                                    usePointStyle: true
-                                }
-                            },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        const label = context.label || '';
-                                        const value = context.parsed || 0;
-                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                        const percentage = total > 0 ? Math.round((value / total) * 100) : 0;
-                                        return `${label}: ${value} (${percentage}%)`;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
-                
-                console.log('✅ Status chart generated:', { openCount, closedCount, inProgressCount });
-            } catch (error) {
-                handleError(error, 'generateStatusChart');
-            }
-        }
-
-        function generateKeyMetrics(projects, rcaCapa) {
-            try {
-                // Calculate average completion time (mock calculation - would need date fields)
-                const avgCompletionTime = '45 days'; // Placeholder
-                
-                // High priority count
-                const highPriorityProjects = projects.filter(p => {
-                    const priority = String(p['Priority'] || '').toLowerCase();
-                    return priority.includes('high') || priority.includes('critical');
-                }).length;
-                
-                const highPriorityRca = rcaCapa.filter(r => {
-                    const priority = String(r['Priority'] || '').toLowerCase();
-                    return priority.includes('high') || priority.includes('critical');
-                }).length;
-                
-                const highPriority = highPriorityProjects + highPriorityRca;
-                
-                // At-risk count (overdue or delayed)
-                const atRiskProjects = projects.filter(p => {
-                    const status = String(p['Status'] || '').toLowerCase();
-                    return status.includes('delay') || status.includes('overdue') || status.includes('risk');
-                }).length;
-                
-                const atRiskRca = rcaCapa.filter(r => {
-                    const status = String(r['Status'] || '').toLowerCase();
-                    return status.includes('delay') || status.includes('overdue') || status.includes('risk');
-                }).length;
-                
-                const atRisk = atRiskProjects + atRiskRca;
-                
-                // Recent updates (mock - would need date fields)
-                const recentUpdates = Math.min(projects.length + rcaCapa.length, 12);
-                
-                const html = `
-                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
-                        <div style="background: white; padding: 12px; border-radius: 6px; border-left: 3px solid #8b5cf6;">
-                            <div style="color: #64748b; font-size: 9px; font-weight: 600; margin-bottom: 4px;">AVG COMPLETION</div>
-                            <div style="color: #1e293b; font-size: 16px; font-weight: 700;">${avgCompletionTime}</div>
-                        </div>
-                        <div style="background: white; padding: 12px; border-radius: 6px; border-left: 3px solid #ef4444;">
-                            <div style="color: #64748b; font-size: 9px; font-weight: 600; margin-bottom: 4px;">HIGH PRIORITY</div>
-                            <div style="color: #1e293b; font-size: 16px; font-weight: 700;">${highPriority}</div>
-                        </div>
-                        <div style="background: white; padding: 12px; border-radius: 6px; border-left: 3px solid #f59e0b;">
-                            <div style="color: #64748b; font-size: 9px; font-weight: 600; margin-bottom: 4px;">AT RISK</div>
-                            <div style="color: #1e293b; font-size: 16px; font-weight: 700;">${atRisk}</div>
-                        </div>
-                        <div style="background: white; padding: 12px; border-radius: 6px; border-left: 3px solid #10b981;">
-                            <div style="color: #64748b; font-size: 9px; font-weight: 600; margin-bottom: 4px;">RECENT UPDATES</div>
-                            <div style="color: #1e293b; font-size: 16px; font-weight: 700;">${recentUpdates}</div>
-                        </div>
-                    </div>
-                `;
-                
-                safeSetHTML('strategicKeyMetrics', html);
-                console.log('✅ Key metrics generated:', { highPriority, atRisk, recentUpdates });
-            } catch (error) {
-                handleError(error, 'generateKeyMetrics');
-            }
-        }
-
-        function generateProjectsSummary(projects) {
-            try {
-                // Count by status
+                // Generate status breakdown
                 const statusCounts = {};
                 projects.forEach(p => {
                     const status = String(p['Status'] || 'Unknown');
                     statusCounts[status] = (statusCounts[status] || 0) + 1;
                 });
                 
-                // Get top statuses
                 const sortedStatuses = Object.entries(statusCounts)
                     .sort((a, b) => b[1] - a[1])
-                    .slice(0, 3);
+                    .slice(0, 5);
                 
-                let statusBreakdownHTML = sortedStatuses.map(([status, count]) => {
+                let breakdownHTML = sortedStatuses.map(([status, count]) => {
                     const statusLower = status.toLowerCase();
                     let color = '#64748b';
                     if (statusLower.includes('closed') || statusLower.includes('complete')) color = '#f59e0b';
                     else if (statusLower.includes('open')) color = '#10b981';
                     else if (statusLower.includes('progress')) color = '#3b82f6';
                     
+                    const percentage = total > 0 ? Math.round((count / total) * 100) : 0;
+                    
                     return `
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-                            <span style="color: #64748b; font-size: 10px;">${status}</span>
-                            <span style="color: ${color}; font-size: 10px; font-weight: 600;">${count}</span>
+                        <div style="margin-bottom: 8px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                <span style="color: #64748b; font-size: 10px; font-weight: 600;">${status}</span>
+                                <span style="color: ${color}; font-size: 10px; font-weight: 700;">${count} (${percentage}%)</span>
+                            </div>
+                            <div style="background: #f1f5f9; height: 6px; border-radius: 3px; overflow: hidden;">
+                                <div style="background: ${color}; height: 100%; width: ${percentage}%;"></div>
+                            </div>
                         </div>
                     `;
                 }).join('');
                 
-                // Get regions
-                const regions = new Set();
-                projects.forEach(p => {
-                    if (p['Region']) regions.add(p['Region']);
-                });
+                safeSetHTML('projectsStatusBreakdown', breakdownHTML || '<div style="color: #94a3b8; font-size: 10px; text-align: center;">No data</div>');
                 
-                const html = `
-                    <div style="margin-bottom: 12px;">
-                        <div style="color: #1e293b; font-size: 20px; font-weight: 700; margin-bottom: 4px;">${projects.length}</div>
-                        <div style="color: #64748b; font-size: 10px;">Total Projects</div>
-                    </div>
-                    <div style="margin-bottom: 12px;">
-                        <div style="color: #64748b; font-size: 9px; font-weight: 600; margin-bottom: 6px; text-transform: uppercase;">Status Breakdown</div>
-                        ${statusBreakdownHTML || '<div style="color: #94a3b8; font-size: 10px;">No data</div>'}
-                    </div>
-                    <div style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); padding: 8px; border-radius: 4px; border-left: 3px solid #8b5cf6;">
-                        <div style="color: #64748b; font-size: 9px; font-weight: 600; margin-bottom: 2px;">COVERAGE</div>
-                        <div style="color: #1e293b; font-size: 11px; font-weight: 600;">${regions.size} Region${regions.size !== 1 ? 's' : ''}</div>
-                    </div>
-                `;
-                
-                safeSetHTML('strategicProjectsSummary', html);
-                console.log('✅ Projects summary generated:', projects.length);
+                console.log('✅ Projects section updated:', { total, open, closed, inProgress });
             } catch (error) {
-                handleError(error, 'generateProjectsSummary');
+                handleError(error, 'generateProjectsSection');
             }
         }
 
-        function generateRcaCapaSummary(rcaCapa) {
+        function generateRcaCapaSection(rcaCapa) {
             try {
                 // Count by status
-                const statusCounts = {};
+                const total = rcaCapa.length;
+                const open = rcaCapa.filter(r => String(r['Status'] || '').toLowerCase().includes('open')).length;
+                const closed = rcaCapa.filter(r => {
+                    const status = String(r['Status'] || '').toLowerCase();
+                    return status.includes('closed') || status.includes('complete');
+                }).length;
+                const inProgress = rcaCapa.filter(r => {
+                    const status = String(r['Status'] || '').toLowerCase();
+                    return status.includes('progress');
+                }).length;
+                
+                // Update KPI cards
+                safeSetText('rcaCapaTotal', total);
+                safeSetText('rcaCapaOpen', open);
+                safeSetText('rcaCapaClosed', closed);
+                safeSetText('rcaCapaInProgress', inProgress);
+                
+                // Generate Error Type breakdown (Column C)
+                const errorTypeCounts = {};
                 rcaCapa.forEach(r => {
-                    const status = String(r['Status'] || 'Unknown');
-                    statusCounts[status] = (statusCounts[status] || 0) + 1;
+                    const errorType = String(r['Error Type'] || r['C'] || 'Unknown').trim();
+                    if (errorType && errorType !== 'Unknown') {
+                        errorTypeCounts[errorType] = (errorTypeCounts[errorType] || 0) + 1;
+                    }
                 });
                 
-                // Get top statuses
-                const sortedStatuses = Object.entries(statusCounts)
+                const sortedErrorTypes = Object.entries(errorTypeCounts)
                     .sort((a, b) => b[1] - a[1])
-                    .slice(0, 3);
+                    .slice(0, 5);
                 
-                let statusBreakdownHTML = sortedStatuses.map(([status, count]) => {
-                    const statusLower = status.toLowerCase();
-                    let color = '#64748b';
-                    if (statusLower.includes('closed') || statusLower.includes('complete')) color = '#f59e0b';
-                    else if (statusLower.includes('open')) color = '#10b981';
-                    else if (statusLower.includes('progress')) color = '#3b82f6';
+                let errorTypeHTML = sortedErrorTypes.map(([type, count]) => {
+                    const percentage = total > 0 ? Math.round((count / total) * 100) : 0;
                     
                     return `
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-                            <span style="color: #64748b; font-size: 10px;">${status}</span>
-                            <span style="color: ${color}; font-size: 10px; font-weight: 600;">${count}</span>
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; background: #fef2f2; border-left: 3px solid #ef4444; border-radius: 4px;">
+                            <span style="color: #1e293b; font-size: 10px; font-weight: 600; flex: 1;">${type}</span>
+                            <span style="color: #ef4444; font-size: 12px; font-weight: 700; margin-left: 8px;">${count}</span>
+                            <span style="color: #64748b; font-size: 9px; margin-left: 6px;">(${percentage}%)</span>
                         </div>
                     `;
                 }).join('');
                 
-                // Get accounts
-                const accounts = new Set();
+                safeSetHTML('rcaCapaErrorType', errorTypeHTML || '<div style="color: #94a3b8; font-size: 10px; text-align: center;">No data</div>');
+                
+                // Generate Impact breakdown (Column D)
+                const impactCounts = {};
                 rcaCapa.forEach(r => {
-                    if (r['Account']) accounts.add(r['Account']);
+                    const impact = String(r['Impact'] || r['D'] || 'Unknown').trim();
+                    if (impact && impact !== 'Unknown') {
+                        impactCounts[impact] = (impactCounts[impact] || 0) + 1;
+                    }
                 });
                 
-                const html = `
-                    <div style="margin-bottom: 12px;">
-                        <div style="color: #1e293b; font-size: 20px; font-weight: 700; margin-bottom: 4px;">${rcaCapa.length}</div>
-                        <div style="color: #64748b; font-size: 10px;">Total RCA/CAPA</div>
-                    </div>
-                    <div style="margin-bottom: 12px;">
-                        <div style="color: #64748b; font-size: 9px; font-weight: 600; margin-bottom: 6px; text-transform: uppercase;">Status Breakdown</div>
-                        ${statusBreakdownHTML || '<div style="color: #94a3b8; font-size: 10px;">No data</div>'}
-                    </div>
-                    <div style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); padding: 8px; border-radius: 4px; border-left: 3px solid #8b5cf6;">
-                        <div style="color: #64748b; font-size: 9px; font-weight: 600; margin-bottom: 2px;">COVERAGE</div>
-                        <div style="color: #1e293b; font-size: 11px; font-weight: 600;">${accounts.size} Account${accounts.size !== 1 ? 's' : ''}</div>
-                    </div>
-                `;
+                const sortedImpacts = Object.entries(impactCounts)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 5);
                 
-                safeSetHTML('strategicRcaCapaSummary', html);
-                console.log('✅ RCA/CAPA summary generated:', rcaCapa.length);
+                let impactHTML = sortedImpacts.map(([impact, count]) => {
+                    const percentage = total > 0 ? Math.round((count / total) * 100) : 0;
+                    
+                    // Color based on impact level
+                    let color = '#f59e0b';
+                    let bgColor = '#fef3c7';
+                    const impactLower = impact.toLowerCase();
+                    if (impactLower.includes('high') || impactLower.includes('critical')) {
+                        color = '#ef4444';
+                        bgColor = '#fef2f2';
+                    } else if (impactLower.includes('low') || impactLower.includes('minor')) {
+                        color = '#10b981';
+                        bgColor = '#f0fdf4';
+                    }
+                    
+                    return `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; background: ${bgColor}; border-left: 3px solid ${color}; border-radius: 4px;">
+                            <span style="color: #1e293b; font-size: 10px; font-weight: 600; flex: 1;">${impact}</span>
+                            <span style="color: ${color}; font-size: 12px; font-weight: 700; margin-left: 8px;">${count}</span>
+                            <span style="color: #64748b; font-size: 9px; margin-left: 6px;">(${percentage}%)</span>
+                        </div>
+                    `;
+                }).join('');
+                
+                safeSetHTML('rcaCapaImpact', impactHTML || '<div style="color: #94a3b8; font-size: 10px; text-align: center;">No data</div>');
+                
+                console.log('✅ RCA/CAPA section updated:', { total, open, closed, inProgress, errorTypes: sortedErrorTypes.length, impacts: sortedImpacts.length });
             } catch (error) {
-                handleError(error, 'generateRcaCapaSummary');
+                handleError(error, 'generateRcaCapaSection');
             }
         }
 
