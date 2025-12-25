@@ -3318,13 +3318,21 @@ Total Population: ${totalPop}
                     }
                 });
                 
-                // Get Regional Heads for filtered data (from Account_Summary mapping)
+                // Get Regional Heads for filtered data (from Parameter_Audit_Count column R)
                 const regionalHeadsInData = new Set();
                 data.forEach(row => {
-                    const client = String(row['Client'] || '').trim();
-                    const mapping = window.clientToAccountMapping?.[client];
-                    if (mapping?.regionalHead) {
-                        regionalHeadsInData.add(mapping.regionalHead);
+                    // Try to get Regional Head from column R first
+                    let regionalHead = String(row['Regional Head'] || '').trim();
+                    
+                    // Fall back to Account_Summary mapping if column doesn't exist
+                    if (!regionalHead && window.clientToAccountMapping) {
+                        const client = String(row['Client'] || '').trim();
+                        const mapping = window.clientToAccountMapping?.[client];
+                        regionalHead = mapping?.regionalHead || '';
+                    }
+                    
+                    if (regionalHead) {
+                        regionalHeadsInData.add(regionalHead);
                     }
                 });
                 
@@ -3345,8 +3353,8 @@ Total Population: ${totalPop}
                 }
                 
                 // Generate enhanced statement-format summary
-                // Note: Regional Head is mapped from Account_Summary sheet via Client mapping
-                // Column R does not exist in Parameter_Audit_Count sheet (only A-Q exist)
+                // Note: Regional Head (column R) and Practice Head (column S) are read from Parameter_Audit_Count
+                // Falls back to Account_Summary mapping if columns don't exist in the Excel file
                 let summary = `<div style="padding: 10px; background: linear-gradient(135deg, rgba(255,140,66,0.08), rgba(255,102,0,0.05)); border-left: 3px solid var(--primary); border-radius: 6px; line-height: 1.9; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">`;
                 summary += `<div style="font-size: 11px; color: var(--text-primary); font-weight: 500;">`;
                 
@@ -3379,30 +3387,21 @@ Total Population: ${totalPop}
             try {
                 data = data || dashboardData.parameterAuditCount;
                 
-                // Check if client mapping is available
-                if (!window.clientToAccountMapping || Object.keys(window.clientToAccountMapping).length === 0) {
-                    // Show empty state if mapping is not available
-                    const emptyHtml = `
-                        <div style="padding: 20px; text-align: center; color: var(--text-secondary); font-size: 11px;">
-                            <i class="fas fa-info-circle" style="font-size: 24px; opacity: 0.3; margin-bottom: 8px;"></i>
-                            <div>Regional Head data not available</div>
-                            <div style="font-size: 9px; opacity: 0.7; margin-top: 4px;">Column R does not exist in Parameter_Audit_Count sheet</div>
-                        </div>
-                    `;
-                    safeSetHTML('regionalHeadBreakdown', emptyHtml);
-                    console.log('⚠️ Regional Head mapping not available');
-                    return;
-                }
-                
                 const regionalHeadStats = {};
 
-                // Group by Regional Head using client mapping
+                // Group by Regional Head - read directly from Parameter_Audit_Count column R
                 data.forEach(row => {
-                    const client = String(row['Client'] || '').trim();
-                    const mapping = window.clientToAccountMapping?.[client];
-                    const regionalHead = mapping?.regionalHead || null;
+                    // Try to get Regional Head from column R first, then fall back to mapping
+                    let regionalHead = String(row['Regional Head'] || '').trim();
                     
-                    // Skip if no regional head mapping found
+                    // Fall back to Account_Summary mapping if column doesn't exist
+                    if (!regionalHead && window.clientToAccountMapping) {
+                        const client = String(row['Client'] || '').trim();
+                        const mapping = window.clientToAccountMapping?.[client];
+                        regionalHead = mapping?.regionalHead || '';
+                    }
+                    
+                    // Skip if no regional head found
                     if (!regionalHead) return;
                     
                     if (!regionalHeadStats[regionalHead]) {
@@ -3496,30 +3495,21 @@ Total Population: ${totalPop}
             try {
                 data = data || dashboardData.parameterAuditCount;
                 
-                // Check if client mapping is available
-                if (!window.clientToAccountMapping || Object.keys(window.clientToAccountMapping).length === 0) {
-                    // Show empty state if mapping is not available
-                    const emptyHtml = `
-                        <div style="padding: 20px; text-align: center; color: var(--text-secondary); font-size: 11px;">
-                            <i class="fas fa-info-circle" style="font-size: 24px; opacity: 0.3; margin-bottom: 8px;"></i>
-                            <div>Practice Head data not available</div>
-                            <div style="font-size: 9px; opacity: 0.7; margin-top: 4px;">Mapped from Account_Summary sheet</div>
-                        </div>
-                    `;
-                    safeSetHTML('practiceHeadBreakdown', emptyHtml);
-                    console.log('⚠️ Practice Head mapping not available');
-                    return;
-                }
-                
                 const practiceHeadStats = {};
 
-                // Group by Practice Head using client mapping
+                // Group by Practice Head - read directly from Parameter_Audit_Count column S
                 data.forEach(row => {
-                    const client = String(row['Client'] || '').trim();
-                    const mapping = window.clientToAccountMapping?.[client];
-                    const practiceHead = mapping?.practiceHead || null;
+                    // Try to get Practice Head from column S first, then fall back to mapping
+                    let practiceHead = String(row['Practice Head'] || '').trim();
                     
-                    // Skip if no practice head mapping found
+                    // Fall back to Account_Summary mapping if column doesn't exist
+                    if (!practiceHead && window.clientToAccountMapping) {
+                        const client = String(row['Client'] || '').trim();
+                        const mapping = window.clientToAccountMapping?.[client];
+                        practiceHead = mapping?.practiceHead || '';
+                    }
+                    
+                    // Skip if no practice head found
                     if (!practiceHead) return;
                     
                     if (!practiceHeadStats[practiceHead]) {
