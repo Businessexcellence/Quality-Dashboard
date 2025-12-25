@@ -912,7 +912,7 @@
                         <i class="fas fa-times"></i> Clear
                     </button>
                 </div>
-                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
+                <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;">
                     <!-- Client Filter -->
                     <div>
                         <label style="font-size: 9px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 3px;">CLIENT</label>
@@ -920,9 +920,16 @@
                             <option value="">All Clients</option>
                         </select>
                     </div>
+                    <!-- Practice Head Filter -->
+                    <div>
+                        <label style="font-size: 9px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 3px;">PRACTICE HEAD</label>
+                        <select id="filterPracticeHead" onchange="applyTransactionalFilters()" style="width: 100%; padding: 5px; border: 1px solid var(--border); border-radius: 3px; background: var(--bg-secondary); color: var(--text-primary); font-size: 11px;">
+                            <option value="">All Practice Heads</option>
+                        </select>
+                    </div>
                     <!-- Financial Year Filter -->
                     <div>
-                        <label style="font-size: 9px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 3px;">FINANCIAL YEAR</label>
+                        <label style="font-size: 9px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 3px;">YEAR</label>
                         <select id="filterFinancialYear" onchange="applyTransactionalFilters()" style="width: 100%; padding: 5px; border: 1px solid var(--border); border-radius: 3px; background: var(--bg-secondary); color: var(--text-primary); font-size: 11px;">
                             <option value="">All Years</option>
                         </select>
@@ -941,6 +948,16 @@
                             <option value="">All Weeks</option>
                         </select>
                     </div>
+                </div>
+            </div>
+
+            <!-- Summary Section --><
+            <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 10px; margin-bottom: 10px;">
+                <h3 style="font-size: 12px; font-weight: 700; color: var(--text-primary); margin: 0 0 8px 0;">
+                    <i class="fas fa-chart-line" style="color: var(--primary); font-size: 11px;"></i> Summary
+                </h3>
+                <div id="summaryContent" style="font-size: 10px; color: var(--text-primary); line-height: 1.6;">
+                    <!-- Summary will be populated dynamically -->
                 </div>
             </div>
 
@@ -1017,6 +1034,16 @@
                     <div id="stageBreakdown" style="overflow-x: auto;">
                         <!-- Stage table will be populated -->
                     </div>
+                </div>
+            </div>
+
+            <!-- Regional Head Wise Overview (Full Width) -->
+            <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 10px; margin-top: 10px;">
+                <h3 style="font-size: 12px; font-weight: 700; color: var(--text-primary); margin: 0 0 8px 0;">
+                    <i class="fas fa-user-tie" style="color: var(--primary); font-size: 11px;"></i> Regional Head Wise Overview
+                </h3>
+                <div id="regionalHeadBreakdown" style="overflow-x: auto;">
+                    <!-- Regional Head table will be populated -->
                 </div>
             </div>
         </div>
@@ -2755,6 +2782,35 @@ Total Population: ${totalPop}
         function populateTransactionalFilters() {
             try {
                 const data = dashboardData.parameterAuditCount;
+                const accountData = dashboardData.accountSummary;
+                
+                // Build client-to-account mapping for Practice Head filtering
+                window.clientToAccountMapping = {};
+                if (accountData) {
+                    accountData.forEach(row => {
+                        const account = String(row['Account'] || '').trim();
+                        const practiceHead = String(row['Practice Head'] || '').trim();
+                        const regionalHead = String(row['Regional Head'] || '').trim();
+                        
+                        // Match account with clients
+                        const matchingClient = data.find(d => {
+                            const client = String(d['Client'] || '').trim();
+                            return account.toLowerCase().includes(client.toLowerCase()) || 
+                                   client.toLowerCase().includes(account.toLowerCase());
+                        });
+                        
+                        if (matchingClient) {
+                            const client = String(matchingClient['Client'] || '').trim();
+                            if (!window.clientToAccountMapping[client]) {
+                                window.clientToAccountMapping[client] = {
+                                    account,
+                                    practiceHead,
+                                    regionalHead
+                                };
+                            }
+                        }
+                    });
+                }
                 
                 // Get unique Clients
                 const clients = [...new Set(data.map(row => String(row['Client'] || '').trim()).filter(c => c))];
@@ -2762,6 +2818,14 @@ Total Population: ${totalPop}
                 if (clientSelect) {
                     clientSelect.innerHTML = '<option value="">All Clients</option>' + 
                         clients.sort().map(client => `<option value="${client}">${client}</option>`).join('');
+                }
+                
+                // Get unique Practice Heads from mapping
+                const practiceHeads = [...new Set(Object.values(window.clientToAccountMapping).map(m => m.practiceHead).filter(p => p))];
+                const practiceHeadSelect = safeGetElement('filterPracticeHead');
+                if (practiceHeadSelect) {
+                    practiceHeadSelect.innerHTML = '<option value="">All Practice Heads</option>' + 
+                        practiceHeads.sort().map(ph => `<option value="${ph}">${ph}</option>`).join('');
                 }
                 
                 // Get unique Financial Years
@@ -2790,7 +2854,7 @@ Total Population: ${totalPop}
                         weeks.sort((a, b) => parseInt(a) - parseInt(b)).map(week => `<option value="${week}">Week ${week}</option>`).join('');
                 }
                 
-                console.log('✅ Filters populated:', clients.length, 'clients,', years.length, 'years,', months.length, 'months,', weeks.length, 'weeks');
+                console.log('✅ Filters populated:', clients.length, 'clients,', practiceHeads.length, 'practice heads,', years.length, 'years,', months.length, 'months,', weeks.length, 'weeks');
             } catch (error) {
                 handleError(error, 'populateTransactionalFilters');
             }
@@ -2799,6 +2863,7 @@ Total Population: ${totalPop}
         function applyTransactionalFilters() {
             try {
                 const clientFilter = safeGetElement('filterClient')?.value || '';
+                const practiceHeadFilter = safeGetElement('filterPracticeHead')?.value || '';
                 const yearFilter = safeGetElement('filterFinancialYear')?.value || '';
                 const monthFilter = safeGetElement('filterMonth')?.value || '';
                 const weekFilter = safeGetElement('filterWeek')?.value || '';
@@ -2809,6 +2874,16 @@ Total Population: ${totalPop}
                 if (clientFilter) {
                     filteredData = filteredData.filter(row => 
                         String(row['Client'] || '').trim() === clientFilter
+                    );
+                }
+                
+                // Filter by Practice Head using mapping
+                if (practiceHeadFilter && window.clientToAccountMapping) {
+                    const matchingClients = Object.keys(window.clientToAccountMapping).filter(client => 
+                        window.clientToAccountMapping[client].practiceHead === practiceHeadFilter
+                    );
+                    filteredData = filteredData.filter(row => 
+                        matchingClients.includes(String(row['Client'] || '').trim())
                     );
                 }
                 
@@ -2830,13 +2905,17 @@ Total Population: ${totalPop}
                     );
                 }
                 
-                console.log('🔍 Filtered data:', filteredData.length, 'rows (Client:', clientFilter || 'All', ', Year:', yearFilter || 'All', ', Month:', monthFilter || 'All', ', Week:', weekFilter || 'All', ')');
+                console.log('🔍 Filtered data:', filteredData.length, 'rows (Client:', clientFilter || 'All', ', Practice Head:', practiceHeadFilter || 'All', ', Year:', yearFilter || 'All', ', Month:', monthFilter || 'All', ', Week:', weekFilter || 'All', ')');
+                
+                // Generate summary
+                generateSummary(filteredData, clientFilter, practiceHeadFilter, yearFilter, monthFilter, weekFilter);
                 
                 // Calculate all metrics with filtered data
                 calculateOverallMetrics(filteredData);
                 calculateRegionBreakdown(filteredData);
                 calculateCriticalBreakdown(filteredData);
                 calculateStageBreakdown(filteredData);
+                calculateRegionalHeadBreakdown(filteredData);
                 
             } catch (error) {
                 handleError(error, 'applyTransactionalFilters');
@@ -2846,11 +2925,13 @@ Total Population: ${totalPop}
         function clearTransactionalFilters() {
             try {
                 const clientSelect = safeGetElement('filterClient');
+                const practiceHeadSelect = safeGetElement('filterPracticeHead');
                 const yearSelect = safeGetElement('filterFinancialYear');
                 const monthSelect = safeGetElement('filterMonth');
                 const weekSelect = safeGetElement('filterWeek');
                 
                 if (clientSelect) clientSelect.value = '';
+                if (practiceHeadSelect) practiceHeadSelect.value = '';
                 if (yearSelect) yearSelect.value = '';
                 if (monthSelect) monthSelect.value = '';
                 if (weekSelect) weekSelect.value = '';
@@ -3140,6 +3221,120 @@ Total Population: ${totalPop}
                 console.log('✅ Stage breakdown rendered:', stageRows.length, 'stages');
             } catch (error) {
                 handleError(error, 'calculateStageBreakdown');
+            }
+        }
+
+        function generateSummary(data, clientFilter, practiceHeadFilter, yearFilter, monthFilter, weekFilter) {
+            try {
+                const totalRecords = data.length;
+                const uniqueClients = [...new Set(data.map(row => row['Client']))].filter(c => c).length;
+                const uniqueRegions = [...new Set(data.map(row => row['Region']))].filter(r => r).length;
+                
+                let summary = `Showing <strong>${totalRecords.toLocaleString()} records</strong>`;
+                
+                if (clientFilter || practiceHeadFilter || yearFilter || monthFilter || weekFilter) {
+                    summary += ' filtered by: ';
+                    const filters = [];
+                    if (clientFilter) filters.push(`<span style="background: #3b82f6; color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px;">Client: ${clientFilter}</span>`);
+                    if (practiceHeadFilter) filters.push(`<span style="background: #8b5cf6; color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px;">Practice Head: ${practiceHeadFilter}</span>`);
+                    if (yearFilter) filters.push(`<span style="background: #10b981; color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px;">Year: ${yearFilter}</span>`);
+                    if (monthFilter) filters.push(`<span style="background: #f59e0b; color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px;">Month: ${monthFilter}</span>`);
+                    if (weekFilter) filters.push(`<span style="background: #ef4444; color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px;">Week: ${weekFilter}</span>`);
+                    summary += filters.join(' ');
+                } else {
+                    summary += ' <span style="color: var(--text-muted);">(No filters applied)</span>';
+                }
+                
+                summary += `<br><span style="color: var(--text-muted); font-size: 9px;">Covering ${uniqueClients} client(s) across ${uniqueRegions} region(s)</span>`;
+                
+                safeSetHTML('summaryContent', summary);
+            } catch (error) {
+                handleError(error, 'generateSummary');
+            }
+        }
+
+        function calculateRegionalHeadBreakdown(data = null) {
+            try {
+                data = data || dashboardData.parameterAuditCount;
+                const regionalHeadStats = {};
+
+                // Group by Regional Head using client mapping
+                data.forEach(row => {
+                    const client = String(row['Client'] || '').trim();
+                    const mapping = window.clientToAccountMapping?.[client];
+                    const regionalHead = mapping?.regionalHead || 'Unknown';
+                    
+                    if (!regionalHeadStats[regionalHead]) {
+                        regionalHeadStats[regionalHead] = {
+                            opportunityPass: 0,
+                            opportunityCount: 0,
+                            opportunityNA: 0,
+                            opportunityFail: 0,
+                            totalPopulation: 0
+                        };
+                    }
+
+                    regionalHeadStats[regionalHead].opportunityPass += parseFloat(row['Opportunity Pass']) || 0;
+                    regionalHeadStats[regionalHead].opportunityCount += parseFloat(row['Opportunity Count']) || 0;
+                    regionalHeadStats[regionalHead].opportunityNA += parseFloat(row['Opportunity NA']) || 0;
+                    regionalHeadStats[regionalHead].opportunityFail += parseFloat(row['Opportunity Fail']) || 0;
+                    regionalHeadStats[regionalHead].totalPopulation += parseFloat(row['Total Population']) || 0;
+                });
+
+                // Calculate metrics for each regional head
+                const regionalHeadRows = Object.entries(regionalHeadStats).map(([regionalHead, stats]) => {
+                    const denominator = stats.opportunityCount - stats.opportunityNA;
+                    const accuracy = denominator > 0 ? (stats.opportunityPass / denominator * 100) : 0;
+                    const sample = stats.totalPopulation > 0 ? (stats.opportunityCount / stats.totalPopulation * 100) : 0;
+                    const error = stats.opportunityCount > 0 ? (stats.opportunityFail / stats.opportunityCount * 100) : 0;
+                    
+                    return {
+                        regionalHead,
+                        accuracy: accuracy.toFixed(1),
+                        sample: sample.toFixed(1),
+                        error: error.toFixed(1),
+                        auditCount: stats.opportunityCount
+                    };
+                }).sort((a, b) => b.auditCount - a.auditCount);
+
+                // Render table
+                const html = `
+                    <table style="width: 100%; border-collapse: collapse; font-size: 10px;">
+                        <thead>
+                            <tr style="border-bottom: 1px solid var(--border); background: rgba(255, 140, 66, 0.05);">
+                                <th style="padding: 6px 8px; text-align: left; font-size: 10px; font-weight: 700; color: var(--text-primary);">Regional Head</th>
+                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: var(--text-primary);">Accuracy %</th>
+                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: var(--text-primary);">Sample %</th>
+                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: var(--text-primary);">Error %</th>
+                                <th style="padding: 6px 8px; text-align: right; font-size: 10px; font-weight: 700; color: var(--text-primary);">Audit Count</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${regionalHeadRows.map(row => `
+                                <tr style="border-bottom: 1px solid var(--border); transition: background 0.2s;" 
+                                    onmouseover="this.style.background='var(--bg-hover)'" 
+                                    onmouseout="this.style.background='transparent'">
+                                    <td style="padding: 6px 8px; font-size: 11px; color: var(--text-primary); font-weight: 600;">👤 ${row.regionalHead}</td>
+                                    <td style="padding: 6px 8px; text-align: center;">
+                                        <span style="background: #10b981; color: white; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: 700;">${row.accuracy}%</span>
+                                    </td>
+                                    <td style="padding: 6px 8px; text-align: center;">
+                                        <span style="background: #3b82f6; color: white; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: 700;">${row.sample}%</span>
+                                    </td>
+                                    <td style="padding: 6px 8px; text-align: center;">
+                                        <span style="background: #ef4444; color: white; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: 700;">${row.error}%</span>
+                                    </td>
+                                    <td style="padding: 6px 8px; text-align: right; font-size: 11px; color: var(--text-primary); font-weight: 700;">${row.auditCount.toLocaleString()}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+
+                safeSetHTML('regionalHeadBreakdown', html);
+                console.log('✅ Regional Head breakdown rendered:', regionalHeadRows.length, 'regional heads');
+            } catch (error) {
+                handleError(error, 'calculateRegionalHeadBreakdown');
             }
         }
 
