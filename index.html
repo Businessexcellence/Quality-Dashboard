@@ -5050,33 +5050,48 @@ Total Population: ${totalPop}
                     console.log('📋 Available columns:', Object.keys(projects[0]));
                 }
                 
-                // Status is in Column G (or might be named "Status" if headers exist)
-                // We'll check multiple possible column names
-                const wip = projects.filter(p => {
-                    // Try different possible column names for Status
-                    const status = String(
-                        p['Status'] || 
-                        p['G'] || 
-                        p['status'] || 
-                        p['PROJECT STATUS'] ||
-                        p['Project Status'] ||
-                        ''
-                    ).toUpperCase().trim();
+                // Helper function to get status from Column G
+                // Column G in Excel is the 7th column (A=1, B=2, C=3, D=4, E=5, F=6, G=7)
+                function getProjectStatus(project) {
+                    // Get all keys
+                    const keys = Object.keys(project);
                     
+                    // Try different possible column references for Column G:
+                    // 1. Direct column letter 'G'
+                    // 2. Index 6 (7th column, 0-based)
+                    // 3. __EMPTY_6 (XLSX's way of naming headerless columns)
+                    // 4. Named headers that might be in column G
+                    
+                    const possibleKeys = [
+                        '__EMPTY_6',  // XLSX headerless column naming (Column G = 6th empty column)
+                        'G',          // Direct column letter
+                        keys[6],      // 7th column by index
+                        'Status',
+                        'status',
+                        'PROJECT STATUS',
+                        'Project Status',
+                        'STATUS'
+                    ];
+                    
+                    for (const key of possibleKeys) {
+                        if (key && project[key]) {
+                            return String(project[key]);
+                        }
+                    }
+                    
+                    return '';
+                }
+                
+                // Count WIP and CLOSED
+                const wip = projects.filter(p => {
+                    const status = getProjectStatus(p).toUpperCase().trim();
                     return status === 'WIP' || status.includes('WIP');
                 }).length;
                 
                 const closed = projects.filter(p => {
-                    const status = String(
-                        p['Status'] || 
-                        p['G'] || 
-                        p['status'] || 
-                        p['PROJECT STATUS'] ||
-                        p['Project Status'] ||
-                        ''
-                    ).toUpperCase().trim();
-                    
-                    return status === 'CLOSED' || status.includes('CLOSED') || status === 'COMPLETE' || status.includes('COMPLETE');
+                    const status = getProjectStatus(p).toUpperCase().trim();
+                    return status === 'CLOSED' || status.includes('CLOSED') || 
+                           status === 'COMPLETE' || status.includes('COMPLETE');
                 }).length;
                 
                 const total = wip + closed; // Total is WIP + Closed
@@ -5085,12 +5100,18 @@ Total Population: ${totalPop}
                 
                 // Log first few status values to help debug
                 if (projects.length > 0) {
-                    console.log('🔍 First 3 project status values:', projects.slice(0, 3).map(p => ({
-                        Status: p['Status'],
-                        G: p['G'],
-                        'Project Status': p['Project Status'],
-                        'PROJECT STATUS': p['PROJECT STATUS']
-                    })));
+                    console.log('🔍 First 5 project status values:', projects.slice(0, 5).map((p, idx) => {
+                        const keys = Object.keys(p);
+                        return {
+                            row: idx + 1,
+                            __EMPTY_6: p['__EMPTY_6'],
+                            G: p['G'],
+                            keys_6: keys[6] ? p[keys[6]] : undefined,
+                            Status: p['Status'],
+                            detectedStatus: getProjectStatus(p),
+                            allKeys: keys
+                        };
+                    }));
                 }
                 
                 // Update KPI cards
@@ -5101,16 +5122,9 @@ Total Population: ${totalPop}
                 // Generate status breakdown - show all unique status values
                 const statusCounts = {};
                 projects.forEach(p => {
-                    const status = String(
-                        p['Status'] || 
-                        p['G'] || 
-                        p['status'] || 
-                        p['PROJECT STATUS'] ||
-                        p['Project Status'] ||
-                        'Unknown'
-                    ).trim();
+                    const status = getProjectStatus(p).trim();
                     
-                    if (status && status !== 'Unknown' && status !== '') {
+                    if (status && status !== '') {
                         statusCounts[status] = (statusCounts[status] || 0) + 1;
                     }
                 });
@@ -5159,23 +5173,108 @@ Total Population: ${totalPop}
                     console.log('📋 Available columns:', Object.keys(rcaCapa[0]));
                 }
                 
-                // Status is in Column I
-                // Count WIP and Closed only
+                // Helper function to get status from Column I (9th column)
+                function getRcaCapaStatus(item) {
+                    const keys = Object.keys(item);
+                    
+                    // Try different possible column references for Column I:
+                    // Column I = 9th column (index 8 in 0-based)
+                    const possibleKeys = [
+                        '__EMPTY_8',  // XLSX headerless column naming (Column I = 8th empty column)
+                        'I',          // Direct column letter
+                        keys[8],      // 9th column by index
+                        'Status',
+                        'status',
+                        'RCA STATUS',
+                        'CAPA STATUS',
+                        'STATUS'
+                    ];
+                    
+                    for (const key of possibleKeys) {
+                        if (key && item[key]) {
+                            return String(item[key]);
+                        }
+                    }
+                    
+                    return '';
+                }
+                
+                // Helper function to get Error Type from Column C (3rd column)
+                function getErrorType(item) {
+                    const keys = Object.keys(item);
+                    
+                    const possibleKeys = [
+                        '__EMPTY_2',  // XLSX headerless column naming (Column C = 2nd empty column)
+                        'C',
+                        keys[2],
+                        'Error Type',
+                        'ERROR TYPE',
+                        'ErrorType'
+                    ];
+                    
+                    for (const key of possibleKeys) {
+                        if (key && item[key]) {
+                            return String(item[key]);
+                        }
+                    }
+                    
+                    return '';
+                }
+                
+                // Helper function to get Impact from Column D (4th column)
+                function getImpact(item) {
+                    const keys = Object.keys(item);
+                    
+                    const possibleKeys = [
+                        '__EMPTY_3',  // XLSX headerless column naming (Column D = 3rd empty column)
+                        'D',
+                        keys[3],
+                        'Impact',
+                        'IMPACT'
+                    ];
+                    
+                    for (const key of possibleKeys) {
+                        if (key && item[key]) {
+                            return String(item[key]);
+                        }
+                    }
+                    
+                    return '';
+                }
+                
+                // Count WIP and Closed only from Column I
                 const wip = rcaCapa.filter(r => {
-                    const statusFromI = String(r['I'] || '').toUpperCase().trim();
-                    const statusFromStatus = String(r['Status'] || '').toUpperCase().trim();
-                    return statusFromI === 'WIP' || statusFromStatus === 'WIP';
+                    const status = getRcaCapaStatus(r).toUpperCase().trim();
+                    return status === 'WIP' || status.includes('WIP');
                 }).length;
                 
                 const closed = rcaCapa.filter(r => {
-                    const statusFromI = String(r['I'] || '').toUpperCase().trim();
-                    const statusFromStatus = String(r['Status'] || '').toUpperCase().trim();
-                    return statusFromI === 'CLOSED' || statusFromStatus === 'CLOSED';
+                    const status = getRcaCapaStatus(r).toUpperCase().trim();
+                    return status === 'CLOSED' || status.includes('CLOSED') || 
+                           status === 'COMPLETE' || status.includes('COMPLETE');
                 }).length;
                 
                 const total = wip + closed; // Total is WIP + Closed
                 
                 console.log('📊 RCA/CAPA count:', { total, wip, closed, allRcaCapa: rcaCapa.length });
+                
+                // Log first few values to help debug
+                if (rcaCapa.length > 0) {
+                    console.log('🔍 First 5 RCA/CAPA status values:', rcaCapa.slice(0, 5).map((r, idx) => {
+                        const keys = Object.keys(r);
+                        return {
+                            row: idx + 1,
+                            __EMPTY_8: r['__EMPTY_8'],
+                            I: r['I'],
+                            keys_8: keys[8] ? r[keys[8]] : undefined,
+                            Status: r['Status'],
+                            detectedStatus: getRcaCapaStatus(r),
+                            errorType: getErrorType(r),
+                            impact: getImpact(r),
+                            allKeys: keys
+                        };
+                    }));
+                }
                 
                 // Update KPI cards
                 safeSetText('rcaCapaTotal', total);
@@ -5185,8 +5284,8 @@ Total Population: ${totalPop}
                 // Generate Error Type breakdown (Column C)
                 const errorTypeCounts = {};
                 rcaCapa.forEach(r => {
-                    const errorType = String(r['Error Type'] || r['C'] || 'Unknown').trim();
-                    if (errorType && errorType !== 'Unknown') {
+                    const errorType = getErrorType(r).trim();
+                    if (errorType && errorType !== '') {
                         errorTypeCounts[errorType] = (errorTypeCounts[errorType] || 0) + 1;
                     }
                 });
@@ -5214,8 +5313,8 @@ Total Population: ${totalPop}
                 // Generate Impact breakdown (Column D)
                 const impactCounts = {};
                 rcaCapa.forEach(r => {
-                    const impact = String(r['Impact'] || r['D'] || 'Unknown').trim();
-                    if (impact && impact !== 'Unknown') {
+                    const impact = getImpact(r).trim();
+                    if (impact && impact !== '') {
                         impactCounts[impact] = (impactCounts[impact] || 0) + 1;
                     }
                 });
