@@ -902,10 +902,67 @@
 
         <!-- OTHER TABS (Placeholders) -->
         <div id="transactional" class="tab-content">
-            <div class="empty-state">
-                <i class="fas fa-exchange-alt"></i>
-                <h3>Transactional Overview</h3>
-                <p>Coming soon...</p>
+            <!-- KPI Cards -->
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px;">
+                <!-- Accuracy Score Card -->
+                <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 8px; padding: 16px; color: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                        <i class="fas fa-check-circle" style="font-size: 24px; opacity: 0.9;"></i>
+                        <span style="font-size: 11px; opacity: 0.9; font-weight: 600;">ACCURACY</span>
+                    </div>
+                    <div style="font-size: 32px; font-weight: 700; margin-bottom: 4px;" id="overallAccuracy">0%</div>
+                    <div style="font-size: 11px; opacity: 0.9;">Overall Accuracy Score</div>
+                </div>
+
+                <!-- Sample % Card -->
+                <div style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); border-radius: 8px; padding: 16px; color: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                        <i class="fas fa-percentage" style="font-size: 24px; opacity: 0.9;"></i>
+                        <span style="font-size: 11px; opacity: 0.9; font-weight: 600;">SAMPLE</span>
+                    </div>
+                    <div style="font-size: 32px; font-weight: 700; margin-bottom: 4px;" id="overallSample">0%</div>
+                    <div style="font-size: 11px; opacity: 0.9;">Sample Percentage</div>
+                </div>
+
+                <!-- Error % Card -->
+                <div style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); border-radius: 8px; padding: 16px; color: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 24px; opacity: 0.9;"></i>
+                        <span style="font-size: 11px; opacity: 0.9; font-weight: 600;">ERROR</span>
+                    </div>
+                    <div style="font-size: 32px; font-weight: 700; margin-bottom: 4px;" id="overallError">0%</div>
+                    <div style="font-size: 11px; opacity: 0.9;">Error Percentage</div>
+                </div>
+
+                <!-- Audit Count Card -->
+                <div style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border-radius: 8px; padding: 16px; color: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                        <i class="fas fa-clipboard-list" style="font-size: 24px; opacity: 0.9;"></i>
+                        <span style="font-size: 11px; opacity: 0.9; font-weight: 600;">AUDITS</span>
+                    </div>
+                    <div style="font-size: 32px; font-weight: 700; margin-bottom: 4px;" id="overallAuditCount">0</div>
+                    <div style="font-size: 11px; opacity: 0.9;">Total Audit Count</div>
+                </div>
+            </div>
+
+            <!-- Region-wise Breakdown -->
+            <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 16px;">
+                <h3 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin: 0 0 12px 0;">
+                    <i class="fas fa-map-marker-alt" style="color: var(--primary);"></i> Region-wise Overview
+                </h3>
+                <div id="regionBreakdown" style="overflow-x: auto;">
+                    <!-- Region table will be populated -->
+                </div>
+            </div>
+
+            <!-- Critical/Non Critical Breakdown -->
+            <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 16px;">
+                <h3 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin: 0 0 12px 0;">
+                    <i class="fas fa-flag" style="color: var(--primary);"></i> Critical/Non Critical Overview
+                </h3>
+                <div id="criticalBreakdown" style="overflow-x: auto;">
+                    <!-- Critical table will be populated -->
+                </div>
             </div>
         </div>
 
@@ -2623,9 +2680,257 @@ Total Population: ${totalPop}
         // REFRESH ALL TABS
         // ==========================================
         
+        // ==========================================
+        // TRANSACTIONAL OVERVIEW TAB
+        // ==========================================
+
+        function refreshTransactionalTab() {
+            try {
+                console.log('🔄 Refreshing Transactional Overview Tab...');
+                
+                if (!validateData(dashboardData.parameterAuditCount, 'Parameter Audit Count for Transactional')) {
+                    console.warn('⚠️ No Parameter Audit Count data available');
+                    return;
+                }
+
+                // Calculate overall metrics
+                calculateOverallMetrics();
+                
+                // Calculate region-wise breakdown
+                calculateRegionBreakdown();
+                
+                // Calculate critical/non-critical breakdown
+                calculateCriticalBreakdown();
+                
+                console.log('✅ Transactional Overview Tab refreshed');
+            } catch (error) {
+                handleError(error, 'refreshTransactionalTab');
+            }
+        }
+
+        function calculateOverallMetrics() {
+            try {
+                const data = dashboardData.parameterAuditCount;
+                
+                // Sum all required fields
+                let totalOpportunityPass = 0;
+                let totalOpportunityCount = 0;
+                let totalOpportunityNA = 0;
+                let totalOpportunityFail = 0;
+                let totalPopulation = 0;
+
+                data.forEach(row => {
+                    totalOpportunityPass += parseFloat(row['Opportunity Pass']) || 0;
+                    totalOpportunityCount += parseFloat(row['Opportunity Count']) || 0;
+                    totalOpportunityNA += parseFloat(row['Opportunity NA']) || 0;
+                    totalOpportunityFail += parseFloat(row['Opportunity Fail']) || 0;
+                    totalPopulation += parseFloat(row['Total Population']) || 0;
+                });
+
+                // Calculate metrics as per formulas
+                // Accuracy% = Sum of "Opportunity Pass" / (Sum of "Opportunity Count" - Sum of "Opportunity NA")
+                const denominator = totalOpportunityCount - totalOpportunityNA;
+                const accuracyPercent = denominator > 0 ? (totalOpportunityPass / denominator * 100) : 0;
+
+                // Sample% = Sum of "Opportunity Count" / Sum of "Total Population"
+                const samplePercent = totalPopulation > 0 ? (totalOpportunityCount / totalPopulation * 100) : 0;
+
+                // Error% = Sum of "Opportunity Fail" / Sum of "Opportunity Count"
+                const errorPercent = totalOpportunityCount > 0 ? (totalOpportunityFail / totalOpportunityCount * 100) : 0;
+
+                // Audit Count = Sum of "Opportunity Count"
+                const auditCount = totalOpportunityCount;
+
+                // Update UI
+                safeSetText('overallAccuracy', accuracyPercent.toFixed(1) + '%');
+                safeSetText('overallSample', samplePercent.toFixed(1) + '%');
+                safeSetText('overallError', errorPercent.toFixed(1) + '%');
+                safeSetText('overallAuditCount', auditCount.toLocaleString());
+
+                console.log('📊 Overall Metrics:', {
+                    accuracy: accuracyPercent.toFixed(1) + '%',
+                    sample: samplePercent.toFixed(1) + '%',
+                    error: errorPercent.toFixed(1) + '%',
+                    auditCount: auditCount
+                });
+            } catch (error) {
+                handleError(error, 'calculateOverallMetrics');
+            }
+        }
+
+        function calculateRegionBreakdown() {
+            try {
+                const data = dashboardData.parameterAuditCount;
+                const regionStats = {};
+
+                // Group by Region
+                data.forEach(row => {
+                    const region = String(row['Region'] || 'Unknown').trim();
+                    
+                    if (!regionStats[region]) {
+                        regionStats[region] = {
+                            opportunityPass: 0,
+                            opportunityCount: 0,
+                            opportunityNA: 0,
+                            opportunityFail: 0,
+                            totalPopulation: 0
+                        };
+                    }
+
+                    regionStats[region].opportunityPass += parseFloat(row['Opportunity Pass']) || 0;
+                    regionStats[region].opportunityCount += parseFloat(row['Opportunity Count']) || 0;
+                    regionStats[region].opportunityNA += parseFloat(row['Opportunity NA']) || 0;
+                    regionStats[region].opportunityFail += parseFloat(row['Opportunity Fail']) || 0;
+                    regionStats[region].totalPopulation += parseFloat(row['Total Population']) || 0;
+                });
+
+                // Calculate metrics for each region
+                const regionRows = Object.entries(regionStats).map(([region, stats]) => {
+                    const denominator = stats.opportunityCount - stats.opportunityNA;
+                    const accuracy = denominator > 0 ? (stats.opportunityPass / denominator * 100) : 0;
+                    const sample = stats.totalPopulation > 0 ? (stats.opportunityCount / stats.totalPopulation * 100) : 0;
+                    const error = stats.opportunityCount > 0 ? (stats.opportunityFail / stats.opportunityCount * 100) : 0;
+                    
+                    return {
+                        region,
+                        accuracy: accuracy.toFixed(1),
+                        sample: sample.toFixed(1),
+                        error: error.toFixed(1),
+                        auditCount: stats.opportunityCount
+                    };
+                }).sort((a, b) => b.auditCount - a.auditCount);
+
+                // Render table
+                const html = `
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid var(--border); background: rgba(255, 140, 66, 0.05);">
+                                <th style="padding: 10px; text-align: left; font-size: 11px; font-weight: 700; color: var(--text-primary);">Region</th>
+                                <th style="padding: 10px; text-align: center; font-size: 11px; font-weight: 700; color: var(--text-primary);">Accuracy %</th>
+                                <th style="padding: 10px; text-align: center; font-size: 11px; font-weight: 700; color: var(--text-primary);">Sample %</th>
+                                <th style="padding: 10px; text-align: center; font-size: 11px; font-weight: 700; color: var(--text-primary);">Error %</th>
+                                <th style="padding: 10px; text-align: right; font-size: 11px; font-weight: 700; color: var(--text-primary);">Audit Count</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${regionRows.map(row => `
+                                <tr style="border-bottom: 1px solid var(--border); transition: background 0.2s;" 
+                                    onmouseover="this.style.background='var(--bg-hover)'" 
+                                    onmouseout="this.style.background='transparent'">
+                                    <td style="padding: 10px; font-size: 12px; color: var(--text-primary); font-weight: 600;">${row.region}</td>
+                                    <td style="padding: 10px; text-align: center;">
+                                        <span style="background: #10b981; color: white; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 700;">${row.accuracy}%</span>
+                                    </td>
+                                    <td style="padding: 10px; text-align: center;">
+                                        <span style="background: #3b82f6; color: white; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 700;">${row.sample}%</span>
+                                    </td>
+                                    <td style="padding: 10px; text-align: center;">
+                                        <span style="background: #ef4444; color: white; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 700;">${row.error}%</span>
+                                    </td>
+                                    <td style="padding: 10px; text-align: right; font-size: 12px; color: var(--text-primary); font-weight: 700;">${row.auditCount.toLocaleString()}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+
+                safeSetHTML('regionBreakdown', html);
+                console.log('✅ Region breakdown rendered:', regionRows.length, 'regions');
+            } catch (error) {
+                handleError(error, 'calculateRegionBreakdown');
+            }
+        }
+
+        function calculateCriticalBreakdown() {
+            try {
+                const data = dashboardData.parameterAuditCount;
+                const criticalStats = {};
+
+                // Group by Critical/Non Critical
+                data.forEach(row => {
+                    const critical = String(row['Critical/Non Critical'] || 'Unknown').trim();
+                    
+                    if (!criticalStats[critical]) {
+                        criticalStats[critical] = {
+                            opportunityPass: 0,
+                            opportunityCount: 0,
+                            opportunityNA: 0,
+                            opportunityFail: 0,
+                            totalPopulation: 0
+                        };
+                    }
+
+                    criticalStats[critical].opportunityPass += parseFloat(row['Opportunity Pass']) || 0;
+                    criticalStats[critical].opportunityCount += parseFloat(row['Opportunity Count']) || 0;
+                    criticalStats[critical].opportunityNA += parseFloat(row['Opportunity NA']) || 0;
+                    criticalStats[critical].opportunityFail += parseFloat(row['Opportunity Fail']) || 0;
+                    criticalStats[critical].totalPopulation += parseFloat(row['Total Population']) || 0;
+                });
+
+                // Calculate metrics for each type
+                const criticalRows = Object.entries(criticalStats).map(([type, stats]) => {
+                    const denominator = stats.opportunityCount - stats.opportunityNA;
+                    const accuracy = denominator > 0 ? (stats.opportunityPass / denominator * 100) : 0;
+                    const sample = stats.totalPopulation > 0 ? (stats.opportunityCount / stats.totalPopulation * 100) : 0;
+                    const error = stats.opportunityCount > 0 ? (stats.opportunityFail / stats.opportunityCount * 100) : 0;
+                    
+                    return {
+                        type,
+                        accuracy: accuracy.toFixed(1),
+                        sample: sample.toFixed(1),
+                        error: error.toFixed(1),
+                        auditCount: stats.opportunityCount
+                    };
+                }).sort((a, b) => b.auditCount - a.auditCount);
+
+                // Render table
+                const html = `
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid var(--border); background: rgba(255, 140, 66, 0.05);">
+                                <th style="padding: 10px; text-align: left; font-size: 11px; font-weight: 700; color: var(--text-primary);">Type</th>
+                                <th style="padding: 10px; text-align: center; font-size: 11px; font-weight: 700; color: var(--text-primary);">Accuracy %</th>
+                                <th style="padding: 10px; text-align: center; font-size: 11px; font-weight: 700; color: var(--text-primary);">Sample %</th>
+                                <th style="padding: 10px; text-align: center; font-size: 11px; font-weight: 700; color: var(--text-primary);">Error %</th>
+                                <th style="padding: 10px; text-align: right; font-size: 11px; font-weight: 700; color: var(--text-primary);">Audit Count</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${criticalRows.map(row => {
+                                const icon = row.type === 'Critical' ? '🔴' : row.type === 'Non Critical' ? '🟢' : '⚪';
+                                return `
+                                    <tr style="border-bottom: 1px solid var(--border); transition: background 0.2s;" 
+                                        onmouseover="this.style.background='var(--bg-hover)'" 
+                                        onmouseout="this.style.background='transparent'">
+                                        <td style="padding: 10px; font-size: 12px; color: var(--text-primary); font-weight: 600;">${icon} ${row.type}</td>
+                                        <td style="padding: 10px; text-align: center;">
+                                            <span style="background: #10b981; color: white; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 700;">${row.accuracy}%</span>
+                                        </td>
+                                        <td style="padding: 10px; text-align: center;">
+                                            <span style="background: #3b82f6; color: white; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 700;">${row.sample}%</span>
+                                        </td>
+                                        <td style="padding: 10px; text-align: center;">
+                                            <span style="background: #ef4444; color: white; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 700;">${row.error}%</span>
+                                        </td>
+                                        <td style="padding: 10px; text-align: right; font-size: 12px; color: var(--text-primary); font-weight: 700;">${row.auditCount.toLocaleString()}</td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                `;
+
+                safeSetHTML('criticalBreakdown', html);
+                console.log('✅ Critical/Non Critical breakdown rendered:', criticalRows.length, 'types');
+            } catch (error) {
+                handleError(error, 'calculateCriticalBreakdown');
+            }
+        }
+
         function refreshAllTabs() {
             refreshHomeTab();
             refreshAccountSummaryTab();
+            refreshTransactionalTab();
         }
 
         // ==========================================
