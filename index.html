@@ -4892,14 +4892,34 @@ Total Population: ${totalPop}
         function refreshStrategicTab() {
             try {
                 console.log('🔄 Refreshing Strategic Overview tab');
+                console.log('📊 Dashboard data check:', {
+                    hasProjects: !!dashboardData?.projects,
+                    projectsLength: dashboardData?.projects?.length || 0,
+                    hasRcaCapa: !!dashboardData?.rcaCapa,
+                    rcaCapaLength: dashboardData?.rcaCapa?.length || 0
+                });
                 
                 if (!dashboardData || !dashboardData.projects || !dashboardData.rcaCapa) {
-                    console.log('⚠️ No Projects or RCA_CAPA data available');
+                    console.warn('⚠️ No Projects or RCA_CAPA data available');
+                    console.log('Available data keys:', dashboardData ? Object.keys(dashboardData) : 'dashboardData is null');
+                    
+                    // Show empty state
+                    safeSetText('projectsTotal', 0);
+                    safeSetText('projectsClosed', 0);
+                    safeSetText('projectsWIP', 0);
+                    safeSetText('rcaCapaTotal', 0);
+                    safeSetText('rcaCapaClosed', 0);
+                    safeSetText('rcaCapaWIP', 0);
                     return;
                 }
 
                 strategicData.projects = dashboardData.projects;
                 strategicData.rcaCapa = dashboardData.rcaCapa;
+
+                console.log('📊 Strategic data loaded:', {
+                    projects: strategicData.projects.length,
+                    rcaCapa: strategicData.rcaCapa.length
+                });
 
                 populateStrategicFilters();
                 applyStrategicFilters();
@@ -4949,8 +4969,22 @@ Total Population: ${totalPop}
         function applyStrategicFilters() {
             try {
                 const strategicData = window.dashboardData;
+                console.log('🔍 applyStrategicFilters called');
+                console.log('📊 Data check:', {
+                    hasStrategicData: !!strategicData,
+                    hasProjects: !!strategicData?.projects,
+                    projectsLength: strategicData?.projects?.length || 0,
+                    hasRcaCapa: !!strategicData?.rcaCapa,
+                    rcaCapaLength: strategicData?.rcaCapa?.length || 0
+                });
+                
                 if (!strategicData || !strategicData.projects || !strategicData.rcaCapa) {
                     console.error('❌ Strategic data not available');
+                    console.log('Available keys:', strategicData ? Object.keys(strategicData) : 'null');
+                    
+                    // Show empty state with zeros
+                    generateProjectsSection([]);
+                    generateRcaCapaSection([]);
                     return;
                 }
 
@@ -4958,6 +4992,8 @@ Total Population: ${totalPop}
                 const accountFilter = document.getElementById('strategicFilterAccount')?.value || '';
                 const yearFilter = document.getElementById('strategicFilterYear')?.value || '';
                 const practiceHeadFilter = document.getElementById('strategicFilterPracticeHead')?.value || '';
+
+                console.log('🔍 Filters:', { regionFilter, accountFilter, yearFilter, practiceHeadFilter });
 
                 // Filter projects
                 let filteredProjects = strategicData.projects.filter(row => {
@@ -4975,11 +5011,23 @@ Total Population: ${totalPop}
                            (!practiceHeadFilter || String(row['Practice Head'] || '').trim() === practiceHeadFilter);
                 });
 
+                console.log(`📊 Filtered: ${filteredProjects.length} projects, ${filteredRcaCapa.length} RCA/CAPA`);
+                
+                // Log sample data for debugging
+                if (filteredProjects.length > 0) {
+                    console.log('📄 Sample project:', filteredProjects[0]);
+                    console.log('📋 Project columns:', Object.keys(filteredProjects[0]));
+                }
+                if (filteredRcaCapa.length > 0) {
+                    console.log('📄 Sample RCA/CAPA:', filteredRcaCapa[0]);
+                    console.log('📋 RCA/CAPA columns:', Object.keys(filteredRcaCapa[0]));
+                }
+
                 // Generate separate sections
                 generateProjectsSection(filteredProjects);
                 generateRcaCapaSection(filteredRcaCapa);
 
-                console.log(`📊 Strategic view updated: ${filteredProjects.length} projects, ${filteredRcaCapa.length} RCA/CAPA`);
+                console.log(`✅ Strategic view updated: ${filteredProjects.length} projects, ${filteredRcaCapa.length} RCA/CAPA`);
             } catch (error) {
                 handleError(error, 'applyStrategicFilters');
             }
@@ -4987,19 +5035,31 @@ Total Population: ${totalPop}
 
         function generateProjectsSection(projects) {
             try {
+                console.log('📊 generateProjectsSection called with', projects.length, 'projects');
+                
+                if (projects.length > 0) {
+                    console.log('📄 Sample project data:', projects[0]);
+                    console.log('📋 Available columns:', Object.keys(projects[0]));
+                }
+                
                 // Status is in Column G
                 // Count WIP and Closed only
                 const wip = projects.filter(p => {
-                    const status = String(p['Status'] || p['G'] || '').toUpperCase().trim();
-                    return status === 'WIP';
+                    const statusFromG = String(p['G'] || '').toUpperCase().trim();
+                    const statusFromStatus = String(p['Status'] || '').toUpperCase().trim();
+                    console.log('🔍 Project status check - G:', statusFromG, 'Status:', statusFromStatus);
+                    return statusFromG === 'WIP' || statusFromStatus === 'WIP';
                 }).length;
                 
                 const closed = projects.filter(p => {
-                    const status = String(p['Status'] || p['G'] || '').toUpperCase().trim();
-                    return status === 'CLOSED';
+                    const statusFromG = String(p['G'] || '').toUpperCase().trim();
+                    const statusFromStatus = String(p['Status'] || '').toUpperCase().trim();
+                    return statusFromG === 'CLOSED' || statusFromStatus === 'CLOSED';
                 }).length;
                 
                 const total = wip + closed; // Total is WIP + Closed
+                
+                console.log('📊 Projects count:', { total, wip, closed, allProjects: projects.length });
                 
                 // Update KPI cards
                 safeSetText('projectsTotal', total);
@@ -5009,7 +5069,10 @@ Total Population: ${totalPop}
                 // Generate status breakdown
                 const statusCounts = {};
                 projects.forEach(p => {
-                    const status = String(p['Status'] || p['G'] || 'Unknown').trim();
+                    const statusFromG = String(p['G'] || '').trim();
+                    const statusFromStatus = String(p['Status'] || '').trim();
+                    const status = statusFromG || statusFromStatus || 'Unknown';
+                    
                     if (status && status !== 'Unknown') {
                         statusCounts[status] = (statusCounts[status] || 0) + 1;
                     }
@@ -5050,19 +5113,31 @@ Total Population: ${totalPop}
 
         function generateRcaCapaSection(rcaCapa) {
             try {
+                console.log('📊 generateRcaCapaSection called with', rcaCapa.length, 'items');
+                
+                if (rcaCapa.length > 0) {
+                    console.log('📄 Sample RCA/CAPA data:', rcaCapa[0]);
+                    console.log('📋 Available columns:', Object.keys(rcaCapa[0]));
+                }
+                
                 // Status is in Column I
                 // Count WIP and Closed only
                 const wip = rcaCapa.filter(r => {
-                    const status = String(r['Status'] || r['I'] || '').toUpperCase().trim();
-                    return status === 'WIP';
+                    const statusFromI = String(r['I'] || '').toUpperCase().trim();
+                    const statusFromStatus = String(r['Status'] || '').toUpperCase().trim();
+                    console.log('🔍 RCA/CAPA status check - I:', statusFromI, 'Status:', statusFromStatus);
+                    return statusFromI === 'WIP' || statusFromStatus === 'WIP';
                 }).length;
                 
                 const closed = rcaCapa.filter(r => {
-                    const status = String(r['Status'] || r['I'] || '').toUpperCase().trim();
-                    return status === 'CLOSED';
+                    const statusFromI = String(r['I'] || '').toUpperCase().trim();
+                    const statusFromStatus = String(r['Status'] || '').toUpperCase().trim();
+                    return statusFromI === 'CLOSED' || statusFromStatus === 'CLOSED';
                 }).length;
                 
                 const total = wip + closed; // Total is WIP + Closed
+                
+                console.log('📊 RCA/CAPA count:', { total, wip, closed, allRcaCapa: rcaCapa.length });
                 
                 // Update KPI cards
                 safeSetText('rcaCapaTotal', total);
@@ -5081,6 +5156,8 @@ Total Population: ${totalPop}
                 const sortedErrorTypes = Object.entries(errorTypeCounts)
                     .sort((a, b) => b[1] - a[1])
                     .slice(0, 5);
+                
+                console.log('📊 Error types found:', sortedErrorTypes.length);
                 
                 let errorTypeHTML = sortedErrorTypes.map(([type, count]) => {
                     const percentage = rcaCapa.length > 0 ? Math.round((count / rcaCapa.length) * 100) : 0;
@@ -5108,6 +5185,8 @@ Total Population: ${totalPop}
                 const sortedImpacts = Object.entries(impactCounts)
                     .sort((a, b) => b[1] - a[1])
                     .slice(0, 5);
+                
+                console.log('📊 Impacts found:', sortedImpacts.length);
                 
                 let impactHTML = sortedImpacts.map(([impact, count]) => {
                     const percentage = rcaCapa.length > 0 ? Math.round((count / rcaCapa.length) * 100) : 0;
