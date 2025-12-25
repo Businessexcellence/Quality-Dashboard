@@ -1540,7 +1540,7 @@
                     </h2>
                     <div style="display: flex; gap: 6px; align-items: center;">
                         <!-- Universal Search Input -->
-                        <div style="position: relative;">
+                        <div style="position: relative; display: flex; align-items: center;">
                             <input 
                                 type="text" 
                                 id="projectUniversalSearch" 
@@ -1554,12 +1554,14 @@
                                     background: white;
                                     color: #1e293b;
                                     outline: none;
+                                    height: 24px;
+                                    box-sizing: border-box;
                                 "
                                 oninput="filterProjectOptions(this.value)"
                             />
-                            <i class="fas fa-search" style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); color: #3b82f6; font-size: 8px; pointer-events: none;"></i>
+                            <i class="fas fa-search" style="position: absolute; left: 8px; color: #3b82f6; font-size: 8px; pointer-events: none;"></i>
                         </div>
-                        <button onclick="clearProjectFilters()" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); border: none; color: white; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 8px; font-weight: 600;">
+                        <button onclick="clearProjectFilters()" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); border: none; color: white; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 8px; font-weight: 600; height: 24px; box-sizing: border-box; display: flex; align-items: center; gap: 4px;">
                             <i class="fas fa-times"></i> Clear All
                         </button>
                     </div>
@@ -6037,63 +6039,138 @@ Total Population: ${totalPop}
                     return;
                 }
                 
-                const projectCards = projects.map((project, index) => {
+                // Group projects by account
+                const projectsByAccount = {};
+                projects.forEach((project, index) => {
                     const account = project['Account'] || 'N/A';
-                    const projectType = getProjectType(project) || 'N/A';
-                    const status = getProjectStatus(project) || 'N/A';
-                    const region = project['Region'] || 'N/A';
-                    
-                    // Status color
-                    let statusColor = '#64748b';
-                    const statusUpper = String(status).toUpperCase();
-                    if (statusUpper === 'CLOSED' || statusUpper.includes('COMPLETE')) statusColor = '#f59e0b';
-                    else if (statusUpper === 'WIP' || statusUpper.includes('WIP')) statusColor = '#3b82f6';
+                    if (!projectsByAccount[account]) {
+                        projectsByAccount[account] = [];
+                    }
+                    projectsByAccount[account].push({ project, index });
+                });
+                
+                // Generate HTML for grouped projects
+                const accountCards = Object.entries(projectsByAccount).map(([account, projectList]) => {
+                    const accountId = 'account_' + account.replace(/[^a-zA-Z0-9]/g, '_');
                     
                     return `
-                        <div 
-                            onclick="showProjectDetails(${index})"
-                            class="project-card"
-                            style="
-                                background: white;
-                                border: 2px solid #e2e8f0;
-                                border-left: 4px solid ${statusColor};
-                                border-radius: 6px;
-                                padding: 8px;
-                                margin-bottom: 6px;
-                                cursor: pointer;
-                                transition: all 0.2s;
-                            "
-                            onmouseover="this.style.background='#f8fafc'; this.style.borderColor='#3b82f6'; this.style.boxShadow='0 2px 8px rgba(59,130,246,0.2)';"
-                            onmouseout="this.style.background='white'; this.style.borderColor='#e2e8f0'; this.style.boxShadow='none';"
-                        >
-                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 4px;">
-                                <div style="flex: 1;">
-                                    <div style="color: #1e293b; font-size: 10px; font-weight: 700; margin-bottom: 2px;">${account}</div>
-                                    <div style="color: #64748b; font-size: 8px;">${region}</div>
+                        <div style="margin-bottom: 8px;">
+                            <!-- Account Header (Clickable) -->
+                            <div 
+                                onclick="toggleAccountProjects('${accountId}')"
+                                style="
+                                    background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+                                    color: white;
+                                    border-radius: 6px;
+                                    padding: 8px 12px;
+                                    cursor: pointer;
+                                    transition: all 0.2s;
+                                    display: flex;
+                                    justify-content: space-between;
+                                    align-items: center;
+                                "
+                                onmouseover="this.style.transform='translateX(2px)'; this.style.boxShadow='0 3px 10px rgba(59,130,246,0.3)';"
+                                onmouseout="this.style.transform='translateX(0)'; this.style.boxShadow='none';"
+                            >
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <i class="fas fa-building" style="font-size: 10px;"></i>
+                                    <span style="font-size: 11px; font-weight: 700;">${account}</span>
                                 </div>
-                                <div style="background: ${statusColor}; color: white; padding: 2px 6px; border-radius: 4px; font-size: 7px; font-weight: 700;">
-                                    ${status}
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span style="background: rgba(255,255,255,0.3); padding: 2px 8px; border-radius: 10px; font-size: 9px; font-weight: 700;">
+                                        ${projectList.length} ${projectList.length === 1 ? 'Project' : 'Projects'}
+                                    </span>
+                                    <i id="${accountId}_icon" class="fas fa-chevron-down" style="font-size: 9px; transition: transform 0.2s;"></i>
                                 </div>
                             </div>
-                            <div style="display: flex; gap: 8px; align-items: center;">
-                                <span style="background: #eff6ff; color: #3b82f6; padding: 2px 6px; border-radius: 3px; font-size: 7px; font-weight: 600;">
-                                    <i class="fas fa-tag" style="font-size: 6px; margin-right: 2px;"></i>${projectType}
-                                </span>
+                            
+                            <!-- Projects List (Collapsible) -->
+                            <div id="${accountId}" style="display: none; margin-top: 4px; margin-left: 8px;">
+                                ${projectList.map(({ project, index }) => {
+                                    const opportunityStatement = project['Opportunity Statement'] || project['Description'] || 'N/A';
+                                    const shortStatement = opportunityStatement.split(' ').slice(0, 5).join(' ') + (opportunityStatement.split(' ').length > 5 ? '...' : '');
+                                    const projectType = getProjectType(project) || 'N/A';
+                                    const status = getProjectStatus(project) || 'N/A';
+                                    const region = project['Region'] || 'N/A';
+                                    
+                                    // Status color
+                                    let statusColor = '#64748b';
+                                    const statusUpper = String(status).toUpperCase();
+                                    if (statusUpper === 'CLOSED' || statusUpper.includes('COMPLETE')) statusColor = '#f59e0b';
+                                    else if (statusUpper === 'WIP' || statusUpper.includes('WIP')) statusColor = '#3b82f6';
+                                    
+                                    return `
+                                        <div 
+                                            onclick="showProjectDetails(${index}); event.stopPropagation();"
+                                            style="
+                                                background: white;
+                                                border: 2px solid #e2e8f0;
+                                                border-left: 4px solid ${statusColor};
+                                                border-radius: 6px;
+                                                padding: 8px;
+                                                margin-bottom: 4px;
+                                                cursor: pointer;
+                                                transition: all 0.2s;
+                                            "
+                                            onmouseover="this.style.background='#f8fafc'; this.style.borderColor='#3b82f6'; this.style.boxShadow='0 2px 8px rgba(59,130,246,0.2)';"
+                                            onmouseout="this.style.background='white'; this.style.borderColor='#e2e8f0'; this.style.boxShadow='none';"
+                                        >
+                                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 4px;">
+                                                <div style="flex: 1;">
+                                                    <div style="color: #1e293b; font-size: 9px; font-weight: 700; margin-bottom: 3px;" title="${opportunityStatement}">
+                                                        ${shortStatement}
+                                                    </div>
+                                                    <div style="color: #64748b; font-size: 7px;">
+                                                        <i class="fas fa-map-marker-alt" style="font-size: 6px; margin-right: 2px;"></i>${region}
+                                                    </div>
+                                                </div>
+                                                <div style="background: ${statusColor}; color: white; padding: 2px 6px; border-radius: 4px; font-size: 7px; font-weight: 700;">
+                                                    ${status}
+                                                </div>
+                                            </div>
+                                            <div style="display: flex; gap: 6px; align-items: center;">
+                                                <span style="background: #eff6ff; color: #3b82f6; padding: 2px 6px; border-radius: 3px; font-size: 7px; font-weight: 600;">
+                                                    <i class="fas fa-tag" style="font-size: 6px; margin-right: 2px;"></i>${projectType}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
                             </div>
                         </div>
                     `;
                 }).join('');
                 
-                safeSetHTML('projectListContainer', projectCards);
+                safeSetHTML('projectListContainer', accountCards);
                 
                 // Store filtered projects for detail view
                 window.filteredProjects = projects;
                 
-                console.log('✅ Project list updated');
+                console.log('✅ Project list updated with', Object.keys(projectsByAccount).length, 'accounts');
             } catch (error) {
                 handleError(error, 'generateProjectList');
             }
         }
+        
+        // Toggle account projects dropdown
+        window.toggleAccountProjects = function(accountId) {
+            try {
+                const projectsContainer = document.getElementById(accountId);
+                const icon = document.getElementById(accountId + '_icon');
+                
+                if (projectsContainer && icon) {
+                    if (projectsContainer.style.display === 'none') {
+                        projectsContainer.style.display = 'block';
+                        icon.style.transform = 'rotate(180deg)';
+                    } else {
+                        projectsContainer.style.display = 'none';
+                        icon.style.transform = 'rotate(0deg)';
+                    }
+                }
+            } catch (error) {
+                console.error('Error toggling account projects:', error);
+            }
+        };
         
         function showProjectDetails(index) {
             try {
