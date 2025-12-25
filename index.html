@@ -4817,18 +4817,21 @@ Total Population: ${totalPop}
                 const uniqueRecruiters = new Set();
                 
                 data.forEach(row => {
-                    const accuracy = String(row['Accuracy'] || '').trim(); // Column K
+                    // Column K can contain numbers (0, 1) or strings ("0", "1", "NA")
+                    const accuracyRaw = row['Accuracy']; // Don't convert yet
+                    const accuracy = String(accuracyRaw || '').trim();
                     const criticalType = String(row['Critical/Non Critical'] || '').trim();
                     const recruiter = String(row['Recruiter Name'] || '').trim();
                     
                     if (recruiter) uniqueRecruiters.add(recruiter);
                     
-                    // Count values from Column K: "1", "0", "NA"
-                    if (accuracy === '1') {
+                    // Count values from Column K: 1, 0, "1", "0", "NA"
+                    // Handle both numeric and string values
+                    if (accuracyRaw === 1 || accuracy === '1') {
                         totalCount1++;
                         if (criticalType === 'Critical') criticalCount1++;
                         if (criticalType === 'Non Critical') nonCriticalCount1++;
-                    } else if (accuracy === '0') {
+                    } else if (accuracyRaw === 0 || accuracy === '0') {
                         totalCount0++;
                         if (criticalType === 'Critical') criticalCount0++;
                         if (criticalType === 'Non Critical') nonCriticalCount0++;
@@ -4891,10 +4894,12 @@ Total Population: ${totalPop}
                 // Calculate overall accuracy
                 let count1 = 0, count0 = 0, countNA = 0;
                 data.forEach(row => {
-                    const acc = String(row['Accuracy'] || '').trim(); // Column K
-                    if (acc === '1') {
+                    // Column K can contain numbers (0, 1) or strings ("0", "1", "NA")
+                    const accuracyRaw = row['Accuracy'];
+                    const acc = String(accuracyRaw || '').trim(); // Column K
+                    if (accuracyRaw === 1 || acc === '1') {
                         count1++;
-                    } else if (acc === '0') {
+                    } else if (accuracyRaw === 0 || acc === '0') {
                         count0++;
                     } else if (acc === 'NA' || acc === '') {
                         countNA++;
@@ -4954,22 +4959,24 @@ Total Population: ${totalPop}
                 let nonCriticalCount1 = 0, nonCriticalCount0 = 0, nonCriticalCountNA = 0;
                 
                 data.forEach(row => {
-                    const accuracy = String(row['Accuracy'] || '').trim(); // Column K
+                    // Column K can contain numbers (0, 1) or strings ("0", "1", "NA")
+                    const accuracyRaw = row['Accuracy'];
+                    const accuracy = String(accuracyRaw || '').trim();
                     const criticalType = String(row['Critical/Non Critical'] || '').trim();
                     
-                    // Count values from Column K: "1", "0", "NA"
+                    // Count values from Column K: 1, 0, "1", "0", "NA"
                     if (criticalType === 'Critical') {
-                        if (accuracy === '1') {
+                        if (accuracyRaw === 1 || accuracy === '1') {
                             criticalCount1++;
-                        } else if (accuracy === '0') {
+                        } else if (accuracyRaw === 0 || accuracy === '0') {
                             criticalCount0++;
                         } else if (accuracy === 'NA' || accuracy === '') {
                             criticalCountNA++;
                         }
                     } else if (criticalType === 'Non Critical') {
-                        if (accuracy === '1') {
+                        if (accuracyRaw === 1 || accuracy === '1') {
                             nonCriticalCount1++;
-                        } else if (accuracy === '0') {
+                        } else if (accuracyRaw === 0 || accuracy === '0') {
                             nonCriticalCount0++;
                         } else if (accuracy === 'NA' || accuracy === '') {
                             nonCriticalCountNA++;
@@ -5042,7 +5049,9 @@ Total Population: ${totalPop}
                 
                 data.forEach(row => {
                     const stage = String(row['Stage'] || '').trim();
-                    const accuracy = String(row['Accuracy'] || '').trim(); // Column K
+                    // Column K can contain numbers (0, 1) or strings ("0", "1", "NA")
+                    const accuracyRaw = row['Accuracy'];
+                    const accuracy = String(accuracyRaw || '').trim();
                     
                     if (!stage) return;
                     
@@ -5050,10 +5059,10 @@ Total Population: ${totalPop}
                         stageStats[stage] = { count1: 0, count0: 0, countNA: 0 };
                     }
                     
-                    // Count values from Column K: "1", "0", "NA"
-                    if (accuracy === '1') {
+                    // Count values from Column K: 1, 0, "1", "0", "NA"
+                    if (accuracyRaw === 1 || accuracy === '1') {
                         stageStats[stage].count1++;
-                    } else if (accuracy === '0') {
+                    } else if (accuracyRaw === 0 || accuracy === '0') {
                         stageStats[stage].count0++;
                     } else if (accuracy === 'NA' || accuracy === '') {
                         stageStats[stage].countNA++;
@@ -5125,7 +5134,9 @@ Total Population: ${totalPop}
                 
                 data.forEach(row => {
                     const recruiter = String(row['Recruiter Name'] || '').trim();
-                    const accuracy = String(row['Accuracy'] || '').trim(); // Column K
+                    // Column K can contain numbers (0, 1) or strings ("0", "1", "NA")
+                    const accuracyRaw = row['Accuracy'];
+                    const accuracy = String(accuracyRaw || '').trim(); // Column K
                     
                     if (!recruiter) return;
                     
@@ -5135,17 +5146,17 @@ Total Population: ${totalPop}
                     
                     recruiterStats[recruiter].totalAudits++;
                     
-                    // Count values from Column K: "1", "0", "NA"
-                    if (accuracy === '1') {
+                    // Count values from Column K: 1, 0, "1", "0", "NA"
+                    if (accuracyRaw === 1 || accuracy === '1') {
                         recruiterStats[recruiter].count1++;
-                    } else if (accuracy === '0') {
+                    } else if (accuracyRaw === 0 || accuracy === '0') {
                         recruiterStats[recruiter].count0++;
                     } else if (accuracy === 'NA' || accuracy === '') {
                         // Treat empty cells as NA
                         recruiterStats[recruiter].countNA++;
                     } else {
                         // Log unexpected values for debugging
-                        console.warn('Unexpected accuracy value:', accuracy, 'for recruiter:', recruiter);
+                        console.warn('Unexpected accuracy value:', accuracyRaw, '(type:', typeof accuracyRaw + ')', 'string:', accuracy, 'for recruiter:', recruiter);
                     }
                 });
                 
@@ -5214,7 +5225,9 @@ Total Population: ${totalPop}
                 data.forEach(row => {
                     const recruiter = String(row['Recruiter Name'] || '').trim();
                     const parameter = String(row['Parameter'] || '').trim();
-                    const accuracy = String(row['Accuracy'] || '').trim(); // Column K
+                    // Column K can contain numbers (0, 1) or strings ("0", "1", "NA")
+                    const accuracyRaw = row['Accuracy'];
+                    const accuracy = String(accuracyRaw || '').trim(); // Column K
                     
                     if (!recruiter || !parameter) return;
                     
@@ -5233,10 +5246,10 @@ Total Population: ${totalPop}
                     
                     recruiterParamStats[key].totalAudits++;
                     
-                    // Count values from Column K: "1", "0", "NA"
-                    if (accuracy === '1') {
+                    // Count values from Column K: 1, 0, "1", "0", "NA"
+                    if (accuracyRaw === 1 || accuracy === '1') {
                         recruiterParamStats[key].count1++;
-                    } else if (accuracy === '0') {
+                    } else if (accuracyRaw === 0 || accuracy === '0') {
                         recruiterParamStats[key].count0++;
                     } else if (accuracy === 'NA' || accuracy === '') {
                         recruiterParamStats[key].countNA++;
