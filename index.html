@@ -6306,8 +6306,16 @@ Total Population: ${totalPop}
                     if (badgeSpan) badgeSpan.style.background = 'linear-gradient(135deg, #3b82f6 0%, #1e40af 100%)';
                 });
                 
+                // Clear PROJECT DETAILS section
+                safeSetHTML('projectDetailsContainer', `
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 300px; color: #94a3b8; text-align: center;">
+                        <i class="fas fa-mouse-pointer" style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"></i>
+                        <p style="font-size: 12px; margin: 0;">Select a project from the list to view details</p>
+                    </div>
+                `);
+                
                 applyProjectFilters();
-                console.log('✅ Project filters cleared');
+                console.log('✅ Project filters and details cleared');
             } catch (error) {
                 handleError(error, 'clearProjectFilters');
             }
