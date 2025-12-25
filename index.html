@@ -4282,15 +4282,25 @@ Total Population: ${totalPop}
                 // Sort by accuracy
                 paramData.sort((a, b) => b.accuracy - a.accuracy);
                 
-                // Get top 5 and bottom 5
-                const top5 = paramData.slice(0, 5);
-                const bottom5 = paramData.slice(-5).reverse();
-                
-                // Combine for display
-                const displayData = [...top5, ...bottom5];
+                // Get top 5 and bottom 5 WITHOUT duplicates
+                let displayData = [];
+                if (paramData.length <= 10) {
+                    // If 10 or fewer parameters, show all (no duplicates)
+                    displayData = paramData;
+                } else {
+                    // If more than 10 parameters, show top 5 and bottom 5
+                    const top5 = paramData.slice(0, 5);
+                    const bottom5 = paramData.slice(-5).reverse();
+                    displayData = [...top5, ...bottom5];
+                }
                 const labels = displayData.map(d => d.parameter.length > 25 ? d.parameter.substring(0, 25) + '...' : d.parameter);
                 const accuracyData = displayData.map(d => d.accuracy.toFixed(1));
-                const colors = displayData.map((d, i) => i < 5 ? 'rgba(16, 185, 129, 0.8)' : 'rgba(239, 68, 68, 0.8)');
+                
+                // Color logic: Top performers (green), Bottom performers (red)
+                const colors = displayData.map((d, i) => {
+                    const midPoint = Math.ceil(displayData.length / 2);
+                    return i < midPoint ? 'rgba(16, 185, 129, 0.8)' : 'rgba(239, 68, 68, 0.8)';
+                });
                 
                 // Destroy existing chart
                 if (topBottomChartInstance) {
