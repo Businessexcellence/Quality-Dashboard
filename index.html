@@ -63,6 +63,8 @@
                         window.refreshAccountSummaryTab();
                     } else if (tabId === 'transactional' && typeof window.refreshTransactionalTab === 'function') {
                         window.refreshTransactionalTab();
+                    } else if (tabId === 'audit-summary' && typeof window.refreshParameterPerformanceTab === 'function') {
+                        window.refreshParameterPerformanceTab();
                     }
                 }
             } catch (error) {
@@ -1105,10 +1107,81 @@
         </div>
 
         <div id="audit-summary" class="tab-content">
-            <div class="empty-state">
-                <i class="fas fa-clipboard-check"></i>
-                <h3>Parameter Performance</h3>
-                <p>Coming soon...</p>
+            <!-- Filters Section -->
+            <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 8px; margin-bottom: 10px;">
+                <div style="display: grid; grid-template-columns: repeat(5, 1fr) auto; gap: 8px; align-items: center;">
+                    <select id="paramFilterClient" onchange="applyParameterFilters()" style="padding: 6px; font-size: 10px; border: 1px solid var(--border); border-radius: 4px; background: white;">
+                        <option value="">All Clients</option>
+                    </select>
+                    <select id="paramFilterRegion" onchange="applyParameterFilters()" style="padding: 6px; font-size: 10px; border: 1px solid var(--border); border-radius: 4px; background: white;">
+                        <option value="">All Regions</option>
+                    </select>
+                    <select id="paramFilterStage" onchange="applyParameterFilters()" style="padding: 6px; font-size: 10px; border: 1px solid var(--border); border-radius: 4px; background: white;">
+                        <option value="">All Stages</option>
+                    </select>
+                    <select id="paramFilterCritical" onchange="applyParameterFilters()" style="padding: 6px; font-size: 10px; border: 1px solid var(--border); border-radius: 4px; background: white;">
+                        <option value="">All Types</option>
+                        <option value="Critical">Critical</option>
+                        <option value="Non Critical">Non Critical</option>
+                    </select>
+                    <select id="paramFilterMonth" onchange="applyParameterFilters()" style="padding: 6px; font-size: 10px; border: 1px solid var(--border); border-radius: 4px; background: white;">
+                        <option value="">All Months</option>
+                    </select>
+                    <button onclick="clearParameterFilters()" style="padding: 6px 12px; font-size: 10px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">
+                        Clear
+                    </button>
+                </div>
+            </div>
+
+            <!-- KPI Cards -->
+            <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 10px;">
+                <div style="background: linear-gradient(135deg, #10b981 0%, #047857 100%); border-radius: 6px; padding: 10px; color: white;">
+                    <div style="font-size: 9px; opacity: 0.85; margin-bottom: 4px;">TOTAL PARAMETERS</div>
+                    <div style="font-size: 24px; font-weight: 700;" id="paramTotalCount">0</div>
+                </div>
+                <div style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); border-radius: 6px; padding: 10px; color: white;">
+                    <div style="font-size: 9px; opacity: 0.85; margin-bottom: 4px;">AVG ACCURACY</div>
+                    <div style="font-size: 24px; font-weight: 700;" id="paramAvgAccuracy">0%</div>
+                </div>
+                <div style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border-radius: 6px; padding: 10px; color: white;">
+                    <div style="font-size: 9px; opacity: 0.85; margin-bottom: 4px;">AVG SAMPLE %</div>
+                    <div style="font-size: 24px; font-weight: 700;" id="paramAvgSample">0%</div>
+                </div>
+                <div style="background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%); border-radius: 6px; padding: 10px; color: white;">
+                    <div style="font-size: 9px; opacity: 0.85; margin-bottom: 4px;">AVG ERROR %</div>
+                    <div style="font-size: 24px; font-weight: 700;" id="paramAvgError">0%</div>
+                </div>
+                <div style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); border-radius: 6px; padding: 10px; color: white;">
+                    <div style="font-size: 9px; opacity: 0.85; margin-bottom: 4px;">TOTAL AUDITS</div>
+                    <div style="font-size: 24px; font-weight: 700;" id="paramTotalAudits">0</div>
+                </div>
+            </div>
+
+            <!-- Main Content: Table and Chart Side by Side -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; height: calc(100vh - 320px);">
+                <!-- Parameter Performance Table -->
+                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 10px; overflow: hidden; display: flex; flex-direction: column;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <h3 style="font-size: 12px; font-weight: 700; color: var(--text-primary); margin: 0;">
+                            <i class="fas fa-list" style="color: var(--primary); font-size: 11px;"></i> Parameter-wise Performance
+                        </h3>
+                        <input type="text" id="paramSearch" placeholder="Search parameter..." onkeyup="filterParameterTable()" 
+                            style="padding: 4px 8px; font-size: 10px; border: 1px solid var(--border); border-radius: 4px; width: 200px;">
+                    </div>
+                    <div id="parameterTableContainer" style="flex: 1; overflow-y: auto; overflow-x: hidden;">
+                        <!-- Table will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Top/Bottom Performers Chart -->
+                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 10px; overflow: hidden; display: flex; flex-direction: column;">
+                    <h3 style="font-size: 12px; font-weight: 700; color: var(--text-primary); margin: 0 0 8px 0;">
+                        <i class="fas fa-trophy" style="color: var(--primary); font-size: 11px;"></i> Top & Bottom Performers
+                    </h3>
+                    <div style="flex: 1; position: relative;">
+                        <canvas id="topBottomChart"></canvas>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -3813,6 +3886,417 @@ Total Population: ${totalPop}
             }
         }
 
+        // ==========================================
+        // PARAMETER PERFORMANCE TAB
+        // ==========================================
+
+        let topBottomChartInstance = null;
+        let parameterTableData = [];
+
+        function refreshParameterPerformanceTab() {
+            try {
+                console.log('🔄 Refreshing Parameter Performance tab');
+                
+                if (!dashboardData || !dashboardData.parameterAuditCount) {
+                    console.log('⚠️ No Parameter Audit Count data available');
+                    return;
+                }
+
+                populateParameterFilters();
+                applyParameterFilters();
+                
+                console.log('✅ Parameter Performance tab refreshed');
+            } catch (error) {
+                handleError(error, 'refreshParameterPerformanceTab');
+            }
+        }
+
+        function populateParameterFilters() {
+            try {
+                const data = dashboardData.parameterAuditCount;
+                
+                // Get unique values
+                const clients = [...new Set(data.map(row => row['Client']))].filter(v => v).sort();
+                const regions = [...new Set(data.map(row => row['Region']))].filter(v => v).sort();
+                const stages = [...new Set(data.map(row => row['Stage']))].filter(v => v).sort();
+                const months = [...new Set(data.map(row => row['Month']))].filter(v => v);
+                
+                // Sort months chronologically
+                const monthOrder = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                months.sort((a, b) => monthOrder.indexOf(a) - monthOrder.indexOf(b));
+                
+                // Populate selects
+                populateSelect('paramFilterClient', clients);
+                populateSelect('paramFilterRegion', regions);
+                populateSelect('paramFilterStage', stages);
+                populateSelect('paramFilterMonth', months);
+                
+                console.log('✅ Parameter filters populated');
+            } catch (error) {
+                handleError(error, 'populateParameterFilters');
+            }
+        }
+
+        function applyParameterFilters() {
+            try {
+                let data = dashboardData.parameterAuditCount;
+                
+                // Get filter values
+                const clientFilter = safeGetElement('paramFilterClient')?.value || '';
+                const regionFilter = safeGetElement('paramFilterRegion')?.value || '';
+                const stageFilter = safeGetElement('paramFilterStage')?.value || '';
+                const criticalFilter = safeGetElement('paramFilterCritical')?.value || '';
+                const monthFilter = safeGetElement('paramFilterMonth')?.value || '';
+                
+                // Apply filters
+                let filteredData = data.filter(row => {
+                    if (clientFilter && row['Client'] !== clientFilter) return false;
+                    if (regionFilter && row['Region'] !== regionFilter) return false;
+                    if (stageFilter && row['Stage'] !== stageFilter) return false;
+                    if (criticalFilter && row['Critical/Non Critical'] !== criticalFilter) return false;
+                    if (monthFilter && row['Month'] !== monthFilter) return false;
+                    return true;
+                });
+                
+                // Calculate and display metrics
+                calculateParameterMetrics(filteredData);
+                generateParameterTable(filteredData);
+                generateTopBottomChart(filteredData);
+                
+            } catch (error) {
+                handleError(error, 'applyParameterFilters');
+            }
+        }
+
+        function clearParameterFilters() {
+            try {
+                const filters = ['paramFilterClient', 'paramFilterRegion', 'paramFilterStage', 'paramFilterCritical', 'paramFilterMonth'];
+                filters.forEach(id => {
+                    const elem = safeGetElement(id);
+                    if (elem) elem.value = '';
+                });
+                document.getElementById('paramSearch').value = '';
+                applyParameterFilters();
+                console.log('✅ Parameter filters cleared');
+            } catch (error) {
+                handleError(error, 'clearParameterFilters');
+            }
+        }
+
+        function calculateParameterMetrics(data) {
+            try {
+                // Group by parameter
+                const paramStats = {};
+                
+                data.forEach(row => {
+                    const param = String(row['Parameter'] || '').trim();
+                    if (!param) return;
+                    
+                    if (!paramStats[param]) {
+                        paramStats[param] = {
+                            opportunityPass: 0,
+                            opportunityCount: 0,
+                            opportunityNA: 0,
+                            opportunityFail: 0,
+                            totalPopulation: 0
+                        };
+                    }
+                    
+                    paramStats[param].opportunityPass += parseFloat(row['Opportunity Pass']) || 0;
+                    paramStats[param].opportunityCount += parseFloat(row['Opportunity Count']) || 0;
+                    paramStats[param].opportunityNA += parseFloat(row['Opportunity NA']) || 0;
+                    paramStats[param].opportunityFail += parseFloat(row['Opportunity Fail']) || 0;
+                    paramStats[param].totalPopulation += parseFloat(row['Total Population']) || 0;
+                });
+                
+                // Calculate averages
+                const params = Object.keys(paramStats);
+                let totalAccuracy = 0;
+                let totalSample = 0;
+                let totalError = 0;
+                let totalAudits = 0;
+                let validParams = 0;
+                
+                params.forEach(param => {
+                    const stats = paramStats[param];
+                    const denominator = stats.opportunityCount - stats.opportunityNA;
+                    const accuracy = denominator > 0 ? (stats.opportunityPass / denominator * 100) : 0;
+                    const sample = stats.totalPopulation > 0 ? (stats.opportunityCount / stats.totalPopulation * 100) : 0;
+                    const error = stats.opportunityCount > 0 ? (stats.opportunityFail / stats.opportunityCount * 100) : 0;
+                    
+                    if (stats.opportunityCount > 0) {
+                        totalAccuracy += accuracy;
+                        totalSample += sample;
+                        totalError += error;
+                        totalAudits += stats.opportunityCount;
+                        validParams++;
+                    }
+                });
+                
+                // Update KPIs
+                safeSetText('paramTotalCount', params.length);
+                safeSetText('paramAvgAccuracy', validParams > 0 ? (totalAccuracy / validParams).toFixed(1) + '%' : '0%');
+                safeSetText('paramAvgSample', validParams > 0 ? (totalSample / validParams).toFixed(1) + '%' : '0%');
+                safeSetText('paramAvgError', validParams > 0 ? (totalError / validParams).toFixed(1) + '%' : '0%');
+                safeSetText('paramTotalAudits', totalAudits.toLocaleString());
+                
+                console.log('✅ Parameter metrics calculated:', { params: params.length, validParams });
+            } catch (error) {
+                handleError(error, 'calculateParameterMetrics');
+            }
+        }
+
+        function generateParameterTable(data) {
+            try {
+                // Group by parameter
+                const paramStats = {};
+                
+                data.forEach(row => {
+                    const param = String(row['Parameter'] || '').trim();
+                    if (!param) return;
+                    
+                    if (!paramStats[param]) {
+                        paramStats[param] = {
+                            opportunityPass: 0,
+                            opportunityCount: 0,
+                            opportunityNA: 0,
+                            opportunityFail: 0,
+                            totalPopulation: 0
+                        };
+                    }
+                    
+                    paramStats[param].opportunityPass += parseFloat(row['Opportunity Pass']) || 0;
+                    paramStats[param].opportunityCount += parseFloat(row['Opportunity Count']) || 0;
+                    paramStats[param].opportunityNA += parseFloat(row['Opportunity NA']) || 0;
+                    paramStats[param].opportunityFail += parseFloat(row['Opportunity Fail']) || 0;
+                    paramStats[param].totalPopulation += parseFloat(row['Total Population']) || 0;
+                });
+                
+                // Calculate metrics for each parameter
+                parameterTableData = Object.entries(paramStats).map(([param, stats]) => {
+                    const denominator = stats.opportunityCount - stats.opportunityNA;
+                    const accuracy = denominator > 0 ? (stats.opportunityPass / denominator * 100) : 0;
+                    const sample = stats.totalPopulation > 0 ? (stats.opportunityCount / stats.totalPopulation * 100) : 0;
+                    const error = stats.opportunityCount > 0 ? (stats.opportunityFail / stats.opportunityCount * 100) : 0;
+                    
+                    return {
+                        parameter: param,
+                        accuracy: accuracy,
+                        sample: sample,
+                        error: error,
+                        auditCount: stats.opportunityCount
+                    };
+                }).sort((a, b) => b.accuracy - a.accuracy);
+                
+                // Render table
+                const html = `
+                    <table style="width: 100%; border-collapse: collapse; font-size: 10px;">
+                        <thead style="position: sticky; top: 0; background: white; z-index: 10;">
+                            <tr style="border-bottom: 2px solid var(--border); background: rgba(255, 140, 66, 0.05);">
+                                <th style="padding: 6px 8px; text-align: left; font-size: 10px; font-weight: 700; color: var(--text-primary); cursor: pointer;" onclick="sortParameterTable('parameter')">
+                                    Parameter <i class="fas fa-sort" style="font-size: 8px; opacity: 0.5;"></i>
+                                </th>
+                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: var(--text-primary); cursor: pointer;" onclick="sortParameterTable('accuracy')">
+                                    Accuracy % <i class="fas fa-sort" style="font-size: 8px; opacity: 0.5;"></i>
+                                </th>
+                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: var(--text-primary); cursor: pointer;" onclick="sortParameterTable('error')">
+                                    Error % <i class="fas fa-sort" style="font-size: 8px; opacity: 0.5;"></i>
+                                </th>
+                                <th style="padding: 6px 8px; text-align: right; font-size: 10px; font-weight: 700; color: var(--text-primary); cursor: pointer;" onclick="sortParameterTable('auditCount')">
+                                    Audits <i class="fas fa-sort" style="font-size: 8px; opacity: 0.5;"></i>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="parameterTableBody">
+                            ${parameterTableData.map(row => `
+                                <tr class="param-row" data-parameter="${row.parameter.toLowerCase()}" style="border-bottom: 1px solid var(--border); transition: background 0.2s;" 
+                                    onmouseover="this.style.background='var(--bg-hover)'" 
+                                    onmouseout="this.style.background='transparent'">
+                                    <td style="padding: 6px 8px; font-size: 10px; color: var(--text-primary); font-weight: 600;">${row.parameter}</td>
+                                    <td style="padding: 6px 8px; text-align: center;">
+                                        <span style="background: ${row.accuracy >= 90 ? '#10b981' : row.accuracy >= 70 ? '#f59e0b' : '#ef4444'}; color: white; padding: 3px 8px; border-radius: 10px; font-size: 9px; font-weight: 700;">${row.accuracy.toFixed(1)}%</span>
+                                    </td>
+                                    <td style="padding: 6px 8px; text-align: center;">
+                                        <span style="background: ${row.error <= 5 ? '#10b981' : row.error <= 15 ? '#f59e0b' : '#ef4444'}; color: white; padding: 3px 8px; border-radius: 10px; font-size: 9px; font-weight: 700;">${row.error.toFixed(1)}%</span>
+                                    </td>
+                                    <td style="padding: 6px 8px; text-align: right; font-size: 10px; color: var(--text-primary); font-weight: 700;">${row.auditCount.toLocaleString()}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                
+                safeSetHTML('parameterTableContainer', html);
+                console.log('✅ Parameter table rendered:', parameterTableData.length, 'parameters');
+            } catch (error) {
+                handleError(error, 'generateParameterTable');
+            }
+        }
+
+        function sortParameterTable(column) {
+            try {
+                // Toggle sort direction
+                if (!window.paramSortColumn || window.paramSortColumn !== column) {
+                    window.paramSortDirection = 'desc';
+                } else {
+                    window.paramSortDirection = window.paramSortDirection === 'desc' ? 'asc' : 'desc';
+                }
+                window.paramSortColumn = column;
+                
+                // Sort data
+                parameterTableData.sort((a, b) => {
+                    let aVal = a[column];
+                    let bVal = b[column];
+                    
+                    if (column === 'parameter') {
+                        aVal = aVal.toLowerCase();
+                        bVal = bVal.toLowerCase();
+                    }
+                    
+                    if (window.paramSortDirection === 'asc') {
+                        return aVal > bVal ? 1 : -1;
+                    } else {
+                        return aVal < bVal ? 1 : -1;
+                    }
+                });
+                
+                // Re-render table
+                generateParameterTable(dashboardData.parameterAuditCount);
+            } catch (error) {
+                handleError(error, 'sortParameterTable');
+            }
+        }
+
+        function filterParameterTable() {
+            try {
+                const searchValue = document.getElementById('paramSearch').value.toLowerCase();
+                const rows = document.querySelectorAll('.param-row');
+                
+                rows.forEach(row => {
+                    const parameter = row.getAttribute('data-parameter');
+                    if (parameter.includes(searchValue)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            } catch (error) {
+                handleError(error, 'filterParameterTable');
+            }
+        }
+
+        function generateTopBottomChart(data) {
+            try {
+                // Group by parameter
+                const paramStats = {};
+                
+                data.forEach(row => {
+                    const param = String(row['Parameter'] || '').trim();
+                    if (!param) return;
+                    
+                    if (!paramStats[param]) {
+                        paramStats[param] = {
+                            opportunityPass: 0,
+                            opportunityCount: 0,
+                            opportunityNA: 0
+                        };
+                    }
+                    
+                    paramStats[param].opportunityPass += parseFloat(row['Opportunity Pass']) || 0;
+                    paramStats[param].opportunityCount += parseFloat(row['Opportunity Count']) || 0;
+                    paramStats[param].opportunityNA += parseFloat(row['Opportunity NA']) || 0;
+                });
+                
+                // Calculate accuracy for each parameter
+                const paramData = Object.entries(paramStats).map(([param, stats]) => {
+                    const denominator = stats.opportunityCount - stats.opportunityNA;
+                    const accuracy = denominator > 0 ? (stats.opportunityPass / denominator * 100) : 0;
+                    return { parameter: param, accuracy: accuracy, auditCount: stats.opportunityCount };
+                }).filter(p => p.auditCount > 0);
+                
+                // Sort by accuracy
+                paramData.sort((a, b) => b.accuracy - a.accuracy);
+                
+                // Get top 5 and bottom 5
+                const top5 = paramData.slice(0, 5);
+                const bottom5 = paramData.slice(-5).reverse();
+                
+                // Combine for display
+                const displayData = [...top5, ...bottom5];
+                const labels = displayData.map(d => d.parameter.length > 25 ? d.parameter.substring(0, 25) + '...' : d.parameter);
+                const accuracyData = displayData.map(d => d.accuracy.toFixed(1));
+                const colors = displayData.map((d, i) => i < 5 ? 'rgba(16, 185, 129, 0.8)' : 'rgba(239, 68, 68, 0.8)');
+                
+                // Destroy existing chart
+                if (topBottomChartInstance) {
+                    topBottomChartInstance.destroy();
+                }
+                
+                const ctx = document.getElementById('topBottomChart');
+                if (!ctx) return;
+                
+                topBottomChartInstance = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Accuracy %',
+                            data: accuracyData,
+                            backgroundColor: colors,
+                            borderColor: colors.map(c => c.replace('0.8', '1')),
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                callbacks: {
+                                    label: function(context) {
+                                        return 'Accuracy: ' + context.parsed.x + '%';
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                beginAtZero: true,
+                                max: 100,
+                                ticks: {
+                                    font: { size: 10 },
+                                    callback: function(value) {
+                                        return value + '%';
+                                    }
+                                },
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.05)'
+                                }
+                            },
+                            y: {
+                                ticks: {
+                                    font: { size: 9, weight: '600' }
+                                },
+                                grid: {
+                                    display: false
+                                }
+                            }
+                        }
+                    }
+                });
+                
+                console.log('✅ Top/Bottom chart rendered');
+            } catch (error) {
+                handleError(error, 'generateTopBottomChart');
+            }
+        }
+
+        // ==========================================
         // 🔄 INDEPENDENT TAB SYSTEM
         // Each tab is now refreshed independently when switched to
         // This function is kept for backward compatibility (initial data load)
