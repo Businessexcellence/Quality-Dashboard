@@ -55,7 +55,7 @@
                 
                 // 🎯 INDEPENDENT TAB REFRESH: Only refresh the active tab
                 // This ensures each tab operates independently and doesn't affect others
-                if (window.dashboardData) {
+                if (window.window.dashboardData) {
                     console.log('🔄 Refreshing only active tab:', tabId);
                     if (tabId === 'home' && typeof window.refreshHomeTab === 'function') {
                         window.refreshHomeTab();
@@ -1632,7 +1632,8 @@
         // GLOBAL DATA STORE
         // ==========================================
         
-        let dashboardData = {
+        // Initialize global window.dashboardData
+        window.window.dashboardData = {
             parameterAuditCount: [],
             recruiterAuditCount: [],
             accountSummary: [],
@@ -1809,7 +1810,7 @@
                     console.log('✅ Tab activated:', tabId);
                     
                     // Re-render chart when Account Summary tab is activated
-                    if (tabId === 'account-summary' && dashboardData && dashboardData.accountSummary && dashboardData.accountSummary.length > 0) {
+                    if (tabId === 'account-summary' && window.dashboardData && window.dashboardData.accountSummary && window.dashboardData.accountSummary.length > 0) {
                         console.log('🗺️ Re-rendering region chart for visible tab');
                         // Use setTimeout to ensure DOM is fully rendered
                         setTimeout(() => {
@@ -1923,16 +1924,16 @@
                     if (!paramData || paramData.length === 0) {
                         paramData = parseSheet(workbook, 'Parameter Audit Count');
                     }
-                    dashboardData.parameterAuditCount = paramData || [];
-                    console.log('✅ Parameter_Audit_Count rows:', dashboardData.parameterAuditCount.length);
+                    window.dashboardData.parameterAuditCount = paramData || [];
+                    console.log('✅ Parameter_Audit_Count rows:', window.dashboardData.parameterAuditCount.length);
                     
                     // Recruiter_Audit_Count - try underscore first
                     let recruiterData = parseSheet(workbook, 'Recruiter_Audit_Count');
                     if (!recruiterData || recruiterData.length === 0) {
                         recruiterData = parseSheet(workbook, 'Recruiter Audit Count');
                     }
-                    dashboardData.recruiterAuditCount = recruiterData || [];
-                    console.log('✅ Recruiter_Audit_Count rows:', dashboardData.recruiterAuditCount.length);
+                    window.dashboardData.recruiterAuditCount = recruiterData || [];
+                    console.log('✅ Recruiter_Audit_Count rows:', window.dashboardData.recruiterAuditCount.length);
                     
                     // Account Summary (THE CRITICAL ONE)
                     console.log('🔍 Searching for Account Summary sheet...');
@@ -1947,11 +1948,11 @@
                         accountSummaryData = parseSheet(workbook, 'AccountSummary');
                     }
                     
-                    dashboardData.accountSummary = accountSummaryData || [];
-                    console.log('✅ Account_Summary rows:', dashboardData.accountSummary.length);
-                    if (dashboardData.accountSummary.length > 0) {
-                        console.log('📄 First Account Summary row:', dashboardData.accountSummary[0]);
-                        console.log('📋 Account Summary columns:', Object.keys(dashboardData.accountSummary[0]));
+                    window.dashboardData.accountSummary = accountSummaryData || [];
+                    console.log('✅ Account_Summary rows:', window.dashboardData.accountSummary.length);
+                    if (window.dashboardData.accountSummary.length > 0) {
+                        console.log('📄 First Account Summary row:', window.dashboardData.accountSummary[0]);
+                        console.log('📋 Account Summary columns:', Object.keys(window.dashboardData.accountSummary[0]));
                     } else {
                         console.error('❌ CRITICAL: Account Summary sheet not found!');
                         console.error('📋 Available sheets in your file:', workbook.SheetNames);
@@ -1966,28 +1967,28 @@
                     if (!rcaData || rcaData.length === 0) {
                         rcaData = parseSheet(workbook, 'RCA CAPA');
                     }
-                    dashboardData.rcaCapa = rcaData || [];
-                    console.log('✅ RCA_CAPA rows:', dashboardData.rcaCapa.length);
-                    if (dashboardData.rcaCapa.length > 0) {
-                        console.log('📋 RCA_CAPA sample row:', dashboardData.rcaCapa[0]);
-                        console.log('📋 RCA_CAPA columns:', Object.keys(dashboardData.rcaCapa[0]));
+                    window.dashboardData.rcaCapa = rcaData || [];
+                    console.log('✅ RCA_CAPA rows:', window.dashboardData.rcaCapa.length);
+                    if (window.dashboardData.rcaCapa.length > 0) {
+                        console.log('📋 RCA_CAPA sample row:', window.dashboardData.rcaCapa[0]);
+                        console.log('📋 RCA_CAPA columns:', Object.keys(window.dashboardData.rcaCapa[0]));
                     }
                     
                     // Projects
-                    dashboardData.projects = parseSheet(workbook, 'Projects') || [];
-                    console.log('✅ Projects rows:', dashboardData.projects.length);
-                    if (dashboardData.projects.length > 0) {
-                        console.log('📋 Projects sample row:', dashboardData.projects[0]);
-                        console.log('📋 Projects columns:', Object.keys(dashboardData.projects[0]));
+                    window.dashboardData.projects = parseSheet(workbook, 'Projects') || [];
+                    console.log('✅ Projects rows:', window.dashboardData.projects.length);
+                    if (window.dashboardData.projects.length > 0) {
+                        console.log('📋 Projects sample row:', window.dashboardData.projects[0]);
+                        console.log('📋 Projects columns:', Object.keys(window.dashboardData.projects[0]));
                     }
                     
                     // CSAT
-                    dashboardData.csat = parseSheet(workbook, 'CSAT') || [];
-                    console.log('✅ CSAT rows:', dashboardData.csat.length);
+                    window.dashboardData.csat = parseSheet(workbook, 'CSAT') || [];
+                    console.log('✅ CSAT rows:', window.dashboardData.csat.length);
 
                     // Save to localStorage
                     try {
-                        localStorage.setItem('dashboardData', JSON.stringify(dashboardData));
+                        localStorage.setItem('window.dashboardData', JSON.stringify(window.dashboardData));
                         console.log('💾 Data saved to localStorage');
                     } catch (storageError) {
                         console.warn('⚠️ Could not save to localStorage:', storageError.message);
@@ -2006,12 +2007,12 @@
                         
                         // Show detailed success message
                         const summary = `✅ File uploaded successfully!\n\n📊 Data Summary:\n` +
-                            `• Parameter Audits: ${dashboardData.parameterAuditCount.length} rows\n` +
-                            `• Account Summary: ${dashboardData.accountSummary.length} accounts\n` +
-                            `• Recruiter Audits: ${dashboardData.recruiterAuditCount.length} rows\n` +
-                            `• RCA/CAPA: ${dashboardData.rcaCapa.length} rows\n` +
-                            `• Projects: ${dashboardData.projects.length} rows\n` +
-                            `• CSAT: ${dashboardData.csat.length} rows\n\n` +
+                            `• Parameter Audits: ${window.dashboardData.parameterAuditCount.length} rows\n` +
+                            `• Account Summary: ${window.dashboardData.accountSummary.length} accounts\n` +
+                            `• Recruiter Audits: ${window.dashboardData.recruiterAuditCount.length} rows\n` +
+                            `• RCA/CAPA: ${window.dashboardData.rcaCapa.length} rows\n` +
+                            `• Projects: ${window.dashboardData.projects.length} rows\n` +
+                            `• CSAT: ${window.dashboardData.csat.length} rows\n\n` +
                             `✨ Dashboard has been refreshed with your data!`;
                         
                         alert(summary);
@@ -2207,11 +2208,11 @@
         }
 
         function getAccountOfMonth() {
-            if (!dashboardData.parameterAuditCount.length) return { name: 'N/A', accuracy: 0 };
+            if (!window.dashboardData.parameterAuditCount.length) return { name: 'N/A', accuracy: 0 };
 
             // Group by account and calculate accuracy
             const accounts = {};
-            dashboardData.parameterAuditCount.forEach(row => {
+            window.dashboardData.parameterAuditCount.forEach(row => {
                 const account = row.Account || row.Client;
                 if (!account) return;
 
@@ -2242,17 +2243,17 @@
 
         function getClosedProjectCount() {
             console.log('🔍 getClosedProjectCount called');
-            console.log('📊 dashboardData.projects:', dashboardData.projects);
+            console.log('📊 window.dashboardData.projects:', window.dashboardData.projects);
             
-            if (!dashboardData.projects || dashboardData.projects.length === 0) {
+            if (!window.dashboardData.projects || window.dashboardData.projects.length === 0) {
                 console.warn('⚠️ No projects data available');
                 return 0;
             }
             
-            console.log(`📊 Total Projects: ${dashboardData.projects.length}`);
+            console.log(`📊 Total Projects: ${window.dashboardData.projects.length}`);
             
             // Log all status values to see what we have
-            const allStatuses = dashboardData.projects.map((p, idx) => {
+            const allStatuses = window.dashboardData.projects.map((p, idx) => {
                 const status = p.Status || p.status || p.STATUS || '';
                 if (idx < 5) { // Log first 5 for debugging
                     console.log(`Project ${idx + 1} Status:`, status, 'Type:', typeof status);
@@ -2262,30 +2263,30 @@
             
             console.log('📋 All unique status values:', [...new Set(allStatuses)]);
             
-            const closedCount = dashboardData.projects.filter(p => {
+            const closedCount = window.dashboardData.projects.filter(p => {
                 const status = p.Status || p.status || p.STATUS || '';
                 const statusStr = status ? status.toString().toLowerCase().trim() : '';
                 const isClosed = statusStr.includes('closed') || statusStr === 'closed';
                 return isClosed;
             }).length;
             
-            console.log(`📊 Closed Projects Count: ${closedCount} out of ${dashboardData.projects.length}`);
+            console.log(`📊 Closed Projects Count: ${closedCount} out of ${window.dashboardData.projects.length}`);
             return closedCount;
         }
 
         function getClosedRCACount() {
             console.log('🔍 getClosedRCACount called');
-            console.log('📊 dashboardData.rcaCapa:', dashboardData.rcaCapa);
+            console.log('📊 window.dashboardData.rcaCapa:', window.dashboardData.rcaCapa);
             
-            if (!dashboardData.rcaCapa || dashboardData.rcaCapa.length === 0) {
+            if (!window.dashboardData.rcaCapa || window.dashboardData.rcaCapa.length === 0) {
                 console.warn('⚠️ No RCA/CAPA data available');
                 return 0;
             }
             
-            console.log(`📊 Total RCA/CAPA: ${dashboardData.rcaCapa.length}`);
+            console.log(`📊 Total RCA/CAPA: ${window.dashboardData.rcaCapa.length}`);
             
             // Log all status values to see what we have
-            const allStatuses = dashboardData.rcaCapa.map((r, idx) => {
+            const allStatuses = window.dashboardData.rcaCapa.map((r, idx) => {
                 const status = r.Status || r.status || r.STATUS || '';
                 if (idx < 5) { // Log first 5 for debugging
                     console.log(`RCA/CAPA ${idx + 1} Status:`, status, 'Type:', typeof status);
@@ -2295,14 +2296,14 @@
             
             console.log('📋 All unique RCA/CAPA status values:', [...new Set(allStatuses)]);
             
-            const closedCount = dashboardData.rcaCapa.filter(r => {
+            const closedCount = window.dashboardData.rcaCapa.filter(r => {
                 const status = r.Status || r.status || r.STATUS || '';
                 const statusStr = status ? status.toString().toLowerCase().trim() : '';
                 const isClosed = statusStr.includes('closed') || statusStr === 'closed';
                 return isClosed;
             }).length;
             
-            console.log(`📊 Closed RCA/CAPA Count: ${closedCount} out of ${dashboardData.rcaCapa.length}`);
+            console.log(`📊 Closed RCA/CAPA Count: ${closedCount} out of ${window.dashboardData.rcaCapa.length}`);
             return closedCount;
         }
 
@@ -2311,7 +2312,7 @@
                 const container = safeGetElement('topAccounts', 'renderTopAccounts');
                 if (!container) return;
                 
-                if (!validateData(dashboardData.parameterAuditCount, 'Parameter Audit Count')) {
+                if (!validateData(window.dashboardData.parameterAuditCount, 'Parameter Audit Count')) {
                     container.innerHTML = '<div class="empty-state">No data available</div>';
                     return;
                 }
@@ -2361,7 +2362,7 @@
         function calculateAccountAccuracy() {
             const accounts = {};
             
-            dashboardData.parameterAuditCount.forEach(row => {
+            window.dashboardData.parameterAuditCount.forEach(row => {
                 const account = row.Account || row.Client;
                 if (!account) return;
 
@@ -2449,10 +2450,10 @@
         function refreshAccountSummaryTab() {
             try {
                 console.log('🔄 Refreshing Account Summary Tab...');
-                console.log('📊 Account Summary data rows:', dashboardData.accountSummary.length);
-                console.log('📊 Parameter Audit Count rows:', dashboardData.parameterAuditCount.length);
+                console.log('📊 Account Summary data rows:', window.dashboardData.accountSummary.length);
+                console.log('📊 Parameter Audit Count rows:', window.dashboardData.parameterAuditCount.length);
                 
-                if (!validateData(dashboardData.accountSummary, 'Account Summary')) {
+                if (!validateData(window.dashboardData.accountSummary, 'Account Summary')) {
                     console.warn('⚠️ No Account Summary data available');
                     console.error('❌ Please check sheet name - looking for "Account_Summary" or "Account Summary"');
                     safeSetHTML('accountFilters', '<div style="padding: 20px; text-align: center; color: var(--text-muted);">📊 No Account Summary data. Please upload Base File.xlsx with "Account_Summary" sheet</div>');
@@ -2474,12 +2475,12 @@
         function renderAccountFilters() {
             const container = document.getElementById('accountFilters');
             
-            if (!dashboardData.accountSummary.length) {
+            if (!window.dashboardData.accountSummary.length) {
                 return;
             }
 
             // Clean data: trim all string values to remove extra spaces
-            dashboardData.accountSummary = dashboardData.accountSummary.map(row => {
+            window.dashboardData.accountSummary = window.dashboardData.accountSummary.map(row => {
                 const cleanRow = {};
                 for (const key in row) {
                     if (typeof row[key] === 'string') {
@@ -2492,7 +2493,7 @@
             });
 
             // Check available columns
-            const sampleRow = dashboardData.accountSummary[0];
+            const sampleRow = window.dashboardData.accountSummary[0];
             console.log('📋 Available Account Summary columns:', Object.keys(sampleRow));
 
             // Define 6 main filters - added Regional Head
@@ -2507,7 +2508,7 @@
 
             container.innerHTML = filters.map(filter => {
                 // Get unique values for this filter
-                const values = [...new Set(dashboardData.accountSummary
+                const values = [...new Set(window.dashboardData.accountSummary
                     .map(row => {
                         const value = row[filter.field];
                         return typeof value === 'string' ? value.trim() : value;
@@ -2518,7 +2519,7 @@
 
                 // Calculate counts for each value
                 const valueCounts = values.map(value => {
-                    const count = dashboardData.accountSummary.filter(r => {
+                    const count = window.dashboardData.accountSummary.filter(r => {
                         const rowValue = r[filter.field];
                         const cleanRowValue = typeof rowValue === 'string' ? rowValue.trim() : rowValue;
                         return cleanRowValue === value;
@@ -2620,11 +2621,11 @@
         function renderAccountKPIs() {
             try {
                 // ALL accounts in Account_Summary are active accounts
-                const activeCount = dashboardData.accountSummary.length;
+                const activeCount = window.dashboardData.accountSummary.length;
 
                 // Get unique regional heads and count accounts per region
                 const regionalHeadMap = {};
-                dashboardData.accountSummary.forEach(a => {
+                window.dashboardData.accountSummary.forEach(a => {
                     const regional = a['Regional Head'] ? String(a['Regional Head']).trim() : 'Unassigned';
                     if (!regionalHeadMap[regional]) {
                         regionalHeadMap[regional] = [];
@@ -2647,14 +2648,14 @@
         function renderRegionalHeadCards() {
             const container = document.getElementById('regionalHeadCards');
             
-            if (!dashboardData.accountSummary.length) {
+            if (!window.dashboardData.accountSummary.length) {
                 container.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-muted);">No data available</div>';
                 return;
             }
 
             // Group accounts by Regional Head
             const regionalHeadMap = {};
-            dashboardData.accountSummary.forEach(account => {
+            window.dashboardData.accountSummary.forEach(account => {
                 const regionalHead = account['Regional Head'] ? String(account['Regional Head']).trim() : 'Unassigned';
                 if (!regionalHeadMap[regionalHead]) {
                     regionalHeadMap[regionalHead] = [];
@@ -2711,14 +2712,14 @@
                 console.log('🔄 Starting renderBESPOC()');
                 
                 // Check if we have data
-                if (!validateData(dashboardData.accountSummary, 'Account Summary for BE SPOC')) {
+                if (!validateData(window.dashboardData.accountSummary, 'Account Summary for BE SPOC')) {
                     safeSetHTML('beSPOCAudit', '<div style="padding: 6px; text-align: center; color: #f8fafc; font-size: 9px;">No data available. Please upload Base File.xlsx</div>');
                     safeSetHTML('beSPOCSLA', '<div style="padding: 6px; text-align: center; color: #f8fafc; font-size: 9px;">No data available. Please upload Base File.xlsx</div>');
                     return;
                 }
             
-            console.log('✅ Data available:', dashboardData.accountSummary.length, 'rows');
-            console.log('📋 First row sample:', dashboardData.accountSummary[0]);
+            console.log('✅ Data available:', window.dashboardData.accountSummary.length, 'rows');
+            console.log('📋 First row sample:', window.dashboardData.accountSummary[0]);
             
             // BE SPOC - Audit (Column C) - Map SPOC to Account Names
             const beSPOCAuditContainer = document.getElementById('beSPOCAudit');
@@ -2729,7 +2730,7 @@
             console.log('✅ BE SPOC Audit container found');
             
             const spocAuditMap = {};
-            dashboardData.accountSummary.forEach((row, index) => {
+            window.dashboardData.accountSummary.forEach((row, index) => {
                 const spoc = String(row['BE SPOC - Audit'] || row['BE SPOC Audit'] || row['SPOC Audit'] || 'Unassigned').trim();
                 const account = String(row['Account'] || 'Unknown').trim();
                 if (!spocAuditMap[spoc]) spocAuditMap[spoc] = [];
@@ -2770,7 +2771,7 @@
             console.log('✅ BE SPOC SLA container found');
             
             const spocSLAMap = {};
-            dashboardData.accountSummary.forEach((row, index) => {
+            window.dashboardData.accountSummary.forEach((row, index) => {
                 const spoc = String(row['BE SPOC - SLAs/KPIs'] || row['BE SPOC SLA'] || row['SPOC SLA'] || 'Unassigned').trim();
                 const account = String(row['Account'] || 'Unknown').trim();
                 if (!spocSLAMap[spoc]) spocSLAMap[spoc] = [];
@@ -2828,7 +2829,7 @@
             console.log('✅ Canvas found:', canvas);
 
             // Check if we have data
-            if (!dashboardData || !dashboardData.accountSummary || dashboardData.accountSummary.length === 0) {
+            if (!window.dashboardData || !window.dashboardData.accountSummary || window.dashboardData.accountSummary.length === 0) {
                 console.warn('⚠️ No account summary data available');
                 const container = document.getElementById('regionChartContainer');
                 if (container) {
@@ -2851,9 +2852,9 @@
             // Count accounts by exact Region column values (Column E from Account_Summary sheet)
             const regionCounts = {};
             
-            console.log('🗺️ Processing', dashboardData.accountSummary.length, 'accounts');
+            console.log('🗺️ Processing', window.dashboardData.accountSummary.length, 'accounts');
             
-            dashboardData.accountSummary.forEach((row, index) => {
+            window.dashboardData.accountSummary.forEach((row, index) => {
                 // Get the exact value from Region column (Column E)
                 const region = row['Region'] ? String(row['Region']).trim() : null;
                 
@@ -3037,24 +3038,24 @@
             const tbody = document.querySelector('#accountTable tbody');
             const filteredCount = document.getElementById('filteredCount');
             
-            if (!dashboardData.accountSummary.length) {
+            if (!window.dashboardData.accountSummary.length) {
                 tbody.innerHTML = '<tr><td colspan="9" class="empty-state">📊 No Account Summary data available. Please upload Base File.xlsx</td></tr>';
                 console.warn('⚠️ No Account Summary data for table');
                 return;
             }
 
             // Apply filter if set
-            let filteredData = dashboardData.accountSummary;
+            let filteredData = window.dashboardData.accountSummary;
             if (currentAccountFilter) {
-                filteredData = dashboardData.accountSummary.filter(row => {
+                filteredData = window.dashboardData.accountSummary.filter(row => {
                     const rowValue = row[currentAccountFilter.field];
                     const cleanRowValue = typeof rowValue === 'string' ? rowValue.trim() : rowValue;
                     const cleanFilterValue = typeof currentAccountFilter.value === 'string' ? currentAccountFilter.value.trim() : currentAccountFilter.value;
                     return cleanRowValue === cleanFilterValue;
                 });
-                filteredCount.textContent = `(Showing ${filteredData.length} of ${dashboardData.accountSummary.length} accounts)`;
+                filteredCount.textContent = `(Showing ${filteredData.length} of ${window.dashboardData.accountSummary.length} accounts)`;
             } else {
-                filteredCount.textContent = `(Showing all ${dashboardData.accountSummary.length} accounts)`;
+                filteredCount.textContent = `(Showing all ${window.dashboardData.accountSummary.length} accounts)`;
             }
 
             console.log(`📋 Rendering ${filteredData.length} accounts in table`);
@@ -3065,7 +3066,7 @@
                 const accountName = row.Account || row.Client || row['Account Name'] || '';
                 
                 // Find matching data in Parameter_Audit_Count for calculations
-                const paramData = dashboardData.parameterAuditCount.filter(p => 
+                const paramData = window.dashboardData.parameterAuditCount.filter(p => 
                     (p.Account || p.Client) === accountName
                 );
                 
@@ -3130,7 +3131,7 @@
         function showAllAccounts() {
             console.log('📊 Showing all active accounts');
             clearAccountFilter();
-            alert(`Active Accounts\n\nTotal: ${dashboardData.accountSummary.length} accounts\n\nNote: All accounts in Account_Summary sheet are considered active accounts.\n\nClick any filter to view specific subsets.`);
+            alert(`Active Accounts\n\nTotal: ${window.dashboardData.accountSummary.length} accounts\n\nNote: All accounts in Account_Summary sheet are considered active accounts.\n\nClick any filter to view specific subsets.`);
         }
 
         function filterByClientInteraction() {
@@ -3150,7 +3151,7 @@
             
             // Get regional head distribution
             const regionalData = {};
-            dashboardData.accountSummary.forEach(row => {
+            window.dashboardData.accountSummary.forEach(row => {
                 const regional = row['Regional Head'] || 'Unassigned';
                 if (!regionalData[regional]) regionalData[regional] = 0;
                 regionalData[regional]++;
@@ -3162,7 +3163,7 @@
                 `${region}: ${count} accounts`
             ).join('\n');
             
-            alert(`Regional Head-wise Account Distribution\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n${breakdown}\n\nTotal Regions: ${sortedRegions.length}\nTotal Accounts: ${dashboardData.accountSummary.length}`);
+            alert(`Regional Head-wise Account Distribution\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n${breakdown}\n\nTotal Regions: ${sortedRegions.length}\nTotal Accounts: ${window.dashboardData.accountSummary.length}`);
         }
 
         function showRegionDetails(region, count) {
@@ -3171,7 +3172,7 @@
         }
 
         function showAccountDetails(index) {
-            const account = dashboardData.accountSummary[index];
+            const account = window.dashboardData.accountSummary[index];
             
             // Calculate metrics
             const oppPass = parseFloat(account['Opportunity Pass']) || 0;
@@ -3231,7 +3232,7 @@ Total Population: ${totalPop}
             try {
                 console.log('🔄 Refreshing Transactional Overview Tab...');
                 
-                if (!validateData(dashboardData.parameterAuditCount, 'Parameter Audit Count for Transactional')) {
+                if (!validateData(window.dashboardData.parameterAuditCount, 'Parameter Audit Count for Transactional')) {
                     console.warn('⚠️ No Parameter Audit Count data available');
                     return;
                 }
@@ -3250,8 +3251,8 @@ Total Population: ${totalPop}
 
         function populateTransactionalFilters() {
             try {
-                const data = dashboardData.parameterAuditCount;
-                const accountData = dashboardData.accountSummary;
+                const data = window.dashboardData.parameterAuditCount;
+                const accountData = window.dashboardData.accountSummary;
                 
                 // Build client-to-account mapping for Practice Head filtering
                 window.clientToAccountMapping = {};
@@ -3338,7 +3339,7 @@ Total Population: ${totalPop}
                 const weekFilter = safeGetElement('filterWeek')?.value || '';
                 
                 // Get filtered data
-                let filteredData = dashboardData.parameterAuditCount;
+                let filteredData = window.dashboardData.parameterAuditCount;
                 
                 if (clientFilter) {
                     filteredData = filteredData.filter(row => 
@@ -3416,7 +3417,7 @@ Total Population: ${totalPop}
 
         function calculateOverallMetrics(data = null) {
             try {
-                data = data || dashboardData.parameterAuditCount;
+                data = data || window.dashboardData.parameterAuditCount;
                 
                 // Sum all required fields
                 let totalOpportunityPass = 0;
@@ -3481,7 +3482,7 @@ Total Population: ${totalPop}
 
         function calculateRegionBreakdown(data = null) {
             try {
-                data = data || dashboardData.parameterAuditCount;
+                data = data || window.dashboardData.parameterAuditCount;
                 const regionStats = {};
 
                 // Group by Region
@@ -3556,7 +3557,7 @@ Total Population: ${totalPop}
 
         function calculateCriticalBreakdown(data = null) {
             try {
-                data = data || dashboardData.parameterAuditCount;
+                data = data || window.dashboardData.parameterAuditCount;
                 const criticalStats = {};
 
                 // Group by Critical/Non Critical
@@ -3634,7 +3635,7 @@ Total Population: ${totalPop}
 
         function calculateStageBreakdown(data = null) {
             try {
-                data = data || dashboardData.parameterAuditCount;
+                data = data || window.dashboardData.parameterAuditCount;
                 const stageStats = {};
 
                 // Group by Stage (Column H)
@@ -3798,7 +3799,7 @@ Total Population: ${totalPop}
 
         function calculateRegionalHeadBreakdown(data = null) {
             try {
-                data = data || dashboardData.parameterAuditCount;
+                data = data || window.dashboardData.parameterAuditCount;
                 
                 const regionalHeadStats = {};
 
@@ -3906,7 +3907,7 @@ Total Population: ${totalPop}
 
         function calculatePracticeHeadBreakdown(data = null) {
             try {
-                data = data || dashboardData.parameterAuditCount;
+                data = data || window.dashboardData.parameterAuditCount;
                 
                 const practiceHeadStats = {};
 
@@ -4017,7 +4018,7 @@ Total Population: ${totalPop}
 
         function calculateMonthWiseChart(data = null) {
             try {
-                data = data || dashboardData.parameterAuditCount;
+                data = data || window.dashboardData.parameterAuditCount;
                 
                 // Group by Month
                 const monthStats = {};
@@ -4237,7 +4238,7 @@ Total Population: ${totalPop}
             try {
                 console.log('🔄 Refreshing Parameter Performance tab');
                 
-                if (!dashboardData || !dashboardData.parameterAuditCount) {
+                if (!window.dashboardData || !window.dashboardData.parameterAuditCount) {
                     console.log('⚠️ No Parameter Audit Count data available');
                     return;
                 }
@@ -4256,7 +4257,7 @@ Total Population: ${totalPop}
 
         function populateParameterFilters() {
             try {
-                const data = dashboardData.parameterAuditCount;
+                const data = window.dashboardData.parameterAuditCount;
                 
                 // Get unique values from correct columns
                 // Column A - Client
@@ -4333,7 +4334,7 @@ Total Population: ${totalPop}
 
         function applyParameterFilters() {
             try {
-                let data = dashboardData.parameterAuditCount;
+                let data = window.dashboardData.parameterAuditCount;
                 
                 // Get filter values from correct columns
                 const clientFilter = safeGetElement('paramFilterClient')?.value || '';      // Column A
@@ -4728,7 +4729,7 @@ Total Population: ${totalPop}
                 });
                 
                 // Re-render table
-                generateParameterTable(dashboardData.parameterAuditCount);
+                generateParameterTable(window.dashboardData.parameterAuditCount);
             } catch (error) {
                 handleError(error, 'sortParameterTable');
             }
@@ -4892,17 +4893,17 @@ Total Population: ${totalPop}
         function refreshStrategicTab() {
             try {
                 console.log('🔄 Refreshing Strategic Overview tab');
-                console.log('🔍 window.dashboardData:', window.dashboardData);
+                console.log('🔍 window.window.dashboardData:', window.window.dashboardData);
                 console.log('📊 Dashboard data check:', {
-                    hasProjects: !!window.dashboardData?.projects,
-                    projectsLength: window.dashboardData?.projects?.length || 0,
-                    hasRcaCapa: !!window.dashboardData?.rcaCapa,
-                    rcaCapaLength: window.dashboardData?.rcaCapa?.length || 0
+                    hasProjects: !!window.window.dashboardData?.projects,
+                    projectsLength: window.window.dashboardData?.projects?.length || 0,
+                    hasRcaCapa: !!window.window.dashboardData?.rcaCapa,
+                    rcaCapaLength: window.window.dashboardData?.rcaCapa?.length || 0
                 });
                 
-                if (!window.dashboardData || !window.dashboardData.projects || !window.dashboardData.rcaCapa) {
+                if (!window.window.dashboardData || !window.window.dashboardData.projects || !window.window.dashboardData.rcaCapa) {
                     console.warn('⚠️ No Projects or RCA_CAPA data available');
-                    console.log('Available data keys:', window.dashboardData ? Object.keys(window.dashboardData) : 'dashboardData is null');
+                    console.log('Available data keys:', window.window.dashboardData ? Object.keys(window.window.dashboardData) : 'window.dashboardData is null');
                     
                     // Show empty state
                     safeSetText('projectsTotal', 0);
@@ -4914,8 +4915,8 @@ Total Population: ${totalPop}
                     return;
                 }
 
-                strategicData.projects = window.dashboardData.projects;
-                strategicData.rcaCapa = window.dashboardData.rcaCapa;
+                strategicData.projects = window.window.dashboardData.projects;
+                strategicData.rcaCapa = window.window.dashboardData.rcaCapa;
 
                 console.log('📊 Strategic data loaded:', {
                     projects: strategicData.projects.length,
@@ -5613,7 +5614,7 @@ Total Population: ${totalPop}
             try {
                 console.log('🔄 Refreshing Recruiter Insight tab');
                 
-                if (!dashboardData || !dashboardData.recruiterAuditCount) {
+                if (!window.dashboardData || !window.dashboardData.recruiterAuditCount) {
                     console.log('⚠️ No Recruiter Audit Count data available');
                     return;
                 }
@@ -5632,7 +5633,7 @@ Total Population: ${totalPop}
 
         function populateRecruiterFilters() {
             try {
-                const data = dashboardData.recruiterAuditCount;
+                const data = window.dashboardData.recruiterAuditCount;
                 
                 // Get unique values from correct columns
                 // Column A - Client (named "Client" in Excel)
@@ -5715,7 +5716,7 @@ Total Population: ${totalPop}
                 const programManagerFilter = document.getElementById('recruiterFilterProgramManager')?.value || '';
                 const regionFilter = document.getElementById('recruiterFilterRegion')?.value || '';
                 
-                let filteredData = dashboardData.recruiterAuditCount.filter(row => {
+                let filteredData = window.dashboardData.recruiterAuditCount.filter(row => {
                     return (!accountFilter || String(row['Client'] || '').trim() === accountFilter) &&
                            (!monthFilter || String(row['Month'] || '').trim() === monthFilter) &&
                            (!regionalHeadFilter || String(row['Regional Head'] || '').trim() === regionalHeadFilter) &&
@@ -6456,9 +6457,9 @@ Total Population: ${totalPop}
             }
             
             // Check if data exists in localStorage
-            const savedData = localStorage.getItem('dashboardData');
+            const savedData = localStorage.getItem('window.dashboardData');
             if (savedData) {
-                dashboardData = JSON.parse(savedData);
+                window.dashboardData = JSON.parse(savedData);
                 refreshAllTabs();
                 console.log('💾 Loaded saved data from localStorage');
             }
