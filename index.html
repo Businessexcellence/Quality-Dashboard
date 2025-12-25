@@ -4133,7 +4133,8 @@ Total Population: ${totalPop}
                 parameterTableData = Object.entries(paramStats).map(([param, stats]) => {
                     // Accuracy% = Sum of "Opportunity Pass" / (Sum of "Opportunity Count" - Sum of "Opportunity NA")
                     const denominator = stats.opportunityCount - stats.opportunityNA;
-                    const accuracy = denominator > 0 ? (stats.opportunityPass / denominator * 100) : 0;
+                    // If denominator is 0 (Opportunity Count = Opportunity NA), accuracy should be NA (not 0/0)
+                    const accuracy = denominator > 0 ? (stats.opportunityPass / denominator * 100) : null;
                     
                     // Sample% = Sum of "Opportunity Count" / Sum of "Total Population"
                     const sample = stats.totalPopulation > 0 ? (stats.opportunityCount / stats.totalPopulation * 100) : 0;
@@ -4149,23 +4150,29 @@ Total Population: ${totalPop}
                         // Audit Count = Sum of "Opportunity Count"
                         auditCount: stats.opportunityCount
                     };
-                }).sort((a, b) => b.accuracy - a.accuracy);
+                }).sort((a, b) => {
+                    // Handle null values (NA) - put them at the end
+                    if (a.accuracy === null && b.accuracy === null) return 0;
+                    if (a.accuracy === null) return 1;  // a goes to end
+                    if (b.accuracy === null) return -1; // b goes to end
+                    return b.accuracy - a.accuracy;     // Normal descending sort
+                });
                 
                 // Render table
                 const html = `
                     <table style="width: 100%; border-collapse: collapse; font-size: 10px;">
                         <thead style="position: sticky; top: 0; background: white; z-index: 10;">
                             <tr style="border-bottom: 2px solid var(--border); background: rgba(255, 140, 66, 0.05);">
-                                <th style="padding: 6px 8px; text-align: left; font-size: 10px; font-weight: 700; color: var(--text-primary); cursor: pointer;" onclick="sortParameterTable('parameter')">
+                                <th style="padding: 6px 8px; text-align: left; font-size: 10px; font-weight: 700; color: #000; cursor: pointer;" onclick="sortParameterTable('parameter')">
                                     Parameter <i class="fas fa-sort" style="font-size: 8px; opacity: 0.5;"></i>
                                 </th>
-                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: var(--text-primary); cursor: pointer;" onclick="sortParameterTable('accuracy')">
+                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: #000; cursor: pointer;" onclick="sortParameterTable('accuracy')">
                                     Accuracy % <i class="fas fa-sort" style="font-size: 8px; opacity: 0.5;"></i>
                                 </th>
-                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: var(--text-primary); cursor: pointer;" onclick="sortParameterTable('error')">
+                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: #000; cursor: pointer;" onclick="sortParameterTable('error')">
                                     Error % <i class="fas fa-sort" style="font-size: 8px; opacity: 0.5;"></i>
                                 </th>
-                                <th style="padding: 6px 8px; text-align: right; font-size: 10px; font-weight: 700; color: var(--text-primary); cursor: pointer;" onclick="sortParameterTable('auditCount')">
+                                <th style="padding: 6px 8px; text-align: right; font-size: 10px; font-weight: 700; color: #000; cursor: pointer;" onclick="sortParameterTable('auditCount')">
                                     Audits <i class="fas fa-sort" style="font-size: 8px; opacity: 0.5;"></i>
                                 </th>
                             </tr>
@@ -4177,7 +4184,7 @@ Total Population: ${totalPop}
                                     onmouseout="this.style.background='transparent'">
                                     <td style="padding: 6px 8px; font-size: 10px; color: var(--text-primary); font-weight: 600;">${row.parameter}</td>
                                     <td style="padding: 6px 8px; text-align: center;">
-                                        <span style="background: ${row.accuracy >= 90 ? '#10b981' : row.accuracy >= 70 ? '#f59e0b' : '#ef4444'}; color: white; padding: 3px 8px; border-radius: 10px; font-size: 9px; font-weight: 700;">${row.accuracy.toFixed(1)}%</span>
+                                        ${row.accuracy === null ? '<span style="color: #6b7280; font-size: 9px; font-weight: 700;">NA</span>' : `<span style="background: ${row.accuracy >= 90 ? '#10b981' : row.accuracy >= 70 ? '#f59e0b' : '#ef4444'}; color: white; padding: 3px 8px; border-radius: 10px; font-size: 9px; font-weight: 700;">${row.accuracy.toFixed(1)}%</span>`}
                                     </td>
                                     <td style="padding: 6px 8px; text-align: center;">
                                         <span style="background: ${row.error <= 5 ? '#10b981' : row.error <= 15 ? '#f59e0b' : '#ef4444'}; color: white; padding: 3px 8px; border-radius: 10px; font-size: 9px; font-weight: 700;">${row.error.toFixed(1)}%</span>
@@ -4210,6 +4217,11 @@ Total Population: ${totalPop}
                 parameterTableData.sort((a, b) => {
                     let aVal = a[column];
                     let bVal = b[column];
+                    
+                    // Handle null values (NA) - treat as lowest
+                    if (aVal === null && bVal === null) return 0;
+                    if (aVal === null) return window.paramSortDirection === 'asc' ? 1 : -1;
+                    if (bVal === null) return window.paramSortDirection === 'asc' ? -1 : 1;
                     
                     if (column === 'parameter') {
                         aVal = aVal.toLowerCase();
@@ -4275,9 +4287,10 @@ Total Population: ${totalPop}
                 // Accuracy% = Sum of "Opportunity Pass" / (Sum of "Opportunity Count" - Sum of "Opportunity NA")
                 const paramData = Object.entries(paramStats).map(([param, stats]) => {
                     const denominator = stats.opportunityCount - stats.opportunityNA;
-                    const accuracy = denominator > 0 ? (stats.opportunityPass / denominator * 100) : 0;
+                    // If denominator is 0 (Opportunity Count = Opportunity NA), accuracy is null (NA)
+                    const accuracy = denominator > 0 ? (stats.opportunityPass / denominator * 100) : null;
                     return { parameter: param, accuracy: accuracy, auditCount: stats.opportunityCount };
-                }).filter(p => p.auditCount > 0);
+                }).filter(p => p.auditCount > 0 && p.accuracy !== null); // Exclude NA values from chart
                 
                 // Sort by accuracy
                 paramData.sort((a, b) => b.accuracy - a.accuracy);
