@@ -1270,11 +1270,18 @@
 
             <!-- Recruiter-Parameter Detailed View -->
             <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 10px;">
-                <h3 style="font-size: 12px; font-weight: 700; color: var(--text-primary); margin: 0 0 8px 0;">
-                    <i class="fas fa-th" style="color: var(--primary); font-size: 11px;"></i> Recruiter-Parameter Detailed Performance
-                </h3>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <h3 style="font-size: 12px; font-weight: 700; color: var(--text-primary); margin: 0;">
+                        <i class="fas fa-th" style="color: var(--primary); font-size: 11px;"></i> Recruiter-Parameter Detailed Performance
+                    </h3>
+                    <div id="selectedRecruiterName" style="font-size: 11px; color: var(--primary); font-weight: 600;"></div>
+                </div>
                 <div id="recruiterParameterTableContainer" style="max-height: 500px; overflow-y: auto;">
-                    <!-- Detailed table will be populated here -->
+                    <!-- Initial empty state -->
+                    <div style="text-align: center; padding: 40px; color: #6b7280;">
+                        <i class="fas fa-mouse-pointer" style="font-size: 48px; opacity: 0.3; margin-bottom: 16px;"></i>
+                        <p style="font-size: 14px; margin: 0;">Click on a recruiter name above to view parameter-wise performance details</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -4753,7 +4760,31 @@ Total Population: ${totalPop}
                 calculateRecruiterMetrics(filteredData);
                 generateRecruiterSummary(filteredData);
                 generateRecruiterTable(filteredData);
-                generateRecruiterParameterTable(filteredData);
+                // Don't call generateRecruiterParameterTable - will be empty until recruiter is clicked
+                generateRecruiterParameterTable(filteredData, null);
+                
+                // Add click handlers for recruiter names after table is generated
+                setTimeout(() => {
+                    const recruiterLinks = document.querySelectorAll('.recruiter-name-link');
+                    recruiterLinks.forEach(link => {
+                        link.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            const recruiterName = this.getAttribute('data-recruiter');
+                            console.log('🎯 Recruiter clicked:', recruiterName);
+                            
+                            // Highlight selected recruiter
+                            document.querySelectorAll('.recruiter-name-link').forEach(l => {
+                                l.style.fontWeight = '500';
+                                l.style.backgroundColor = 'transparent';
+                            });
+                            this.style.fontWeight = '700';
+                            this.style.backgroundColor = 'rgba(59, 130, 246, 0.1)';
+                            
+                            // Generate parameter table for selected recruiter
+                            generateRecruiterParameterTable(filteredData, recruiterName);
+                        });
+                    });
+                }, 100);
                 
             } catch (error) {
                 handleError(error, 'applyRecruiterFilters');
@@ -5185,7 +5216,11 @@ Total Population: ${totalPop}
                         <tbody>
                             ${recruiterTableData.map(row => `
                                 <tr class="recruiter-row" data-recruiter="${row.recruiter.toLowerCase()}" style="border-bottom: 1px solid var(--border);">
-                                    <td style="padding: 6px 8px; font-size: 10px; color: var(--text-primary); font-weight: 600;">${row.recruiter}</td>
+                                    <td style="padding: 6px 8px; font-size: 10px; font-weight: 600;">
+                                        <span class="recruiter-name-link" data-recruiter="${row.recruiter}" style="color: #3b82f6; cursor: pointer; text-decoration: underline;">
+                                            ${row.recruiter}
+                                        </span>
+                                    </td>
                                     <td style="padding: 6px 8px; text-align: center; font-size: 10px; color: var(--text-primary);">${row.totalAudits}</td>
                                     <td style="padding: 6px 8px; text-align: center;">
                                         ${row.accuracy === null ? '<span style="color: #6b7280; font-size: 9px; font-weight: 700;">NA</span>' : 
@@ -5215,8 +5250,25 @@ Total Population: ${totalPop}
             }
         }
 
-        function generateRecruiterParameterTable(data) {
+        function generateRecruiterParameterTable(data, selectedRecruiter = null) {
             try {
+                // Show empty state if no recruiter is selected
+                if (!selectedRecruiter) {
+                    const emptyStateHTML = `
+                        <div style="text-align: center; padding: 60px 20px; color: var(--text-secondary);">
+                            <i class="fas fa-user-circle" style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;"></i>
+                            <p style="font-size: 14px; font-weight: 500; margin-bottom: 8px;">No Recruiter Selected</p>
+                            <p style="font-size: 12px;">Click on a recruiter name in the table above to view their parameter-wise performance</p>
+                        </div>
+                    `;
+                    safeSetHTML('recruiterParameterTableContainer', emptyStateHTML);
+                    safeSetText('selectedRecruiterName', '');
+                    return;
+                }
+
+                // Update the selected recruiter name display
+                safeSetText('selectedRecruiterName', `Selected: ${selectedRecruiter}`);
+
                 // Group by Recruiter and Parameter
                 const recruiterParamStats = {};
                 
@@ -5228,6 +5280,9 @@ Total Population: ${totalPop}
                     const accuracy = String(accuracyRaw || '').trim(); // Column K
                     
                     if (!recruiter || !parameter) return;
+                    
+                    // Filter by selected recruiter
+                    if (recruiter !== selectedRecruiter) return;
                     
                     const key = `${recruiter}|||${parameter}`;
                     
@@ -5281,7 +5336,6 @@ Total Population: ${totalPop}
                     <table style="width: 100%; border-collapse: collapse; font-size: 10px;">
                         <thead style="position: sticky; top: 0; background: white; z-index: 10;">
                             <tr style="border-bottom: 2px solid var(--border); background: rgba(59, 130, 246, 0.05);">
-                                <th style="padding: 6px 8px; text-align: left; font-size: 10px; font-weight: 700; color: #000;">Recruiter Name</th>
                                 <th style="padding: 6px 8px; text-align: left; font-size: 10px; font-weight: 700; color: #000;">Parameter</th>
                                 <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: #000;">Accuracy %</th>
                                 <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: #000;">Audit Count</th>
@@ -5292,12 +5346,9 @@ Total Population: ${totalPop}
                         </thead>
                         <tbody>
                             ${recruiterParameterData.map((row, idx) => {
-                                const prevRow = idx > 0 ? recruiterParameterData[idx - 1] : null;
-                                const showRecruiter = !prevRow || prevRow.recruiter !== row.recruiter;
                                 return `
                                 <tr style="border-bottom: 1px solid var(--border);">
-                                    <td style="padding: 6px 8px; font-size: 10px; color: var(--text-primary); font-weight: ${showRecruiter ? '700' : '400'}; ${showRecruiter ? 'border-top: 2px solid var(--border);' : ''}">${showRecruiter ? row.recruiter : ''}</td>
-                                    <td style="padding: 6px 8px; font-size: 10px; color: var(--text-secondary);">${row.parameter}</td>
+                                    <td style="padding: 6px 8px; font-size: 10px; color: var(--text-primary); font-weight: 600;">${row.parameter}</td>
                                     <td style="padding: 6px 8px; text-align: center;">
                                         ${row.accuracy === null ? '<span style="color: #6b7280; font-size: 9px; font-weight: 700;">NA</span>' : 
                                         `<span style="background: ${row.accuracy >= 90 ? '#10b981' : row.accuracy >= 70 ? '#f59e0b' : '#ef4444'}; color: white; padding: 3px 8px; border-radius: 10px; font-size: 9px; font-weight: 700;">${row.accuracy.toFixed(1)}%</span>`}
@@ -5314,7 +5365,7 @@ Total Population: ${totalPop}
                 `;
                 
                 safeSetHTML('recruiterParameterTableContainer', html);
-                console.log('✅ Recruiter-Parameter table generated:', recruiterParameterData.length, 'rows');
+                console.log('✅ Recruiter-Parameter table generated for', selectedRecruiter, ':', recruiterParameterData.length, 'parameters');
             } catch (error) {
                 handleError(error, 'generateRecruiterParameterTable');
             }
