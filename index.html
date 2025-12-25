@@ -5900,7 +5900,7 @@ Total Population: ${totalPop}
         // PROJECT SUMMARY TAB FUNCTIONS
         // ============================================
         
-        function refreshProjectsTab() {
+        window.refreshProjectsTab = function() {
             try {
                 console.log('🔄 Refreshing Projects tab...');
                 
@@ -5927,7 +5927,7 @@ Total Population: ${totalPop}
             } catch (error) {
                 handleError(error, 'refreshProjectsTab');
             }
-        }
+        };
         
         function populateProjectFilters(projects) {
             try {
@@ -6478,7 +6478,7 @@ Total Population: ${totalPop}
         // RCA & CAPA TAB FUNCTIONS
         // ============================================
         
-        function refreshRcaCapaTab() {
+        window.refreshRcaCapaTab = function() {
             try {
                 console.log('🔄 Refreshing RCA & CAPA tab...');
                 
@@ -6499,7 +6499,7 @@ Total Population: ${totalPop}
             } catch (error) {
                 handleError(error, 'refreshRcaCapaTab');
             }
-        }
+        };
         
         function populateRcaCapaFilters(rcaCapaData) {
             try {
