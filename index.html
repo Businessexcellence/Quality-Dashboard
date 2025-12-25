@@ -1656,8 +1656,8 @@
                         </button>
                     </div>
                 </div>
-                <div id="rcaCapaFilters" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;">
-                    <!-- 4 Filters generated dynamically with counts -->
+                <div id="rcaCapaFilters" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;">
+                    <!-- 5 Filters generated dynamically with counts -->
                 </div>
             </div>
 
@@ -5696,6 +5696,31 @@ Total Population: ${totalPop}
             return '';
         };
 
+        window.getRcaAccount = function(item) {
+            const keys = Object.keys(item);
+            
+            // Column F (6th column, index 5) - Account
+            // PRIORITY: Header names first (most common when Excel has headers)
+            const possibleKeys = [
+                'Account',
+                'ACCOUNT',
+                'Account Name',
+                'Client',
+                'Client Name',
+                'F',          // Direct column letter
+                '__EMPTY_5',  // XLSX headerless column naming
+                keys[5]       // 6th column by index
+            ];
+            
+            for (const key of possibleKeys) {
+                if (key && item[key] !== null && item[key] !== undefined && item[key] !== '') {
+                    return String(item[key]).trim();
+                }
+            }
+            
+            return '';
+        };
+
         function generateProjectsSection(projects) {
             try {
                 console.log('📊 generateProjectsSection called with', projects.length, 'projects');
@@ -6736,6 +6761,7 @@ Total Population: ${totalPop}
                     
                     // Test helper functions on first item
                     debugInfo.push('<br><strong>🧪 Helper Function Tests on First Item:</strong>');
+                    debugInfo.push(`Account: "${window.getRcaAccount(firstItem)}" ${window.getRcaAccount(firstItem) ? '✅' : '❌'}`);
                     debugInfo.push(`Error Type: "${window.getErrorType(firstItem)}" ${window.getErrorType(firstItem) ? '✅' : '❌'}`);
                     debugInfo.push(`Impact: "${window.getImpact(firstItem)}" ${window.getImpact(firstItem) ? '✅' : '❌'}`);
                     debugInfo.push(`Practice Head: "${window.getRcaPracticeHead(firstItem)}" ${window.getRcaPracticeHead(firstItem) ? '✅' : '❌'}`);
@@ -6764,6 +6790,7 @@ Total Population: ${totalPop}
         function populateRcaCapaFilters(rcaCapaData) {
             try {
                 const filters = [
+                    { field: 'Account', label: 'Account', icon: 'building' },
                     { field: 'Region', label: 'Region', icon: 'globe' },
                     { field: 'Financial Year', label: 'Financial Year', icon: 'calendar' },
                     { field: 'Practice Head', label: 'Practice Head', icon: 'user-tie' },
@@ -6784,6 +6811,8 @@ Total Population: ${totalPop}
                             value = window.getRcaFinancialYear(item);
                         } else if (filter.field === 'Practice Head') {
                             value = window.getRcaPracticeHead(item);
+                        } else if (filter.field === 'Account') {
+                            value = window.getRcaAccount(item);
                         } else {
                             value = item[filter.field];
                         }
@@ -6810,6 +6839,8 @@ Total Population: ${totalPop}
                                 itemValue = window.getRcaFinancialYear(item);
                             } else if (filter.field === 'Practice Head') {
                                 itemValue = window.getRcaPracticeHead(item);
+                            } else if (filter.field === 'Account') {
+                                itemValue = window.getRcaAccount(item);
                             } else {
                                 itemValue = item[filter.field];
                             }
@@ -7070,6 +7101,8 @@ Total Population: ${totalPop}
                             itemValue = window.getRcaFinancialYear(item);
                         } else if (field === 'Practice Head') {
                             itemValue = window.getRcaPracticeHead(item);
+                        } else if (field === 'Account') {
+                            itemValue = window.getRcaAccount(item);
                         } else {
                             itemValue = item[field];
                         }
@@ -7326,7 +7359,7 @@ Total Population: ${totalPop}
                 // Group by account
                 const itemsByAccount = {};
                 rcaCapaItems.forEach((item, index) => {
-                    const account = item['Account'] || 'N/A';
+                    const account = window.getRcaAccount(item) || 'N/A';
                     if (!itemsByAccount[account]) {
                         itemsByAccount[account] = [];
                     }
