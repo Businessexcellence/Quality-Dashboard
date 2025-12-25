@@ -902,6 +902,34 @@
 
         <!-- OTHER TABS (Placeholders) -->
         <div id="transactional" class="tab-content">
+            <!-- Filters Section -->
+            <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 16px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                    <h3 style="font-size: 12px; font-weight: 700; color: var(--text-primary); margin: 0;">
+                        <i class="fas fa-filter" style="color: var(--primary);"></i> Filters
+                    </h3>
+                    <button onclick="clearTransactionalFilters()" style="background: var(--error); border: none; color: white; padding: 4px 12px; border-radius: 4px; cursor: pointer; font-size: 10px; font-weight: 600;">
+                        <i class="fas fa-times"></i> Clear Filters
+                    </button>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <!-- Financial Year Filter -->
+                    <div>
+                        <label style="font-size: 10px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">FINANCIAL YEAR</label>
+                        <select id="filterFinancialYear" onchange="applyTransactionalFilters()" style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg-secondary); color: var(--text-primary); font-size: 12px;">
+                            <option value="">All Years</option>
+                        </select>
+                    </div>
+                    <!-- Month Filter -->
+                    <div>
+                        <label style="font-size: 10px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">MONTH</label>
+                        <select id="filterMonth" onchange="applyTransactionalFilters()" style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg-secondary); color: var(--text-primary); font-size: 12px;">
+                            <option value="">All Months</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
             <!-- KPI Cards -->
             <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px;">
                 <!-- Accuracy Score Card -->
@@ -956,12 +984,22 @@
             </div>
 
             <!-- Critical/Non Critical Breakdown -->
-            <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 16px;">
+            <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 16px;">
                 <h3 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin: 0 0 12px 0;">
                     <i class="fas fa-flag" style="color: var(--primary);"></i> Critical/Non Critical Overview
                 </h3>
                 <div id="criticalBreakdown" style="overflow-x: auto;">
                     <!-- Critical table will be populated -->
+                </div>
+            </div>
+
+            <!-- Stage-wise Breakdown -->
+            <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 16px;">
+                <h3 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin: 0 0 12px 0;">
+                    <i class="fas fa-layer-group" style="color: var(--primary);"></i> Stage-wise Overview
+                </h3>
+                <div id="stageBreakdown" style="overflow-x: auto;">
+                    <!-- Stage table will be populated -->
                 </div>
             </div>
         </div>
@@ -2685,14 +2723,11 @@ Total Population: ${totalPop}
                     return;
                 }
 
-                // Calculate overall metrics
-                calculateOverallMetrics();
+                // Populate filters
+                populateTransactionalFilters();
                 
-                // Calculate region-wise breakdown
-                calculateRegionBreakdown();
-                
-                // Calculate critical/non-critical breakdown
-                calculateCriticalBreakdown();
+                // Calculate and render all breakdowns
+                applyTransactionalFilters();
                 
                 console.log('✅ Transactional Overview Tab refreshed');
             } catch (error) {
@@ -2700,9 +2735,85 @@ Total Population: ${totalPop}
             }
         }
 
-        function calculateOverallMetrics() {
+        function populateTransactionalFilters() {
             try {
                 const data = dashboardData.parameterAuditCount;
+                
+                // Get unique Financial Years
+                const years = [...new Set(data.map(row => String(row['Finanical Year'] || row['Financial Year'] || '').trim()).filter(y => y))];
+                const yearSelect = safeGetElement('filterFinancialYear');
+                if (yearSelect) {
+                    yearSelect.innerHTML = '<option value="">All Years</option>' + 
+                        years.sort().map(year => `<option value="${year}">${year}</option>`).join('');
+                }
+                
+                // Get unique Months
+                const months = [...new Set(data.map(row => String(row['Month'] || '').trim()).filter(m => m))];
+                const monthOrder = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                const sortedMonths = months.sort((a, b) => monthOrder.indexOf(a) - monthOrder.indexOf(b));
+                const monthSelect = safeGetElement('filterMonth');
+                if (monthSelect) {
+                    monthSelect.innerHTML = '<option value="">All Months</option>' + 
+                        sortedMonths.map(month => `<option value="${month}">${month}</option>`).join('');
+                }
+                
+                console.log('✅ Filters populated:', years.length, 'years,', months.length, 'months');
+            } catch (error) {
+                handleError(error, 'populateTransactionalFilters');
+            }
+        }
+
+        function applyTransactionalFilters() {
+            try {
+                const yearFilter = safeGetElement('filterFinancialYear')?.value || '';
+                const monthFilter = safeGetElement('filterMonth')?.value || '';
+                
+                // Get filtered data
+                let filteredData = dashboardData.parameterAuditCount;
+                
+                if (yearFilter) {
+                    filteredData = filteredData.filter(row => 
+                        String(row['Finanical Year'] || row['Financial Year'] || '').trim() === yearFilter
+                    );
+                }
+                
+                if (monthFilter) {
+                    filteredData = filteredData.filter(row => 
+                        String(row['Month'] || '').trim() === monthFilter
+                    );
+                }
+                
+                console.log('🔍 Filtered data:', filteredData.length, 'rows (Year:', yearFilter || 'All', ', Month:', monthFilter || 'All', ')');
+                
+                // Calculate all metrics with filtered data
+                calculateOverallMetrics(filteredData);
+                calculateRegionBreakdown(filteredData);
+                calculateCriticalBreakdown(filteredData);
+                calculateStageBreakdown(filteredData);
+                
+            } catch (error) {
+                handleError(error, 'applyTransactionalFilters');
+            }
+        }
+
+        function clearTransactionalFilters() {
+            try {
+                const yearSelect = safeGetElement('filterFinancialYear');
+                const monthSelect = safeGetElement('filterMonth');
+                
+                if (yearSelect) yearSelect.value = '';
+                if (monthSelect) monthSelect.value = '';
+                
+                applyTransactionalFilters();
+                console.log('✅ Filters cleared');
+            } catch (error) {
+                handleError(error, 'clearTransactionalFilters');
+            }
+        }
+
+        function calculateOverallMetrics(data = null) {
+            try {
+                data = data || dashboardData.parameterAuditCount;
                 
                 // Sum all required fields
                 let totalOpportunityPass = 0;
@@ -2750,9 +2861,9 @@ Total Population: ${totalPop}
             }
         }
 
-        function calculateRegionBreakdown() {
+        function calculateRegionBreakdown(data = null) {
             try {
-                const data = dashboardData.parameterAuditCount;
+                data = data || dashboardData.parameterAuditCount;
                 const regionStats = {};
 
                 // Group by Region
@@ -2833,9 +2944,9 @@ Total Population: ${totalPop}
             }
         }
 
-        function calculateCriticalBreakdown() {
+        function calculateCriticalBreakdown(data = null) {
             try {
-                const data = dashboardData.parameterAuditCount;
+                data = data || dashboardData.parameterAuditCount;
                 const criticalStats = {};
 
                 // Group by Critical/Non Critical
@@ -2916,6 +3027,92 @@ Total Population: ${totalPop}
                 console.log('✅ Critical/Non Critical breakdown rendered:', criticalRows.length, 'types');
             } catch (error) {
                 handleError(error, 'calculateCriticalBreakdown');
+            }
+        }
+
+        function calculateStageBreakdown(data = null) {
+            try {
+                data = data || dashboardData.parameterAuditCount;
+                const stageStats = {};
+
+                // Group by Stage (Column H)
+                data.forEach(row => {
+                    const stage = String(row['Stage'] || 'Unknown').trim();
+                    
+                    if (!stageStats[stage]) {
+                        stageStats[stage] = {
+                            opportunityPass: 0,
+                            opportunityCount: 0,
+                            opportunityNA: 0,
+                            opportunityFail: 0,
+                            totalPopulation: 0
+                        };
+                    }
+
+                    stageStats[stage].opportunityPass += parseFloat(row['Opportunity Pass']) || 0;
+                    stageStats[stage].opportunityCount += parseFloat(row['Opportunity Count']) || 0;
+                    stageStats[stage].opportunityNA += parseFloat(row['Opportunity NA']) || 0;
+                    stageStats[stage].opportunityFail += parseFloat(row['Opportunity Fail']) || 0;
+                    stageStats[stage].totalPopulation += parseFloat(row['Total Population']) || 0;
+                });
+
+                // Calculate metrics for each stage
+                const stageRows = Object.entries(stageStats).map(([stage, stats]) => {
+                    const denominator = stats.opportunityCount - stats.opportunityNA;
+                    const accuracy = denominator > 0 ? (stats.opportunityPass / denominator * 100) : 0;
+                    const sample = stats.totalPopulation > 0 ? (stats.opportunityCount / stats.totalPopulation * 100) : 0;
+                    const error = stats.opportunityCount > 0 ? (stats.opportunityFail / stats.opportunityCount * 100) : 0;
+                    
+                    return {
+                        stage,
+                        accuracy: accuracy.toFixed(1),
+                        sample: sample.toFixed(1),
+                        error: error.toFixed(1),
+                        auditCount: stats.opportunityCount
+                    };
+                }).sort((a, b) => b.auditCount - a.auditCount);
+
+                // Render table
+                const html = `
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid var(--border); background: rgba(255, 140, 66, 0.05);">
+                                <th style="padding: 10px; text-align: left; font-size: 11px; font-weight: 700; color: var(--text-primary);">Stage</th>
+                                <th style="padding: 10px; text-align: center; font-size: 11px; font-weight: 700; color: var(--text-primary);">Accuracy %</th>
+                                <th style="padding: 10px; text-align: center; font-size: 11px; font-weight: 700; color: var(--text-primary);">Sample %</th>
+                                <th style="padding: 10px; text-align: center; font-size: 11px; font-weight: 700; color: var(--text-primary);">Error %</th>
+                                <th style="padding: 10px; text-align: right; font-size: 11px; font-weight: 700; color: var(--text-primary);">Audit Count</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${stageRows.map(row => {
+                                const icon = row.stage === 'Pre Selection' ? '📋' : row.stage === 'Post Selection' ? '✅' : '📊';
+                                return `
+                                    <tr style="border-bottom: 1px solid var(--border); transition: background 0.2s;" 
+                                        onmouseover="this.style.background='var(--bg-hover)'" 
+                                        onmouseout="this.style.background='transparent'">
+                                        <td style="padding: 10px; font-size: 12px; color: var(--text-primary); font-weight: 600;">${icon} ${row.stage}</td>
+                                        <td style="padding: 10px; text-align: center;">
+                                            <span style="background: #10b981; color: white; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 700;">${row.accuracy}%</span>
+                                        </td>
+                                        <td style="padding: 10px; text-align: center;">
+                                            <span style="background: #3b82f6; color: white; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 700;">${row.sample}%</span>
+                                        </td>
+                                        <td style="padding: 10px; text-align: center;">
+                                            <span style="background: #ef4444; color: white; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 700;">${row.error}%</span>
+                                        </td>
+                                        <td style="padding: 10px; text-align: right; font-size: 12px; color: var(--text-primary); font-weight: 700;">${row.auditCount.toLocaleString()}</td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                `;
+
+                safeSetHTML('stageBreakdown', html);
+                console.log('✅ Stage breakdown rendered:', stageRows.length, 'stages');
+            } catch (error) {
+                handleError(error, 'calculateStageBreakdown');
             }
         }
 
