@@ -794,31 +794,19 @@
                 </div>
             </div>
 
-            <!-- Performance Leaderboards -->
+            <!-- Performance Leaderboards (Compact) -->
             <div class="widget-grid">
-                <div class="widget-card">
+                <div class="widget-card" style="max-height: 300px;">
                     <h3>🏆 Top Performing Accounts</h3>
-                    <div id="topAccounts" class="table-container">
+                    <div id="topAccounts" class="table-container" style="max-height: 240px; overflow-y: auto;">
                         <!-- Table will be populated -->
                     </div>
                 </div>
-                <div class="widget-card">
+                <div class="widget-card" style="max-height: 300px;">
                     <h3>⚠️ Needs Attention</h3>
-                    <div id="bottomAccounts" class="table-container">
+                    <div id="bottomAccounts" class="table-container" style="max-height: 240px; overflow-y: auto;">
                         <!-- Table will be populated -->
                     </div>
-                </div>
-            </div>
-
-            <!-- Insight Boxes -->
-            <div class="widget-grid">
-                <div class="widget-card">
-                    <h3>✅ Positive Insights</h3>
-                    <div id="positiveInsights"></div>
-                </div>
-                <div class="widget-card">
-                    <h3>⚠️ Areas for Improvement</h3>
-                    <div id="negativeInsights"></div>
                 </div>
             </div>
         </div>
@@ -1711,37 +1699,55 @@
         }
 
         function renderTopAccounts() {
-            const container = document.getElementById('topAccounts');
-            
-            if (!dashboardData.parameterAuditCount.length) {
-                container.innerHTML = '<div class="empty-state">No data available</div>';
-                return;
-            }
+            try {
+                const container = safeGetElement('topAccounts', 'renderTopAccounts');
+                if (!container) return;
+                
+                if (!validateData(dashboardData.parameterAuditCount, 'Parameter Audit Count')) {
+                    container.innerHTML = '<div class="empty-state">No data available</div>';
+                    return;
+                }
 
-            // Calculate accuracy by account
-            const accounts = calculateAccountAccuracy();
-            const top5 = accounts.sort((a, b) => b.accuracy - a.accuracy).slice(0, 5);
+                // Calculate accuracy by account (limit to top 5)
+                const accounts = calculateAccountAccuracy();
+                const top5 = accounts.sort((a, b) => b.accuracy - a.accuracy).slice(0, 5);
 
-            container.innerHTML = `
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Rank</th>
-                            <th>Account</th>
-                            <th>Accuracy %</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${top5.map((acc, idx) => `
-                            <tr>
-                                <td><strong>${idx + 1}</strong></td>
-                                <td>${acc.name}</td>
-                                <td><span class="badge badge-success">${acc.accuracy}%</span></td>
+                container.innerHTML = `
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid var(--border); background: rgba(16,185,129,0.05);">
+                                <th style="padding: 8px; text-align: left; font-size: 10px; font-weight: 700; color: var(--text-primary);">#</th>
+                                <th style="padding: 8px; text-align: left; font-size: 10px; font-weight: 700; color: var(--text-primary);">Account</th>
+                                <th style="padding: 8px; text-align: right; font-size: 10px; font-weight: 700; color: var(--text-primary);">Accuracy</th>
                             </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            `;
+                        </thead>
+                        <tbody>
+                            ${top5.map((acc, idx) => `
+                                <tr style="border-bottom: 1px solid var(--border); transition: background 0.2s;" 
+                                    onmouseover="this.style.background='var(--bg-hover)'" 
+                                    onmouseout="this.style.background='transparent'">
+                                    <td style="padding: 8px; font-size: 11px; color: var(--text-secondary);">${idx + 1}</td>
+                                    <td style="padding: 8px; font-size: 11px; color: var(--text-primary); font-weight: 500;">${acc.name}</td>
+                                    <td style="padding: 8px; text-align: right;">
+                                        <span style="
+                                            background: #10b981; 
+                                            color: white; 
+                                            padding: 3px 8px; 
+                                            border-radius: 10px; 
+                                            font-size: 11px; 
+                                            font-weight: 700;
+                                        ">${acc.accuracy.toFixed(1)}%</span>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                
+                console.log('✅ Top accounts rendered:', top5.length, 'accounts');
+            } catch (error) {
+                handleError(error, 'renderTopAccounts');
+            }
         }
 
         function calculateAccountAccuracy() {
@@ -1769,65 +1775,58 @@
         }
 
         function renderInsights() {
-            const positiveContainer = document.getElementById('positiveInsights');
-            const negativeContainer = document.getElementById('negativeInsights');
-            const bottomAccountsContainer = document.getElementById('bottomAccounts');
+            try {
+                const bottomAccountsContainer = safeGetElement('bottomAccounts', 'renderInsights');
+                if (!bottomAccountsContainer) return;
 
-            const accounts = calculateAccountAccuracy();
-            const avgAccuracy = accounts.length > 0 
-                ? (accounts.reduce((sum, a) => sum + a.accuracy, 0) / accounts.length).toFixed(2)
-                : 0;
+                const accounts = calculateAccountAccuracy();
 
-            const highPerformers = accounts.filter(a => a.accuracy >= 95).length;
-            const lowPerformers = accounts.filter(a => a.accuracy < 80).length;
+                // Populate Needs Attention section with lowest performing accounts (limit to 5)
+                const lowestPerformers = accounts
+                    .sort((a, b) => a.accuracy - b.accuracy)
+                    .slice(0, 5);
 
-            positiveContainer.innerHTML = `
-                <p style="margin-bottom: 8px;">✅ <strong>${highPerformers}</strong> accounts with 95%+ accuracy</p>
-                <p style="margin-bottom: 8px;">✅ Overall accuracy: <strong>${avgAccuracy}%</strong></p>
-                <p>✅ <strong>${dashboardData.projects.length}</strong> active projects</p>
-            `;
-
-            negativeContainer.innerHTML = `
-                <p style="margin-bottom: 8px;">⚠️ <strong>${lowPerformers}</strong> accounts below 80% accuracy</p>
-                <p style="margin-bottom: 8px;">⚠️ <strong>${getClosedRCACount()}</strong> pending RCA/CAPA items</p>
-                <p>⚠️ Action required for underperforming accounts</p>
-            `;
-
-            // Populate Needs Attention section with lowest performing accounts
-            const lowestPerformers = accounts
-                .sort((a, b) => a.accuracy - b.accuracy)
-                .slice(0, 5);
-
-            if (lowestPerformers.length > 0) {
-                bottomAccountsContainer.innerHTML = `
-                    <table style="width: 100%; border-collapse: collapse;">
-                        <thead>
-                            <tr style="border-bottom: 2px solid var(--border); background: rgba(255,102,0,0.05);">
-                                <th style="padding: 10px; text-align: left; font-size: 11px; font-weight: 700; color: var(--text-primary);">#</th>
-                                <th style="padding: 10px; text-align: left; font-size: 11px; font-weight: 700; color: var(--text-primary);">Account</th>
-                                <th style="padding: 10px; text-align: right; font-size: 11px; font-weight: 700; color: var(--text-primary);">Accuracy</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${lowestPerformers.map((acc, index) => `
-                                <tr style="border-bottom: 1px solid var(--border); transition: background 0.2s;" 
-                                    onmouseover="this.style.background='var(--bg-hover)'" 
-                                    onmouseout="this.style.background='transparent'">
-                                    <td style="padding: 10px; font-size: 12px; color: var(--text-secondary);">${index + 1}</td>
-                                    <td style="padding: 10px; font-size: 12px; color: var(--text-primary); font-weight: 500;">${acc.name}</td>
-                                    <td style="padding: 10px; text-align: right;">
-                                        <span style="
-                                            background: ${acc.accuracy < 70 ? '#ef4444' : acc.accuracy < 80 ? '#f59e0b' : '#10b981'}; 
-                                            color: white; 
-                                            padding: 4px 10px; 
-                                            border-radius: 12px; 
-                                            font-size: 13px; 
-                                            font-weight: 700;
-                                        ">${acc.accuracy.toFixed(1)}%</span>
-                                    </td>
+                if (lowestPerformers.length > 0) {
+                    bottomAccountsContainer.innerHTML = `
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="border-bottom: 2px solid var(--border); background: rgba(255,102,0,0.05);">
+                                    <th style="padding: 8px; text-align: left; font-size: 10px; font-weight: 700; color: var(--text-primary);">#</th>
+                                    <th style="padding: 8px; text-align: left; font-size: 10px; font-weight: 700; color: var(--text-primary);">Account</th>
+                                    <th style="padding: 8px; text-align: right; font-size: 10px; font-weight: 700; color: var(--text-primary);">Accuracy</th>
                                 </tr>
-                            `).join('')}
-                        </tbody>
+                            </thead>
+                            <tbody>
+                                ${lowestPerformers.map((acc, index) => `
+                                    <tr style="border-bottom: 1px solid var(--border); transition: background 0.2s;" 
+                                        onmouseover="this.style.background='var(--bg-hover)'" 
+                                        onmouseout="this.style.background='transparent'">
+                                        <td style="padding: 8px; font-size: 11px; color: var(--text-secondary);">${index + 1}</td>
+                                        <td style="padding: 8px; font-size: 11px; color: var(--text-primary); font-weight: 500;">${acc.name}</td>
+                                        <td style="padding: 8px; text-align: right;">
+                                            <span style="
+                                                background: ${acc.accuracy < 70 ? '#ef4444' : acc.accuracy < 80 ? '#f59e0b' : '#10b981'}; 
+                                                color: white; 
+                                                padding: 3px 8px; 
+                                                border-radius: 10px; 
+                                                font-size: 11px; 
+                                                font-weight: 700;
+                                            ">${acc.accuracy.toFixed(1)}%</span>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                } else {
+                    bottomAccountsContainer.innerHTML = '<p style="padding: 20px; text-align: center; color: var(--text-muted);">No data available</p>';
+                }
+
+                console.log('✅ Insights rendered:', lowestPerformers.length, 'accounts needing attention');
+            } catch (error) {
+                handleError(error, 'renderInsights');
+            }
+        }
                     </table>
                 `;
             } else {
