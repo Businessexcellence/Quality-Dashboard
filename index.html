@@ -4823,6 +4823,7 @@ Total Population: ${totalPop}
                     
                     if (recruiter) uniqueRecruiters.add(recruiter);
                     
+                    // Count values from Column K: "1", "0", "NA"
                     if (accuracy === '1') {
                         totalCount1++;
                         if (criticalType === 'Critical') criticalCount1++;
@@ -4831,7 +4832,7 @@ Total Population: ${totalPop}
                         totalCount0++;
                         if (criticalType === 'Critical') criticalCount0++;
                         if (criticalType === 'Non Critical') nonCriticalCount0++;
-                    } else if (accuracy === 'NA') {
+                    } else if (accuracy === 'NA' || accuracy === '') {
                         totalCountNA++;
                         if (criticalType === 'Critical') criticalCountNA++;
                         if (criticalType === 'Non Critical') nonCriticalCountNA++;
@@ -4890,10 +4891,14 @@ Total Population: ${totalPop}
                 // Calculate overall accuracy
                 let count1 = 0, count0 = 0, countNA = 0;
                 data.forEach(row => {
-                    const acc = String(row['Accuracy'] || '').trim();
-                    if (acc === '1') count1++;
-                    else if (acc === '0') count0++;
-                    else if (acc === 'NA') countNA++;
+                    const acc = String(row['Accuracy'] || '').trim(); // Column K
+                    if (acc === '1') {
+                        count1++;
+                    } else if (acc === '0') {
+                        count0++;
+                    } else if (acc === 'NA' || acc === '') {
+                        countNA++;
+                    }
                 });
                 
                 const totalAll = count1 + count0 + countNA;
@@ -4949,17 +4954,26 @@ Total Population: ${totalPop}
                 let nonCriticalCount1 = 0, nonCriticalCount0 = 0, nonCriticalCountNA = 0;
                 
                 data.forEach(row => {
-                    const accuracy = String(row['Accuracy'] || '').trim();
+                    const accuracy = String(row['Accuracy'] || '').trim(); // Column K
                     const criticalType = String(row['Critical/Non Critical'] || '').trim();
                     
+                    // Count values from Column K: "1", "0", "NA"
                     if (criticalType === 'Critical') {
-                        if (accuracy === '1') criticalCount1++;
-                        else if (accuracy === '0') criticalCount0++;
-                        else if (accuracy === 'NA') criticalCountNA++;
+                        if (accuracy === '1') {
+                            criticalCount1++;
+                        } else if (accuracy === '0') {
+                            criticalCount0++;
+                        } else if (accuracy === 'NA' || accuracy === '') {
+                            criticalCountNA++;
+                        }
                     } else if (criticalType === 'Non Critical') {
-                        if (accuracy === '1') nonCriticalCount1++;
-                        else if (accuracy === '0') nonCriticalCount0++;
-                        else if (accuracy === 'NA') nonCriticalCountNA++;
+                        if (accuracy === '1') {
+                            nonCriticalCount1++;
+                        } else if (accuracy === '0') {
+                            nonCriticalCount0++;
+                        } else if (accuracy === 'NA' || accuracy === '') {
+                            nonCriticalCountNA++;
+                        }
                     }
                 });
                 
@@ -5028,7 +5042,7 @@ Total Population: ${totalPop}
                 
                 data.forEach(row => {
                     const stage = String(row['Stage'] || '').trim();
-                    const accuracy = String(row['Accuracy'] || '').trim();
+                    const accuracy = String(row['Accuracy'] || '').trim(); // Column K
                     
                     if (!stage) return;
                     
@@ -5036,9 +5050,14 @@ Total Population: ${totalPop}
                         stageStats[stage] = { count1: 0, count0: 0, countNA: 0 };
                     }
                     
-                    if (accuracy === '1') stageStats[stage].count1++;
-                    else if (accuracy === '0') stageStats[stage].count0++;
-                    else if (accuracy === 'NA') stageStats[stage].countNA++;
+                    // Count values from Column K: "1", "0", "NA"
+                    if (accuracy === '1') {
+                        stageStats[stage].count1++;
+                    } else if (accuracy === '0') {
+                        stageStats[stage].count0++;
+                    } else if (accuracy === 'NA' || accuracy === '') {
+                        stageStats[stage].countNA++;
+                    }
                 });
                 
                 const stages = Object.keys(stageStats);
@@ -5106,7 +5125,7 @@ Total Population: ${totalPop}
                 
                 data.forEach(row => {
                     const recruiter = String(row['Recruiter Name'] || '').trim();
-                    const accuracy = String(row['Accuracy'] || '').trim();
+                    const accuracy = String(row['Accuracy'] || '').trim(); // Column K
                     
                     if (!recruiter) return;
                     
@@ -5116,9 +5135,18 @@ Total Population: ${totalPop}
                     
                     recruiterStats[recruiter].totalAudits++;
                     
-                    if (accuracy === '1') recruiterStats[recruiter].count1++;
-                    else if (accuracy === '0') recruiterStats[recruiter].count0++;
-                    else if (accuracy === 'NA') recruiterStats[recruiter].countNA++;
+                    // Count values from Column K: "1", "0", "NA"
+                    if (accuracy === '1') {
+                        recruiterStats[recruiter].count1++;
+                    } else if (accuracy === '0') {
+                        recruiterStats[recruiter].count0++;
+                    } else if (accuracy === 'NA' || accuracy === '') {
+                        // Treat empty cells as NA
+                        recruiterStats[recruiter].countNA++;
+                    } else {
+                        // Log unexpected values for debugging
+                        console.warn('Unexpected accuracy value:', accuracy, 'for recruiter:', recruiter);
+                    }
                 });
                 
                 // Calculate accuracy for each recruiter
@@ -5186,7 +5214,7 @@ Total Population: ${totalPop}
                 data.forEach(row => {
                     const recruiter = String(row['Recruiter Name'] || '').trim();
                     const parameter = String(row['Parameter'] || '').trim();
-                    const accuracy = String(row['Accuracy'] || '').trim();
+                    const accuracy = String(row['Accuracy'] || '').trim(); // Column K
                     
                     if (!recruiter || !parameter) return;
                     
@@ -5205,9 +5233,14 @@ Total Population: ${totalPop}
                     
                     recruiterParamStats[key].totalAudits++;
                     
-                    if (accuracy === '1') recruiterParamStats[key].count1++;
-                    else if (accuracy === '0') recruiterParamStats[key].count0++;
-                    else if (accuracy === 'NA') recruiterParamStats[key].countNA++;
+                    // Count values from Column K: "1", "0", "NA"
+                    if (accuracy === '1') {
+                        recruiterParamStats[key].count1++;
+                    } else if (accuracy === '0') {
+                        recruiterParamStats[key].count0++;
+                    } else if (accuracy === 'NA' || accuracy === '') {
+                        recruiterParamStats[key].countNA++;
+                    }
                 });
                 
                 // Calculate accuracy for each recruiter-parameter combination
