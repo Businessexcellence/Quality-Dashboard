@@ -4968,10 +4968,8 @@ Total Population: ${totalPop}
 
         function applyStrategicFilters() {
             try {
-                const strategicData = window.dashboardData;
                 console.log('🔍 applyStrategicFilters called');
-                console.log('📊 Data check:', {
-                    hasStrategicData: !!strategicData,
+                console.log('📊 Local strategicData check:', {
                     hasProjects: !!strategicData?.projects,
                     projectsLength: strategicData?.projects?.length || 0,
                     hasRcaCapa: !!strategicData?.rcaCapa,
@@ -4980,7 +4978,7 @@ Total Population: ${totalPop}
                 
                 if (!strategicData || !strategicData.projects || !strategicData.rcaCapa) {
                     console.error('❌ Strategic data not available');
-                    console.log('Available keys:', strategicData ? Object.keys(strategicData) : 'null');
+                    console.log('strategicData state:', strategicData);
                     
                     // Show empty state with zeros
                     generateProjectsSection([]);
@@ -5047,7 +5045,6 @@ Total Population: ${totalPop}
                 const wip = projects.filter(p => {
                     const statusFromG = String(p['G'] || '').toUpperCase().trim();
                     const statusFromStatus = String(p['Status'] || '').toUpperCase().trim();
-                    console.log('🔍 Project status check - G:', statusFromG, 'Status:', statusFromStatus);
                     return statusFromG === 'WIP' || statusFromStatus === 'WIP';
                 }).length;
                 
@@ -5125,7 +5122,6 @@ Total Population: ${totalPop}
                 const wip = rcaCapa.filter(r => {
                     const statusFromI = String(r['I'] || '').toUpperCase().trim();
                     const statusFromStatus = String(r['Status'] || '').toUpperCase().trim();
-                    console.log('🔍 RCA/CAPA status check - I:', statusFromI, 'Status:', statusFromStatus);
                     return statusFromI === 'WIP' || statusFromStatus === 'WIP';
                 }).length;
                 
