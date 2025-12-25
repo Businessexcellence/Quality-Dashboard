@@ -1539,10 +1539,85 @@
         </div>
 
         <div id="projects" class="tab-content">
-            <div class="empty-state">
-                <i class="fas fa-project-diagram"></i>
-                <h3>Project Summary</h3>
-                <p>Coming soon...</p>
+            <!-- PROJECT SUMMARY TAB -->
+            
+            <!-- Filters Section -->
+            <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 8px; padding: 8px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <h2 style="font-size: 10px; color: #1e40af; margin: 0; font-weight: 700;">
+                        <i class="fas fa-filter" style="font-size: 8px;"></i> PROJECT FILTERS
+                    </h2>
+                    <div style="display: flex; gap: 6px; align-items: center;">
+                        <!-- Universal Search Input -->
+                        <div style="position: relative;">
+                            <input 
+                                type="text" 
+                                id="projectUniversalSearch" 
+                                placeholder="🔍 Search all filters..."
+                                style="
+                                    padding: 4px 8px 4px 24px;
+                                    border: 2px solid #93c5fd;
+                                    border-radius: 4px;
+                                    font-size: 9px;
+                                    width: 180px;
+                                    background: white;
+                                    color: #1e293b;
+                                    outline: none;
+                                "
+                                oninput="filterProjectOptions(this.value)"
+                            />
+                            <i class="fas fa-search" style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); color: #3b82f6; font-size: 8px; pointer-events: none;"></i>
+                        </div>
+                        <button onclick="clearProjectFilters()" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); border: none; color: white; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 8px; font-weight: 600;">
+                            <i class="fas fa-times"></i> Clear All
+                        </button>
+                    </div>
+                </div>
+                <div id="projectFilters" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;">
+                    <!-- 5 Filters generated dynamically with counts -->
+                </div>
+            </div>
+
+            <!-- Project Details Section -->
+            <div style="display: grid; grid-template-columns: 1fr 400px; gap: 12px;">
+                
+                <!-- Left: Project List -->
+                <div style="background: white; border-radius: 10px; padding: 10px; box-shadow: 0 3px 10px rgba(59,130,246,0.15); border-left: 5px solid #3b82f6;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <h2 style="font-size: 12px; font-weight: 800; color: #1e40af; margin: 0; display: flex; align-items: center;">
+                            <div style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 8px; box-shadow: 0 3px 6px rgba(59,130,246,0.3);">
+                                <i class="fas fa-list" style="color: white; font-size: 12px;"></i>
+                            </div>
+                            PROJECT LIST
+                        </h2>
+                        <div style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); color: white; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 700;">
+                            <span id="projectListCount">0</span> Projects
+                        </div>
+                    </div>
+                    
+                    <!-- Project Cards -->
+                    <div id="projectListContainer" style="max-height: calc(100vh - 280px); overflow-y: auto; padding-right: 6px;">
+                        <!-- Project cards will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Right: Project Details Panel -->
+                <div style="background: white; border-radius: 10px; padding: 10px; box-shadow: 0 3px 10px rgba(59,130,246,0.15); border-left: 5px solid #3b82f6;">
+                    <h2 style="font-size: 12px; font-weight: 800; color: #1e40af; margin: 0 0 8px 0; display: flex; align-items: center;">
+                        <div style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 8px; box-shadow: 0 3px 6px rgba(59,130,246,0.3);">
+                            <i class="fas fa-info-circle" style="color: white; font-size: 12px;"></i>
+                        </div>
+                        PROJECT DETAILS
+                    </h2>
+                    
+                    <div id="projectDetailsContainer" style="max-height: calc(100vh - 280px); overflow-y: auto; padding-right: 6px;">
+                        <!-- Project details will be populated here -->
+                        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 300px; color: #94a3b8; text-align: center;">
+                            <i class="fas fa-mouse-pointer" style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"></i>
+                            <p style="font-size: 12px; margin: 0;">Select a project from the list to view details</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -1812,6 +1887,16 @@
                         // Use setTimeout to ensure DOM is fully rendered
                         setTimeout(() => {
                             renderRegionChart();
+                        }, 100);
+                    }
+                    
+                    // Refresh Projects tab when activated
+                    if (tabId === 'projects' && window.dashboardData && window.dashboardData.projects && window.dashboardData.projects.length > 0) {
+                        console.log('🔄 Refreshing Projects tab');
+                        setTimeout(() => {
+                            if (typeof refreshProjectsTab === 'function') {
+                                refreshProjectsTab();
+                            }
                         }, 100);
                     }
                 } else {
@@ -5671,6 +5756,482 @@ Total Population: ${totalPop}
                 handleError(error, 'clearStrategicFilters');
             }
         }
+
+        // ============================================
+        // PROJECT SUMMARY TAB FUNCTIONS
+        // ============================================
+        
+        function refreshProjectsTab() {
+            try {
+                console.log('🔄 Refreshing Projects tab...');
+                
+                if (!window.dashboardData || !window.dashboardData.projects) {
+                    console.error('❌ Projects data not available');
+                    return;
+                }
+                
+                const projects = window.dashboardData.projects;
+                console.log('📊 Projects data loaded:', projects.length, 'projects');
+                
+                if (projects.length > 0) {
+                    console.log('📄 Sample project:', projects[0]);
+                    console.log('📋 Project columns:', Object.keys(projects[0]));
+                }
+                
+                // Populate filters
+                populateProjectFilters(projects);
+                
+                // Apply initial filters (show all)
+                applyProjectFilters();
+                
+                console.log('✅ Projects tab refreshed');
+            } catch (error) {
+                handleError(error, 'refreshProjectsTab');
+            }
+        }
+        
+        function populateProjectFilters(projects) {
+            try {
+                const filters = [
+                    { field: 'Account', label: 'Account', icon: 'building' },
+                    { field: 'Financial Year', label: 'Financial Year', icon: 'calendar' },
+                    { field: 'Region', label: 'Region', icon: 'globe' },
+                    { field: 'Practice Head', label: 'Practice Head', icon: 'user-tie' }
+                ];
+                
+                // Add Project Type filter (with intelligent detection)
+                filters.push({ field: 'Project Type', label: 'Project Type', icon: 'tags' });
+                
+                const filtersHTML = filters.map(filter => {
+                    // Get unique values for this field
+                    let values = new Set();
+                    projects.forEach(p => {
+                        let value;
+                        
+                        if (filter.field === 'Project Type') {
+                            // Use intelligent project type detection
+                            value = getProjectType(p);
+                        } else {
+                            value = p[filter.field];
+                        }
+                        
+                        if (value !== null && value !== undefined && value !== '') {
+                            const cleanValue = typeof value === 'string' ? value.trim() : value;
+                            if (cleanValue !== '') values.add(cleanValue);
+                        }
+                    });
+                    
+                    const uniqueValues = Array.from(values).sort();
+                    
+                    if (uniqueValues.length === 0) return '';
+                    
+                    // Calculate counts for each value
+                    const valueCounts = uniqueValues.map(value => {
+                        const count = projects.filter(p => {
+                            let pValue;
+                            if (filter.field === 'Project Type') {
+                                pValue = getProjectType(p);
+                            } else {
+                                pValue = p[filter.field];
+                            }
+                            const cleanPValue = typeof pValue === 'string' ? pValue.trim() : pValue;
+                            return cleanPValue === value;
+                        }).length;
+                        return { value, count };
+                    }).sort((a, b) => b.count - a.count);
+                    
+                    return `
+                        <div style="
+                            background: white; 
+                            border: 2px solid #93c5fd; 
+                            border-radius: 6px; 
+                            padding: 6px; 
+                        ">
+                            <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 4px;">
+                                <i class="fas fa-${filter.icon}" style="color: #3b82f6; font-size: 8px;"></i>
+                                <h3 style="font-size: 9px; font-weight: 700; color: #1e40af; margin: 0; text-transform: uppercase;">${filter.label}</h3>
+                            </div>
+                            <div class="project-filter-options" data-filter-field="${filter.field}" style="
+                                display: flex; 
+                                flex-direction: column; 
+                                gap: 2px; 
+                                max-height: 90px; 
+                                overflow-y: auto;
+                                padding-right: 3px;
+                            ">
+                                ${valueCounts.map(({ value, count }) => `
+                                    <button 
+                                        onclick="toggleProjectFilter('${filter.field}', '${String(value).replace(/'/g, "\\'")}')"
+                                        class="project-filter-btn"
+                                        data-field="${filter.field}"
+                                        data-value="${String(value).replace(/'/g, "\\'")}"
+                                        data-search-text="${String(value).toLowerCase()}"
+                                        style="
+                                            display: flex;
+                                            justify-content: space-between;
+                                            align-items: center;
+                                            padding: 3px 5px;
+                                            background: #eff6ff;
+                                            border: 1px solid #93c5fd;
+                                            border-radius: 3px;
+                                            cursor: pointer;
+                                            transition: all 0.2s;
+                                            text-align: left;
+                                            width: 100%;
+                                        "
+                                        onmouseover="if(!this.classList.contains('active')){ this.style.background='#dbeafe'; this.style.borderColor='#3b82f6'; }"
+                                        onmouseout="if(!this.classList.contains('active')){ this.style.background='#eff6ff'; this.style.borderColor='#93c5fd'; }"
+                                    >
+                                        <span style="color: #1e293b; font-size: 8px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;" title="${value}">${value}</span>
+                                        <span style="
+                                            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+                                            color: white;
+                                            padding: 1px 4px;
+                                            border-radius: 8px;
+                                            font-size: 7px;
+                                            font-weight: 700;
+                                            margin-left: 4px;
+                                            min-width: 20px;
+                                            text-align: center;
+                                        ">${count}</span>
+                                    </button>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                safeSetHTML('projectFilters', filtersHTML);
+                console.log('✅ Project filters populated');
+            } catch (error) {
+                handleError(error, 'populateProjectFilters');
+            }
+        }
+        
+        function filterProjectOptions(searchText) {
+            try {
+                const lowerSearch = searchText.toLowerCase().trim();
+                
+                if (!lowerSearch) {
+                    document.querySelectorAll('.project-filter-btn').forEach(btn => {
+                        btn.style.display = 'flex';
+                    });
+                    return;
+                }
+                
+                document.querySelectorAll('.project-filter-btn').forEach(btn => {
+                    const searchableText = btn.getAttribute('data-search-text') || '';
+                    if (searchableText.includes(lowerSearch)) {
+                        btn.style.display = 'flex';
+                    } else {
+                        btn.style.display = 'none';
+                    }
+                });
+                
+                console.log(`🔍 Project filters searched: "${searchText}"`);
+            } catch (error) {
+                handleError(error, 'filterProjectOptions');
+            }
+        }
+        
+        function toggleProjectFilter(field, value) {
+            try {
+                console.log(`🔍 Project filter toggled: ${field} = ${value}`);
+                
+                if (!window.activeProjectFilters) {
+                    window.activeProjectFilters = {};
+                }
+                
+                if (!window.activeProjectFilters[field]) {
+                    window.activeProjectFilters[field] = [];
+                }
+                
+                const valueIndex = window.activeProjectFilters[field].indexOf(value);
+                if (valueIndex > -1) {
+                    window.activeProjectFilters[field].splice(valueIndex, 1);
+                    if (window.activeProjectFilters[field].length === 0) {
+                        delete window.activeProjectFilters[field];
+                    }
+                } else {
+                    window.activeProjectFilters[field].push(value);
+                }
+                
+                console.log('📊 Active project filters:', window.activeProjectFilters);
+                
+                applyProjectFilters();
+                
+                // Update button styles
+                document.querySelectorAll('.project-filter-btn').forEach(btn => {
+                    const btnField = btn.getAttribute('data-field');
+                    const btnValue = btn.getAttribute('data-value');
+                    
+                    const isActive = window.activeProjectFilters[btnField] && 
+                                    window.activeProjectFilters[btnField].includes(btnValue);
+                    
+                    if (isActive) {
+                        btn.classList.add('active');
+                        btn.style.background = 'linear-gradient(135deg, #3b82f6 0%, #1e40af 100%)';
+                        btn.style.borderColor = '#1e40af';
+                        const textSpan = btn.querySelector('span:first-child');
+                        if (textSpan) textSpan.style.color = 'white';
+                        const badgeSpan = btn.querySelector('span:last-child');
+                        if (badgeSpan) badgeSpan.style.background = 'rgba(255,255,255,0.3)';
+                    } else {
+                        btn.classList.remove('active');
+                        btn.style.background = '#eff6ff';
+                        btn.style.borderColor = '#93c5fd';
+                        const textSpan = btn.querySelector('span:first-child');
+                        if (textSpan) textSpan.style.color = '#1e293b';
+                        const badgeSpan = btn.querySelector('span:last-child');
+                        if (badgeSpan) badgeSpan.style.background = 'linear-gradient(135deg, #3b82f6 0%, #1e40af 100%)';
+                    }
+                });
+            } catch (error) {
+                handleError(error, 'toggleProjectFilter');
+            }
+        }
+        
+        function applyProjectFilters() {
+            try {
+                console.log('🔍 Applying project filters...');
+                
+                if (!window.dashboardData || !window.dashboardData.projects) {
+                    console.error('❌ Projects data not available');
+                    return;
+                }
+                
+                const allProjects = window.dashboardData.projects;
+                const activeFilters = window.activeProjectFilters || {};
+                
+                console.log('🔍 Active filters:', activeFilters);
+                
+                // Filter projects with OR logic within field, AND logic across fields
+                const filteredProjects = allProjects.filter(project => {
+                    for (const [field, values] of Object.entries(activeFilters)) {
+                        if (values.length === 0) continue;
+                        
+                        let projectValue;
+                        if (field === 'Project Type') {
+                            projectValue = getProjectType(project);
+                        } else {
+                            projectValue = project[field];
+                        }
+                        
+                        const cleanProjectValue = typeof projectValue === 'string' ? projectValue.trim() : projectValue;
+                        
+                        // Must match at least one value in this field (OR within field)
+                        if (!values.includes(cleanProjectValue)) {
+                            return false;
+                        }
+                    }
+                    return true;
+                });
+                
+                console.log(`📊 Filtered projects: ${filteredProjects.length} of ${allProjects.length}`);
+                
+                // Update project list
+                generateProjectList(filteredProjects);
+                
+            } catch (error) {
+                handleError(error, 'applyProjectFilters');
+            }
+        }
+        
+        function generateProjectList(projects) {
+            try {
+                // Update count
+                safeSetText('projectListCount', projects.length);
+                
+                if (projects.length === 0) {
+                    safeSetHTML('projectListContainer', `
+                        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 200px; color: #94a3b8; text-align: center;">
+                            <i class="fas fa-inbox" style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"></i>
+                            <p style="font-size: 12px; margin: 0;">No projects found matching the selected filters</p>
+                        </div>
+                    `);
+                    return;
+                }
+                
+                const projectCards = projects.map((project, index) => {
+                    const account = project['Account'] || 'N/A';
+                    const projectType = getProjectType(project) || 'N/A';
+                    const status = getProjectStatus(project) || 'N/A';
+                    const region = project['Region'] || 'N/A';
+                    
+                    // Status color
+                    let statusColor = '#64748b';
+                    const statusUpper = String(status).toUpperCase();
+                    if (statusUpper === 'CLOSED' || statusUpper.includes('COMPLETE')) statusColor = '#f59e0b';
+                    else if (statusUpper === 'WIP' || statusUpper.includes('WIP')) statusColor = '#3b82f6';
+                    
+                    return `
+                        <div 
+                            onclick="showProjectDetails(${index})"
+                            class="project-card"
+                            style="
+                                background: white;
+                                border: 2px solid #e2e8f0;
+                                border-left: 4px solid ${statusColor};
+                                border-radius: 6px;
+                                padding: 8px;
+                                margin-bottom: 6px;
+                                cursor: pointer;
+                                transition: all 0.2s;
+                            "
+                            onmouseover="this.style.background='#f8fafc'; this.style.borderColor='#3b82f6'; this.style.boxShadow='0 2px 8px rgba(59,130,246,0.2)';"
+                            onmouseout="this.style.background='white'; this.style.borderColor='#e2e8f0'; this.style.boxShadow='none';"
+                        >
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 4px;">
+                                <div style="flex: 1;">
+                                    <div style="color: #1e293b; font-size: 10px; font-weight: 700; margin-bottom: 2px;">${account}</div>
+                                    <div style="color: #64748b; font-size: 8px;">${region}</div>
+                                </div>
+                                <div style="background: ${statusColor}; color: white; padding: 2px 6px; border-radius: 4px; font-size: 7px; font-weight: 700;">
+                                    ${status}
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 8px; align-items: center;">
+                                <span style="background: #eff6ff; color: #3b82f6; padding: 2px 6px; border-radius: 3px; font-size: 7px; font-weight: 600;">
+                                    <i class="fas fa-tag" style="font-size: 6px; margin-right: 2px;"></i>${projectType}
+                                </span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                safeSetHTML('projectListContainer', projectCards);
+                
+                // Store filtered projects for detail view
+                window.filteredProjects = projects;
+                
+                console.log('✅ Project list updated');
+            } catch (error) {
+                handleError(error, 'generateProjectList');
+            }
+        }
+        
+        function showProjectDetails(index) {
+            try {
+                if (!window.filteredProjects || !window.filteredProjects[index]) {
+                    console.error('❌ Project not found at index', index);
+                    return;
+                }
+                
+                const project = window.filteredProjects[index];
+                console.log('📄 Showing project details:', project);
+                
+                // Extract project details
+                const account = project['Account'] || 'N/A';
+                const opportunityStatement = project['Opportunity Statement'] || project['Description'] || 'N/A';
+                const sponsor = project['Sponsor'] || project['Project Sponsor'] || 'N/A';
+                const quarter = project['Quarter'] || project['Q'] || 'N/A';
+                const projectType = getProjectType(project) || 'N/A';
+                const status = getProjectStatus(project) || 'N/A';
+                const region = project['Region'] || 'N/A';
+                const financialYear = project['Financial Year'] || 'N/A';
+                const practiceHead = project['Practice Head'] || 'N/A';
+                
+                // Status color
+                let statusColor = '#64748b';
+                const statusUpper = String(status).toUpperCase();
+                if (statusUpper === 'CLOSED' || statusUpper.includes('COMPLETE')) statusColor = '#f59e0b';
+                else if (statusUpper === 'WIP' || statusUpper.includes('WIP')) statusColor = '#3b82f6';
+                
+                const detailsHTML = `
+                    <div style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); color: white; padding: 12px; border-radius: 8px; margin-bottom: 12px;">
+                        <div style="font-size: 14px; font-weight: 800; margin-bottom: 4px;">${account}</div>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <span style="background: rgba(255,255,255,0.2); padding: 3px 8px; border-radius: 4px; font-size: 8px; font-weight: 600;">
+                                <i class="fas fa-map-marker-alt" style="font-size: 7px; margin-right: 3px;"></i>${region}
+                            </span>
+                            <span style="background: rgba(255,255,255,0.2); padding: 3px 8px; border-radius: 4px; font-size: 8px; font-weight: 600;">
+                                <i class="fas fa-calendar" style="font-size: 7px; margin-right: 3px;"></i>${financialYear}
+                            </span>
+                            <span style="background: ${statusColor}; padding: 3px 8px; border-radius: 4px; font-size: 8px; font-weight: 700;">
+                                ${status}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        
+                        <!-- Project Type -->
+                        <div style="background: #f8fafc; border-radius: 6px; padding: 8px; border-left: 3px solid #3b82f6;">
+                            <div style="color: #64748b; font-size: 8px; font-weight: 700; text-transform: uppercase; margin-bottom: 3px;">
+                                <i class="fas fa-tag" style="margin-right: 4px;"></i>Project Type
+                            </div>
+                            <div style="color: #1e293b; font-size: 10px; font-weight: 600;">${projectType}</div>
+                        </div>
+                        
+                        <!-- Opportunity Statement -->
+                        <div style="background: #f8fafc; border-radius: 6px; padding: 8px; border-left: 3px solid #10b981;">
+                            <div style="color: #64748b; font-size: 8px; font-weight: 700; text-transform: uppercase; margin-bottom: 3px;">
+                                <i class="fas fa-lightbulb" style="margin-right: 4px;"></i>Opportunity Statement
+                            </div>
+                            <div style="color: #1e293b; font-size: 9px; line-height: 1.4;">${opportunityStatement}</div>
+                        </div>
+                        
+                        <!-- Sponsor -->
+                        <div style="background: #f8fafc; border-radius: 6px; padding: 8px; border-left: 3px solid #f59e0b;">
+                            <div style="color: #64748b; font-size: 8px; font-weight: 700; text-transform: uppercase; margin-bottom: 3px;">
+                                <i class="fas fa-user-shield" style="margin-right: 4px;"></i>Sponsor
+                            </div>
+                            <div style="color: #1e293b; font-size: 10px; font-weight: 600;">${sponsor}</div>
+                        </div>
+                        
+                        <!-- Quarter -->
+                        <div style="background: #f8fafc; border-radius: 6px; padding: 8px; border-left: 3px solid #8b5cf6;">
+                            <div style="color: #64748b; font-size: 8px; font-weight: 700; text-transform: uppercase; margin-bottom: 3px;">
+                                <i class="fas fa-calendar-alt" style="margin-right: 4px;"></i>Quarter
+                            </div>
+                            <div style="color: #1e293b; font-size: 10px; font-weight: 600;">${quarter}</div>
+                        </div>
+                        
+                        <!-- Practice Head -->
+                        <div style="background: #f8fafc; border-radius: 6px; padding: 8px; border-left: 3px solid #ec4899;">
+                            <div style="color: #64748b; font-size: 8px; font-weight: 700; text-transform: uppercase; margin-bottom: 3px;">
+                                <i class="fas fa-user-tie" style="margin-right: 4px;"></i>Practice Head
+                            </div>
+                            <div style="color: #1e293b; font-size: 10px; font-weight: 600;">${practiceHead}</div>
+                        </div>
+                        
+                    </div>
+                `;
+                
+                safeSetHTML('projectDetailsContainer', detailsHTML);
+                console.log('✅ Project details displayed');
+            } catch (error) {
+                handleError(error, 'showProjectDetails');
+            }
+        }
+        
+        function clearProjectFilters() {
+            try {
+                window.activeProjectFilters = {};
+                
+                const searchInput = document.getElementById('projectUniversalSearch');
+                if (searchInput) {
+                    searchInput.value = '';
+                    filterProjectOptions('');
+                }
+                
+                document.querySelectorAll('.project-filter-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                    btn.style.background = '#eff6ff';
+                    btn.style.borderColor = '#93c5fd';
+                    const textSpan = btn.querySelector('span:first-child');
+                    if (textSpan) textSpan.style.color = '#1e293b';
+                    const badgeSpan = btn.querySelector('span:last-child');
+                    if (badgeSpan) badgeSpan.style.background = 'linear-gradient(135deg, #3b82f6 0%, #1e40af 100%)';
+                });
+                
+                applyProjectFilters();
+                console.log('✅ Project filters cleared');
+            } catch (error) {
+                handleError(error, 'clearProjectFilters');
+            }
+        }
+
 
         function generateExecutiveSummary(projects, rcaCapa) {
             try {
