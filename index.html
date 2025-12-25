@@ -919,52 +919,69 @@
 
         <!-- OTHER TABS (Placeholders) -->
         <div id="transactional" class="tab-content">
-            <!-- Filters Section -->
-            <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 8px; margin-bottom: 10px;">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
-                    <h3 style="font-size: 11px; font-weight: 700; color: var(--text-primary); margin: 0;">
-                        <i class="fas fa-filter" style="color: var(--primary); font-size: 10px;"></i> Filters
-                    </h3>
-                    <button onclick="clearTransactionalFilters()" style="background: var(--error); border: none; color: white; padding: 3px 10px; border-radius: 3px; cursor: pointer; font-size: 9px; font-weight: 600;">
-                        <i class="fas fa-times"></i> Clear
-                    </button>
+            <!-- Filters Section - Card Style -->
+            <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 1px solid #fcd34d; border-radius: 8px; padding: 12px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                    <i class="fas fa-filter" style="color: #d97706; font-size: 12px; margin-right: 8px;"></i>
+                    <span style="font-size: 11px; font-weight: 700; color: #92400e;">Filter Transactional Data</span>
                 </div>
-                <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;">
-                    <!-- Client Filter -->
-                    <div>
-                        <label style="font-size: 9px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 3px;">CLIENT</label>
-                        <select id="filterClient" onchange="applyTransactionalFilters()" style="width: 100%; padding: 5px; border: 1px solid var(--border); border-radius: 3px; background: var(--bg-secondary); color: var(--text-primary); font-size: 11px;">
+                <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 10px;">
+                    <!-- Client Filter Card -->
+                    <div style="background: white; border: 1px solid #fcd34d; border-radius: 6px; padding: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                        <label style="display: block; font-size: 9px; font-weight: 600; color: #92400e; margin-bottom: 4px;">
+                            <i class="fas fa-building" style="margin-right: 4px;"></i>Client
+                        </label>
+                        <select id="filterClient" onchange="applyTransactionalFilters()" style="width: 100%; padding: 5px; font-size: 10px; border: 1px solid #cbd5e1; border-radius: 4px; background: white; color: #334155;">
                             <option value="">All Clients</option>
                         </select>
                     </div>
-                    <!-- Practice Head Filter -->
-                    <div>
-                        <label style="font-size: 9px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 3px;">PRACTICE HEAD</label>
-                        <select id="filterPracticeHead" onchange="applyTransactionalFilters()" style="width: 100%; padding: 5px; border: 1px solid var(--border); border-radius: 3px; background: var(--bg-secondary); color: var(--text-primary); font-size: 11px;">
+                    
+                    <!-- Practice Head Filter Card -->
+                    <div style="background: white; border: 1px solid #fcd34d; border-radius: 6px; padding: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                        <label style="display: block; font-size: 9px; font-weight: 600; color: #92400e; margin-bottom: 4px;">
+                            <i class="fas fa-user-tie" style="margin-right: 4px;"></i>Practice Head
+                        </label>
+                        <select id="filterPracticeHead" onchange="applyTransactionalFilters()" style="width: 100%; padding: 5px; font-size: 10px; border: 1px solid #cbd5e1; border-radius: 4px; background: white; color: #334155;">
                             <option value="">All Practice Heads</option>
                         </select>
                     </div>
-                    <!-- Financial Year Filter -->
-                    <div>
-                        <label style="font-size: 9px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 3px;">YEAR</label>
-                        <select id="filterFinancialYear" onchange="applyTransactionalFilters()" style="width: 100%; padding: 5px; border: 1px solid var(--border); border-radius: 3px; background: var(--bg-secondary); color: var(--text-primary); font-size: 11px;">
+                    
+                    <!-- Financial Year Filter Card -->
+                    <div style="background: white; border: 1px solid #fcd34d; border-radius: 6px; padding: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                        <label style="display: block; font-size: 9px; font-weight: 600; color: #92400e; margin-bottom: 4px;">
+                            <i class="fas fa-calendar-alt" style="margin-right: 4px;"></i>Year
+                        </label>
+                        <select id="filterFinancialYear" onchange="applyTransactionalFilters()" style="width: 100%; padding: 5px; font-size: 10px; border: 1px solid #cbd5e1; border-radius: 4px; background: white; color: #334155;">
                             <option value="">All Years</option>
                         </select>
                     </div>
-                    <!-- Month Filter -->
-                    <div>
-                        <label style="font-size: 9px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 3px;">MONTH</label>
-                        <select id="filterMonth" onchange="applyTransactionalFilters()" style="width: 100%; padding: 5px; border: 1px solid var(--border); border-radius: 3px; background: var(--bg-secondary); color: var(--text-primary); font-size: 11px;">
+                    
+                    <!-- Month Filter Card -->
+                    <div style="background: white; border: 1px solid #fcd34d; border-radius: 6px; padding: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                        <label style="display: block; font-size: 9px; font-weight: 600; color: #92400e; margin-bottom: 4px;">
+                            <i class="fas fa-calendar" style="margin-right: 4px;"></i>Month
+                        </label>
+                        <select id="filterMonth" onchange="applyTransactionalFilters()" style="width: 100%; padding: 5px; font-size: 10px; border: 1px solid #cbd5e1; border-radius: 4px; background: white; color: #334155;">
                             <option value="">All Months</option>
                         </select>
                     </div>
-                    <!-- Week Filter -->
-                    <div>
-                        <label style="font-size: 9px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 3px;">WEEK</label>
-                        <select id="filterWeek" onchange="applyTransactionalFilters()" style="width: 100%; padding: 5px; border: 1px solid var(--border); border-radius: 3px; background: var(--bg-secondary); color: var(--text-primary); font-size: 11px;">
+                    
+                    <!-- Week Filter Card -->
+                    <div style="background: white; border: 1px solid #fcd34d; border-radius: 6px; padding: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                        <label style="display: block; font-size: 9px; font-weight: 600; color: #92400e; margin-bottom: 4px;">
+                            <i class="fas fa-clock" style="margin-right: 4px;"></i>Week
+                        </label>
+                        <select id="filterWeek" onchange="applyTransactionalFilters()" style="width: 100%; padding: 5px; font-size: 10px; border: 1px solid #cbd5e1; border-radius: 4px; background: white; color: #334155;">
                             <option value="">All Weeks</option>
                         </select>
                     </div>
+                </div>
+                
+                <!-- Clear Button -->
+                <div style="text-align: right;">
+                    <button onclick="clearTransactionalFilters()" style="padding: 6px 16px; font-size: 10px; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; box-shadow: 0 2px 4px rgba(239,68,68,0.3);">
+                        <i class="fas fa-times-circle" style="margin-right: 4px;"></i>Clear All Filters
+                    </button>
                 </div>
             </div>
 
@@ -1109,28 +1126,70 @@
         </div>
 
         <div id="audit-summary" class="tab-content">
-            <!-- Filters Section -->
-            <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 8px; margin-bottom: 10px;">
-                <div style="display: grid; grid-template-columns: repeat(5, 1fr) auto; gap: 8px; align-items: center;">
-                    <select id="paramFilterClient" onchange="applyParameterFilters()" style="padding: 6px; font-size: 10px; border: 1px solid var(--border); border-radius: 4px; background: white;">
-                        <option value="">All Clients</option>
-                    </select>
-                    <select id="paramFilterRegion" onchange="applyParameterFilters()" style="padding: 6px; font-size: 10px; border: 1px solid var(--border); border-radius: 4px; background: white;">
-                        <option value="">All Regions</option>
-                    </select>
-                    <select id="paramFilterStage" onchange="applyParameterFilters()" style="padding: 6px; font-size: 10px; border: 1px solid var(--border); border-radius: 4px; background: white;">
-                        <option value="">All Stages</option>
-                    </select>
-                    <select id="paramFilterCritical" onchange="applyParameterFilters()" style="padding: 6px; font-size: 10px; border: 1px solid var(--border); border-radius: 4px; background: white;">
-                        <option value="">All Types</option>
-                        <option value="Critical">Critical</option>
-                        <option value="Non Critical">Non Critical</option>
-                    </select>
-                    <select id="paramFilterMonth" onchange="applyParameterFilters()" style="padding: 6px; font-size: 10px; border: 1px solid var(--border); border-radius: 4px; background: white;">
-                        <option value="">All Months</option>
-                    </select>
-                    <button onclick="clearParameterFilters()" style="padding: 6px 12px; font-size: 10px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">
-                        Clear
+            <!-- Filters Section - Card Style -->
+            <div style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border: 1px solid #6ee7b7; border-radius: 8px; padding: 12px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                    <i class="fas fa-filter" style="color: #047857; font-size: 12px; margin-right: 8px;"></i>
+                    <span style="font-size: 11px; font-weight: 700; color: #065f46;">Filter Parameters</span>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 10px;">
+                    <!-- Client Filter Card -->
+                    <div style="background: white; border: 1px solid #6ee7b7; border-radius: 6px; padding: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                        <label style="display: block; font-size: 9px; font-weight: 600; color: #065f46; margin-bottom: 4px;">
+                            <i class="fas fa-building" style="margin-right: 4px;"></i>Client
+                        </label>
+                        <select id="paramFilterClient" onchange="applyParameterFilters()" style="width: 100%; padding: 5px; font-size: 10px; border: 1px solid #cbd5e1; border-radius: 4px; background: white; color: #334155;">
+                            <option value="">All Clients</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Region Filter Card -->
+                    <div style="background: white; border: 1px solid #6ee7b7; border-radius: 6px; padding: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                        <label style="display: block; font-size: 9px; font-weight: 600; color: #065f46; margin-bottom: 4px;">
+                            <i class="fas fa-map-marker-alt" style="margin-right: 4px;"></i>Region
+                        </label>
+                        <select id="paramFilterRegion" onchange="applyParameterFilters()" style="width: 100%; padding: 5px; font-size: 10px; border: 1px solid #cbd5e1; border-radius: 4px; background: white; color: #334155;">
+                            <option value="">All Regions</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Stage Filter Card -->
+                    <div style="background: white; border: 1px solid #6ee7b7; border-radius: 6px; padding: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                        <label style="display: block; font-size: 9px; font-weight: 600; color: #065f46; margin-bottom: 4px;">
+                            <i class="fas fa-tasks" style="margin-right: 4px;"></i>Stage
+                        </label>
+                        <select id="paramFilterStage" onchange="applyParameterFilters()" style="width: 100%; padding: 5px; font-size: 10px; border: 1px solid #cbd5e1; border-radius: 4px; background: white; color: #334155;">
+                            <option value="">All Stages</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Critical Type Filter Card -->
+                    <div style="background: white; border: 1px solid #6ee7b7; border-radius: 6px; padding: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                        <label style="display: block; font-size: 9px; font-weight: 600; color: #065f46; margin-bottom: 4px;">
+                            <i class="fas fa-exclamation-triangle" style="margin-right: 4px;"></i>Type
+                        </label>
+                        <select id="paramFilterCritical" onchange="applyParameterFilters()" style="width: 100%; padding: 5px; font-size: 10px; border: 1px solid #cbd5e1; border-radius: 4px; background: white; color: #334155;">
+                            <option value="">All Types</option>
+                            <option value="Critical">Critical</option>
+                            <option value="Non Critical">Non Critical</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Month Filter Card -->
+                    <div style="background: white; border: 1px solid #6ee7b7; border-radius: 6px; padding: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                        <label style="display: block; font-size: 9px; font-weight: 600; color: #065f46; margin-bottom: 4px;">
+                            <i class="fas fa-calendar" style="margin-right: 4px;"></i>Month
+                        </label>
+                        <select id="paramFilterMonth" onchange="applyParameterFilters()" style="width: 100%; padding: 5px; font-size: 10px; border: 1px solid #cbd5e1; border-radius: 4px; background: white; color: #334155;">
+                            <option value="">All Months</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Clear Button -->
+                <div style="text-align: right;">
+                    <button onclick="clearParameterFilters()" style="padding: 6px 16px; font-size: 10px; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; box-shadow: 0 2px 4px rgba(239,68,68,0.3);">
+                        <i class="fas fa-times-circle" style="margin-right: 4px;"></i>Clear All Filters
                     </button>
                 </div>
             </div>
