@@ -5850,13 +5850,16 @@ Total Population: ${totalPop}
                                 overflow-y: auto;
                                 padding-right: 3px;
                             ">
-                                ${valueCounts.map(({ value, count }) => `
+                                ${valueCounts.map(({ value, count }) => {
+                                    const escapedValue = String(value).replace(/'/g, "\\'");
+                                    const searchText = String(value).toLowerCase().replace(/\s+/g, ' ').trim();
+                                    return `
                                     <button 
-                                        onclick="toggleProjectFilter('${filter.field}', '${String(value).replace(/'/g, "\\'")}')"
+                                        onclick="toggleProjectFilter('${filter.field}', '${escapedValue}')"
                                         class="project-filter-btn"
                                         data-field="${filter.field}"
-                                        data-value="${String(value).replace(/'/g, "\\'")}"
-                                        data-search-text="${String(value).toLowerCase()}"
+                                        data-value="${escapedValue}"
+                                        data-search-text="${searchText}"
                                         style="
                                             display: flex;
                                             justify-content: space-between;
@@ -5886,7 +5889,8 @@ Total Population: ${totalPop}
                                             text-align: center;
                                         ">${count}</span>
                                     </button>
-                                `).join('')}
+                                `;
+                                }).join('')}
                             </div>
                         </div>
                     `;
@@ -5901,6 +5905,7 @@ Total Population: ${totalPop}
         
         function filterProjectOptions(searchText) {
             try {
+                // Normalize search text: lowercase and preserve spaces
                 const lowerSearch = searchText.toLowerCase().trim();
                 
                 if (!lowerSearch) {
@@ -5911,8 +5916,12 @@ Total Population: ${totalPop}
                 }
                 
                 document.querySelectorAll('.project-filter-btn').forEach(btn => {
-                    const searchableText = btn.getAttribute('data-search-text') || '';
-                    if (searchableText.includes(lowerSearch)) {
+                    // Get the searchable text and normalize it
+                    const searchableText = (btn.getAttribute('data-search-text') || '').toLowerCase();
+                    const buttonValue = (btn.getAttribute('data-value') || '').toLowerCase();
+                    
+                    // Check if search text matches either the data-search-text or data-value
+                    if (searchableText.includes(lowerSearch) || buttonValue.includes(lowerSearch)) {
                         btn.style.display = 'flex';
                     } else {
                         btn.style.display = 'none';
@@ -5927,7 +5936,9 @@ Total Population: ${totalPop}
         
         function toggleProjectFilter(field, value) {
             try {
-                console.log(`🔍 Project filter toggled: ${field} = ${value}`);
+                // Normalize the value to ensure consistent string comparison
+                const normalizedValue = String(value || '').trim();
+                console.log(`🔍 Project filter toggled: ${field} = ${normalizedValue}`);
                 
                 if (!window.activeProjectFilters) {
                     window.activeProjectFilters = {};
@@ -5937,14 +5948,14 @@ Total Population: ${totalPop}
                     window.activeProjectFilters[field] = [];
                 }
                 
-                const valueIndex = window.activeProjectFilters[field].indexOf(value);
+                const valueIndex = window.activeProjectFilters[field].indexOf(normalizedValue);
                 if (valueIndex > -1) {
                     window.activeProjectFilters[field].splice(valueIndex, 1);
                     if (window.activeProjectFilters[field].length === 0) {
                         delete window.activeProjectFilters[field];
                     }
                 } else {
-                    window.activeProjectFilters[field].push(value);
+                    window.activeProjectFilters[field].push(normalizedValue);
                 }
                 
                 console.log('📊 Active project filters:', window.activeProjectFilters);
@@ -5954,7 +5965,7 @@ Total Population: ${totalPop}
                 // Update button styles
                 document.querySelectorAll('.project-filter-btn').forEach(btn => {
                     const btnField = btn.getAttribute('data-field');
-                    const btnValue = btn.getAttribute('data-value');
+                    const btnValue = String(btn.getAttribute('data-value') || '').trim();
                     
                     const isActive = window.activeProjectFilters[btnField] && 
                                     window.activeProjectFilters[btnField].includes(btnValue);
@@ -6010,10 +6021,12 @@ Total Population: ${totalPop}
                             projectValue = project[field];
                         }
                         
-                        const cleanProjectValue = typeof projectValue === 'string' ? projectValue.trim() : projectValue;
+                        // Normalize both project value and filter values for comparison
+                        const cleanProjectValue = String(projectValue || '').trim();
+                        const normalizedValues = values.map(v => String(v || '').trim());
                         
                         // Must match at least one value in this field (OR within field)
-                        if (!values.includes(cleanProjectValue)) {
+                        if (!normalizedValues.includes(cleanProjectValue)) {
                             return false;
                         }
                     }
