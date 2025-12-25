@@ -3280,9 +3280,18 @@ Total Population: ${totalPop}
                 const uniqueParameters = [...new Set(data.map(row => row['Parameter']))].filter(p => p).length;
                 const uniqueStages = [...new Set(data.map(row => row['Stage']))].filter(s => s).length;
                 
-                // Count Critical and Non-Critical
-                const criticalCount = data.filter(row => String(row['Critical/Non Critical'] || '').trim() === 'Critical').length;
-                const nonCriticalCount = data.filter(row => String(row['Critical/Non Critical'] || '').trim() === 'Non Critical').length;
+                // Sum Critical and Non-Critical Opportunity Count (not row count)
+                let criticalCount = 0;
+                let nonCriticalCount = 0;
+                data.forEach(row => {
+                    const criticalType = String(row['Critical/Non Critical'] || '').trim();
+                    const oppCount = parseFloat(row['Opportunity Count']) || 0;
+                    if (criticalType === 'Critical') {
+                        criticalCount += oppCount;
+                    } else if (criticalType === 'Non Critical') {
+                        nonCriticalCount += oppCount;
+                    }
+                });
                 
                 // Get Regional Heads for filtered data (from Account_Summary mapping)
                 const regionalHeadsInData = new Set();
@@ -3344,13 +3353,32 @@ Total Population: ${totalPop}
         function calculateRegionalHeadBreakdown(data = null) {
             try {
                 data = data || dashboardData.parameterAuditCount;
+                
+                // Check if client mapping is available
+                if (!window.clientToAccountMapping || Object.keys(window.clientToAccountMapping).length === 0) {
+                    // Show empty state if mapping is not available
+                    const emptyHtml = `
+                        <div style="padding: 20px; text-align: center; color: var(--text-secondary); font-size: 11px;">
+                            <i class="fas fa-info-circle" style="font-size: 24px; opacity: 0.3; margin-bottom: 8px;"></i>
+                            <div>Regional Head data not available</div>
+                            <div style="font-size: 9px; opacity: 0.7; margin-top: 4px;">Column R does not exist in Parameter_Audit_Count sheet</div>
+                        </div>
+                    `;
+                    safeSetHTML('regionalHeadBreakdown', emptyHtml);
+                    console.log('⚠️ Regional Head mapping not available');
+                    return;
+                }
+                
                 const regionalHeadStats = {};
 
                 // Group by Regional Head using client mapping
                 data.forEach(row => {
                     const client = String(row['Client'] || '').trim();
                     const mapping = window.clientToAccountMapping?.[client];
-                    const regionalHead = mapping?.regionalHead || 'Unknown';
+                    const regionalHead = mapping?.regionalHead || null;
+                    
+                    // Skip if no regional head mapping found
+                    if (!regionalHead) return;
                     
                     if (!regionalHeadStats[regionalHead]) {
                         regionalHeadStats[regionalHead] = {
@@ -3384,6 +3412,19 @@ Total Population: ${totalPop}
                         auditCount: stats.opportunityCount
                     };
                 }).sort((a, b) => b.auditCount - a.auditCount);
+                
+                // Show empty state if no regional heads found
+                if (regionalHeadRows.length === 0) {
+                    const emptyHtml = `
+                        <div style="padding: 20px; text-align: center; color: var(--text-secondary); font-size: 11px;">
+                            <i class="fas fa-info-circle" style="font-size: 24px; opacity: 0.3; margin-bottom: 8px;"></i>
+                            <div>No Regional Head data available for filtered results</div>
+                        </div>
+                    `;
+                    safeSetHTML('regionalHeadBreakdown', emptyHtml);
+                    console.log('⚠️ No Regional Heads found in filtered data');
+                    return;
+                }
 
                 // Render table
                 const html = `
