@@ -1747,11 +1747,11 @@
                 </div>
             </div>
 
-            <!-- WINDOW-FITTED: List (50%) + Details (50%) using remaining viewport height -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; height: calc(100vh - 380px); min-height: 350px;">
+            <!-- EXTENDED HEIGHT: List (80%) + Details (20%) with scrolling -->
+            <div style="display: grid; grid-template-columns: 4fr 1fr; gap: 4px;">
                 
-                <!-- Left: RCA & CAPA List -->
-                <div style="background: white; border-radius: 6px; padding: 6px; box-shadow: 0 2px 6px rgba(239,68,68,0.1); border-left: 3px solid #ef4444; display: flex; flex-direction: column;">
+                <!-- Left: RCA & CAPA List (80% width, fixed tall height with scroll) -->
+                <div style="background: white; border-radius: 6px; padding: 6px; box-shadow: 0 2px 6px rgba(239,68,68,0.1); border-left: 3px solid #ef4444; display: flex; flex-direction: column; height: 600px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-shrink: 0;">
                         <h2 style="font-size: 11px; font-weight: 800; color: #dc2626; margin: 0; display: flex; align-items: center;">
                             <div style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); width: 24px; height: 24px; border-radius: 5px; display: flex; align-items: center; justify-content: center; margin-right: 6px; box-shadow: 0 2px 4px rgba(239,68,68,0.2);">
@@ -1764,35 +1764,26 @@
                         </div>
                     </div>
                     
-                    <!-- RCA & CAPA Cards (flexible height, auto-scroll) -->
+                    <!-- RCA & CAPA Cards (scrollable container) -->
                     <div id="rcaCapaListContainer" style="flex: 1; overflow-y: auto; padding-right: 4px;">
                         <!-- RCA & CAPA cards will be populated here -->
                     </div>
                 </div>
 
-                <!-- Right: RCA & CAPA Details Panel -->
-                <div style="background: white; border-radius: 6px; padding: 6px; box-shadow: 0 2px 6px rgba(239,68,68,0.1); border-left: 3px solid #ef4444; display: flex; flex-direction: column;">
+                <!-- Right: RCA & CAPA Details Panel (20% width, same height with scroll) -->
+                <div style="background: white; border-radius: 6px; padding: 6px; box-shadow: 0 2px 6px rgba(239,68,68,0.1); border-left: 3px solid #ef4444; display: flex; flex-direction: column; height: 600px;">
                     <h2 style="font-size: 11px; font-weight: 800; color: #dc2626; margin: 0 0 6px 0; display: flex; align-items: center; flex-shrink: 0;">
                         <div style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); width: 24px; height: 24px; border-radius: 5px; display: flex; align-items: center; justify-content: center; margin-right: 6px; box-shadow: 0 2px 4px rgba(239,68,68,0.2);">
                             <i class="fas fa-info-circle" style="color: white; font-size: 11px;"></i>
                         </div>
-                        RCA & CAPA DETAILS
+                        DETAILS
                     </h2>
                     
                     <div id="rcaCapaDetailsContainer" style="flex: 1; overflow-y: auto; padding-right: 4px;">
                         <!-- RCA & CAPA details will be populated here -->
                         <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: #94a3b8; text-align: center;">
-                            <i class="fas fa-mouse-pointer" style="font-size: 40px; margin-bottom: 12px; opacity: 0.3;"></i>
-                            <p style="font-size: 11px; margin: 0;">Select an item from the list to view details</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="csat" class="tab-content">
-                            <i class="fas fa-mouse-pointer" style="font-size: 40px; margin-bottom: 12px; opacity: 0.3;"></i>
-                            <p style="font-size: 10px; margin: 0;">Select an item from the list to view details</p>
+                            <i class="fas fa-mouse-pointer" style="font-size: 36px; margin-bottom: 10px; opacity: 0.3;"></i>
+                            <p style="font-size: 10px; margin: 0;">Select item</p>
                         </div>
                     </div>
                 </div>
