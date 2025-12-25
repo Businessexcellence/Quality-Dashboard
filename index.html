@@ -1393,139 +1393,141 @@
         </div>
 
         <div id="strategic" class="tab-content">
-            <!-- Filters Section - Compact (Purple Theme) -->
-            <div style="background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%); border: 1px solid #d8b4fe; border-radius: 6px; padding: 8px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; align-items: end;">
-                    <!-- Region Filter -->
-                    <div>
-                        <label style="display: block; font-size: 8px; font-weight: 600; color: #5b21b6; margin-bottom: 2px;">
-                            <i class="fas fa-map-marker-alt" style="margin-right: 2px;"></i>Region
+            <!-- Compact Filters Section -->
+            <div style="background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%); border-radius: 8px; padding: 12px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 180px;">
+                        <label style="display: block; font-size: 9px; font-weight: 600; color: #5b21b6; margin-bottom: 4px;">
+                            <i class="fas fa-map-marker-alt"></i> Region
                         </label>
-                        <select id="strategicFilterRegion" onchange="applyStrategicFilters()" style="width: 100%; padding: 3px; font-size: 9px; border: 1px solid #cbd5e1; border-radius: 3px;">
-                            <option value="">All</option>
+                        <select id="strategicFilterRegion" onchange="applyStrategicFilters()" style="width: 100%; padding: 6px; font-size: 10px; border: 2px solid #d8b4fe; border-radius: 6px;">
+                            <option value="">All Regions</option>
                         </select>
                     </div>
-                    
-                    <!-- Account Filter -->
-                    <div>
-                        <label style="display: block; font-size: 8px; font-weight: 600; color: #5b21b6; margin-bottom: 2px;">
-                            <i class="fas fa-building" style="margin-right: 2px;"></i>Account
+                    <div style="flex: 1; min-width: 180px;">
+                        <label style="display: block; font-size: 9px; font-weight: 600; color: #5b21b6; margin-bottom: 4px;">
+                            <i class="fas fa-building"></i> Account
                         </label>
-                        <select id="strategicFilterAccount" onchange="applyStrategicFilters()" style="width: 100%; padding: 3px; font-size: 9px; border: 1px solid #cbd5e1; border-radius: 3px;">
-                            <option value="">All</option>
+                        <select id="strategicFilterAccount" onchange="applyStrategicFilters()" style="width: 100%; padding: 6px; font-size: 10px; border: 2px solid #d8b4fe; border-radius: 6px;">
+                            <option value="">All Accounts</option>
                         </select>
                     </div>
-                    
-                    <!-- Financial Year Filter -->
-                    <div>
-                        <label style="display: block; font-size: 8px; font-weight: 600; color: #5b21b6; margin-bottom: 2px;">
-                            <i class="fas fa-calendar-alt" style="margin-right: 2px;"></i>Year
+                    <div style="flex: 1; min-width: 180px;">
+                        <label style="display: block; font-size: 9px; font-weight: 600; color: #5b21b6; margin-bottom: 4px;">
+                            <i class="fas fa-calendar-alt"></i> Financial Year
                         </label>
-                        <select id="strategicFilterYear" onchange="applyStrategicFilters()" style="width: 100%; padding: 3px; font-size: 9px; border: 1px solid #cbd5e1; border-radius: 3px;">
-                            <option value="">All</option>
+                        <select id="strategicFilterYear" onchange="applyStrategicFilters()" style="width: 100%; padding: 6px; font-size: 10px; border: 2px solid #d8b4fe; border-radius: 6px;">
+                            <option value="">All Years</option>
                         </select>
                     </div>
-                    
-                    <!-- Practice Head Filter -->
-                    <div>
-                        <label style="display: block; font-size: 8px; font-weight: 600; color: #5b21b6; margin-bottom: 2px;">
-                            <i class="fas fa-user-tie" style="margin-right: 2px;"></i>Practice Head
+                    <div style="flex: 1; min-width: 180px;">
+                        <label style="display: block; font-size: 9px; font-weight: 600; color: #5b21b6; margin-bottom: 4px;">
+                            <i class="fas fa-user-tie"></i> Practice Head
                         </label>
-                        <select id="strategicFilterPracticeHead" onchange="applyStrategicFilters()" style="width: 100%; padding: 3px; font-size: 9px; border: 1px solid #cbd5e1; border-radius: 3px;">
-                            <option value="">All</option>
+                        <select id="strategicFilterPracticeHead" onchange="applyStrategicFilters()" style="width: 100%; padding: 6px; font-size: 10px; border: 2px solid #d8b4fe; border-radius: 6px;">
+                            <option value="">All Practice Heads</option>
                         </select>
                     </div>
-                    
-                    <!-- Clear Button -->
-                    <button onclick="clearStrategicFilters()" style="padding: 6px 10px; font-size: 8px; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; border: none; border-radius: 3px; cursor: pointer; font-weight: 600; white-space: nowrap;">
-                        <i class="fas fa-times-circle" style="margin-right: 3px;"></i>Clear
+                    <button onclick="clearStrategicFilters()" style="padding: 8px 16px; font-size: 10px; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 700; box-shadow: 0 2px 6px rgba(239,68,68,0.4); margin-top: 18px;">
+                        <i class="fas fa-times-circle"></i> Clear All
                     </button>
                 </div>
             </div>
 
-            <!-- TWO COLUMN LAYOUT -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; height: calc(100vh - 200px);">
-                
-                <!-- LEFT COLUMN: PROJECTS SECTION -->
-                <div style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border: 2px solid #3b82f6; border-radius: 6px; padding: 10px; overflow-y: auto;">
-                    <h2 style="font-size: 13px; font-weight: 700; color: #1e40af; margin: 0 0 8px 0; display: flex; align-items: center;">
-                        <i class="fas fa-project-diagram" style="margin-right: 6px; font-size: 12px;"></i>
-                        PROJECTS
+            <!-- PROJECTS SECTION - Compact Card Style -->
+            <div style="background: white; border-radius: 12px; padding: 20px; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(59,130,246,0.15); border-left: 6px solid #3b82f6;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                    <h2 style="font-size: 18px; font-weight: 800; color: #1e40af; margin: 0; display: flex; align-items: center;">
+                        <div style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-right: 12px; box-shadow: 0 4px 8px rgba(59,130,246,0.3);">
+                            <i class="fas fa-project-diagram" style="color: white; font-size: 18px;"></i>
+                        </div>
+                        PROJECTS OVERVIEW
                     </h2>
+                </div>
+                
+                <!-- Compact 3-Column Layout -->
+                <div style="display: grid; grid-template-columns: 250px 1fr 1fr; gap: 20px;">
                     
-                    <!-- Project KPI Cards (Compact) -->
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 8px;">
-                        <div style="background: white; border-radius: 4px; padding: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                            <div style="color: #64748b; font-size: 7px; font-weight: 600; margin-bottom: 2px;">TOTAL</div>
-                            <div style="color: #1e293b; font-size: 18px; font-weight: 700;" id="projectsTotal">0</div>
-                            <div style="color: #94a3b8; font-size: 6px;">WIP + Closed</div>
+                    <!-- Left: KPI Cards Column -->
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <div style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-radius: 10px; padding: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); border: 2px solid #bfdbfe;">
+                            <div style="color: #1e40af; font-size: 10px; font-weight: 700; margin-bottom: 6px; text-transform: uppercase;">Total Projects</div>
+                            <div style="color: #1e293b; font-size: 32px; font-weight: 900; line-height: 1;" id="projectsTotal">0</div>
+                            <div style="color: #64748b; font-size: 9px; margin-top: 4px; font-weight: 600;">WIP + Closed</div>
                         </div>
-                        <div style="background: white; border-radius: 4px; padding: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                            <div style="color: #64748b; font-size: 7px; font-weight: 600; margin-bottom: 2px;">CLOSED</div>
-                            <div style="color: #f59e0b; font-size: 18px; font-weight: 700;" id="projectsClosed">0</div>
+                        <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 10px; padding: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); border: 2px solid #fde047;">
+                            <div style="color: #92400e; font-size: 10px; font-weight: 700; margin-bottom: 6px; text-transform: uppercase;">Closed</div>
+                            <div style="color: #f59e0b; font-size: 32px; font-weight: 900; line-height: 1;" id="projectsClosed">0</div>
                         </div>
-                        <div style="background: white; border-radius: 4px; padding: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                            <div style="color: #64748b; font-size: 7px; font-weight: 600; margin-bottom: 2px;">WIP</div>
-                            <div style="color: #3b82f6; font-size: 18px; font-weight: 700;" id="projectsWIP">0</div>
+                        <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 10px; padding: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); border: 2px solid #93c5fd;">
+                            <div style="color: #1e3a8a; font-size: 10px; font-weight: 700; margin-bottom: 6px; text-transform: uppercase;">Work In Progress</div>
+                            <div style="color: #3b82f6; font-size: 32px; font-weight: 900; line-height: 1;" id="projectsWIP">0</div>
                         </div>
                     </div>
                     
-                    <!-- Project Status Distribution (Compact) -->
-                    <div style="background: white; border-radius: 4px; padding: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); margin-bottom: 8px;">
-                        <h3 style="font-size: 10px; font-weight: 700; color: #1e293b; margin: 0 0 6px 0;">Status Distribution</h3>
-                        <div id="projectsStatusBreakdown" style="max-height: 120px; overflow-y: auto;"></div>
-                    </div>
-                    
-                    <!-- Project Type (Compact) -->
-                    <div style="background: white; border-radius: 4px; padding: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                        <h3 style="font-size: 10px; font-weight: 700; color: #1e293b; margin: 0 0 6px 0; display: flex; align-items: center;">
-                            <i class="fas fa-layer-group" style="color: #3b82f6; margin-right: 4px; font-size: 9px;"></i>
-                            Project Type
+                    <!-- Middle: Status Distribution -->
+                    <div style="background: #f8fafc; border-radius: 10px; padding: 14px; border: 2px solid #e2e8f0;">
+                        <h3 style="font-size: 12px; font-weight: 800; color: #334155; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 0.5px;">
+                            <i class="fas fa-chart-bar" style="color: #3b82f6; margin-right: 6px;"></i>Status Distribution
                         </h3>
-                        <div id="projectsTypeBreakdown" style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; max-height: 200px; overflow-y: auto;"></div>
+                        <div id="projectsStatusBreakdown" style="max-height: 280px; overflow-y: auto; padding-right: 6px;"></div>
+                    </div>
+                    
+                    <!-- Right: Project Type -->
+                    <div style="background: #f8fafc; border-radius: 10px; padding: 14px; border: 2px solid #e2e8f0;">
+                        <h3 style="font-size: 12px; font-weight: 800; color: #334155; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 0.5px;">
+                            <i class="fas fa-layer-group" style="color: #3b82f6; margin-right: 6px;"></i>Project Types
+                        </h3>
+                        <div id="projectsTypeBreakdown" style="display: flex; flex-direction: column; gap: 8px; max-height: 280px; overflow-y: auto; padding-right: 6px;"></div>
                     </div>
                 </div>
+            </div>
 
-                <!-- RIGHT COLUMN: RCA/CAPA SECTION -->
-                <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 2px solid #10b981; border-radius: 6px; padding: 10px; overflow-y: auto;">
-                    <h2 style="font-size: 13px; font-weight: 700; color: #065f46; margin: 0 0 8px 0; display: flex; align-items: center;">
-                        <i class="fas fa-clipboard-check" style="margin-right: 6px; font-size: 12px;"></i>
-                        RCA / CAPA
+            <!-- RCA/CAPA SECTION - Compact Card Style -->
+            <div style="background: white; border-radius: 12px; padding: 20px; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(16,185,129,0.15); border-left: 6px solid #10b981;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                    <h2 style="font-size: 18px; font-weight: 800; color: #065f46; margin: 0; display: flex; align-items: center;">
+                        <div style="background: linear-gradient(135deg, #10b981 0%, #065f46 100%); width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-right: 12px; box-shadow: 0 4px 8px rgba(16,185,129,0.3);">
+                            <i class="fas fa-clipboard-check" style="color: white; font-size: 18px;"></i>
+                        </div>
+                        RCA / CAPA OVERVIEW
                     </h2>
+                </div>
+                
+                <!-- Compact 3-Column Layout -->
+                <div style="display: grid; grid-template-columns: 250px 1fr 1fr; gap: 20px;">
                     
-                    <!-- RCA/CAPA KPI Cards (Compact) -->
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 8px;">
-                        <div style="background: white; border-radius: 4px; padding: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                            <div style="color: #64748b; font-size: 7px; font-weight: 600; margin-bottom: 2px;">TOTAL</div>
-                            <div style="color: #1e293b; font-size: 18px; font-weight: 700;" id="rcaCapaTotal">0</div>
-                            <div style="color: #94a3b8; font-size: 6px;">WIP + Closed</div>
+                    <!-- Left: KPI Cards Column -->
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-radius: 10px; padding: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); border: 2px solid #bbf7d0;">
+                            <div style="color: #065f46; font-size: 10px; font-weight: 700; margin-bottom: 6px; text-transform: uppercase;">Total RCA/CAPA</div>
+                            <div style="color: #1e293b; font-size: 32px; font-weight: 900; line-height: 1;" id="rcaCapaTotal">0</div>
+                            <div style="color: #64748b; font-size: 9px; margin-top: 4px; font-weight: 600;">WIP + Closed</div>
                         </div>
-                        <div style="background: white; border-radius: 4px; padding: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                            <div style="color: #64748b; font-size: 7px; font-weight: 600; margin-bottom: 2px;">CLOSED</div>
-                            <div style="color: #f59e0b; font-size: 18px; font-weight: 700;" id="rcaCapaClosed">0</div>
+                        <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 10px; padding: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); border: 2px solid #fde047;">
+                            <div style="color: #92400e; font-size: 10px; font-weight: 700; margin-bottom: 6px; text-transform: uppercase;">Closed</div>
+                            <div style="color: #f59e0b; font-size: 32px; font-weight: 900; line-height: 1;" id="rcaCapaClosed">0</div>
                         </div>
-                        <div style="background: white; border-radius: 4px; padding: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                            <div style="color: #64748b; font-size: 7px; font-weight: 600; margin-bottom: 2px;">WIP</div>
-                            <div style="color: #3b82f6; font-size: 18px; font-weight: 700;" id="rcaCapaWIP">0</div>
+                        <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 10px; padding: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); border: 2px solid #93c5fd;">
+                            <div style="color: #1e3a8a; font-size: 10px; font-weight: 700; margin-bottom: 6px; text-transform: uppercase;">Work In Progress</div>
+                            <div style="color: #3b82f6; font-size: 32px; font-weight: 900; line-height: 1;" id="rcaCapaWIP">0</div>
                         </div>
                     </div>
                     
-                    <!-- Error Type (Compact) -->
-                    <div style="background: white; border-radius: 4px; padding: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); margin-bottom: 8px;">
-                        <h3 style="font-size: 10px; font-weight: 700; color: #1e293b; margin: 0 0 6px 0; display: flex; align-items: center;">
-                            <i class="fas fa-exclamation-triangle" style="color: #ef4444; margin-right: 4px; font-size: 9px;"></i>
-                            Error Type
+                    <!-- Middle: Error Type -->
+                    <div style="background: #f8fafc; border-radius: 10px; padding: 14px; border: 2px solid #e2e8f0;">
+                        <h3 style="font-size: 12px; font-weight: 800; color: #334155; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 0.5px;">
+                            <i class="fas fa-exclamation-triangle" style="color: #ef4444; margin-right: 6px;"></i>Error Types
                         </h3>
-                        <div id="rcaCapaErrorType" style="display: flex; flex-direction: column; gap: 6px; max-height: 150px; overflow-y: auto;"></div>
+                        <div id="rcaCapaErrorType" style="display: flex; flex-direction: column; gap: 8px; max-height: 280px; overflow-y: auto; padding-right: 6px;"></div>
                     </div>
                     
-                    <!-- Impact (Compact) -->
-                    <div style="background: white; border-radius: 4px; padding: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                        <h3 style="font-size: 10px; font-weight: 700; color: #1e293b; margin: 0 0 6px 0; display: flex; align-items: center;">
-                            <i class="fas fa-bolt" style="color: #f59e0b; margin-right: 4px; font-size: 9px;"></i>
-                            Impact
+                    <!-- Right: Impact -->
+                    <div style="background: #f8fafc; border-radius: 10px; padding: 14px; border: 2px solid #e2e8f0;">
+                        <h3 style="font-size: 12px; font-weight: 800; color: #334155; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 0.5px;">
+                            <i class="fas fa-bolt" style="color: #f59e0b; margin-right: 6px;"></i>Impact Levels
                         </h3>
-                        <div id="rcaCapaImpact" style="display: flex; flex-direction: column; gap: 6px; max-height: 150px; overflow-y: auto;"></div>
+                        <div id="rcaCapaImpact" style="display: flex; flex-direction: column; gap: 8px; max-height: 280px; overflow-y: auto; padding-right: 6px;"></div>
                     </div>
                 </div>
             </div>
@@ -5218,11 +5220,15 @@ Total Population: ${totalPop}
                     const color = colors[colorIndex % colors.length];
                     
                     return `
-                        <div style="background: linear-gradient(135deg, ${color}15 0%, ${color}25 100%); border-left: 2px solid ${color}; border-radius: 3px; padding: 6px;">
-                            <div style="color: #1e293b; font-size: 9px; font-weight: 700; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${type}">${type}</div>
+                        <div style="background: white; border-left: 4px solid ${color}; border-radius: 8px; padding: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); transition: transform 0.2s;">
                             <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <span style="color: ${color}; font-size: 14px; font-weight: 700;">${count}</span>
-                                <span style="color: #64748b; font-size: 8px; font-weight: 600;">${percentage}%</span>
+                                <div style="flex: 1;">
+                                    <div style="color: #1e293b; font-size: 11px; font-weight: 700; margin-bottom: 4px;">${type}</div>
+                                    <div style="color: #64748b; font-size: 9px; font-weight: 600;">${percentage}% of total</div>
+                                </div>
+                                <div style="background: linear-gradient(135deg, ${color}15 0%, ${color}25 100%); width: 50px; height: 50px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                    <span style="color: ${color}; font-size: 20px; font-weight: 900;">${count}</span>
+                                </div>
                             </div>
                         </div>
                     `;
@@ -5372,10 +5378,16 @@ Total Population: ${totalPop}
                     const percentage = rcaCapa.length > 0 ? Math.round((count / rcaCapa.length) * 100) : 0;
                     
                     return `
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 5px; background: #fef2f2; border-left: 2px solid #ef4444; border-radius: 3px;">
-                            <span style="color: #1e293b; font-size: 8px; font-weight: 600; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${type}">${type}</span>
-                            <span style="color: #ef4444; font-size: 10px; font-weight: 700; margin-left: 6px;">${count}</span>
-                            <span style="color: #64748b; font-size: 7px; margin-left: 4px;">(${percentage}%)</span>
+                        <div style="background: white; border-left: 4px solid #ef4444; border-radius: 8px; padding: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.08);">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div style="flex: 1;">
+                                    <div style="color: #1e293b; font-size: 11px; font-weight: 700; margin-bottom: 4px;">${type}</div>
+                                    <div style="color: #64748b; font-size: 9px; font-weight: 600;">${percentage}% of total</div>
+                                </div>
+                                <div style="background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); width: 50px; height: 50px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                    <span style="color: #ef4444; font-size: 20px; font-weight: 900;">${count}</span>
+                                </div>
+                            </div>
                         </div>
                     `;
                 }).join('');
@@ -5413,10 +5425,16 @@ Total Population: ${totalPop}
                     }
                     
                     return `
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 5px; background: ${bgColor}; border-left: 2px solid ${color}; border-radius: 3px;">
-                            <span style="color: #1e293b; font-size: 8px; font-weight: 600; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${impact}">${impact}</span>
-                            <span style="color: ${color}; font-size: 10px; font-weight: 700; margin-left: 6px;">${count}</span>
-                            <span style="color: #64748b; font-size: 7px; margin-left: 4px;">(${percentage}%)</span>
+                        <div style="background: white; border-left: 4px solid ${color}; border-radius: 8px; padding: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.08);">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div style="flex: 1;">
+                                    <div style="color: #1e293b; font-size: 11px; font-weight: 700; margin-bottom: 4px;">${impact}</div>
+                                    <div style="color: #64748b; font-size: 9px; font-weight: 600;">${percentage}% of total</div>
+                                </div>
+                                <div style="background: linear-gradient(135deg, ${bgColor} 0%, ${bgColor} 100%); width: 50px; height: 50px; border-radius: 10px; display: flex; align-items: center; justify-content: center; border: 2px solid ${color}25;">
+                                    <span style="color: ${color}; font-size: 20px; font-weight: 900;">${count}</span>
+                                </div>
+                            </div>
                         </div>
                     `;
                 }).join('');
