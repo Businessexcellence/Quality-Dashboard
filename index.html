@@ -5322,6 +5322,69 @@ Total Population: ${totalPop}
             }
         }
 
+        // ============================================
+        // GLOBAL HELPER FUNCTIONS FOR PROJECT DATA
+        // ============================================
+        
+        // Helper function to get status from Column G
+        window.getProjectStatus = function(project) {
+            const keys = Object.keys(project);
+            
+            const possibleKeys = [
+                '__EMPTY_6',  // XLSX headerless column naming (Column G = 6th empty column)
+                'G',          // Direct column letter
+                keys[6],      // 7th column by index
+                'Status',
+                'status',
+                'PROJECT STATUS',
+                'Project Status',
+                'STATUS'
+            ];
+            
+            for (const key of possibleKeys) {
+                if (key && project[key]) {
+                    return String(project[key]);
+                }
+            }
+            
+            return '';
+        };
+        
+        // Helper function to get Project Type
+        window.getProjectType = function(project) {
+            const keys = Object.keys(project);
+            
+            const possibleKeys = [
+                'Project Type',
+                'PROJECT TYPE',
+                'Type',
+                'TYPE',
+                'ProjectType',
+                'Category',
+                'CATEGORY',
+                'Project Category',
+                '__EMPTY_1',  // Column B
+                '__EMPTY_2',  // Column C
+                '__EMPTY_3',  // Column D
+                'B', 'C', 'D', 'E', 'F', 'H',
+                keys[1], keys[2], keys[3], keys[4], keys[5], keys[7]
+            ];
+            
+            for (const key of possibleKeys) {
+                if (key && project[key]) {
+                    const value = String(project[key]).trim();
+                    // Skip if it looks like a status or date
+                    if (value && 
+                        !value.match(/^\d{4}-\d{2}-\d{2}/) &&
+                        !['WIP', 'CLOSED', 'COMPLETE', 'OPEN'].includes(value.toUpperCase())) {
+                        return value;
+                    }
+                }
+            }
+            
+            return '';
+        };
+
         function generateProjectsSection(projects) {
             try {
                 console.log('📊 generateProjectsSection called with', projects.length, 'projects');
@@ -5331,73 +5394,9 @@ Total Population: ${totalPop}
                     console.log('📋 Available columns:', Object.keys(projects[0]));
                 }
                 
-                // Helper function to get status from Column G
-                // Column G in Excel is the 7th column (A=1, B=2, C=3, D=4, E=5, F=6, G=7)
-                function getProjectStatus(project) {
-                    // Get all keys
-                    const keys = Object.keys(project);
-                    
-                    // Try different possible column references for Column G:
-                    // 1. Direct column letter 'G'
-                    // 2. Index 6 (7th column, 0-based)
-                    // 3. __EMPTY_6 (XLSX's way of naming headerless columns)
-                    // 4. Named headers that might be in column G
-                    
-                    const possibleKeys = [
-                        '__EMPTY_6',  // XLSX headerless column naming (Column G = 6th empty column)
-                        'G',          // Direct column letter
-                        keys[6],      // 7th column by index
-                        'Status',
-                        'status',
-                        'PROJECT STATUS',
-                        'Project Status',
-                        'STATUS'
-                    ];
-                    
-                    for (const key of possibleKeys) {
-                        if (key && project[key]) {
-                            return String(project[key]);
-                        }
-                    }
-                    
-                    return '';
-                }
-                
-                // Helper function to get Project Type
-                function getProjectType(project) {
-                    const keys = Object.keys(project);
-                    
-                    // Try different possible column references for Project Type
-                    const possibleKeys = [
-                        'Project Type',
-                        'PROJECT TYPE',
-                        'Type',
-                        'TYPE',
-                        'ProjectType',
-                        'Category',
-                        'CATEGORY',
-                        'Project Category',
-                        '__EMPTY_1',  // Column B
-                        '__EMPTY_2',  // Column C
-                        '__EMPTY_3',  // Column D
-                        'B', 'C', 'D', 'E', 'F', 'H',
-                        keys[1], keys[2], keys[3], keys[4], keys[5], keys[7]
-                    ];
-                    
-                    for (const key of possibleKeys) {
-                        if (key && project[key]) {
-                            const value = String(project[key]).trim();
-                            // Skip if it looks like a status or date
-                            if (value && 
-                                !value.match(/^\d{4}-\d{2}-\d{2}/) &&
-                                !['WIP', 'CLOSED', 'COMPLETE', 'OPEN'].includes(value.toUpperCase())) {
-                                return value;
-                            }
-                        }
-                    }
-                    
-                    return '';
-                }
+                // Use global helper functions
+                const getProjectStatus = window.getProjectStatus;
+                const getProjectType = window.getProjectType;
                 
                 // Count WIP and CLOSED
                 const wip = projects.filter(p => {
