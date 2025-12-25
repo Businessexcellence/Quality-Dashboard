@@ -6735,54 +6735,29 @@ Total Population: ${totalPop}
             try {
                 console.log('🔄 Refreshing RCA & CAPA tab...');
                 
-                // Show debug panel
+                // Hide debug panel (for production)
                 const debugPanel = document.getElementById('rcaCapaDebugPanel');
                 const debugContent = document.getElementById('rcaCapaDebugContent');
-                if (debugPanel) debugPanel.style.display = 'block';
-                
-                let debugInfo = [];
-                debugInfo.push('📊 Checking data sources...');
-                debugInfo.push(`window.dashboardData exists: ${!!window.dashboardData}`);
-                debugInfo.push(`window.dashboardData.rcaCapa exists: ${!!window.dashboardData?.rcaCapa}`);
-                debugInfo.push(`window.dashboardData.rcaCapa length: ${window.dashboardData?.rcaCapa?.length || 0}`);
+                if (debugPanel) debugPanel.style.display = 'none'; // Keep hidden in production
                 
                 if (!window.dashboardData || !window.dashboardData.rcaCapa) {
-                    debugInfo.push('❌ ERROR: No RCA & CAPA data available');
-                    debugInfo.push('💡 Please upload an Excel file with RCA_CAPA sheet');
-                    if (debugContent) debugContent.innerHTML = debugInfo.join('<br>');
                     console.warn('⚠️ No RCA & CAPA data available');
                     return;
                 }
                 
                 const rcaCapaData = window.dashboardData.rcaCapa;
-                debugInfo.push(`✅ Data loaded: ${rcaCapaData.length} items`);
                 console.log(`📊 RCA & CAPA data loaded: ${rcaCapaData.length} items`);
                 
                 // CRITICAL: Set window.allRcaCapa for global access
                 window.allRcaCapa = rcaCapaData;
-                debugInfo.push(`✅ window.allRcaCapa set: ${window.allRcaCapa.length} items`);
                 console.log('✅ window.allRcaCapa set with', window.allRcaCapa.length, 'items');
                 
                 if (rcaCapaData.length > 0) {
                     const firstItem = rcaCapaData[0];
                     const columns = Object.keys(firstItem);
-                    debugInfo.push(`📋 Total columns: ${columns.length}`);
-                    debugInfo.push(`📋 Column names: ${columns.join(', ')}`);
                     console.log('📋 Sample RCA item:', firstItem);
                     console.log('📋 RCA columns:', columns);
-                    
-                    // Test helper functions on first item
-                    debugInfo.push('<br><strong>🧪 Helper Function Tests on First Item:</strong>');
-                    debugInfo.push(`Account: "${window.getRcaAccount(firstItem)}" ${window.getRcaAccount(firstItem) ? '✅' : '❌'}`);
-                    debugInfo.push(`Error Type: "${window.getErrorType(firstItem)}" ${window.getErrorType(firstItem) ? '✅' : '❌'}`);
-                    debugInfo.push(`Impact: "${window.getImpact(firstItem)}" ${window.getImpact(firstItem) ? '✅' : '❌'}`);
-                    debugInfo.push(`Practice Head: "${window.getRcaPracticeHead(firstItem)}" ${window.getRcaPracticeHead(firstItem) ? '✅' : '❌'}`);
-                    debugInfo.push(`Financial Year: "${window.getRcaFinancialYear(firstItem)}" ${window.getRcaFinancialYear(firstItem) ? '✅' : '❌'}`);
-                    debugInfo.push(`Status: "${window.getRcaCapaStatus(firstItem)}" ${window.getRcaCapaStatus(firstItem) ? '✅' : '❌'}`);
-                    debugInfo.push(`Region: "${window.getRcaRegion(firstItem)}" ${window.getRcaRegion(firstItem) ? '✅' : '❌'}`);
                 }
-                
-                if (debugContent) debugContent.innerHTML = debugInfo.join('<br>');
                 
                 // Populate filters
                 populateRcaCapaFilters(rcaCapaData);
@@ -6791,10 +6766,6 @@ Total Population: ${totalPop}
                 applyRcaCapaFilters();
                 
             } catch (error) {
-                const debugContent = document.getElementById('rcaCapaDebugContent');
-                if (debugContent) {
-                    debugContent.innerHTML = `❌ ERROR: ${error.message}<br>Stack: ${error.stack}`;
-                }
                 handleError(error, 'refreshRcaCapaTab');
             }
         };
