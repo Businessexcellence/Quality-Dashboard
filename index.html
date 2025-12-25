@@ -1394,16 +1394,38 @@
 
         <div id="strategic" class="tab-content">
             <!-- Compact Filters Section - Matching Account Summary Style -->
-            <div style="background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%); border-radius: 8px; padding: 12px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                    <h2 style="font-size: 11px; color: #5b21b6; margin: 0; font-weight: 700;">
-                        <i class="fas fa-filter" style="font-size: 9px;"></i> STRATEGIC FILTERS
+            <div style="background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%); border-radius: 8px; padding: 8px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <h2 style="font-size: 10px; color: #5b21b6; margin: 0; font-weight: 700;">
+                        <i class="fas fa-filter" style="font-size: 8px;"></i> STRATEGIC FILTERS
                     </h2>
-                    <button onclick="clearStrategicFilters()" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); border: none; color: white; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 9px; font-weight: 600;">
-                        <i class="fas fa-times"></i> Clear All
-                    </button>
+                    <div style="display: flex; gap: 6px; align-items: center;">
+                        <!-- Universal Search Input -->
+                        <div style="position: relative;">
+                            <input 
+                                type="text" 
+                                id="strategicUniversalSearch" 
+                                placeholder="🔍 Search all filters..."
+                                style="
+                                    padding: 4px 8px 4px 24px;
+                                    border: 2px solid #d8b4fe;
+                                    border-radius: 4px;
+                                    font-size: 9px;
+                                    width: 180px;
+                                    background: white;
+                                    color: #1e293b;
+                                    outline: none;
+                                "
+                                oninput="filterStrategicOptions(this.value)"
+                            />
+                            <i class="fas fa-search" style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); color: #7c3aed; font-size: 8px; pointer-events: none;"></i>
+                        </div>
+                        <button onclick="clearStrategicFilters()" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); border: none; color: white; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 8px; font-weight: 600;">
+                            <i class="fas fa-times"></i> Clear All
+                        </button>
+                    </div>
                 </div>
-                <div id="strategicFilters" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
+                <div id="strategicFilters" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;">
                     <!-- 4 Filters generated dynamically with counts -->
                 </div>
             </div>
@@ -4960,34 +4982,35 @@ Total Population: ${totalPop}
                             background: white; 
                             border: 2px solid #d8b4fe; 
                             border-radius: 6px; 
-                            padding: 8px; 
+                            padding: 6px; 
                         ">
-                            <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 6px;">
-                                <i class="fas fa-${filter.icon}" style="color: #7c3aed; font-size: 9px;"></i>
-                                <h3 style="font-size: 10px; font-weight: 700; color: #5b21b6; margin: 0; text-transform: uppercase;">${filter.label}</h3>
+                            <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 4px;">
+                                <i class="fas fa-${filter.icon}" style="color: #7c3aed; font-size: 8px;"></i>
+                                <h3 style="font-size: 9px; font-weight: 700; color: #5b21b6; margin: 0; text-transform: uppercase;">${filter.label}</h3>
                             </div>
-                            <div style="
+                            <div class="strategic-filter-options" data-filter-field="${filter.field}" style="
                                 display: flex; 
                                 flex-direction: column; 
-                                gap: 3px; 
-                                max-height: 120px; 
+                                gap: 2px; 
+                                max-height: 90px; 
                                 overflow-y: auto;
                                 padding-right: 3px;
                             ">
                                 ${valueCounts.map(({ value, count }) => `
                                     <button 
-                                        onclick="applyStrategicFilter('${filter.field}', '${String(value).replace(/'/g, "\\'")}')"
+                                        onclick="toggleStrategicFilter('${filter.field}', '${String(value).replace(/'/g, "\\'")}')"
                                         class="strategic-filter-btn"
                                         data-field="${filter.field}"
                                         data-value="${String(value).replace(/'/g, "\\'")}"
+                                        data-search-text="${String(value).toLowerCase()}"
                                         style="
                                             display: flex;
                                             justify-content: space-between;
                                             align-items: center;
-                                            padding: 4px 6px;
+                                            padding: 3px 5px;
                                             background: #faf5ff;
                                             border: 1px solid #d8b4fe;
-                                            border-radius: 4px;
+                                            border-radius: 3px;
                                             cursor: pointer;
                                             transition: all 0.2s;
                                             text-align: left;
@@ -4996,16 +5019,16 @@ Total Population: ${totalPop}
                                         onmouseover="if(!this.classList.contains('active')){ this.style.background='#e9d5ff'; this.style.borderColor='#7c3aed'; }"
                                         onmouseout="if(!this.classList.contains('active')){ this.style.background='#faf5ff'; this.style.borderColor='#d8b4fe'; }"
                                     >
-                                        <span style="color: #1e293b; font-size: 9px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;" title="${value}">${value}</span>
+                                        <span style="color: #1e293b; font-size: 8px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;" title="${value}">${value}</span>
                                         <span style="
                                             background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
                                             color: white;
-                                            padding: 2px 6px;
-                                            border-radius: 10px;
-                                            font-size: 8px;
+                                            padding: 1px 4px;
+                                            border-radius: 8px;
+                                            font-size: 7px;
                                             font-weight: 700;
-                                            margin-left: 6px;
-                                            min-width: 24px;
+                                            margin-left: 4px;
+                                            min-width: 20px;
                                             text-align: center;
                                         ">${count}</span>
                                     </button>
@@ -5021,40 +5044,80 @@ Total Population: ${totalPop}
             }
         }
         
-        // New function to apply filter when button is clicked
-        function applyStrategicFilter(field, value) {
+        // Universal search function to filter all options
+        function filterStrategicOptions(searchText) {
             try {
-                console.log(`🔍 Filter clicked: ${field} = ${value}`);
+                const lowerSearch = searchText.toLowerCase().trim();
                 
-                // Store active filters
+                // If search is empty, show all buttons
+                if (!lowerSearch) {
+                    document.querySelectorAll('.strategic-filter-btn').forEach(btn => {
+                        btn.style.display = 'flex';
+                    });
+                    return;
+                }
+                
+                // Filter buttons based on search text
+                document.querySelectorAll('.strategic-filter-btn').forEach(btn => {
+                    const searchableText = btn.getAttribute('data-search-text') || '';
+                    if (searchableText.includes(lowerSearch)) {
+                        btn.style.display = 'flex';
+                    } else {
+                        btn.style.display = 'none';
+                    }
+                });
+                
+                console.log(`🔍 Search filtered: "${searchText}"`);
+            } catch (error) {
+                handleError(error, 'filterStrategicOptions');
+            }
+        }
+        
+        // New function to toggle filter (supports multiple selection)
+        function toggleStrategicFilter(field, value) {
+            try {
+                console.log(`🔍 Filter toggled: ${field} = ${value}`);
+                
+                // Initialize active filters if needed
                 if (!window.activeStrategicFilters) {
                     window.activeStrategicFilters = {};
                 }
                 
-                // First, reset only buttons in the SAME field (deselect previous option in this field)
-                document.querySelectorAll(`.strategic-filter-btn[data-field="${field}"]`).forEach(btn => {
-                    btn.classList.remove('active');
-                    btn.style.background = '#faf5ff';
-                    btn.style.borderColor = '#d8b4fe';
-                    const textSpan = btn.querySelector('span:first-child');
-                    if (textSpan) textSpan.style.color = '#1e293b';
-                    const badgeSpan = btn.querySelector('span:last-child');
-                    if (badgeSpan) badgeSpan.style.background = 'linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%)';
-                });
+                // Initialize array for this field if needed
+                if (!window.activeStrategicFilters[field]) {
+                    window.activeStrategicFilters[field] = [];
+                }
                 
-                // Now set the new active filter
-                window.activeStrategicFilters[field] = value;
+                // Toggle the value (add if not present, remove if present)
+                const valueIndex = window.activeStrategicFilters[field].indexOf(value);
+                if (valueIndex > -1) {
+                    // Remove the value
+                    window.activeStrategicFilters[field].splice(valueIndex, 1);
+                    
+                    // Remove field entirely if no values left
+                    if (window.activeStrategicFilters[field].length === 0) {
+                        delete window.activeStrategicFilters[field];
+                    }
+                } else {
+                    // Add the value
+                    window.activeStrategicFilters[field].push(value);
+                }
+                
+                console.log('📊 Active filters:', window.activeStrategicFilters);
                 
                 // Apply filters
                 applyStrategicFilters();
                 
-                // Highlight the clicked button
+                // Update button styles for ALL buttons
                 document.querySelectorAll('.strategic-filter-btn').forEach(btn => {
                     const btnField = btn.getAttribute('data-field');
                     const btnValue = btn.getAttribute('data-value');
                     
-                    // Check if this button matches any active filter
-                    if (btnField && window.activeStrategicFilters[btnField] === btnValue) {
+                    // Check if this button's value is in the active filters for its field
+                    const isActive = window.activeStrategicFilters[btnField] && 
+                                    window.activeStrategicFilters[btnField].includes(btnValue);
+                    
+                    if (isActive) {
                         btn.classList.add('active');
                         btn.style.background = 'linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%)';
                         btn.style.borderColor = '#5b21b6';
@@ -5062,11 +5125,24 @@ Total Population: ${totalPop}
                         if (textSpan) textSpan.style.color = 'white';
                         const badgeSpan = btn.querySelector('span:last-child');
                         if (badgeSpan) badgeSpan.style.background = 'rgba(255,255,255,0.3)';
+                    } else {
+                        btn.classList.remove('active');
+                        btn.style.background = '#faf5ff';
+                        btn.style.borderColor = '#d8b4fe';
+                        const textSpan = btn.querySelector('span:first-child');
+                        if (textSpan) textSpan.style.color = '#1e293b';
+                        const badgeSpan = btn.querySelector('span:last-child');
+                        if (badgeSpan) badgeSpan.style.background = 'linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%)';
                     }
                 });
             } catch (error) {
-                handleError(error, 'applyStrategicFilter');
+                handleError(error, 'toggleStrategicFilter');
             }
+        }
+        
+        // Old function kept for backward compatibility (redirects to toggle)
+        function applyStrategicFilter(field, value) {
+            toggleStrategicFilter(field, value);
         }
 
         function applyStrategicFilters() {
@@ -5089,31 +5165,55 @@ Total Population: ${totalPop}
                     return;
                 }
 
-                // Get active filters from window object
+                // Get active filters from window object (now supports arrays)
                 const activeFilters = window.activeStrategicFilters || {};
                 
-                const regionFilter = activeFilters['Region'] || '';
-                const accountFilter = activeFilters['Account'] || '';
-                const yearFilter = activeFilters['Financial Year'] || '';
-                const practiceHeadFilter = activeFilters['Practice Head'] || '';
+                const regionFilters = activeFilters['Region'] || [];
+                const accountFilters = activeFilters['Account'] || [];
+                const yearFilters = activeFilters['Financial Year'] || [];
+                const practiceHeadFilters = activeFilters['Practice Head'] || [];
 
-                console.log('🔍 Filters:', { regionFilter, accountFilter, yearFilter, practiceHeadFilter });
+                console.log('🔍 Active Filters:', { 
+                    Region: regionFilters, 
+                    Account: accountFilters, 
+                    'Financial Year': yearFilters, 
+                    'Practice Head': practiceHeadFilters 
+                });
+
+                // Helper function to check if a row matches filter (OR logic within same field, AND logic across fields)
+                const matchesFilters = (row) => {
+                    // Region filter (OR logic - match any selected region)
+                    if (regionFilters.length > 0) {
+                        const rowRegion = String(row['Region'] || '').trim();
+                        if (!regionFilters.includes(rowRegion)) return false;
+                    }
+                    
+                    // Account filter (OR logic - match any selected account)
+                    if (accountFilters.length > 0) {
+                        const rowAccount = String(row['Account'] || '').trim();
+                        if (!accountFilters.includes(rowAccount)) return false;
+                    }
+                    
+                    // Financial Year filter (OR logic - match any selected year)
+                    if (yearFilters.length > 0) {
+                        const rowYear = String(row['Financial Year'] || '').trim();
+                        if (!yearFilters.includes(rowYear)) return false;
+                    }
+                    
+                    // Practice Head filter (OR logic - match any selected practice head)
+                    if (practiceHeadFilters.length > 0) {
+                        const rowPracticeHead = String(row['Practice Head'] || '').trim();
+                        if (!practiceHeadFilters.includes(rowPracticeHead)) return false;
+                    }
+                    
+                    return true;
+                };
 
                 // Filter projects
-                let filteredProjects = strategicData.projects.filter(row => {
-                    return (!regionFilter || String(row['Region'] || '').trim() === regionFilter) &&
-                           (!accountFilter || String(row['Account'] || '').trim() === accountFilter) &&
-                           (!yearFilter || String(row['Financial Year'] || '').trim() === yearFilter) &&
-                           (!practiceHeadFilter || String(row['Practice Head'] || '').trim() === practiceHeadFilter);
-                });
+                let filteredProjects = strategicData.projects.filter(matchesFilters);
 
                 // Filter RCA/CAPA
-                let filteredRcaCapa = strategicData.rcaCapa.filter(row => {
-                    return (!regionFilter || String(row['Region'] || '').trim() === regionFilter) &&
-                           (!accountFilter || String(row['Account'] || '').trim() === accountFilter) &&
-                           (!yearFilter || String(row['Financial Year'] || '').trim() === yearFilter) &&
-                           (!practiceHeadFilter || String(row['Practice Head'] || '').trim() === practiceHeadFilter);
-                });
+                let filteredRcaCapa = strategicData.rcaCapa.filter(matchesFilters);
 
                 console.log(`📊 Filtered: ${filteredProjects.length} projects, ${filteredRcaCapa.length} RCA/CAPA`);
                 
@@ -5546,6 +5646,13 @@ Total Population: ${totalPop}
             try {
                 // Clear active filters
                 window.activeStrategicFilters = {};
+                
+                // Clear search input
+                const searchInput = document.getElementById('strategicUniversalSearch');
+                if (searchInput) {
+                    searchInput.value = '';
+                    filterStrategicOptions(''); // Show all options
+                }
                 
                 // Reset all button styles
                 document.querySelectorAll('.strategic-filter-btn').forEach(btn => {
