@@ -1667,8 +1667,8 @@
                 <div id="rcaCapaDebugContent" style="color: #78350f; line-height: 1.6;"></div>
             </div>
 
-            <!-- KPI Cards and Chart Section -->
-            <div style="display: grid; grid-template-columns: repeat(4, 1fr) 2fr; gap: 12px; margin-bottom: 12px;">
+            <!-- NEW LAYOUT: KPI Cards and Region Chart -->
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 12px;">
                 <!-- Error Type Card -->
                 <div style="background: white; border-radius: 10px; padding: 10px; box-shadow: 0 3px 10px rgba(239,68,68,0.15); border-left: 5px solid #ef4444;">
                     <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
@@ -1728,14 +1728,19 @@
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Monthly RCA Chart -->
-                <div style="background: white; border-radius: 10px; padding: 10px; box-shadow: 0 3px 10px rgba(239,68,68,0.15); border-left: 5px solid #8b5cf6;">
-                    <div style="color: #64748b; font-size: 8px; font-weight: 700; text-transform: uppercase; margin-bottom: 8px;">
-                        <i class="fas fa-chart-line" style="margin-right: 4px;"></i>Monthly RCA Count
+            <!-- Region-wise RCA Count Chart -->
+            <div style="background: white; border-radius: 10px; padding: 16px; box-shadow: 0 3px 10px rgba(239,68,68,0.15); border-left: 5px solid #8b5cf6; margin-bottom: 12px;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                    <div style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-globe" style="color: white; font-size: 14px;"></i>
                     </div>
-                    <canvas id="rcaMonthlyChart" style="max-height: 120px;"></canvas>
+                    <div style="color: #64748b; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">
+                        Region-wise RCA & CAPA Count
+                    </div>
                 </div>
+                <canvas id="rcaRegionChart" style="max-height: 200px;"></canvas>
             </div>
 
             <!-- RCA & CAPA Details Section -->
@@ -7070,7 +7075,7 @@ Total Population: ${totalPop}
                 
                 // Generate KPIs and Chart
                 generateRcaKPIs(filteredRcaCapa);
-                generateMonthlyRcaChart(filteredRcaCapa);
+                generateRegionRcaChart(filteredRcaCapa);
                 
                 // Update list
                 generateRcaCapaList(filteredRcaCapa);
@@ -7175,82 +7180,59 @@ Total Population: ${totalPop}
             }
         }
         
-        function generateMonthlyRcaChart(rcaCapaItems) {
+        function generateRegionRcaChart(rcaCapaItems) {
             try {
                 // Destroy existing chart if any
-                if (window.rcaMonthlyChart) {
-                    window.rcaMonthlyChart.destroy();
+                if (window.rcaRegionChart) {
+                    window.rcaRegionChart.destroy();
                 }
                 
-                const canvas = document.getElementById('rcaMonthlyChart');
+                const canvas = document.getElementById('rcaRegionChart');
                 if (!canvas) {
-                    console.error('❌ Monthly RCA chart canvas not found');
+                    console.error('❌ Region RCA chart canvas not found');
                     return;
                 }
                 
-                // Group by month
-                const monthlyCounts = {};
-                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-                
+                // Count by region
+                const regionCounts = {};
                 rcaCapaItems.forEach(item => {
-                    // Try to find date field
-                    const dateFields = [
-                        item['Date'],
-                        item['Created Date'],
-                        item['Date Created'],
-                        item['Timestamp'],
-                        item['Entry Date']
-                    ];
-                    
-                    let dateValue = null;
-                    for (const field of dateFields) {
-                        if (field) {
-                            dateValue = field;
-                            break;
-                        }
-                    }
-                    
-                    if (dateValue) {
-                        let date;
-                        if (typeof dateValue === 'number') {
-                            // Excel serial date
-                            date = new Date((dateValue - 25569) * 86400 * 1000);
-                        } else {
-                            date = new Date(dateValue);
-                        }
-                        
-                        if (!isNaN(date.getTime())) {
-                            const monthKey = `${months[date.getMonth()]} ${date.getFullYear()}`;
-                            monthlyCounts[monthKey] = (monthlyCounts[monthKey] || 0) + 1;
-                        }
-                    }
+                    const region = window.getRcaRegion(item) || 'Unknown';
+                    regionCounts[region] = (regionCounts[region] || 0) + 1;
                 });
                 
-                // Sort by date
-                const sortedMonths = Object.entries(monthlyCounts)
-                    .sort((a, b) => {
-                        const dateA = new Date(a[0]);
-                        const dateB = new Date(b[0]);
-                        return dateA - dateB;
-                    })
-                    .slice(-12); // Last 12 months
+                // Sort by count descending
+                const sortedRegions = Object.entries(regionCounts)
+                    .sort((a, b) => b[1] - a[1]);
                 
-                const labels = sortedMonths.map(([month]) => month);
-                const data = sortedMonths.map(([, count]) => count);
+                const labels = sortedRegions.map(([region]) => region);
+                const data = sortedRegions.map(([, count]) => count);
+                
+                // Color palette for regions
+                const colors = [
+                    '#ef4444', // red
+                    '#f59e0b', // amber
+                    '#10b981', // green
+                    '#3b82f6', // blue
+                    '#8b5cf6', // purple
+                    '#ec4899', // pink
+                    '#14b8a6', // teal
+                    '#f97316'  // orange
+                ];
+                
+                const backgroundColors = labels.map((_, index) => colors[index % colors.length]);
                 
                 const ctx = canvas.getContext('2d');
-                window.rcaMonthlyChart = new Chart(ctx, {
-                    type: 'line',
+                window.rcaRegionChart = new Chart(ctx, {
+                    type: 'bar',
                     data: {
                         labels: labels,
                         datasets: [{
-                            label: 'RCA Count',
+                            label: 'RCA & CAPA Count',
                             data: data,
-                            borderColor: '#ef4444',
-                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                            backgroundColor: backgroundColors,
+                            borderColor: backgroundColors.map(c => c),
                             borderWidth: 2,
-                            fill: true,
-                            tension: 0.4
+                            borderRadius: 6
                         }]
                     },
                     options: {
@@ -7272,18 +7254,16 @@ Total Population: ${totalPop}
                             y: {
                                 beginAtZero: true,
                                 ticks: {
-                                    font: { size: 8 },
+                                    font: { size: 10 },
                                     stepSize: 1
                                 },
                                 grid: {
-                                    color: '#fee2e2'
+                                    color: '#f3f4f6'
                                 }
                             },
                             x: {
                                 ticks: {
-                                    font: { size: 8 },
-                                    maxRotation: 45,
-                                    minRotation: 45
+                                    font: { size: 10, weight: '600' }
                                 },
                                 grid: {
                                     display: false
@@ -7293,9 +7273,9 @@ Total Population: ${totalPop}
                     }
                 });
                 
-                console.log('✅ Monthly RCA chart generated');
+                console.log('✅ Region RCA chart generated:', sortedRegions.length, 'regions');
             } catch (error) {
-                handleError(error, 'generateMonthlyRcaChart');
+                handleError(error, 'generateRegionRcaChart');
             }
         }
         
