@@ -7198,8 +7198,9 @@ Total Population: ${totalPop}
         function generateRegionRcaChart(rcaCapaItems) {
             try {
                 // Destroy existing chart if any
-                if (window.rcaRegionChart) {
+                if (window.rcaRegionChart && typeof window.rcaRegionChart.destroy === 'function') {
                     window.rcaRegionChart.destroy();
+                    window.rcaRegionChart = null;
                 }
                 
                 const canvas = document.getElementById('rcaRegionChart');
@@ -7208,6 +7209,8 @@ Total Population: ${totalPop}
                     return;
                 }
                 
+                console.log('📊 Generating region chart for', rcaCapaItems.length, 'items');
+                
                 // Count by region
                 const regionCounts = {};
                 rcaCapaItems.forEach(item => {
@@ -7215,12 +7218,22 @@ Total Population: ${totalPop}
                     regionCounts[region] = (regionCounts[region] || 0) + 1;
                 });
                 
+                console.log('📊 Region counts:', regionCounts);
+                
                 // Sort by count descending
                 const sortedRegions = Object.entries(regionCounts)
                     .sort((a, b) => b[1] - a[1]);
                 
+                if (sortedRegions.length === 0) {
+                    console.warn('⚠️ No regions found for chart');
+                    return;
+                }
+                
                 const labels = sortedRegions.map(([region]) => region);
                 const data = sortedRegions.map(([, count]) => count);
+                
+                console.log('📊 Chart labels:', labels);
+                console.log('📊 Chart data:', data);
                 
                 // Color palette for regions
                 const colors = [
@@ -7290,6 +7303,7 @@ Total Population: ${totalPop}
                 
                 console.log('✅ Region RCA chart generated:', sortedRegions.length, 'regions');
             } catch (error) {
+                console.error('❌ Error generating region chart:', error);
                 handleError(error, 'generateRegionRcaChart');
             }
         }
