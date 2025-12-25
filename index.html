@@ -3902,7 +3902,10 @@ Total Population: ${totalPop}
                     return;
                 }
 
+                // First populate filters with data
                 populateParameterFilters();
+                
+                // Then apply filters (will show all data initially since filters are empty)
                 applyParameterFilters();
                 
                 console.log('✅ Parameter Performance tab refreshed');
@@ -4367,6 +4370,7 @@ Total Population: ${totalPop}
             refreshHomeTab();
             refreshAccountSummaryTab();
             refreshTransactionalTab();
+            refreshParameterPerformanceTab(); // Parameter Performance Tab
         }
 
         // ==========================================
