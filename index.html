@@ -2068,13 +2068,8 @@
                     window.dashboardData.csat = parseSheet(workbook, 'CSAT') || [];
                     console.log('✅ CSAT rows:', window.dashboardData.csat.length);
 
-                    // Save to localStorage
-                    try {
-                        localStorage.setItem('window.dashboardData', JSON.stringify(window.dashboardData));
-                        console.log('💾 Data saved to localStorage');
-                    } catch (storageError) {
-                        console.warn('⚠️ Could not save to localStorage:', storageError.message);
-                    }
+                    // Note: We keep data in memory only (localStorage has size limits)
+                    console.log('💾 Data stored in memory (window.dashboardData)');
 
                     uploadStatus.textContent = '✅ Upload complete!';
                     uploadSubStatus.textContent = 'Data loaded successfully';
@@ -7416,13 +7411,8 @@ Total Population: ${totalPop}
                 console.log('✅ Upload button event listener attached');
             }
             
-            // Check if data exists in localStorage
-            const savedData = localStorage.getItem('window.dashboardData');
-            if (savedData) {
-                window.dashboardData = JSON.parse(savedData);
-                refreshAllTabs();
-                console.log('💾 Loaded saved data from localStorage');
-            }
+            // Data will be loaded when user uploads Excel file
+            console.log('📊 Ready to load data - please upload your Excel file');
         });
 
         // Close modal on clicking outside
