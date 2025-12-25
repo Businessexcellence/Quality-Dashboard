@@ -4686,8 +4686,8 @@ Total Population: ${totalPop}
                 const data = dashboardData.recruiterAuditCount;
                 
                 // Get unique values from correct columns
-                // Column A - Account
-                const accounts = [...new Set(data.map(row => String(row['Account'] || '').trim()))].filter(v => v).sort();
+                // Column A - Client (named "Client" in Excel)
+                const accounts = [...new Set(data.map(row => String(row['Client'] || '').trim()))].filter(v => v).sort();
                 // Column C - Month
                 const months = [...new Set(data.map(row => String(row['Month'] || '').trim()))].filter(v => v);
                 // Column G - Program Manager
@@ -4767,7 +4767,7 @@ Total Population: ${totalPop}
                 const regionFilter = document.getElementById('recruiterFilterRegion')?.value || '';
                 
                 let filteredData = dashboardData.recruiterAuditCount.filter(row => {
-                    return (!accountFilter || String(row['Account'] || '').trim() === accountFilter) &&
+                    return (!accountFilter || String(row['Client'] || '').trim() === accountFilter) &&
                            (!monthFilter || String(row['Month'] || '').trim() === monthFilter) &&
                            (!regionalHeadFilter || String(row['Regional Head'] || '').trim() === regionalHeadFilter) &&
                            (!programManagerFilter || String(row['Program Manager'] || '').trim() === programManagerFilter) &&
@@ -4884,7 +4884,7 @@ Total Population: ${totalPop}
             try {
                 // Calculate metrics for summary
                 const uniqueRecruiters = [...new Set(data.map(row => String(row['Recruiter Name'] || '').trim()))].filter(v => v);
-                const uniqueAccounts = [...new Set(data.map(row => String(row['Account'] || '').trim()))].filter(v => v);
+                const uniqueAccounts = [...new Set(data.map(row => String(row['Client'] || '').trim()))].filter(v => v);
                 const uniqueRegions = [...new Set(data.map(row => String(row['Region'] || '').trim()))].filter(v => v);
                 
                 // Calculate overall accuracy
