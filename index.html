@@ -6060,27 +6060,72 @@ Total Population: ${totalPop}
                 // Normalize search text: lowercase and preserve spaces
                 const lowerSearch = searchText.toLowerCase().trim();
                 
-                if (!lowerSearch) {
-                    document.querySelectorAll('.project-filter-btn').forEach(btn => {
-                        btn.style.display = 'flex';
-                    });
-                    return;
-                }
-                
+                // Always show/hide filter buttons based on search
                 document.querySelectorAll('.project-filter-btn').forEach(btn => {
-                    // Get the searchable text and normalize it
-                    const searchableText = (btn.getAttribute('data-search-text') || '').toLowerCase();
-                    const buttonValue = (btn.getAttribute('data-value') || '').toLowerCase();
-                    
-                    // Check if search text matches either the data-search-text or data-value
-                    if (searchableText.includes(lowerSearch) || buttonValue.includes(lowerSearch)) {
+                    if (!lowerSearch) {
                         btn.style.display = 'flex';
                     } else {
-                        btn.style.display = 'none';
+                        // Get the searchable text and normalize it
+                        const searchableText = (btn.getAttribute('data-search-text') || '').toLowerCase();
+                        const buttonValue = (btn.getAttribute('data-value') || '').toLowerCase();
+                        
+                        // Check if search text matches either the data-search-text or data-value
+                        if (searchableText.includes(lowerSearch) || buttonValue.includes(lowerSearch)) {
+                            btn.style.display = 'flex';
+                        } else {
+                            btn.style.display = 'none';
+                        }
                     }
                 });
                 
-                console.log(`🔍 Project filters searched: "${searchText}"`);
+                // ALSO filter the project list based on search text
+                if (!window.dashboardData || !window.dashboardData.projects) {
+                    console.error('❌ Projects data not available');
+                    return;
+                }
+                
+                const allProjects = window.dashboardData.projects;
+                
+                // If no search text, apply normal filters
+                if (!lowerSearch) {
+                    applyProjectFilters();
+                    console.log(`🔍 Project search cleared - showing filtered results`);
+                    return;
+                }
+                
+                // Search across all project fields
+                const searchedProjects = allProjects.filter(project => {
+                    // Search in all relevant fields
+                    const searchableFields = [
+                        project['Account'],
+                        project['Opportunity Statement'],
+                        project['Description'],
+                        project['Sponsor'],
+                        project['Project Sponsor'],
+                        project['Region'],
+                        project['Financial Year'],
+                        project['Practice Head'],
+                        project['Quarter'],
+                        project['Q'],
+                        window.getProjectType(project),
+                        window.getProjectStatus(project)
+                    ];
+                    
+                    // Check if any field contains the search text
+                    return searchableFields.some(field => {
+                        if (field !== null && field !== undefined) {
+                            const fieldValue = String(field).toLowerCase();
+                            return fieldValue.includes(lowerSearch);
+                        }
+                        return false;
+                    });
+                });
+                
+                console.log(`🔍 Project search: "${searchText}" - found ${searchedProjects.length} of ${allProjects.length} projects`);
+                
+                // Update the project list with search results
+                generateProjectList(searchedProjects);
+                
             } catch (error) {
                 handleError(error, 'filterProjectOptions');
             }
@@ -6625,27 +6670,77 @@ Total Population: ${totalPop}
                 // Normalize search text: lowercase and preserve spaces
                 const lowerSearch = searchText.toLowerCase().trim();
                 
-                if (!lowerSearch) {
-                    document.querySelectorAll('.rcacapa-filter-btn').forEach(btn => {
-                        btn.style.display = 'flex';
-                    });
-                    return;
-                }
-                
+                // Always show/hide filter buttons based on search
                 document.querySelectorAll('.rcacapa-filter-btn').forEach(btn => {
-                    // Get the searchable text and normalize it
-                    const searchableText = (btn.getAttribute('data-search-text') || '').toLowerCase();
-                    const buttonValue = (btn.getAttribute('data-value') || '').toLowerCase();
-                    
-                    // Check if search text matches either the data-search-text or data-value
-                    if (searchableText.includes(lowerSearch) || buttonValue.includes(lowerSearch)) {
+                    if (!lowerSearch) {
                         btn.style.display = 'flex';
                     } else {
-                        btn.style.display = 'none';
+                        // Get the searchable text and normalize it
+                        const searchableText = (btn.getAttribute('data-search-text') || '').toLowerCase();
+                        const buttonValue = (btn.getAttribute('data-value') || '').toLowerCase();
+                        
+                        // Check if search text matches either the data-search-text or data-value
+                        if (searchableText.includes(lowerSearch) || buttonValue.includes(lowerSearch)) {
+                            btn.style.display = 'flex';
+                        } else {
+                            btn.style.display = 'none';
+                        }
                     }
                 });
                 
-                console.log(`🔍 RCA & CAPA filters searched: "${searchText}"`);
+                // ALSO filter the RCA & CAPA list based on search text
+                if (!window.dashboardData || !window.dashboardData.rcaCapa) {
+                    console.error('❌ RCA & CAPA data not available');
+                    return;
+                }
+                
+                const allRcaCapa = window.dashboardData.rcaCapa;
+                
+                // If no search text, apply normal filters
+                if (!lowerSearch) {
+                    applyRcaCapaFilters();
+                    console.log(`🔍 RCA & CAPA search cleared - showing filtered results`);
+                    return;
+                }
+                
+                // Search across all RCA & CAPA fields
+                const searchedRcaCapa = allRcaCapa.filter(item => {
+                    // Search in all relevant fields
+                    const searchableFields = [
+                        item['Account'],
+                        item['Description'],
+                        item['Issue Description'],
+                        item['Problem Statement'],
+                        item['Root Cause'],
+                        item['RCA'],
+                        item['Corrective Action'],
+                        item['CAPA'],
+                        item['Action'],
+                        item['Owner'],
+                        item['Assigned To'],
+                        item['Region'],
+                        item['Financial Year'],
+                        item['Practice Head'],
+                        window.getErrorType(item),
+                        window.getImpact(item),
+                        window.getRcaCapaStatus(item)
+                    ];
+                    
+                    // Check if any field contains the search text
+                    return searchableFields.some(field => {
+                        if (field !== null && field !== undefined) {
+                            const fieldValue = String(field).toLowerCase();
+                            return fieldValue.includes(lowerSearch);
+                        }
+                        return false;
+                    });
+                });
+                
+                console.log(`🔍 RCA & CAPA search: "${searchText}" - found ${searchedRcaCapa.length} of ${allRcaCapa.length} items`);
+                
+                // Update the list with search results
+                generateRcaCapaList(searchedRcaCapa);
+                
             } catch (error) {
                 handleError(error, 'filterRcaCapaOptions');
             }
