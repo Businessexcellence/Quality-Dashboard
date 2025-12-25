@@ -52,6 +52,19 @@
                 if (clickedElement) {
                     clickedElement.classList.add('active');
                 }
+                
+                // 🎯 INDEPENDENT TAB REFRESH: Only refresh the active tab
+                // This ensures each tab operates independently and doesn't affect others
+                if (window.dashboardData) {
+                    console.log('🔄 Refreshing only active tab:', tabId);
+                    if (tabId === 'home' && typeof window.refreshHomeTab === 'function') {
+                        window.refreshHomeTab();
+                    } else if (tabId === 'account-summary' && typeof window.refreshAccountSummaryTab === 'function') {
+                        window.refreshAccountSummaryTab();
+                    } else if (tabId === 'transactional' && typeof window.refreshTransactionalTab === 'function') {
+                        window.refreshTransactionalTab();
+                    }
+                }
             } catch (error) {
                 console.error('❌ Error switching tab:', error);
                 alert('Error switching tab: ' + error.message);
@@ -3271,7 +3284,7 @@ Total Population: ${totalPop}
                 const criticalCount = data.filter(row => String(row['Critical/Non Critical'] || '').trim() === 'Critical').length;
                 const nonCriticalCount = data.filter(row => String(row['Critical/Non Critical'] || '').trim() === 'Non Critical').length;
                 
-                // Get Regional Heads for filtered data
+                // Get Regional Heads for filtered data (from Account_Summary mapping)
                 const regionalHeadsInData = new Set();
                 data.forEach(row => {
                     const client = String(row['Client'] || '').trim();
@@ -3281,37 +3294,46 @@ Total Population: ${totalPop}
                     }
                 });
                 
-                let summary = `<strong style="font-size: 11px;">📊 Audit Data Summary</strong><br>`;
-                summary += `<div style="margin-top: 6px; padding: 6px; background: rgba(255,140,66,0.05); border-radius: 4px;">`;
+                // Get stage names
+                const stageNames = [...new Set(data.map(row => row['Stage']))].filter(s => s);
+                const stageText = stageNames.length > 0 ? stageNames.join(' and ') : 'N/A';
                 
-                // Filters badges
+                // Build filter text
+                let filterText = '';
                 if (clientFilter || practiceHeadFilter || yearFilter || monthFilter || weekFilter) {
-                    summary += '<div style="margin-bottom: 6px;"><strong>Filters:</strong> ';
                     const filters = [];
-                    if (clientFilter) filters.push(`<span style="background: #3b82f6; color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px;">Client: ${clientFilter}</span>`);
-                    if (practiceHeadFilter) filters.push(`<span style="background: #8b5cf6; color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px;">Practice Head: ${practiceHeadFilter}</span>`);
-                    if (yearFilter) filters.push(`<span style="background: #10b981; color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px;">Year: ${yearFilter}</span>`);
-                    if (monthFilter) filters.push(`<span style="background: #f59e0b; color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px;">Month: ${monthFilter}</span>`);
-                    if (weekFilter) filters.push(`<span style="background: #ef4444; color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px;">Week: ${weekFilter}</span>`);
-                    summary += filters.join(' ');
-                    summary += '</div>';
+                    if (clientFilter) filters.push(`<strong>${clientFilter}</strong>`);
+                    if (practiceHeadFilter) filters.push(`Practice Head <strong>${practiceHeadFilter}</strong>`);
+                    if (yearFilter) filters.push(`year <strong>${yearFilter}</strong>`);
+                    if (monthFilter) filters.push(`month <strong>${monthFilter}</strong>`);
+                    if (weekFilter) filters.push(`week <strong>${weekFilter}</strong>`);
+                    filterText = ' for ' + filters.join(', ');
                 }
                 
-                // Audit details
-                summary += `
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; font-size: 10px;">
-                        <div><strong>${totalRecords.toLocaleString()}</strong> Records</div>
-                        <div><strong>${uniqueParameters}</strong> Parameters</div>
-                        <div><strong>${uniqueClients}</strong> Clients</div>
-                        <div><strong>${uniqueRegions}</strong> Regions</div>
-                        <div><strong>${regionalHeadsInData.size}</strong> Regional Heads</div>
-                        <div><strong>${uniqueStages}</strong> Stages</div>
-                        <div style="color: #dc2626;"><strong>${criticalCount.toLocaleString()}</strong> Critical</div>
-                        <div style="color: #10b981;"><strong>${nonCriticalCount.toLocaleString()}</strong> Non-Critical</div>
-                    </div>
-                `;
+                // Generate enhanced statement-format summary
+                // Note: Regional Head is mapped from Account_Summary sheet via Client mapping
+                // Column R does not exist in Parameter_Audit_Count sheet (only A-Q exist)
+                let summary = `<div style="padding: 10px; background: linear-gradient(135deg, rgba(255,140,66,0.08), rgba(255,102,0,0.05)); border-left: 3px solid var(--primary); border-radius: 6px; line-height: 1.9; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">`;
+                summary += `<div style="font-size: 11px; color: var(--text-primary); font-weight: 500;">`;
                 
-                summary += `</div>`;
+                // Opening statement
+                summary += `<div style="margin-bottom: 8px;"><strong>📊 Audit Overview:</strong> `;
+                summary += `This ${filterText ? 'filtered ' : ''}audit analysis covers <span style="background: var(--primary); color: white; padding: 2px 6px; border-radius: 4px; font-weight: 700;">${totalRecords.toLocaleString()}</span> records `;
+                summary += `across <span style="background: #3b82f6; color: white; padding: 2px 6px; border-radius: 4px; font-weight: 700;">${uniqueParameters}</span> parameters${filterText}.</div>`;
+                
+                // Coverage details
+                summary += `<div style="margin-bottom: 8px;"><strong>🌍 Coverage:</strong> `;
+                summary += `The data spans <span style="background: #8b5cf6; color: white; padding: 2px 6px; border-radius: 4px; font-weight: 700;">${uniqueClients}</span> client(s) `;
+                summary += `operating in <span style="background: #ec4899; color: white; padding: 2px 6px; border-radius: 4px; font-weight: 700;">${uniqueRegions}</span> region(s), `;
+                summary += `managed by <span style="background: #f59e0b; color: white; padding: 2px 6px; border-radius: 4px; font-weight: 700;">${regionalHeadsInData.size}</span> regional head(s).</div>`;
+                
+                // Stage and criticality
+                summary += `<div><strong>⚙️ Audit Composition:</strong> `;
+                summary += `The audit encompasses <strong>${stageText}</strong> stage(s), categorized into `;
+                summary += `<span style="background: #dc2626; color: white; padding: 2px 6px; border-radius: 4px; font-weight: 700;">${criticalCount.toLocaleString()} Critical</span> and `;
+                summary += `<span style="background: #10b981; color: white; padding: 2px 6px; border-radius: 4px; font-weight: 700;">${nonCriticalCount.toLocaleString()} Non-Critical</span> opportunities.</div>`;
+                
+                summary += `</div></div>`;
                 
                 safeSetHTML('summaryContent', summary);
             } catch (error) {
@@ -3404,7 +3426,11 @@ Total Population: ${totalPop}
             }
         }
 
+        // 🔄 INDEPENDENT TAB SYSTEM
+        // Each tab is now refreshed independently when switched to
+        // This function is kept for backward compatibility (initial data load)
         function refreshAllTabs() {
+            console.log('🔄 Initial data load: Refreshing all tabs');
             refreshHomeTab();
             refreshAccountSummaryTab();
             refreshTransactionalTab();
