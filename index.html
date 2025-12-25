@@ -3915,23 +3915,74 @@ Total Population: ${totalPop}
             try {
                 const data = dashboardData.parameterAuditCount;
                 
-                // Get unique values
+                // Get unique values from correct columns
+                // Column A - Client
                 const clients = [...new Set(data.map(row => row['Client']))].filter(v => v).sort();
+                // Column B - Region
                 const regions = [...new Set(data.map(row => row['Region']))].filter(v => v).sort();
+                // Column H - Stage
                 const stages = [...new Set(data.map(row => row['Stage']))].filter(v => v).sort();
+                // Column G - Critical/Non Critical (NOT column F which is Week)
+                const criticalTypes = [...new Set(data.map(row => row['Critical/Non Critical']))].filter(v => v).sort();
+                // Column D - Month
                 const months = [...new Set(data.map(row => row['Month']))].filter(v => v);
                 
                 // Sort months chronologically
                 const monthOrder = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
                 months.sort((a, b) => monthOrder.indexOf(a) - monthOrder.indexOf(b));
                 
-                // Populate selects
-                populateSelect('paramFilterClient', clients);
-                populateSelect('paramFilterRegion', regions);
-                populateSelect('paramFilterStage', stages);
-                populateSelect('paramFilterMonth', months);
+                // Populate Client filter (Column A)
+                const clientSelect = document.getElementById('paramFilterClient');
+                if (clientSelect) {
+                    clientSelect.innerHTML = '<option value="">All Clients</option>';
+                    clients.forEach(client => {
+                        clientSelect.innerHTML += `<option value="${client}">${client}</option>`;
+                    });
+                }
                 
-                console.log('✅ Parameter filters populated');
+                // Populate Region filter (Column B)
+                const regionSelect = document.getElementById('paramFilterRegion');
+                if (regionSelect) {
+                    regionSelect.innerHTML = '<option value="">All Regions</option>';
+                    regions.forEach(region => {
+                        regionSelect.innerHTML += `<option value="${region}">${region}</option>`;
+                    });
+                }
+                
+                // Populate Stage filter (Column H)
+                const stageSelect = document.getElementById('paramFilterStage');
+                if (stageSelect) {
+                    stageSelect.innerHTML = '<option value="">All Stages</option>';
+                    stages.forEach(stage => {
+                        stageSelect.innerHTML += `<option value="${stage}">${stage}</option>`;
+                    });
+                }
+                
+                // Populate Critical/Non Critical filter (Column G)
+                const criticalSelect = document.getElementById('paramFilterCritical');
+                if (criticalSelect) {
+                    criticalSelect.innerHTML = '<option value="">All Types</option>';
+                    criticalTypes.forEach(type => {
+                        criticalSelect.innerHTML += `<option value="${type}">${type}</option>`;
+                    });
+                }
+                
+                // Populate Month filter (Column D)
+                const monthSelect = document.getElementById('paramFilterMonth');
+                if (monthSelect) {
+                    monthSelect.innerHTML = '<option value="">All Months</option>';
+                    months.forEach(month => {
+                        monthSelect.innerHTML += `<option value="${month}">${month}</option>`;
+                    });
+                }
+                
+                console.log('✅ Parameter filters populated:', {
+                    clients: clients.length,
+                    regions: regions.length,
+                    stages: stages.length,
+                    criticalTypes: criticalTypes.length,
+                    months: months.length
+                });
             } catch (error) {
                 handleError(error, 'populateParameterFilters');
             }
@@ -3941,22 +3992,31 @@ Total Population: ${totalPop}
             try {
                 let data = dashboardData.parameterAuditCount;
                 
-                // Get filter values
-                const clientFilter = safeGetElement('paramFilterClient')?.value || '';
-                const regionFilter = safeGetElement('paramFilterRegion')?.value || '';
-                const stageFilter = safeGetElement('paramFilterStage')?.value || '';
-                const criticalFilter = safeGetElement('paramFilterCritical')?.value || '';
-                const monthFilter = safeGetElement('paramFilterMonth')?.value || '';
+                // Get filter values from correct columns
+                const clientFilter = safeGetElement('paramFilterClient')?.value || '';      // Column A
+                const regionFilter = safeGetElement('paramFilterRegion')?.value || '';      // Column B
+                const stageFilter = safeGetElement('paramFilterStage')?.value || '';        // Column H
+                const criticalFilter = safeGetElement('paramFilterCritical')?.value || '';  // Column G
+                const monthFilter = safeGetElement('paramFilterMonth')?.value || '';        // Column D
                 
-                // Apply filters
+                console.log('🔍 Applying filters:', { clientFilter, regionFilter, stageFilter, criticalFilter, monthFilter });
+                
+                // Apply filters to Parameter_Audit_Count data
                 let filteredData = data.filter(row => {
-                    if (clientFilter && row['Client'] !== clientFilter) return false;
-                    if (regionFilter && row['Region'] !== regionFilter) return false;
-                    if (stageFilter && row['Stage'] !== stageFilter) return false;
-                    if (criticalFilter && row['Critical/Non Critical'] !== criticalFilter) return false;
-                    if (monthFilter && row['Month'] !== monthFilter) return false;
+                    // Column A - Client
+                    if (clientFilter && String(row['Client'] || '').trim() !== clientFilter) return false;
+                    // Column B - Region
+                    if (regionFilter && String(row['Region'] || '').trim() !== regionFilter) return false;
+                    // Column H - Stage
+                    if (stageFilter && String(row['Stage'] || '').trim() !== stageFilter) return false;
+                    // Column G - Critical/Non Critical
+                    if (criticalFilter && String(row['Critical/Non Critical'] || '').trim() !== criticalFilter) return false;
+                    // Column D - Month
+                    if (monthFilter && String(row['Month'] || '').trim() !== monthFilter) return false;
                     return true;
                 });
+                
+                console.log('✅ Filtered data:', filteredData.length, 'rows');
                 
                 // Calculate and display metrics
                 calculateParameterMetrics(filteredData);
