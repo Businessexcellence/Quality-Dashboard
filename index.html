@@ -1457,17 +1457,12 @@
                 </h2>
                 
                 <!-- Project KPI Cards -->
-                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 12px;">
-                    <!-- Total Projects -->
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 12px;">
+                    <!-- Total Projects (WIP + Closed) -->
                     <div style="background: white; border-radius: 6px; padding: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
                         <div style="color: #64748b; font-size: 9px; font-weight: 600; margin-bottom: 4px;">TOTAL PROJECTS</div>
                         <div style="color: #1e293b; font-size: 24px; font-weight: 700;" id="projectsTotal">0</div>
-                    </div>
-                    
-                    <!-- Open Projects -->
-                    <div style="background: white; border-radius: 6px; padding: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                        <div style="color: #64748b; font-size: 9px; font-weight: 600; margin-bottom: 4px;">OPEN</div>
-                        <div style="color: #10b981; font-size: 24px; font-weight: 700;" id="projectsOpen">0</div>
+                        <div style="color: #94a3b8; font-size: 8px; margin-top: 4px;">WIP + Closed</div>
                     </div>
                     
                     <!-- Closed Projects -->
@@ -1476,10 +1471,10 @@
                         <div style="color: #f59e0b; font-size: 24px; font-weight: 700;" id="projectsClosed">0</div>
                     </div>
                     
-                    <!-- In Progress Projects -->
+                    <!-- WIP Projects -->
                     <div style="background: white; border-radius: 6px; padding: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                        <div style="color: #64748b; font-size: 9px; font-weight: 600; margin-bottom: 4px;">IN PROGRESS</div>
-                        <div style="color: #3b82f6; font-size: 24px; font-weight: 700;" id="projectsInProgress">0</div>
+                        <div style="color: #64748b; font-size: 9px; font-weight: 600; margin-bottom: 4px;">WIP</div>
+                        <div style="color: #3b82f6; font-size: 24px; font-weight: 700;" id="projectsWIP">0</div>
                     </div>
                 </div>
                 
@@ -1498,17 +1493,12 @@
                 </h2>
                 
                 <!-- RCA/CAPA KPI Cards -->
-                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 12px;">
-                    <!-- Total RCA/CAPA -->
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 12px;">
+                    <!-- Total RCA/CAPA (WIP + Closed) -->
                     <div style="background: white; border-radius: 6px; padding: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
                         <div style="color: #64748b; font-size: 9px; font-weight: 600; margin-bottom: 4px;">TOTAL RCA/CAPA</div>
                         <div style="color: #1e293b; font-size: 24px; font-weight: 700;" id="rcaCapaTotal">0</div>
-                    </div>
-                    
-                    <!-- Open RCA/CAPA -->
-                    <div style="background: white; border-radius: 6px; padding: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                        <div style="color: #64748b; font-size: 9px; font-weight: 600; margin-bottom: 4px;">OPEN</div>
-                        <div style="color: #10b981; font-size: 24px; font-weight: 700;" id="rcaCapaOpen">0</div>
+                        <div style="color: #94a3b8; font-size: 8px; margin-top: 4px;">WIP + Closed</div>
                     </div>
                     
                     <!-- Closed RCA/CAPA -->
@@ -1517,10 +1507,10 @@
                         <div style="color: #f59e0b; font-size: 24px; font-weight: 700;" id="rcaCapaClosed">0</div>
                     </div>
                     
-                    <!-- In Progress RCA/CAPA -->
+                    <!-- WIP RCA/CAPA -->
                     <div style="background: white; border-radius: 6px; padding: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                        <div style="color: #64748b; font-size: 9px; font-weight: 600; margin-bottom: 4px;">IN PROGRESS</div>
-                        <div style="color: #3b82f6; font-size: 24px; font-weight: 700;" id="rcaCapaInProgress">0</div>
+                        <div style="color: #64748b; font-size: 9px; font-weight: 600; margin-bottom: 4px;">WIP</div>
+                        <div style="color: #3b82f6; font-size: 24px; font-weight: 700;" id="rcaCapaWIP">0</div>
                     </div>
                 </div>
                 
@@ -4997,29 +4987,32 @@ Total Population: ${totalPop}
 
         function generateProjectsSection(projects) {
             try {
-                // Count by status
-                const total = projects.length;
-                const open = projects.filter(p => String(p['Status'] || '').toLowerCase().includes('open')).length;
+                // Status is in Column G
+                // Count WIP and Closed only
+                const wip = projects.filter(p => {
+                    const status = String(p['Status'] || p['G'] || '').toUpperCase().trim();
+                    return status === 'WIP';
+                }).length;
+                
                 const closed = projects.filter(p => {
-                    const status = String(p['Status'] || '').toLowerCase();
-                    return status.includes('closed') || status.includes('complete');
+                    const status = String(p['Status'] || p['G'] || '').toUpperCase().trim();
+                    return status === 'CLOSED';
                 }).length;
-                const inProgress = projects.filter(p => {
-                    const status = String(p['Status'] || '').toLowerCase();
-                    return status.includes('progress');
-                }).length;
+                
+                const total = wip + closed; // Total is WIP + Closed
                 
                 // Update KPI cards
                 safeSetText('projectsTotal', total);
-                safeSetText('projectsOpen', open);
                 safeSetText('projectsClosed', closed);
-                safeSetText('projectsInProgress', inProgress);
+                safeSetText('projectsWIP', wip);
                 
                 // Generate status breakdown
                 const statusCounts = {};
                 projects.forEach(p => {
-                    const status = String(p['Status'] || 'Unknown');
-                    statusCounts[status] = (statusCounts[status] || 0) + 1;
+                    const status = String(p['Status'] || p['G'] || 'Unknown').trim();
+                    if (status && status !== 'Unknown') {
+                        statusCounts[status] = (statusCounts[status] || 0) + 1;
+                    }
                 });
                 
                 const sortedStatuses = Object.entries(statusCounts)
@@ -5027,13 +5020,12 @@ Total Population: ${totalPop}
                     .slice(0, 5);
                 
                 let breakdownHTML = sortedStatuses.map(([status, count]) => {
-                    const statusLower = status.toLowerCase();
+                    const statusUpper = status.toUpperCase();
                     let color = '#64748b';
-                    if (statusLower.includes('closed') || statusLower.includes('complete')) color = '#f59e0b';
-                    else if (statusLower.includes('open')) color = '#10b981';
-                    else if (statusLower.includes('progress')) color = '#3b82f6';
+                    if (statusUpper === 'CLOSED') color = '#f59e0b';
+                    else if (statusUpper === 'WIP') color = '#3b82f6';
                     
-                    const percentage = total > 0 ? Math.round((count / total) * 100) : 0;
+                    const percentage = projects.length > 0 ? Math.round((count / projects.length) * 100) : 0;
                     
                     return `
                         <div style="margin-bottom: 8px;">
@@ -5050,7 +5042,7 @@ Total Population: ${totalPop}
                 
                 safeSetHTML('projectsStatusBreakdown', breakdownHTML || '<div style="color: #94a3b8; font-size: 10px; text-align: center;">No data</div>');
                 
-                console.log('✅ Projects section updated:', { total, open, closed, inProgress });
+                console.log('✅ Projects section updated:', { total, wip, closed, allProjects: projects.length });
             } catch (error) {
                 handleError(error, 'generateProjectsSection');
             }
@@ -5058,23 +5050,24 @@ Total Population: ${totalPop}
 
         function generateRcaCapaSection(rcaCapa) {
             try {
-                // Count by status
-                const total = rcaCapa.length;
-                const open = rcaCapa.filter(r => String(r['Status'] || '').toLowerCase().includes('open')).length;
+                // Status is in Column I
+                // Count WIP and Closed only
+                const wip = rcaCapa.filter(r => {
+                    const status = String(r['Status'] || r['I'] || '').toUpperCase().trim();
+                    return status === 'WIP';
+                }).length;
+                
                 const closed = rcaCapa.filter(r => {
-                    const status = String(r['Status'] || '').toLowerCase();
-                    return status.includes('closed') || status.includes('complete');
+                    const status = String(r['Status'] || r['I'] || '').toUpperCase().trim();
+                    return status === 'CLOSED';
                 }).length;
-                const inProgress = rcaCapa.filter(r => {
-                    const status = String(r['Status'] || '').toLowerCase();
-                    return status.includes('progress');
-                }).length;
+                
+                const total = wip + closed; // Total is WIP + Closed
                 
                 // Update KPI cards
                 safeSetText('rcaCapaTotal', total);
-                safeSetText('rcaCapaOpen', open);
                 safeSetText('rcaCapaClosed', closed);
-                safeSetText('rcaCapaInProgress', inProgress);
+                safeSetText('rcaCapaWIP', wip);
                 
                 // Generate Error Type breakdown (Column C)
                 const errorTypeCounts = {};
@@ -5090,7 +5083,7 @@ Total Population: ${totalPop}
                     .slice(0, 5);
                 
                 let errorTypeHTML = sortedErrorTypes.map(([type, count]) => {
-                    const percentage = total > 0 ? Math.round((count / total) * 100) : 0;
+                    const percentage = rcaCapa.length > 0 ? Math.round((count / rcaCapa.length) * 100) : 0;
                     
                     return `
                         <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; background: #fef2f2; border-left: 3px solid #ef4444; border-radius: 4px;">
@@ -5117,7 +5110,7 @@ Total Population: ${totalPop}
                     .slice(0, 5);
                 
                 let impactHTML = sortedImpacts.map(([impact, count]) => {
-                    const percentage = total > 0 ? Math.round((count / total) * 100) : 0;
+                    const percentage = rcaCapa.length > 0 ? Math.round((count / rcaCapa.length) * 100) : 0;
                     
                     // Color based on impact level
                     let color = '#f59e0b';
@@ -5142,7 +5135,7 @@ Total Population: ${totalPop}
                 
                 safeSetHTML('rcaCapaImpact', impactHTML || '<div style="color: #94a3b8; font-size: 10px; text-align: center;">No data</div>');
                 
-                console.log('✅ RCA/CAPA section updated:', { total, open, closed, inProgress, errorTypes: sortedErrorTypes.length, impacts: sortedImpacts.length });
+                console.log('✅ RCA/CAPA section updated:', { total, wip, closed, allRcaCapa: rcaCapa.length, errorTypes: sortedErrorTypes.length, impacts: sortedImpacts.length });
             } catch (error) {
                 handleError(error, 'generateRcaCapaSection');
             }
