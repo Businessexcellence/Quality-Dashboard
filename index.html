@@ -1140,15 +1140,15 @@
                     <div style="font-size: 24px; font-weight: 700;" id="paramTotalCount">0</div>
                 </div>
                 <div style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); border-radius: 6px; padding: 10px; color: white;">
-                    <div style="font-size: 9px; opacity: 0.85; margin-bottom: 4px;">AVG ACCURACY</div>
+                    <div style="font-size: 9px; opacity: 0.85; margin-bottom: 4px;">ACCURACY %</div>
                     <div style="font-size: 24px; font-weight: 700;" id="paramAvgAccuracy">0%</div>
                 </div>
                 <div style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border-radius: 6px; padding: 10px; color: white;">
-                    <div style="font-size: 9px; opacity: 0.85; margin-bottom: 4px;">AVG SAMPLE %</div>
+                    <div style="font-size: 9px; opacity: 0.85; margin-bottom: 4px;">SAMPLE %</div>
                     <div style="font-size: 24px; font-weight: 700;" id="paramAvgSample">0%</div>
                 </div>
                 <div style="background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%); border-radius: 6px; padding: 10px; color: white;">
-                    <div style="font-size: 9px; opacity: 0.85; margin-bottom: 4px;">AVG ERROR %</div>
+                    <div style="font-size: 9px; opacity: 0.85; margin-bottom: 4px;">ERROR %</div>
                     <div style="font-size: 24px; font-weight: 700;" id="paramAvgError">0%</div>
                 </div>
                 <div style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); border-radius: 6px; padding: 10px; color: white;">
@@ -4045,70 +4045,55 @@ Total Population: ${totalPop}
 
         function calculateParameterMetrics(data) {
             try {
-                // Group by parameter - using same methodology as Transactional Overview
-                const paramStats = {};
+                // Calculate OVERALL metrics directly from filtered data (NOT averages per parameter)
+                // Using EXACT same methodology as Transactional Overview Tab
                 
+                let totalOpportunityPass = 0;
+                let totalOpportunityCount = 0;
+                let totalOpportunityNA = 0;
+                let totalOpportunityFail = 0;
+                let totalPopulation = 0;
+                
+                // Sum ALL rows in filtered data
                 data.forEach(row => {
-                    const param = String(row['Parameter'] || '').trim();
-                    if (!param) return;
-                    
-                    if (!paramStats[param]) {
-                        paramStats[param] = {
-                            opportunityPass: 0,
-                            opportunityCount: 0,
-                            opportunityNA: 0,
-                            opportunityFail: 0,
-                            totalPopulation: 0
-                        };
-                    }
-                    
-                    // Sum all metrics per parameter from Parameter_Audit_Count sheet
-                    paramStats[param].opportunityPass += parseFloat(row['Opportunity Pass']) || 0;
-                    paramStats[param].opportunityCount += parseFloat(row['Opportunity Count']) || 0;
-                    paramStats[param].opportunityNA += parseFloat(row['Opportunity NA']) || 0;
-                    paramStats[param].opportunityFail += parseFloat(row['Opportunity Fail']) || 0;
-                    paramStats[param].totalPopulation += parseFloat(row['Total Population']) || 0;
+                    totalOpportunityPass += parseFloat(row['Opportunity Pass']) || 0;
+                    totalOpportunityCount += parseFloat(row['Opportunity Count']) || 0;
+                    totalOpportunityNA += parseFloat(row['Opportunity NA']) || 0;
+                    totalOpportunityFail += parseFloat(row['Opportunity Fail']) || 0;
+                    totalPopulation += parseFloat(row['Total Population']) || 0;
                 });
                 
-                // Calculate averages using SAME formulas as Transactional Overview
-                const params = Object.keys(paramStats);
-                let totalAccuracy = 0;
-                let totalSample = 0;
-                let totalError = 0;
-                let totalAudits = 0;
-                let validParams = 0;
+                // Calculate metrics using specified formulas
+                // Accuracy% = Sum of "Opportunity Pass" / (Sum of "Opportunity Count" - Sum of "Opportunity NA")
+                const denominator = totalOpportunityCount - totalOpportunityNA;
+                const accuracyPercent = denominator > 0 ? (totalOpportunityPass / denominator * 100) : 0;
                 
-                params.forEach(param => {
-                    const stats = paramStats[param];
-                    
-                    // Accuracy% = Sum of "Opportunity Pass" / (Sum of "Opportunity Count" - Sum of "Opportunity NA")
-                    const denominator = stats.opportunityCount - stats.opportunityNA;
-                    const accuracy = denominator > 0 ? (stats.opportunityPass / denominator * 100) : 0;
-                    
-                    // Sample% = Sum of "Opportunity Count" / Sum of "Total Population"
-                    const sample = stats.totalPopulation > 0 ? (stats.opportunityCount / stats.totalPopulation * 100) : 0;
-                    
-                    // Error% = Sum of "Opportunity Fail" / Sum of "Opportunity Count"
-                    const error = stats.opportunityCount > 0 ? (stats.opportunityFail / stats.opportunityCount * 100) : 0;
-                    
-                    if (stats.opportunityCount > 0) {
-                        totalAccuracy += accuracy;
-                        totalSample += sample;
-                        totalError += error;
-                        // Audit Count = Sum of "Opportunity Count"
-                        totalAudits += stats.opportunityCount;
-                        validParams++;
-                    }
+                // Sample% = Sum of "Opportunity Count" / Sum of "Total Population"
+                const samplePercent = totalPopulation > 0 ? (totalOpportunityCount / totalPopulation * 100) : 0;
+                
+                // Error% = Sum of "Opportunity Fail" / Sum of "Opportunity Count"
+                const errorPercent = totalOpportunityCount > 0 ? (totalOpportunityFail / totalOpportunityCount * 100) : 0;
+                
+                // Overall Audit Count = Sum of "Opportunity Count"
+                const auditCount = totalOpportunityCount;
+                
+                // Count unique parameters
+                const uniqueParams = [...new Set(data.map(row => String(row['Parameter'] || '').trim()))].filter(p => p).length;
+                
+                // Update KPIs with OVERALL metrics (not averages)
+                safeSetText('paramTotalCount', uniqueParams);
+                safeSetText('paramAvgAccuracy', accuracyPercent.toFixed(1) + '%');
+                safeSetText('paramAvgSample', samplePercent.toFixed(1) + '%');
+                safeSetText('paramAvgError', errorPercent.toFixed(1) + '%');
+                safeSetText('paramTotalAudits', auditCount.toLocaleString());
+                
+                console.log('✅ Parameter metrics calculated:', {
+                    uniqueParams,
+                    accuracy: accuracyPercent.toFixed(1) + '%',
+                    sample: samplePercent.toFixed(1) + '%',
+                    error: errorPercent.toFixed(1) + '%',
+                    auditCount: auditCount
                 });
-                
-                // Update KPIs with averages
-                safeSetText('paramTotalCount', params.length);
-                safeSetText('paramAvgAccuracy', validParams > 0 ? (totalAccuracy / validParams).toFixed(1) + '%' : '0%');
-                safeSetText('paramAvgSample', validParams > 0 ? (totalSample / validParams).toFixed(1) + '%' : '0%');
-                safeSetText('paramAvgError', validParams > 0 ? (totalError / validParams).toFixed(1) + '%' : '0%');
-                safeSetText('paramTotalAudits', totalAudits.toLocaleString());
-                
-                console.log('✅ Parameter metrics calculated:', { params: params.length, validParams });
             } catch (error) {
                 handleError(error, 'calculateParameterMetrics');
             }
