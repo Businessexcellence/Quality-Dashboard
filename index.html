@@ -5040,40 +5040,72 @@ Total Population: ${totalPop}
                     console.log('📋 Available columns:', Object.keys(projects[0]));
                 }
                 
-                // Status is in Column G
-                // Count WIP and Closed only
+                // Status is in Column G (or might be named "Status" if headers exist)
+                // We'll check multiple possible column names
                 const wip = projects.filter(p => {
-                    const statusFromG = String(p['G'] || '').toUpperCase().trim();
-                    const statusFromStatus = String(p['Status'] || '').toUpperCase().trim();
-                    return statusFromG === 'WIP' || statusFromStatus === 'WIP';
+                    // Try different possible column names for Status
+                    const status = String(
+                        p['Status'] || 
+                        p['G'] || 
+                        p['status'] || 
+                        p['PROJECT STATUS'] ||
+                        p['Project Status'] ||
+                        ''
+                    ).toUpperCase().trim();
+                    
+                    return status === 'WIP' || status.includes('WIP');
                 }).length;
                 
                 const closed = projects.filter(p => {
-                    const statusFromG = String(p['G'] || '').toUpperCase().trim();
-                    const statusFromStatus = String(p['Status'] || '').toUpperCase().trim();
-                    return statusFromG === 'CLOSED' || statusFromStatus === 'CLOSED';
+                    const status = String(
+                        p['Status'] || 
+                        p['G'] || 
+                        p['status'] || 
+                        p['PROJECT STATUS'] ||
+                        p['Project Status'] ||
+                        ''
+                    ).toUpperCase().trim();
+                    
+                    return status === 'CLOSED' || status.includes('CLOSED') || status === 'COMPLETE' || status.includes('COMPLETE');
                 }).length;
                 
                 const total = wip + closed; // Total is WIP + Closed
                 
                 console.log('📊 Projects count:', { total, wip, closed, allProjects: projects.length });
                 
+                // Log first few status values to help debug
+                if (projects.length > 0) {
+                    console.log('🔍 First 3 project status values:', projects.slice(0, 3).map(p => ({
+                        Status: p['Status'],
+                        G: p['G'],
+                        'Project Status': p['Project Status'],
+                        'PROJECT STATUS': p['PROJECT STATUS']
+                    })));
+                }
+                
                 // Update KPI cards
                 safeSetText('projectsTotal', total);
                 safeSetText('projectsClosed', closed);
                 safeSetText('projectsWIP', wip);
                 
-                // Generate status breakdown
+                // Generate status breakdown - show all unique status values
                 const statusCounts = {};
                 projects.forEach(p => {
-                    const statusFromG = String(p['G'] || '').trim();
-                    const statusFromStatus = String(p['Status'] || '').trim();
-                    const status = statusFromG || statusFromStatus || 'Unknown';
+                    const status = String(
+                        p['Status'] || 
+                        p['G'] || 
+                        p['status'] || 
+                        p['PROJECT STATUS'] ||
+                        p['Project Status'] ||
+                        'Unknown'
+                    ).trim();
                     
-                    if (status && status !== 'Unknown') {
+                    if (status && status !== 'Unknown' && status !== '') {
                         statusCounts[status] = (statusCounts[status] || 0) + 1;
                     }
                 });
+                
+                console.log('📊 All status values found:', statusCounts);
                 
                 const sortedStatuses = Object.entries(statusCounts)
                     .sort((a, b) => b[1] - a[1])
@@ -5082,8 +5114,8 @@ Total Population: ${totalPop}
                 let breakdownHTML = sortedStatuses.map(([status, count]) => {
                     const statusUpper = status.toUpperCase();
                     let color = '#64748b';
-                    if (statusUpper === 'CLOSED') color = '#f59e0b';
-                    else if (statusUpper === 'WIP') color = '#3b82f6';
+                    if (statusUpper === 'CLOSED' || statusUpper.includes('COMPLETE')) color = '#f59e0b';
+                    else if (statusUpper === 'WIP' || statusUpper.includes('WIP')) color = '#3b82f6';
                     
                     const percentage = projects.length > 0 ? Math.round((count / projects.length) * 100) : 0;
                     
