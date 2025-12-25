@@ -1619,40 +1619,40 @@
         </div>
 
         <div id="rca-capa" class="tab-content">
-            <!-- RCA & CAPA FILTERS -->
-            <div style="background: white; border-radius: 10px; padding: 10px; margin-bottom: 12px; box-shadow: 0 3px 10px rgba(239,68,68,0.15); border-left: 5px solid #ef4444;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                    <h2 style="font-size: 12px; font-weight: 800; color: #dc2626; margin: 0; display: flex; align-items: center;">
-                        <div style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 8px; box-shadow: 0 3px 6px rgba(239,68,68,0.3);">
-                            <i class="fas fa-filter" style="color: white; font-size: 9px;"></i>
+            <!-- COMPACT RCA & CAPA FILTERS -->
+            <div style="background: white; border-radius: 6px; padding: 6px; margin-bottom: 6px; box-shadow: 0 2px 6px rgba(239,68,68,0.1); border-left: 3px solid #ef4444;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <h2 style="font-size: 10px; font-weight: 800; color: #dc2626; margin: 0; display: flex; align-items: center;">
+                        <div style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); width: 22px; height: 22px; border-radius: 5px; display: flex; align-items: center; justify-content: center; margin-right: 6px; box-shadow: 0 2px 4px rgba(239,68,68,0.2);">
+                            <i class="fas fa-filter" style="color: white; font-size: 8px;"></i>
                         </div>
                         RCA & CAPA FILTERS
                     </h2>
-                    <div style="display: flex; gap: 6px; align-items: center;">
+                    <div style="display: flex; gap: 4px; align-items: center;">
                         <!-- Universal Search Input -->
                         <input 
                             type="text" 
                             id="rcaCapaUniversalSearch" 
                             placeholder="🔍 Search all filters..."
                             style="
-                                padding: 4px 8px 4px 24px;
+                                padding: 3px 6px 3px 20px;
                                 border: 2px solid #fca5a5;
                                 border-radius: 4px;
-                                font-size: 9px;
-                                width: 180px;
-                                background: white url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2216%22 height=%2216%22 viewBox=%220 0 16 16%22><path fill=%22%23ef4444%22 d=%22M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z%22/></svg>') no-repeat 6px center;
-                                background-size: 12px 12px;
+                                font-size: 8px;
+                                width: 150px;
+                                background: white url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2216%22 height=%2216%22 viewBox=%220 0 16 16%22><path fill=%22%23ef4444%22 d=%22M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z%22/></svg>') no-repeat 5px center;
+                                background-size: 10px 10px;
                                 color: #1e293b;
                                 outline: none;
-                                height: 24px;
-                                line-height: 24px;
+                                height: 20px;
+                                line-height: 20px;
                                 box-sizing: border-box;
                                 vertical-align: middle;
                             "
                             oninput="filterRcaCapaOptions(this.value)"
                         />
-                        <button onclick="clearRcaCapaFilters()" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); border: none; color: white; padding: 0 8px; border-radius: 4px; cursor: pointer; font-size: 8px; font-weight: 600; height: 24px; line-height: 24px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; gap: 4px; vertical-align: middle;">
-                            <i class="fas fa-times" style="font-size: 8px;"></i> Clear All
+                        <button onclick="clearRcaCapaFilters()" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); border: none; color: white; padding: 0 6px; border-radius: 4px; cursor: pointer; font-size: 7px; font-weight: 600; height: 20px; line-height: 20px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; gap: 3px; vertical-align: middle;">
+                            <i class="fas fa-times" style="font-size: 7px;"></i> Clear All
                         </button>
                     </div>
                 </div>
@@ -1667,62 +1667,62 @@
                 <div id="rcaCapaDebugContent" style="color: #78350f; line-height: 1.6;"></div>
             </div>
 
-            <!-- NEW LAYOUT: KPI Cards and Region Chart -->
-            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 12px;">
+            <!-- COMPACT LAYOUT: KPI Cards and Region Chart -->
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 6px;">
                 <!-- Error Type Card -->
-                <div style="background: white; border-radius: 10px; padding: 10px; box-shadow: 0 3px 10px rgba(239,68,68,0.15); border-left: 5px solid #ef4444;">
-                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                        <div style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fas fa-exclamation-triangle" style="color: white; font-size: 14px;"></i>
+                <div style="background: white; border-radius: 6px; padding: 6px; box-shadow: 0 2px 6px rgba(239,68,68,0.1); border-left: 3px solid #ef4444;">
+                    <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 4px;">
+                        <div style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); width: 24px; height: 24px; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-exclamation-triangle" style="color: white; font-size: 11px;"></i>
                         </div>
                         <div>
-                            <div style="color: #64748b; font-size: 8px; font-weight: 700; text-transform: uppercase;">Error Types</div>
-                            <div id="rcaErrorTypeCount" style="color: #1e293b; font-size: 20px; font-weight: 800;">0</div>
+                            <div style="color: #64748b; font-size: 7px; font-weight: 700; text-transform: uppercase;">Error Types</div>
+                            <div id="rcaErrorTypeCount" style="color: #1e293b; font-size: 16px; font-weight: 800;">0</div>
                         </div>
                     </div>
-                    <div id="rcaErrorTypeBreakdown" style="max-height: 120px; overflow-y: auto; font-size: 7px;">
+                    <div id="rcaErrorTypeBreakdown" style="max-height: 80px; overflow-y: auto; font-size: 6px;">
                         <!-- Error type breakdown -->
                     </div>
                 </div>
 
                 <!-- Impact Levels Card -->
-                <div style="background: white; border-radius: 10px; padding: 10px; box-shadow: 0 3px 10px rgba(239,68,68,0.15); border-left: 5px solid #f59e0b;">
-                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                        <div style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fas fa-bolt" style="color: white; font-size: 14px;"></i>
+                <div style="background: white; border-radius: 6px; padding: 6px; box-shadow: 0 2px 6px rgba(239,68,68,0.1); border-left: 3px solid #f59e0b;">
+                    <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 4px;">
+                        <div style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); width: 24px; height: 24px; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-bolt" style="color: white; font-size: 11px;"></i>
                         </div>
                         <div>
-                            <div style="color: #64748b; font-size: 8px; font-weight: 700; text-transform: uppercase;">Impact Levels</div>
-                            <div id="rcaImpactCount" style="color: #1e293b; font-size: 20px; font-weight: 800;">0</div>
+                            <div style="color: #64748b; font-size: 7px; font-weight: 700; text-transform: uppercase;">Impact Levels</div>
+                            <div id="rcaImpactCount" style="color: #1e293b; font-size: 16px; font-weight: 800;">0</div>
                         </div>
                     </div>
-                    <div id="rcaImpactBreakdown" style="max-height: 120px; overflow-y: auto; font-size: 7px;">
+                    <div id="rcaImpactBreakdown" style="max-height: 80px; overflow-y: auto; font-size: 6px;">
                         <!-- Impact breakdown -->
                     </div>
                 </div>
 
                 <!-- Total RCA Count -->
-                <div style="background: white; border-radius: 10px; padding: 10px; box-shadow: 0 3px 10px rgba(239,68,68,0.15); border-left: 5px solid #3b82f6;">
-                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                        <div style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fas fa-list-alt" style="color: white; font-size: 14px;"></i>
+                <div style="background: white; border-radius: 6px; padding: 6px; box-shadow: 0 2px 6px rgba(239,68,68,0.1); border-left: 3px solid #3b82f6;">
+                    <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 4px;">
+                        <div style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); width: 24px; height: 24px; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-list-alt" style="color: white; font-size: 11px;"></i>
                         </div>
                         <div>
-                            <div style="color: #64748b; font-size: 8px; font-weight: 700; text-transform: uppercase;">Total Items</div>
-                            <div id="rcaTotalCount" style="color: #1e293b; font-size: 20px; font-weight: 800;">0</div>
+                            <div style="color: #64748b; font-size: 7px; font-weight: 700; text-transform: uppercase;">Total Items</div>
+                            <div id="rcaTotalCount" style="color: #1e293b; font-size: 16px; font-weight: 800;">0</div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Status Card -->
-                <div style="background: white; border-radius: 10px; padding: 10px; box-shadow: 0 3px 10px rgba(239,68,68,0.15); border-left: 5px solid #10b981;">
-                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                        <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fas fa-check-circle" style="color: white; font-size: 14px;"></i>
+                <div style="background: white; border-radius: 6px; padding: 6px; box-shadow: 0 2px 6px rgba(239,68,68,0.1); border-left: 3px solid #10b981;">
+                    <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 4px;">
+                        <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); width: 24px; height: 24px; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-check-circle" style="color: white; font-size: 11px;"></i>
                         </div>
                         <div>
-                            <div style="color: #64748b; font-size: 8px; font-weight: 700; text-transform: uppercase;">Status</div>
-                            <div id="rcaStatusBreakdown" style="color: #1e293b; font-size: 9px; font-weight: 600; margin-top: 4px;">
+                            <div style="color: #64748b; font-size: 7px; font-weight: 700; text-transform: uppercase;">Status</div>
+                            <div id="rcaStatusBreakdown" style="color: #1e293b; font-size: 7px; font-weight: 600; margin-top: 2px;">
                                 <!-- Status breakdown -->
                             </div>
                         </div>
@@ -1730,56 +1730,56 @@
                 </div>
             </div>
 
-            <!-- Region-wise RCA Count Chart -->
-            <div style="background: white; border-radius: 10px; padding: 16px; box-shadow: 0 3px 10px rgba(239,68,68,0.15); border-left: 5px solid #8b5cf6; margin-bottom: 12px;">
-                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
-                    <div style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                        <i class="fas fa-globe" style="color: white; font-size: 14px;"></i>
+            <!-- COMPACT Region-wise RCA Count Chart -->
+            <div style="background: white; border-radius: 6px; padding: 8px; box-shadow: 0 2px 6px rgba(239,68,68,0.1); border-left: 3px solid #8b5cf6; margin-bottom: 6px;">
+                <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 6px;">
+                    <div style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); width: 24px; height: 24px; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-globe" style="color: white; font-size: 11px;"></i>
                     </div>
-                    <div style="color: #64748b; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">
+                    <div style="color: #64748b; font-size: 8px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3px;">
                         Region-wise RCA & CAPA Count
                     </div>
                 </div>
-                <canvas id="rcaRegionChart" style="max-height: 200px;"></canvas>
+                <canvas id="rcaRegionChart" style="max-height: 140px;"></canvas>
             </div>
 
-            <!-- RCA & CAPA Details Section -->
-            <div style="display: grid; grid-template-columns: 1fr 400px; gap: 12px;">
+            <!-- COMPACT RCA & CAPA Details Section -->
+            <div style="display: grid; grid-template-columns: 1fr 380px; gap: 6px;">
                 
                 <!-- Left: RCA & CAPA List -->
-                <div style="background: white; border-radius: 10px; padding: 10px; box-shadow: 0 3px 10px rgba(239,68,68,0.15); border-left: 5px solid #ef4444;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                        <h2 style="font-size: 12px; font-weight: 800; color: #dc2626; margin: 0; display: flex; align-items: center;">
-                            <div style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 8px; box-shadow: 0 3px 6px rgba(239,68,68,0.3);">
-                                <i class="fas fa-list" style="color: white; font-size: 12px;"></i>
+                <div style="background: white; border-radius: 6px; padding: 6px; box-shadow: 0 2px 6px rgba(239,68,68,0.1); border-left: 3px solid #ef4444;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <h2 style="font-size: 10px; font-weight: 800; color: #dc2626; margin: 0; display: flex; align-items: center;">
+                            <div style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); width: 22px; height: 22px; border-radius: 5px; display: flex; align-items: center; justify-content: center; margin-right: 6px; box-shadow: 0 2px 4px rgba(239,68,68,0.2);">
+                                <i class="fas fa-list" style="color: white; font-size: 10px;"></i>
                             </div>
                             RCA & CAPA LIST
                         </h2>
-                        <div style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 700;">
+                        <div style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; padding: 3px 8px; border-radius: 5px; font-size: 8px; font-weight: 700;">
                             <span id="rcaCapaListCount">0</span> Items
                         </div>
                     </div>
                     
                     <!-- RCA & CAPA Cards -->
-                    <div id="rcaCapaListContainer" style="max-height: calc(100vh - 500px); overflow-y: auto; padding-right: 6px;">
+                    <div id="rcaCapaListContainer" style="max-height: calc(100vh - 400px); overflow-y: auto; padding-right: 4px;">
                         <!-- RCA & CAPA cards will be populated here -->
                     </div>
                 </div>
 
-                <!-- Right: RCA & CAPA Details Panel -->
-                <div style="background: white; border-radius: 10px; padding: 10px; box-shadow: 0 3px 10px rgba(239,68,68,0.15); border-left: 5px solid #ef4444;">
-                    <h2 style="font-size: 12px; font-weight: 800; color: #dc2626; margin: 0 0 8px 0; display: flex; align-items: center;">
-                        <div style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 8px; box-shadow: 0 3px 6px rgba(239,68,68,0.3);">
-                            <i class="fas fa-info-circle" style="color: white; font-size: 12px;"></i>
+                <!-- Right: COMPACT RCA & CAPA Details Panel -->
+                <div style="background: white; border-radius: 6px; padding: 6px; box-shadow: 0 2px 6px rgba(239,68,68,0.1); border-left: 3px solid #ef4444;">
+                    <h2 style="font-size: 10px; font-weight: 800; color: #dc2626; margin: 0 0 6px 0; display: flex; align-items: center;">
+                        <div style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); width: 22px; height: 22px; border-radius: 5px; display: flex; align-items: center; justify-content: center; margin-right: 6px; box-shadow: 0 2px 4px rgba(239,68,68,0.2);">
+                            <i class="fas fa-info-circle" style="color: white; font-size: 10px;"></i>
                         </div>
                         RCA & CAPA DETAILS
                     </h2>
                     
-                    <div id="rcaCapaDetailsContainer" style="max-height: calc(100vh - 500px); overflow-y: auto; padding-right: 6px;">
+                    <div id="rcaCapaDetailsContainer" style="max-height: calc(100vh - 400px); overflow-y: auto; padding-right: 4px;">
                         <!-- RCA & CAPA details will be populated here -->
-                        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 300px; color: #94a3b8; text-align: center;">
-                            <i class="fas fa-mouse-pointer" style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"></i>
-                            <p style="font-size: 12px; margin: 0;">Select an item from the list to view details</p>
+                        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 250px; color: #94a3b8; text-align: center;">
+                            <i class="fas fa-mouse-pointer" style="font-size: 40px; margin-bottom: 12px; opacity: 0.3;"></i>
+                            <p style="font-size: 10px; margin: 0;">Select an item from the list to view details</p>
                         </div>
                     </div>
                 </div>
