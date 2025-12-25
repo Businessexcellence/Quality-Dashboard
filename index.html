@@ -67,6 +67,8 @@
                         window.refreshParameterPerformanceTab();
                     } else if (tabId === 'recruiter' && typeof window.refreshRecruiterTab === 'function') {
                         window.refreshRecruiterTab();
+                    } else if (tabId === 'strategic' && typeof window.refreshStrategicTab === 'function') {
+                        window.refreshStrategicTab();
                     }
                 }
             } catch (error) {
@@ -1391,10 +1393,138 @@
         </div>
 
         <div id="strategic" class="tab-content">
-            <div class="empty-state">
-                <i class="fas fa-chart-line"></i>
-                <h3>Strategic Overview</h3>
-                <p>Coming soon...</p>
+            <!-- Filters Section - Card Style (Purple Theme) -->
+            <div style="background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%); border: 1px solid #d8b4fe; border-radius: 6px; padding: 8px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                <div style="display: flex; align-items: center; margin-bottom: 6px;">
+                    <i class="fas fa-filter" style="color: #7c3aed; font-size: 11px; margin-right: 6px;"></i>
+                    <span style="font-size: 10px; font-weight: 700; color: #5b21b6;">Filter Strategic Data</span>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 6px;">
+                    <!-- Region Filter Card -->
+                    <div style="background: white; border: 1px solid #d8b4fe; border-radius: 4px; padding: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                        <label style="display: block; font-size: 8px; font-weight: 600; color: #5b21b6; margin-bottom: 3px;">
+                            <i class="fas fa-map-marker-alt" style="margin-right: 3px;"></i>Region
+                        </label>
+                        <select id="strategicFilterRegion" onchange="applyStrategicFilters()" style="width: 100%; padding: 4px; font-size: 9px; border: 1px solid #cbd5e1; border-radius: 3px; background: white; color: #334155;">
+                            <option value="">All Regions</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Account Filter Card -->
+                    <div style="background: white; border: 1px solid #d8b4fe; border-radius: 4px; padding: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                        <label style="display: block; font-size: 8px; font-weight: 600; color: #5b21b6; margin-bottom: 3px;">
+                            <i class="fas fa-building" style="margin-right: 3px;"></i>Account
+                        </label>
+                        <select id="strategicFilterAccount" onchange="applyStrategicFilters()" style="width: 100%; padding: 4px; font-size: 9px; border: 1px solid #cbd5e1; border-radius: 3px; background: white; color: #334155;">
+                            <option value="">All Accounts</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Financial Year Filter Card -->
+                    <div style="background: white; border: 1px solid #d8b4fe; border-radius: 4px; padding: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                        <label style="display: block; font-size: 8px; font-weight: 600; color: #5b21b6; margin-bottom: 3px;">
+                            <i class="fas fa-calendar-alt" style="margin-right: 3px;"></i>Financial Year
+                        </label>
+                        <select id="strategicFilterYear" onchange="applyStrategicFilters()" style="width: 100%; padding: 4px; font-size: 9px; border: 1px solid #cbd5e1; border-radius: 3px; background: white; color: #334155;">
+                            <option value="">All Years</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Practice Head Filter Card -->
+                    <div style="background: white; border: 1px solid #d8b4fe; border-radius: 4px; padding: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                        <label style="display: block; font-size: 8px; font-weight: 600; color: #5b21b6; margin-bottom: 3px;">
+                            <i class="fas fa-user-tie" style="margin-right: 3px;"></i>Practice Head
+                        </label>
+                        <select id="strategicFilterPracticeHead" onchange="applyStrategicFilters()" style="width: 100%; padding: 4px; font-size: 9px; border: 1px solid #cbd5e1; border-radius: 3px; background: white; color: #334155;">
+                            <option value="">All Practice Heads</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Clear Button -->
+                <div style="text-align: right;">
+                    <button onclick="clearStrategicFilters()" style="padding: 4px 12px; font-size: 9px; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; box-shadow: 0 2px 4px rgba(239,68,68,0.3);">
+                        <i class="fas fa-times-circle" style="margin-right: 4px;"></i>Clear All Filters
+                    </button>
+                </div>
+            </div>
+
+            <!-- Status Cards - Clickable -->
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 10px;">
+                <!-- All Status Card -->
+                <div id="statusCardAll" onclick="filterByStatus('all')" style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); border-radius: 6px; padding: 12px; color: white; cursor: pointer; transition: transform 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1);" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-size: 9px; opacity: 0.85; margin-bottom: 3px;">ALL</div>
+                            <div style="font-size: 24px; font-weight: 700;" id="statusCountAll">0</div>
+                        </div>
+                        <i class="fas fa-list" style="font-size: 24px; opacity: 0.3;"></i>
+                    </div>
+                </div>
+
+                <!-- Open Status Card -->
+                <div id="statusCardOpen" onclick="filterByStatus('open')" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 6px; padding: 12px; color: white; cursor: pointer; transition: transform 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1);" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-size: 9px; opacity: 0.85; margin-bottom: 3px;">OPEN</div>
+                            <div style="font-size: 24px; font-weight: 700;" id="statusCountOpen">0</div>
+                        </div>
+                        <i class="fas fa-folder-open" style="font-size: 24px; opacity: 0.3;"></i>
+                    </div>
+                </div>
+
+                <!-- Closed Status Card -->
+                <div id="statusCardClosed" onclick="filterByStatus('closed')" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border-radius: 6px; padding: 12px; color: white; cursor: pointer; transition: transform 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1);" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-size: 9px; opacity: 0.85; margin-bottom: 3px;">CLOSED</div>
+                            <div style="font-size: 24px; font-weight: 700;" id="statusCountClosed">0</div>
+                        </div>
+                        <i class="fas fa-check-circle" style="font-size: 24px; opacity: 0.3;"></i>
+                    </div>
+                </div>
+
+                <!-- In Progress Status Card -->
+                <div id="statusCardProgress" onclick="filterByStatus('progress')" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); border-radius: 6px; padding: 12px; color: white; cursor: pointer; transition: transform 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1);" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-size: 9px; opacity: 0.85; margin-bottom: 3px;">IN PROGRESS</div>
+                            <div style="font-size: 24px; font-weight: 700;" id="statusCountProgress">0</div>
+                        </div>
+                        <i class="fas fa-spinner" style="font-size: 24px; opacity: 0.3;"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Projects and RCA_CAPA Tables Side by Side -->
+            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                <!-- Projects Table -->
+                <div style="flex: 1; background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 8px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <h3 style="font-size: 11px; font-weight: 700; color: var(--text-primary); margin: 0;">
+                            <i class="fas fa-project-diagram" style="color: var(--primary); font-size: 10px;"></i> Projects
+                        </h3>
+                        <input type="text" id="projectSearch" placeholder="Search projects..." onkeyup="filterProjectTable()" 
+                            style="padding: 3px 8px; font-size: 10px; border: 1px solid var(--border); border-radius: 4px; width: 150px;">
+                    </div>
+                    <div id="projectTableContainer" style="max-height: 400px; overflow-y: auto;">
+                        <!-- Projects table will be populated here -->
+                    </div>
+                </div>
+
+                <!-- RCA_CAPA Table -->
+                <div style="flex: 1; background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 8px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <h3 style="font-size: 11px; font-weight: 700; color: var(--text-primary); margin: 0;">
+                            <i class="fas fa-clipboard-list" style="color: var(--primary); font-size: 10px;"></i> RCA/CAPA
+                        </h3>
+                        <input type="text" id="rcaCapaSearch" placeholder="Search RCA/CAPA..." onkeyup="filterRcaCapaTable()" 
+                            style="padding: 3px 8px; font-size: 10px; border: 1px solid var(--border); border-radius: 4px; width: 150px;">
+                    </div>
+                    <div id="rcaCapaTableContainer" style="max-height: 400px; overflow-y: auto;">
+                        <!-- RCA_CAPA table will be populated here -->
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -4739,6 +4869,297 @@ Total Population: ${totalPop}
         // Custom accuracy calculation: Count("1") / (Count("1"+"0"+"NA") - Count("NA"))
         // ==========================================
 
+        // STRATEGIC OVERVIEW TAB
+        let strategicData = {
+            projects: [],
+            rcaCapa: []
+        };
+        let currentStatusFilter = 'all';
+
+        function refreshStrategicTab() {
+            try {
+                console.log('🔄 Refreshing Strategic Overview tab');
+                
+                if (!dashboardData || !dashboardData.projects || !dashboardData.rcaCapa) {
+                    console.log('⚠️ No Projects or RCA_CAPA data available');
+                    return;
+                }
+
+                strategicData.projects = dashboardData.projects;
+                strategicData.rcaCapa = dashboardData.rcaCapa;
+
+                populateStrategicFilters();
+                applyStrategicFilters();
+                
+                console.log('✅ Strategic Overview tab refreshed');
+            } catch (error) {
+                handleError(error, 'refreshStrategicTab');
+            }
+        }
+
+        function populateStrategicFilters() {
+            try {
+                const allData = [...strategicData.projects, ...strategicData.rcaCapa];
+                
+                // Get unique values for filters
+                const regions = [...new Set(allData.map(row => String(row['Region'] || '').trim()))].filter(v => v).sort();
+                const accounts = [...new Set(allData.map(row => String(row['Account'] || '').trim()))].filter(v => v).sort();
+                const years = [...new Set(allData.map(row => String(row['Financial Year'] || '').trim()))].filter(v => v).sort();
+                const practiceHeads = [...new Set(allData.map(row => String(row['Practice Head'] || '').trim()))].filter(v => v).sort();
+
+                // Populate Region filter
+                const regionFilter = document.getElementById('strategicFilterRegion');
+                regionFilter.innerHTML = '<option value="">All Regions</option>' + 
+                    regions.map(r => `<option value="${r}">${r}</option>`).join('');
+
+                // Populate Account filter
+                const accountFilter = document.getElementById('strategicFilterAccount');
+                accountFilter.innerHTML = '<option value="">All Accounts</option>' + 
+                    accounts.map(a => `<option value="${a}">${a}</option>`).join('');
+
+                // Populate Financial Year filter
+                const yearFilter = document.getElementById('strategicFilterYear');
+                yearFilter.innerHTML = '<option value="">All Years</option>' + 
+                    years.map(y => `<option value="${y}">${y}</option>`).join('');
+
+                // Populate Practice Head filter
+                const practiceHeadFilter = document.getElementById('strategicFilterPracticeHead');
+                practiceHeadFilter.innerHTML = '<option value="">All Practice Heads</option>' + 
+                    practiceHeads.map(p => `<option value="${p}">${p}</option>`).join('');
+
+                console.log('✅ Strategic filters populated');
+            } catch (error) {
+                handleError(error, 'populateStrategicFilters');
+            }
+        }
+
+        function applyStrategicFilters() {
+            try {
+                const regionFilter = document.getElementById('strategicFilterRegion')?.value || '';
+                const accountFilter = document.getElementById('strategicFilterAccount')?.value || '';
+                const yearFilter = document.getElementById('strategicFilterYear')?.value || '';
+                const practiceHeadFilter = document.getElementById('strategicFilterPracticeHead')?.value || '';
+
+                // Filter projects
+                let filteredProjects = strategicData.projects.filter(row => {
+                    return (!regionFilter || String(row['Region'] || '').trim() === regionFilter) &&
+                           (!accountFilter || String(row['Account'] || '').trim() === accountFilter) &&
+                           (!yearFilter || String(row['Financial Year'] || '').trim() === yearFilter) &&
+                           (!practiceHeadFilter || String(row['Practice Head'] || '').trim() === practiceHeadFilter);
+                });
+
+                // Filter RCA/CAPA
+                let filteredRcaCapa = strategicData.rcaCapa.filter(row => {
+                    return (!regionFilter || String(row['Region'] || '').trim() === regionFilter) &&
+                           (!accountFilter || String(row['Account'] || '').trim() === accountFilter) &&
+                           (!yearFilter || String(row['Financial Year'] || '').trim() === yearFilter) &&
+                           (!practiceHeadFilter || String(row['Practice Head'] || '').trim() === practiceHeadFilter);
+                });
+
+                // Apply status filter
+                if (currentStatusFilter !== 'all') {
+                    filteredProjects = filterByStatusLogic(filteredProjects, currentStatusFilter);
+                    filteredRcaCapa = filterByStatusLogic(filteredRcaCapa, currentStatusFilter);
+                }
+
+                // Update status counts
+                updateStatusCounts(filteredProjects, filteredRcaCapa);
+
+                // Generate tables
+                generateProjectTable(filteredProjects);
+                generateRcaCapaTable(filteredRcaCapa);
+
+                console.log(`🔍 Strategic filters applied: ${filteredProjects.length} projects, ${filteredRcaCapa.length} RCA/CAPA`);
+            } catch (error) {
+                handleError(error, 'applyStrategicFilters');
+            }
+        }
+
+        function filterByStatusLogic(data, status) {
+            if (status === 'all') return data;
+            if (status === 'open') return data.filter(row => String(row['Status'] || '').toLowerCase().includes('open'));
+            if (status === 'closed') return data.filter(row => String(row['Status'] || '').toLowerCase().includes('closed') || String(row['Status'] || '').toLowerCase().includes('complete'));
+            if (status === 'progress') return data.filter(row => String(row['Status'] || '').toLowerCase().includes('progress') || String(row['Status'] || '').toLowerCase().includes('ongoing'));
+            return data;
+        }
+
+        function filterByStatus(status) {
+            currentStatusFilter = status;
+            
+            // Update card highlights
+            document.querySelectorAll('[id^="statusCard"]').forEach(card => {
+                card.style.opacity = '0.6';
+                card.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+            });
+            
+            const selectedCard = document.getElementById(`statusCard${status.charAt(0).toUpperCase() + status.slice(1)}`);
+            if (selectedCard) {
+                selectedCard.style.opacity = '1';
+                selectedCard.style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)';
+            }
+            
+            applyStrategicFilters();
+        }
+
+        function updateStatusCounts(projects, rcaCapa) {
+            const allData = [...projects, ...rcaCapa];
+            
+            const countAll = allData.length;
+            const countOpen = allData.filter(row => String(row['Status'] || '').toLowerCase().includes('open')).length;
+            const countClosed = allData.filter(row => String(row['Status'] || '').toLowerCase().includes('closed') || String(row['Status'] || '').toLowerCase().includes('complete')).length;
+            const countProgress = allData.filter(row => String(row['Status'] || '').toLowerCase().includes('progress') || String(row['Status'] || '').toLowerCase().includes('ongoing')).length;
+
+            safeSetText('statusCountAll', countAll);
+            safeSetText('statusCountOpen', countOpen);
+            safeSetText('statusCountClosed', countClosed);
+            safeSetText('statusCountProgress', countProgress);
+        }
+
+        function generateProjectTable(data) {
+            try {
+                const html = `
+                    <table style="width: 100%; border-collapse: collapse; font-size: 10px;">
+                        <thead style="position: sticky; top: 0; background: white; z-index: 10;">
+                            <tr style="border-bottom: 2px solid var(--border); background: rgba(99, 102, 241, 0.05);">
+                                <th style="padding: 6px 8px; text-align: left; font-size: 10px; font-weight: 700; color: #000;">Project Name</th>
+                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: #000;">Status</th>
+                                <th style="padding: 6px 8px; text-align: left; font-size: 10px; font-weight: 700; color: #000;">Region</th>
+                                <th style="padding: 6px 8px; text-align: left; font-size: 10px; font-weight: 700; color: #000;">Account</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.length === 0 ? '<tr><td colspan="4" style="text-align: center; padding: 20px; color: #6b7280;">No projects found</td></tr>' : 
+                            data.map(row => {
+                                const projectName = String(row['Project Name'] || row['Project'] || 'N/A');
+                                const status = String(row['Status'] || 'N/A');
+                                const region = String(row['Region'] || 'N/A');
+                                const account = String(row['Account'] || 'N/A');
+                                
+                                let statusColor = '#6b7280';
+                                if (status.toLowerCase().includes('closed') || status.toLowerCase().includes('complete')) statusColor = '#f59e0b';
+                                else if (status.toLowerCase().includes('open')) statusColor = '#10b981';
+                                else if (status.toLowerCase().includes('progress')) statusColor = '#3b82f6';
+
+                                return `
+                                <tr class="project-row" style="border-bottom: 1px solid var(--border);">
+                                    <td style="padding: 6px 8px; font-size: 10px; color: var(--text-primary); font-weight: 600;">${projectName}</td>
+                                    <td style="padding: 6px 8px; text-align: center;">
+                                        <span style="background: ${statusColor}; color: white; padding: 2px 6px; border-radius: 8px; font-size: 8px; font-weight: 700;">${status}</span>
+                                    </td>
+                                    <td style="padding: 6px 8px; font-size: 10px; color: var(--text-secondary);">${region}</td>
+                                    <td style="padding: 6px 8px; font-size: 10px; color: var(--text-secondary);">${account}</td>
+                                </tr>
+                            `}).join('')}
+                        </tbody>
+                    </table>
+                `;
+                
+                safeSetHTML('projectTableContainer', html);
+                console.log('✅ Project table generated:', data.length, 'rows');
+            } catch (error) {
+                handleError(error, 'generateProjectTable');
+            }
+        }
+
+        function generateRcaCapaTable(data) {
+            try {
+                const html = `
+                    <table style="width: 100%; border-collapse: collapse; font-size: 10px;">
+                        <thead style="position: sticky; top: 0; background: white; z-index: 10;">
+                            <tr style="border-bottom: 2px solid var(--border); background: rgba(99, 102, 241, 0.05);">
+                                <th style="padding: 6px 8px; text-align: left; font-size: 10px; font-weight: 700; color: #000;">RCA/CAPA ID</th>
+                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: #000;">Status</th>
+                                <th style="padding: 6px 8px; text-align: left; font-size: 10px; font-weight: 700; color: #000;">Region</th>
+                                <th style="padding: 6px 8px; text-align: left; font-size: 10px; font-weight: 700; color: #000;">Account</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.length === 0 ? '<tr><td colspan="4" style="text-align: center; padding: 20px; color: #6b7280;">No RCA/CAPA found</td></tr>' : 
+                            data.map(row => {
+                                const rcaCapaId = String(row['RCA/CAPA ID'] || row['ID'] || 'N/A');
+                                const status = String(row['Status'] || 'N/A');
+                                const region = String(row['Region'] || 'N/A');
+                                const account = String(row['Account'] || 'N/A');
+                                
+                                let statusColor = '#6b7280';
+                                if (status.toLowerCase().includes('closed') || status.toLowerCase().includes('complete')) statusColor = '#f59e0b';
+                                else if (status.toLowerCase().includes('open')) statusColor = '#10b981';
+                                else if (status.toLowerCase().includes('progress')) statusColor = '#3b82f6';
+
+                                return `
+                                <tr class="rca-capa-row" style="border-bottom: 1px solid var(--border);">
+                                    <td style="padding: 6px 8px; font-size: 10px; color: var(--text-primary); font-weight: 600;">${rcaCapaId}</td>
+                                    <td style="padding: 6px 8px; text-align: center;">
+                                        <span style="background: ${statusColor}; color: white; padding: 2px 6px; border-radius: 8px; font-size: 8px; font-weight: 700;">${status}</span>
+                                    </td>
+                                    <td style="padding: 6px 8px; font-size: 10px; color: var(--text-secondary);">${region}</td>
+                                    <td style="padding: 6px 8px; font-size: 10px; color: var(--text-secondary);">${account}</td>
+                                </tr>
+                            `}).join('')}
+                        </tbody>
+                    </table>
+                `;
+                
+                safeSetHTML('rcaCapaTableContainer', html);
+                console.log('✅ RCA/CAPA table generated:', data.length, 'rows');
+            } catch (error) {
+                handleError(error, 'generateRcaCapaTable');
+            }
+        }
+
+        function filterProjectTable() {
+            try {
+                const searchValue = document.getElementById('projectSearch').value.toLowerCase();
+                const rows = document.querySelectorAll('.project-row');
+                
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(searchValue) ? '' : 'none';
+                });
+            } catch (error) {
+                handleError(error, 'filterProjectTable');
+            }
+        }
+
+        function filterRcaCapaTable() {
+            try {
+                const searchValue = document.getElementById('rcaCapaSearch').value.toLowerCase();
+                const rows = document.querySelectorAll('.rca-capa-row');
+                
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(searchValue) ? '' : 'none';
+                });
+            } catch (error) {
+                handleError(error, 'filterRcaCapaTable');
+            }
+        }
+
+        function clearStrategicFilters() {
+            try {
+                document.getElementById('strategicFilterRegion').value = '';
+                document.getElementById('strategicFilterAccount').value = '';
+                document.getElementById('strategicFilterYear').value = '';
+                document.getElementById('strategicFilterPracticeHead').value = '';
+                currentStatusFilter = 'all';
+                
+                // Reset card highlights
+                document.querySelectorAll('[id^="statusCard"]').forEach(card => {
+                    card.style.opacity = '1';
+                    card.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+                });
+                
+                applyStrategicFilters();
+                console.log('✅ Strategic filters cleared');
+            } catch (error) {
+                handleError(error, 'clearStrategicFilters');
+            }
+        }
+
+        // Make functions available globally
+        window.filterByStatus = filterByStatus;
+        window.refreshStrategicTab = refreshStrategicTab;
+
         let recruiterCriticalChartInstance = null;
         let recruiterStageChartInstance = null;
         let recruiterTableData = [];
@@ -5553,6 +5974,7 @@ Total Population: ${totalPop}
             refreshTransactionalTab();
             refreshParameterPerformanceTab(); // Parameter Performance Tab
             refreshRecruiterTab(); // Recruiter Insight Tab
+            refreshStrategicTab(); // Strategic Overview Tab
         }
 
         // ==========================================
