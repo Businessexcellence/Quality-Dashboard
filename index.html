@@ -973,33 +973,36 @@
                 </div>
             </div>
 
-            <!-- Region-wise Breakdown -->
-            <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 10px; margin-bottom: 10px;">
-                <h3 style="font-size: 12px; font-weight: 700; color: var(--text-primary); margin: 0 0 8px 0;">
-                    <i class="fas fa-map-marker-alt" style="color: var(--primary); font-size: 11px;"></i> Region-wise Overview
-                </h3>
-                <div id="regionBreakdown" style="overflow-x: auto;">
-                    <!-- Region table will be populated -->
+            <!-- Overview Sections Side by Side -->
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+                <!-- Region-wise Breakdown -->
+                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 10px;">
+                    <h3 style="font-size: 12px; font-weight: 700; color: var(--text-primary); margin: 0 0 8px 0;">
+                        <i class="fas fa-map-marker-alt" style="color: var(--primary); font-size: 11px;"></i> Region-wise
+                    </h3>
+                    <div id="regionBreakdown" style="overflow-x: auto;">
+                        <!-- Region table will be populated -->
+                    </div>
                 </div>
-            </div>
 
-            <!-- Critical/Non Critical Breakdown -->
-            <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 10px; margin-bottom: 10px;">
-                <h3 style="font-size: 12px; font-weight: 700; color: var(--text-primary); margin: 0 0 8px 0;">
-                    <i class="fas fa-flag" style="color: var(--primary); font-size: 11px;"></i> Critical/Non Critical Overview
-                </h3>
-                <div id="criticalBreakdown" style="overflow-x: auto;">
-                    <!-- Critical table will be populated -->
+                <!-- Critical/Non Critical Breakdown -->
+                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 10px;">
+                    <h3 style="font-size: 12px; font-weight: 700; color: var(--text-primary); margin: 0 0 8px 0;">
+                        <i class="fas fa-flag" style="color: var(--primary); font-size: 11px;"></i> Critical/Non Critical
+                    </h3>
+                    <div id="criticalBreakdown" style="overflow-x: auto;">
+                        <!-- Critical table will be populated -->
+                    </div>
                 </div>
-            </div>
 
-            <!-- Stage-wise Breakdown -->
-            <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 10px;">
-                <h3 style="font-size: 12px; font-weight: 700; color: var(--text-primary); margin: 0 0 8px 0;">
-                    <i class="fas fa-layer-group" style="color: var(--primary); font-size: 11px;"></i> Stage-wise Overview
-                </h3>
-                <div id="stageBreakdown" style="overflow-x: auto;">
-                    <!-- Stage table will be populated -->
+                <!-- Stage-wise Breakdown -->
+                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 10px;">
+                    <h3 style="font-size: 12px; font-weight: 700; color: var(--text-primary); margin: 0 0 8px 0;">
+                        <i class="fas fa-layer-group" style="color: var(--primary); font-size: 11px;"></i> Stage-wise
+                    </h3>
+                    <div id="stageBreakdown" style="overflow-x: auto;">
+                        <!-- Stage table will be populated -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -2903,16 +2906,14 @@ Total Population: ${totalPop}
                     };
                 }).sort((a, b) => b.auditCount - a.auditCount);
 
-                // Render table
+                // Render table (compact for side-by-side layout)
                 const html = `
-                    <table style="width: 100%; border-collapse: collapse;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 10px;">
                         <thead>
                             <tr style="border-bottom: 1px solid var(--border); background: rgba(255, 140, 66, 0.05);">
-                                <th style="padding: 6px 8px; text-align: left; font-size: 10px; font-weight: 700; color: var(--text-primary);">Region</th>
-                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: var(--text-primary);">Accuracy %</th>
-                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: var(--text-primary);">Sample %</th>
-                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: var(--text-primary);">Error %</th>
-                                <th style="padding: 6px 8px; text-align: right; font-size: 10px; font-weight: 700; color: var(--text-primary);">Audit Count</th>
+                                <th style="padding: 5px; text-align: left; font-size: 9px; font-weight: 700; color: var(--text-primary);">Region</th>
+                                <th style="padding: 5px; text-align: center; font-size: 9px; font-weight: 700; color: var(--text-primary);">Acc%</th>
+                                <th style="padding: 5px; text-align: right; font-size: 9px; font-weight: 700; color: var(--text-primary);">Count</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -2920,17 +2921,11 @@ Total Population: ${totalPop}
                                 <tr style="border-bottom: 1px solid var(--border); transition: background 0.2s;" 
                                     onmouseover="this.style.background='var(--bg-hover)'" 
                                     onmouseout="this.style.background='transparent'">
-                                    <td style="padding: 6px 8px; font-size: 11px; color: var(--text-primary); font-weight: 600;">${row.region}</td>
-                                    <td style="padding: 6px 8px; text-align: center;">
-                                        <span style="background: #10b981; color: white; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: 700;">${row.accuracy}%</span>
+                                    <td style="padding: 5px; font-size: 10px; color: var(--text-primary); font-weight: 600;">${row.region}</td>
+                                    <td style="padding: 5px; text-align: center;">
+                                        <span style="background: #10b981; color: white; padding: 2px 6px; border-radius: 8px; font-size: 9px; font-weight: 700;">${row.accuracy}%</span>
                                     </td>
-                                    <td style="padding: 6px 8px; text-align: center;">
-                                        <span style="background: #3b82f6; color: white; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: 700;">${row.sample}%</span>
-                                    </td>
-                                    <td style="padding: 6px 8px; text-align: center;">
-                                        <span style="background: #ef4444; color: white; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: 700;">${row.error}%</span>
-                                    </td>
-                                    <td style="padding: 6px 8px; text-align: right; font-size: 11px; color: var(--text-primary); font-weight: 700;">${row.auditCount.toLocaleString()}</td>
+                                    <td style="padding: 5px; text-align: right; font-size: 10px; color: var(--text-primary); font-weight: 600;">${row.auditCount.toLocaleString()}</td>
                                 </tr>
                             `).join('')}
                         </tbody>
@@ -2986,16 +2981,14 @@ Total Population: ${totalPop}
                     };
                 }).sort((a, b) => b.auditCount - a.auditCount);
 
-                // Render table
+                // Render table (compact for side-by-side layout)
                 const html = `
-                    <table style="width: 100%; border-collapse: collapse;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 10px;">
                         <thead>
                             <tr style="border-bottom: 1px solid var(--border); background: rgba(255, 140, 66, 0.05);">
-                                <th style="padding: 6px 8px; text-align: left; font-size: 10px; font-weight: 700; color: var(--text-primary);">Type</th>
-                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: var(--text-primary);">Accuracy %</th>
-                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: var(--text-primary);">Sample %</th>
-                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: var(--text-primary);">Error %</th>
-                                <th style="padding: 6px 8px; text-align: right; font-size: 10px; font-weight: 700; color: var(--text-primary);">Audit Count</th>
+                                <th style="padding: 5px; text-align: left; font-size: 9px; font-weight: 700; color: var(--text-primary);">Type</th>
+                                <th style="padding: 5px; text-align: center; font-size: 9px; font-weight: 700; color: var(--text-primary);">Acc%</th>
+                                <th style="padding: 5px; text-align: right; font-size: 9px; font-weight: 700; color: var(--text-primary);">Count</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -3005,17 +2998,11 @@ Total Population: ${totalPop}
                                     <tr style="border-bottom: 1px solid var(--border); transition: background 0.2s;" 
                                         onmouseover="this.style.background='var(--bg-hover)'" 
                                         onmouseout="this.style.background='transparent'">
-                                        <td style="padding: 6px 8px; font-size: 11px; color: var(--text-primary); font-weight: 600;">${icon} ${row.type}</td>
-                                        <td style="padding: 6px 8px; text-align: center;">
-                                            <span style="background: #10b981; color: white; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: 700;">${row.accuracy}%</span>
+                                        <td style="padding: 5px; font-size: 10px; color: var(--text-primary); font-weight: 600;">${icon} ${row.type}</td>
+                                        <td style="padding: 5px; text-align: center;">
+                                            <span style="background: #10b981; color: white; padding: 2px 6px; border-radius: 8px; font-size: 9px; font-weight: 700;">${row.accuracy}%</span>
                                         </td>
-                                        <td style="padding: 6px 8px; text-align: center;">
-                                            <span style="background: #3b82f6; color: white; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: 700;">${row.sample}%</span>
-                                        </td>
-                                        <td style="padding: 6px 8px; text-align: center;">
-                                            <span style="background: #ef4444; color: white; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: 700;">${row.error}%</span>
-                                        </td>
-                                        <td style="padding: 6px 8px; text-align: right; font-size: 11px; color: var(--text-primary); font-weight: 700;">${row.auditCount.toLocaleString()}</td>
+                                        <td style="padding: 5px; text-align: right; font-size: 10px; color: var(--text-primary); font-weight: 600;">${row.auditCount.toLocaleString()}</td>
                                     </tr>
                                 `;
                             }).join('')}
@@ -3072,16 +3059,14 @@ Total Population: ${totalPop}
                     };
                 }).sort((a, b) => b.auditCount - a.auditCount);
 
-                // Render table
+                // Render table (compact for side-by-side layout)
                 const html = `
-                    <table style="width: 100%; border-collapse: collapse;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 10px;">
                         <thead>
                             <tr style="border-bottom: 1px solid var(--border); background: rgba(255, 140, 66, 0.05);">
-                                <th style="padding: 6px 8px; text-align: left; font-size: 10px; font-weight: 700; color: var(--text-primary);">Stage</th>
-                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: var(--text-primary);">Accuracy %</th>
-                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: var(--text-primary);">Sample %</th>
-                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: var(--text-primary);">Error %</th>
-                                <th style="padding: 6px 8px; text-align: right; font-size: 10px; font-weight: 700; color: var(--text-primary);">Audit Count</th>
+                                <th style="padding: 5px; text-align: left; font-size: 9px; font-weight: 700; color: var(--text-primary);">Stage</th>
+                                <th style="padding: 5px; text-align: center; font-size: 9px; font-weight: 700; color: var(--text-primary);">Acc%</th>
+                                <th style="padding: 5px; text-align: right; font-size: 9px; font-weight: 700; color: var(--text-primary);">Count</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -3091,17 +3076,11 @@ Total Population: ${totalPop}
                                     <tr style="border-bottom: 1px solid var(--border); transition: background 0.2s;" 
                                         onmouseover="this.style.background='var(--bg-hover)'" 
                                         onmouseout="this.style.background='transparent'">
-                                        <td style="padding: 6px 8px; font-size: 11px; color: var(--text-primary); font-weight: 600;">${icon} ${row.stage}</td>
-                                        <td style="padding: 6px 8px; text-align: center;">
-                                            <span style="background: #10b981; color: white; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: 700;">${row.accuracy}%</span>
+                                        <td style="padding: 5px; font-size: 10px; color: var(--text-primary); font-weight: 600;">${icon} ${row.stage}</td>
+                                        <td style="padding: 5px; text-align: center;">
+                                            <span style="background: #10b981; color: white; padding: 2px 6px; border-radius: 8px; font-size: 9px; font-weight: 700;">${row.accuracy}%</span>
                                         </td>
-                                        <td style="padding: 6px 8px; text-align: center;">
-                                            <span style="background: #3b82f6; color: white; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: 700;">${row.sample}%</span>
-                                        </td>
-                                        <td style="padding: 6px 8px; text-align: center;">
-                                            <span style="background: #ef4444; color: white; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: 700;">${row.error}%</span>
-                                        </td>
-                                        <td style="padding: 6px 8px; text-align: right; font-size: 11px; color: var(--text-primary); font-weight: 700;">${row.auditCount.toLocaleString()}</td>
+                                        <td style="padding: 5px; text-align: right; font-size: 10px; color: var(--text-primary); font-weight: 600;">${row.auditCount.toLocaleString()}</td>
                                     </tr>
                                 `;
                             }).join('')}
