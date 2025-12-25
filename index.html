@@ -1483,6 +1483,17 @@
                     <h3 style="font-size: 12px; font-weight: 700; color: #1e293b; margin: 0 0 12px 0;">Status Distribution</h3>
                     <div id="projectsStatusBreakdown"></div>
                 </div>
+                
+                <!-- Project Type Card -->
+                <div style="background: white; border-radius: 6px; padding: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-top: 12px;">
+                    <h3 style="font-size: 12px; font-weight: 700; color: #1e293b; margin: 0 0 12px 0; display: flex; align-items: center;">
+                        <i class="fas fa-layer-group" style="color: #3b82f6; margin-right: 6px;"></i>
+                        Project Type Overview
+                    </h3>
+                    <div id="projectsTypeBreakdown" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px;">
+                        <!-- Project type breakdown will be populated here -->
+                    </div>
+                </div>
             </div>
 
             <!-- RCA_CAPA SECTION -->
@@ -5082,6 +5093,42 @@ Total Population: ${totalPop}
                     return '';
                 }
                 
+                // Helper function to get Project Type
+                function getProjectType(project) {
+                    const keys = Object.keys(project);
+                    
+                    // Try different possible column references for Project Type
+                    const possibleKeys = [
+                        'Project Type',
+                        'PROJECT TYPE',
+                        'Type',
+                        'TYPE',
+                        'ProjectType',
+                        'Category',
+                        'CATEGORY',
+                        'Project Category',
+                        '__EMPTY_1',  // Column B
+                        '__EMPTY_2',  // Column C
+                        '__EMPTY_3',  // Column D
+                        'B', 'C', 'D', 'E', 'F', 'H',
+                        keys[1], keys[2], keys[3], keys[4], keys[5], keys[7]
+                    ];
+                    
+                    for (const key of possibleKeys) {
+                        if (key && project[key]) {
+                            const value = String(project[key]).trim();
+                            // Skip if it looks like a status or date
+                            if (value && 
+                                !value.match(/^\d{4}-\d{2}-\d{2}/) &&
+                                !['WIP', 'CLOSED', 'COMPLETE', 'OPEN'].includes(value.toUpperCase())) {
+                                return value;
+                            }
+                        }
+                    }
+                    
+                    return '';
+                }
+                
                 // Count WIP and CLOSED
                 const wip = projects.filter(p => {
                     const status = getProjectStatus(p).toUpperCase().trim();
@@ -5109,6 +5156,8 @@ Total Population: ${totalPop}
                             keys_6: keys[6] ? p[keys[6]] : undefined,
                             Status: p['Status'],
                             detectedStatus: getProjectStatus(p),
+                            detectedProjectType: getProjectType(p),
+                            'Project Type': p['Project Type'],
                             allKeys: keys
                         };
                     }));
@@ -5158,7 +5207,42 @@ Total Population: ${totalPop}
                 
                 safeSetHTML('projectsStatusBreakdown', breakdownHTML || '<div style="color: #94a3b8; font-size: 10px; text-align: center;">No data</div>');
                 
-                console.log('✅ Projects section updated:', { total, wip, closed, allProjects: projects.length });
+                // Generate Project Type breakdown
+                const projectTypeCounts = {};
+                projects.forEach(p => {
+                    const projectType = getProjectType(p);
+                    if (projectType && projectType !== '') {
+                        projectTypeCounts[projectType] = (projectTypeCounts[projectType] || 0) + 1;
+                    }
+                });
+                
+                console.log('📊 Project types found:', projectTypeCounts);
+                
+                const sortedProjectTypes = Object.entries(projectTypeCounts)
+                    .sort((a, b) => b[1] - a[1]);
+                
+                let projectTypeHTML = sortedProjectTypes.map(([type, count]) => {
+                    const percentage = projects.length > 0 ? Math.round((count / projects.length) * 100) : 0;
+                    
+                    // Color palette for different project types
+                    const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6', '#f97316'];
+                    const colorIndex = sortedProjectTypes.findIndex(([t]) => t === type);
+                    const color = colors[colorIndex % colors.length];
+                    
+                    return `
+                        <div style="background: linear-gradient(135deg, ${color}15 0%, ${color}25 100%); border-left: 3px solid ${color}; border-radius: 4px; padding: 10px;">
+                            <div style="color: #1e293b; font-size: 11px; font-weight: 700; margin-bottom: 4px;">${type}</div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="color: ${color}; font-size: 18px; font-weight: 700;">${count}</span>
+                                <span style="color: #64748b; font-size: 9px; font-weight: 600;">${percentage}%</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                safeSetHTML('projectsTypeBreakdown', projectTypeHTML || '<div style="color: #94a3b8; font-size: 10px; text-align: center;">No project type data available</div>');
+                
+                console.log('✅ Projects section updated:', { total, wip, closed, allProjects: projects.length, projectTypes: Object.keys(projectTypeCounts).length });
             } catch (error) {
                 handleError(error, 'generateProjectsSection');
             }
