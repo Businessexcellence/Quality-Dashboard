@@ -912,7 +912,14 @@
                         <i class="fas fa-times"></i> Clear
                     </button>
                 </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
+                    <!-- Client Filter -->
+                    <div>
+                        <label style="font-size: 9px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 3px;">CLIENT</label>
+                        <select id="filterClient" onchange="applyTransactionalFilters()" style="width: 100%; padding: 5px; border: 1px solid var(--border); border-radius: 3px; background: var(--bg-secondary); color: var(--text-primary); font-size: 11px;">
+                            <option value="">All Clients</option>
+                        </select>
+                    </div>
                     <!-- Financial Year Filter -->
                     <div>
                         <label style="font-size: 9px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 3px;">FINANCIAL YEAR</label>
@@ -925,6 +932,13 @@
                         <label style="font-size: 9px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 3px;">MONTH</label>
                         <select id="filterMonth" onchange="applyTransactionalFilters()" style="width: 100%; padding: 5px; border: 1px solid var(--border); border-radius: 3px; background: var(--bg-secondary); color: var(--text-primary); font-size: 11px;">
                             <option value="">All Months</option>
+                        </select>
+                    </div>
+                    <!-- Week Filter -->
+                    <div>
+                        <label style="font-size: 9px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 3px;">WEEK</label>
+                        <select id="filterWeek" onchange="applyTransactionalFilters()" style="width: 100%; padding: 5px; border: 1px solid var(--border); border-radius: 3px; background: var(--bg-secondary); color: var(--text-primary); font-size: 11px;">
+                            <option value="">All Weeks</option>
                         </select>
                     </div>
                 </div>
@@ -2742,6 +2756,14 @@ Total Population: ${totalPop}
             try {
                 const data = dashboardData.parameterAuditCount;
                 
+                // Get unique Clients
+                const clients = [...new Set(data.map(row => String(row['Client'] || '').trim()).filter(c => c))];
+                const clientSelect = safeGetElement('filterClient');
+                if (clientSelect) {
+                    clientSelect.innerHTML = '<option value="">All Clients</option>' + 
+                        clients.sort().map(client => `<option value="${client}">${client}</option>`).join('');
+                }
+                
                 // Get unique Financial Years
                 const years = [...new Set(data.map(row => String(row['Finanical Year'] || row['Financial Year'] || '').trim()).filter(y => y))];
                 const yearSelect = safeGetElement('filterFinancialYear');
@@ -2760,7 +2782,15 @@ Total Population: ${totalPop}
                         sortedMonths.map(month => `<option value="${month}">${month}</option>`).join('');
                 }
                 
-                console.log('✅ Filters populated:', years.length, 'years,', months.length, 'months');
+                // Get unique Weeks
+                const weeks = [...new Set(data.map(row => String(row['Week'] || '').trim()).filter(w => w))];
+                const weekSelect = safeGetElement('filterWeek');
+                if (weekSelect) {
+                    weekSelect.innerHTML = '<option value="">All Weeks</option>' + 
+                        weeks.sort((a, b) => parseInt(a) - parseInt(b)).map(week => `<option value="${week}">Week ${week}</option>`).join('');
+                }
+                
+                console.log('✅ Filters populated:', clients.length, 'clients,', years.length, 'years,', months.length, 'months,', weeks.length, 'weeks');
             } catch (error) {
                 handleError(error, 'populateTransactionalFilters');
             }
@@ -2768,11 +2798,19 @@ Total Population: ${totalPop}
 
         function applyTransactionalFilters() {
             try {
+                const clientFilter = safeGetElement('filterClient')?.value || '';
                 const yearFilter = safeGetElement('filterFinancialYear')?.value || '';
                 const monthFilter = safeGetElement('filterMonth')?.value || '';
+                const weekFilter = safeGetElement('filterWeek')?.value || '';
                 
                 // Get filtered data
                 let filteredData = dashboardData.parameterAuditCount;
+                
+                if (clientFilter) {
+                    filteredData = filteredData.filter(row => 
+                        String(row['Client'] || '').trim() === clientFilter
+                    );
+                }
                 
                 if (yearFilter) {
                     filteredData = filteredData.filter(row => 
@@ -2786,7 +2824,13 @@ Total Population: ${totalPop}
                     );
                 }
                 
-                console.log('🔍 Filtered data:', filteredData.length, 'rows (Year:', yearFilter || 'All', ', Month:', monthFilter || 'All', ')');
+                if (weekFilter) {
+                    filteredData = filteredData.filter(row => 
+                        String(row['Week'] || '').trim() === weekFilter
+                    );
+                }
+                
+                console.log('🔍 Filtered data:', filteredData.length, 'rows (Client:', clientFilter || 'All', ', Year:', yearFilter || 'All', ', Month:', monthFilter || 'All', ', Week:', weekFilter || 'All', ')');
                 
                 // Calculate all metrics with filtered data
                 calculateOverallMetrics(filteredData);
@@ -2801,11 +2845,15 @@ Total Population: ${totalPop}
 
         function clearTransactionalFilters() {
             try {
+                const clientSelect = safeGetElement('filterClient');
                 const yearSelect = safeGetElement('filterFinancialYear');
                 const monthSelect = safeGetElement('filterMonth');
+                const weekSelect = safeGetElement('filterWeek');
                 
+                if (clientSelect) clientSelect.value = '';
                 if (yearSelect) yearSelect.value = '';
                 if (monthSelect) monthSelect.value = '';
+                if (weekSelect) weekSelect.value = '';
                 
                 applyTransactionalFilters();
                 console.log('✅ Filters cleared');
