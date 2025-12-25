@@ -2056,6 +2056,18 @@
                             }
                         }, 100);
                     }
+                    
+                    // Refresh RCA & CAPA tab when activated
+                    if (tabId === 'rca-capa' && window.dashboardData && window.dashboardData.rcaCapa && window.dashboardData.rcaCapa.length > 0) {
+                        console.log('🔄 Auto-refreshing RCA & CAPA tab on activation');
+                        setTimeout(() => {
+                            if (typeof window.refreshRcaCapaTab === 'function') {
+                                window.refreshRcaCapaTab();
+                            } else {
+                                console.error('❌ refreshRcaCapaTab function not found');
+                            }
+                        }, 100);
+                    }
                 } else {
                     console.error('❌ Tab not found:', tabId);
                 }
