@@ -888,7 +888,7 @@
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px;">
                 <!-- BE SPOC - Audit -->
                 <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 8px; height: 220px;">
-                    <h3 style="font-size: 11px; margin: 0 0 6px 0; font-weight: 700; color: #f8fafc;">
+                    <h3 style="font-size: 11px; margin: 0 0 6px 0; font-weight: 700; color: #1a1a1a;">
                         <i class="fas fa-user-check" style="font-size: 9px; color: var(--primary);"></i> BE SPOC - AUDIT
                     </h3>
                     <div id="beSPOCAudit" style="font-size: 10px; max-height: 190px; overflow-y: auto; overflow-x: hidden;">
@@ -898,7 +898,7 @@
                 
                 <!-- BE SPOC - SLAs/KPIs -->
                 <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 8px; height: 220px;">
-                    <h3 style="font-size: 11px; margin: 0 0 6px 0; font-weight: 700; color: #f8fafc;">
+                    <h3 style="font-size: 11px; margin: 0 0 6px 0; font-weight: 700; color: #1a1a1a;">
                         <i class="fas fa-user-clock" style="font-size: 9px; color: var(--primary);"></i> BE SPOC - SLAs/KPIs
                     </h3>
                     <div id="beSPOCSLA" style="font-size: 10px; max-height: 190px; overflow-y: auto; overflow-x: hidden;">
@@ -2946,26 +2946,40 @@
         }
 
         function clearAccountFilter() {
-            // Clear all active filters
-            window.activeAccountFilters = {};
-            
-            // Re-render ALL sections with full data
-            renderAccountTable();
-            renderAccountKPIs();
-            renderRegionalHeadCards();
-            renderRegionChart();
-            renderBESPOC();
-            
-            // Reset all button styles
-            document.querySelectorAll('.account-filter-btn').forEach(btn => {
-                btn.classList.remove('active');
-                btn.style.background = 'var(--bg-primary)';
-                btn.style.borderColor = 'var(--border)';
-                btn.querySelector('span:first-child').style.color = 'var(--text-primary)';
-                btn.style.boxShadow = 'none';
-            });
-            
-            console.log('✅ All account filters cleared');
+            try {
+                console.log('🔄 Clearing all account filters...');
+                
+                // Clear all active filters
+                window.activeAccountFilters = {};
+                
+                // Get full data
+                const fullData = window.dashboardData.accountSummary || [];
+                console.log('📊 Full data:', fullData.length, 'accounts');
+                
+                // Re-render ALL sections with full data
+                renderAccountTable();
+                renderAccountKPIsFiltered(fullData);
+                renderRegionalHeadCardsFiltered(fullData);
+                renderRegionChartFiltered(fullData);
+                renderBESPOCFiltered(fullData);
+                
+                // Reset all button styles
+                document.querySelectorAll('.account-filter-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                    btn.style.background = 'var(--bg-primary)';
+                    btn.style.borderColor = 'var(--border)';
+                    const firstSpan = btn.querySelector('span:first-child');
+                    if (firstSpan) {
+                        firstSpan.style.color = 'var(--text-primary)';
+                    }
+                    btn.style.boxShadow = 'none';
+                });
+                
+                console.log('✅ All account filters cleared successfully');
+            } catch (error) {
+                console.error('❌ Error clearing account filters:', error);
+                handleError(error, 'clearAccountFilter');
+            }
         }
 
         // Helper function to get filtered account data
@@ -3222,35 +3236,41 @@
         }
 
         function renderRegionalHeadCards() {
-            const container = document.getElementById('regionalHeadCards');
-            
-            if (!window.dashboardData.accountSummary.length) {
-                container.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-muted);">No data available</div>';
-                return;
-            }
-
-            // Group accounts by Regional Head
-            const regionalHeadMap = {};
-            window.dashboardData.accountSummary.forEach(account => {
-                const regionalHead = account['Regional Head'] ? String(account['Regional Head']).trim() : 'Unassigned';
-                if (!regionalHeadMap[regionalHead]) {
-                    regionalHeadMap[regionalHead] = [];
+            try {
+                const container = document.getElementById('regionalHeadCards');
+                
+                if (!container) {
+                    console.warn('⚠️ regionalHeadCards container not found');
+                    return;
                 }
-                regionalHeadMap[regionalHead].push(account);
-            });
+                
+                if (!window.dashboardData || !window.dashboardData.accountSummary || !window.dashboardData.accountSummary.length) {
+                    container.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-muted);">No data available</div>';
+                    return;
+                }
 
-            // Sort by count descending
-            const sortedRegionalHeads = Object.entries(regionalHeadMap)
-                .filter(([name]) => name !== 'Unassigned')
-                .sort((a, b) => b[1].length - a[1].length);
+                // Group accounts by Regional Head
+                const regionalHeadMap = {};
+                window.dashboardData.accountSummary.forEach(account => {
+                    const regionalHead = account['Regional Head'] ? String(account['Regional Head']).trim() : 'Unassigned';
+                    if (!regionalHeadMap[regionalHead]) {
+                        regionalHeadMap[regionalHead] = [];
+                    }
+                    regionalHeadMap[regionalHead].push(account);
+                });
 
-            if (sortedRegionalHeads.length === 0) {
-                container.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-muted);">No Regional Heads found</div>';
-                return;
-            }
+                // Sort by count descending
+                const sortedRegionalHeads = Object.entries(regionalHeadMap)
+                    .filter(([name]) => name !== 'Unassigned')
+                    .sort((a, b) => b[1].length - a[1].length);
 
-            // Render clickable cards
-            container.innerHTML = sortedRegionalHeads.map(([name, accounts]) => `
+                if (sortedRegionalHeads.length === 0) {
+                    container.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-muted);">No Regional Heads found</div>';
+                    return;
+                }
+
+                // Render clickable cards
+                container.innerHTML = sortedRegionalHeads.map(([name, accounts]) => `
                 <div 
                     onclick="applyAccountFilter('Regional Head', '${name.replace(/'/g, "\\'")}')"
                     style="
@@ -3280,7 +3300,11 @@
                 </div>
             `).join('');
 
-            console.log('✅ Regional Head cards rendered:', sortedRegionalHeads.length);
+                console.log('✅ Regional Head cards rendered:', sortedRegionalHeads.length);
+            } catch (error) {
+                console.error('❌ Error in renderRegionalHeadCards:', error);
+                handleError(error, 'renderRegionalHeadCards');
+            }
         }
 
         function renderBESPOC() {
@@ -3289,8 +3313,8 @@
                 
                 // Check if we have data
                 if (!validateData(window.dashboardData.accountSummary, 'Account Summary for BE SPOC')) {
-                    safeSetHTML('beSPOCAudit', '<div style="padding: 6px; text-align: center; color: #f8fafc; font-size: 9px;">No data available. Please upload Base File.xlsx</div>');
-                    safeSetHTML('beSPOCSLA', '<div style="padding: 6px; text-align: center; color: #f8fafc; font-size: 9px;">No data available. Please upload Base File.xlsx</div>');
+                    safeSetHTML('beSPOCAudit', '<div style="padding: 6px; text-align: center; color: #1a1a1a; font-size: 9px;">No data available. Please upload Base File.xlsx</div>');
+                    safeSetHTML('beSPOCSLA', '<div style="padding: 6px; text-align: center; color: #1a1a1a; font-size: 9px;">No data available. Please upload Base File.xlsx</div>');
                     return;
                 }
             
@@ -3323,12 +3347,12 @@
             const sortedSPOCAudit = Object.entries(spocAuditMap).sort((a, b) => b[1].length - a[1].length);
             
             if (sortedSPOCAudit.length === 0) {
-                beSPOCAuditContainer.innerHTML = '<div style="padding: 6px; text-align: center; color: #f8fafc; font-size: 9px;">No SPOC data found</div>';
+                beSPOCAuditContainer.innerHTML = '<div style="padding: 6px; text-align: center; color: #1a1a1a; font-size: 9px;">No SPOC data found</div>';
                 console.warn('⚠️ No SPOC Audit data after processing');
             } else {
                 const html = sortedSPOCAudit.slice(0, 10).map(([spoc, accounts]) => `
                     <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; margin-bottom: 4px; background: rgba(255, 140, 66, 0.05); border-radius: 4px; border-left: 3px solid var(--primary);">
-                        <span style="font-size: 10px; color: #f8fafc; font-weight: 600;">${spoc}</span>
+                        <span style="font-size: 10px; color: #1a1a1a; font-weight: 600;">${spoc}</span>
                         <span style="font-size: 11px; font-weight: 700; color: var(--primary); background: rgba(255, 140, 66, 0.2); padding: 2px 8px; border-radius: 3px;">${accounts.length}</span>
                     </div>
                 `).join('');
@@ -3364,12 +3388,12 @@
             const sortedSPOCSLA = Object.entries(spocSLAMap).sort((a, b) => b[1].length - a[1].length);
             
             if (sortedSPOCSLA.length === 0) {
-                beSPOCSLAContainer.innerHTML = '<div style="padding: 6px; text-align: center; color: #f8fafc; font-size: 9px;">No SPOC data found</div>';
+                beSPOCSLAContainer.innerHTML = '<div style="padding: 6px; text-align: center; color: #1a1a1a; font-size: 9px;">No SPOC data found</div>';
                 console.warn('⚠️ No SPOC SLA data after processing');
             } else {
                 const html = sortedSPOCSLA.slice(0, 10).map(([spoc, accounts]) => `
                     <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; margin-bottom: 4px; background: rgba(255, 140, 66, 0.05); border-radius: 4px; border-left: 3px solid var(--primary);">
-                        <span style="font-size: 10px; color: #f8fafc; font-weight: 600;">${spoc}</span>
+                        <span style="font-size: 10px; color: #1a1a1a; font-weight: 600;">${spoc}</span>
                         <span style="font-size: 11px; font-weight: 700; color: var(--primary); background: rgba(255, 140, 66, 0.2); padding: 2px 8px; border-radius: 3px;">${accounts.length}</span>
                     </div>
                 `).join('');
@@ -3383,6 +3407,7 @@
             } catch (error) {
                 handleError(error, 'renderBESPOC');
                 safeSetHTML('beSPOCAudit', '<div style="padding: 6px; text-align: center; color: #ef4444; font-size: 9px;">Error loading data</div>');
+                safeSetHTML('beSPOCSLA', '<div style="padding: 6px; text-align: center; color: #ef4444; font-size: 9px;">Error loading data</div>');
                 safeSetHTML('beSPOCSLA', '<div style="padding: 6px; text-align: center; color: #ef4444; font-size: 9px;">Error loading data</div>');
             }
         }
