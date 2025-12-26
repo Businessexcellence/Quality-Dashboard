@@ -756,9 +756,12 @@
 <body>
     <!-- HEADER -->
     <div class="header">
+        <div style="position: absolute; left: 24px; top: 50%; transform: translateY(-50%); display: flex; align-items: center; gap: 16px;">
+            <img src="/taggd-logo.png" alt="TAGGD" style="height: 40px; width: auto;">
+        </div>
         <h1>
             Business Excellence<br>
-            <span style="font-size: 14px; font-weight: 500; color: #000000;">Comprehensive Quality Dashboard</span>
+            <span style="font-size: 14px; font-weight: 500; color: #666666;">Comprehensive Quality Dashboard</span>
         </h1>
         <button class="upload-btn" onclick="console.log('Button clicked!'); window.openUploadModal(); return false;">
             <i class="fas fa-upload"></i>
@@ -2886,8 +2889,15 @@
                 
                 console.log('📊 Active account filters:', window.activeAccountFilters);
                 
-                // Render table with filters
+                // Get filtered data
+                const filteredData = getFilteredAccountData();
+                
+                // Update ALL sections with filtered data
                 renderAccountTable();
+                renderAccountKPIsFiltered(filteredData);
+                renderRegionalHeadCardsFiltered(filteredData);
+                renderRegionChartFiltered(filteredData);
+                renderBESPOCFiltered(filteredData);
                 
                 // Update button styles for ALL buttons
                 document.querySelectorAll('.account-filter-btn').forEach(btn => {
@@ -2920,17 +2930,250 @@
         function clearAccountFilter() {
             // Clear all active filters
             window.activeAccountFilters = {};
+            
+            // Re-render ALL sections with full data
             renderAccountTable();
+            renderAccountKPIs();
+            renderRegionalHeadCards();
+            renderRegionChart();
+            renderBESPOC();
             
             // Reset all button styles
-            document.querySelectorAll('#accountFilters button').forEach(btn => {
+            document.querySelectorAll('.account-filter-btn').forEach(btn => {
+                btn.classList.remove('active');
                 btn.style.background = 'var(--bg-primary)';
                 btn.style.borderColor = 'var(--border)';
-                btn.style.color = 'var(--text-primary)';
+                btn.querySelector('span:first-child').style.color = 'var(--text-primary)';
                 btn.style.boxShadow = 'none';
             });
             
             console.log('✅ All account filters cleared');
+        }
+
+        // Helper function to get filtered account data
+        function getFilteredAccountData() {
+            if (!window.activeAccountFilters || Object.keys(window.activeAccountFilters).length === 0) {
+                return window.dashboardData.accountSummary;
+            }
+            
+            return window.dashboardData.accountSummary.filter(row => {
+                // AND logic across different filter fields
+                return Object.entries(window.activeAccountFilters).every(([field, values]) => {
+                    if (!values || values.length === 0) return true;
+                    
+                    // Get row value for this field
+                    const rowValue = row[field];
+                    const cleanRowValue = typeof rowValue === 'string' ? rowValue.trim() : rowValue;
+                    
+                    // OR logic within same field (match any selected value)
+                    return values.some(value => {
+                        const cleanFilterValue = typeof value === 'string' ? value.trim() : value;
+                        return cleanRowValue === cleanFilterValue;
+                    });
+                });
+            });
+        }
+
+        // Filtered versions of render functions
+        function renderAccountKPIsFiltered(filteredData) {
+            try {
+                const activeCount = filteredData.length;
+                
+                // Get unique regional heads from filtered data
+                const regionalHeadMap = {};
+                filteredData.forEach(a => {
+                    const regional = a['Regional Head'] ? String(a['Regional Head']).trim() : 'Unassigned';
+                    if (!regionalHeadMap[regional]) {
+                        regionalHeadMap[regional] = [];
+                    }
+                    regionalHeadMap[regional].push(a.Account || a.Client);
+                });
+                
+                const uniqueRegionalHeads = Object.keys(regionalHeadMap).filter(r => r !== 'Unassigned').length;
+                
+                safeSetText('activeAccountCount', activeCount);
+                
+                console.log(`📊 Filtered KPIs: Active Accounts=${activeCount}, Regional Heads=${uniqueRegionalHeads}`);
+            } catch (error) {
+                handleError(error, 'renderAccountKPIsFiltered');
+            }
+        }
+
+        function renderRegionalHeadCardsFiltered(filteredData) {
+            try {
+                const regionalHeadMap = {};
+                
+                filteredData.forEach(account => {
+                    const regionalHead = account['Regional Head'] ? 
+                        String(account['Regional Head']).trim() : 'Unassigned';
+                    
+                    if (!regionalHeadMap[regionalHead]) {
+                        regionalHeadMap[regionalHead] = [];
+                    }
+                    regionalHeadMap[regionalHead].push(account.Account || account.Client);
+                });
+                
+                const sortedRegionalHeads = Object.entries(regionalHeadMap)
+                    .filter(([head]) => head !== 'Unassigned')
+                    .sort((a, b) => b[1].length - a[1].length);
+                
+                const container = document.querySelector('#regionalHeadOverview tbody');
+                if (!container) return;
+                
+                if (sortedRegionalHeads.length === 0) {
+                    container.innerHTML = '<tr><td colspan="2" class="empty-state">No data available</td></tr>';
+                    return;
+                }
+                
+                container.innerHTML = sortedRegionalHeads.map(([head, accounts]) => `
+                    <tr onclick="showRegionDetails('${head}', ${accounts.length})" style="cursor: pointer;">
+                        <td style="padding: 4px 6px; font-size: 9px;">${head}</td>
+                        <td style="padding: 4px 6px; font-size: 9px; text-align: center;"><strong>${accounts.length}</strong></td>
+                    </tr>
+                `).join('');
+                
+                console.log(`✅ Filtered Regional Head cards rendered: ${sortedRegionalHeads.length} regional heads`);
+            } catch (error) {
+                handleError(error, 'renderRegionalHeadCardsFiltered');
+            }
+        }
+
+        function renderRegionChartFiltered(filteredData) {
+            try {
+                const canvas = document.getElementById('regionChart');
+                if (!canvas) return;
+                
+                // Destroy existing chart
+                if (window.regionChartInstance) {
+                    window.regionChartInstance.destroy();
+                }
+                
+                // Count accounts by region
+                const regionCounts = {};
+                filteredData.forEach(account => {
+                    const region = account.Region ? String(account.Region).trim() : 'Unknown';
+                    regionCounts[region] = (regionCounts[region] || 0) + 1;
+                });
+                
+                const labels = [];
+                const data = [];
+                const colors = ['#FF6600', '#FF8C42', '#FFA500', '#FFB84D', '#FFC266', '#FFD700'];
+                
+                Object.entries(regionCounts)
+                    .sort((a, b) => b[1] - a[1])
+                    .forEach(([region, count]) => {
+                        labels.push(region);
+                        data.push(count);
+                    });
+                
+                const ctx = canvas.getContext('2d');
+                window.regionChartInstance = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: data,
+                            backgroundColor: colors.slice(0, labels.length),
+                            borderColor: '#ffffff',
+                            borderWidth: 3,
+                            hoverOffset: 15
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    padding: 10,
+                                    font: { size: 9, family: "'Inter', 'Segoe UI', sans-serif", weight: '700' },
+                                    color: '#ffffff',
+                                    usePointStyle: true,
+                                    pointStyle: 'circle',
+                                    boxWidth: 10,
+                                    boxHeight: 10,
+                                    generateLabels: function(chart) {
+                                        const data = chart.data;
+                                        if (data.labels.length && data.datasets.length) {
+                                            return data.labels.map((label, i) => {
+                                                const value = data.datasets[0].data[i];
+                                                const total = data.datasets[0].data.reduce((a, b) => a + b, 0);
+                                                const percentage = ((value / total) * 100).toFixed(0);
+                                                return {
+                                                    text: `${label}: ${value} (${percentage}%)`,
+                                                    fillStyle: data.datasets[0].backgroundColor[i],
+                                                    fontColor: '#ffffff',
+                                                    hidden: false,
+                                                    index: i
+                                                };
+                                            });
+                                        }
+                                        return [];
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                enabled: true,
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                padding: 8,
+                                titleFont: { size: 10, weight: 'bold' },
+                                bodyFont: { size: 9 },
+                                callbacks: {
+                                    label: function(context) {
+                                        const label = context.label || '';
+                                        const value = context.parsed;
+                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        const percentage = ((value / total) * 100).toFixed(1);
+                                        return `${label}: ${value} accounts (${percentage}%)`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+                
+                console.log('✅ Filtered Region chart rendered');
+            } catch (error) {
+                handleError(error, 'renderRegionChartFiltered');
+            }
+        }
+
+        function renderBESPOCFiltered(filteredData) {
+            try {
+                // Group by BE SPOC - Audit
+                const bespocMap = {};
+                filteredData.forEach(account => {
+                    const bespoc = account['BE SPOC - Audit'] || account['BE SPOC Audit'] || 'Unassigned';
+                    if (!bespocMap[bespoc]) {
+                        bespocMap[bespoc] = [];
+                    }
+                    bespocMap[bespoc].push(account.Account || account.Client);
+                });
+                
+                const sortedBESPOC = Object.entries(bespocMap)
+                    .filter(([name]) => name !== 'Unassigned')
+                    .sort((a, b) => b[1].length - a[1].length);
+                
+                const container = document.querySelector('#practiceHeadOverview tbody');
+                if (!container) return;
+                
+                if (sortedBESPOC.length === 0) {
+                    container.innerHTML = '<tr><td colspan="2" class="empty-state">No data available</td></tr>';
+                    return;
+                }
+                
+                container.innerHTML = sortedBESPOC.map(([name, accounts]) => `
+                    <tr style="cursor: pointer;">
+                        <td style="padding: 4px 6px; font-size: 9px;">${name}</td>
+                        <td style="padding: 4px 6px; font-size: 9px; text-align: center;"><strong>${accounts.length}</strong></td>
+                    </tr>
+                `).join('');
+                
+                console.log(`✅ Filtered BE SPOC cards rendered: ${sortedBESPOC.length} BE SPOCs`);
+            } catch (error) {
+                handleError(error, 'renderBESPOCFiltered');
+            }
         }
 
         function renderAccountKPIs() {
