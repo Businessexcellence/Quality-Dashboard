@@ -140,7 +140,7 @@
         }
 
         :root {
-            /* TAGGD Brand Colors - Orange, Black, White, Gray */
+            /* TAGGD Brand Colors - Orange, White, Light Gray (matching taggd.in) */
             --primary: #ff6600;           /* Taggd Orange */
             --primary-dark: #e65c00;      /* Darker Orange */
             --secondary: #ff8533;         /* Light Orange */
@@ -149,20 +149,20 @@
             --warning: #ff6600;           /* Orange */
             --error: #dc2626;             /* Red */
             
-            /* Backgrounds - Pure Black & Gray */
-            --bg-primary: #0d0d0d;        /* Pure Black */
-            --bg-secondary: #1a1a1a;      /* Dark Gray */
-            --bg-card: #1a1a1a;           /* Dark Gray */
-            --bg-hover: #2a2a2a;          /* Medium Gray */
+            /* Backgrounds - Light Theme (matching taggd.in) */
+            --bg-primary: #f8f9fa;        /* Light Gray Background */
+            --bg-secondary: #ffffff;      /* White */
+            --bg-card: #ffffff;           /* White Cards */
+            --bg-hover: #f0f0f0;          /* Light Gray Hover */
             
-            /* Text */
-            --text-primary: #f8fafc;
-            --text-secondary: #cbd5e1;
-            --text-muted: #94a3b8;
+            /* Text - Dark on Light */
+            --text-primary: #1a1a1a;      /* Dark Gray Text */
+            --text-secondary: #4a5568;    /* Medium Gray */
+            --text-muted: #6b7280;        /* Light Gray */
             
             /* Borders & Shadows */
-            --border: #333333;            /* Gray Border */
-            --shadow: rgba(0, 0, 0, 0.5);
+            --border: #e5e7eb;            /* Light Gray Border */
+            --shadow: rgba(0, 0, 0, 0.1); /* Subtle Shadow */
             
             /* Spacing */
             --nav-width: 60px;
@@ -178,7 +178,7 @@
             overflow-x: hidden;
         }
 
-        /* Background Gradient Effect - Taggd Orange */
+        /* Background Gradient Effect - TAGGD Light Orange */
         body::before {
             content: '';
             position: fixed;
@@ -187,8 +187,8 @@
             right: 0;
             bottom: 0;
             background: 
-                radial-gradient(circle at 20% 20%, rgba(255, 102, 0, 0.05) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(255, 133, 51, 0.05) 0%, transparent 50%);
+                radial-gradient(circle at 20% 20%, rgba(255, 102, 0, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 133, 51, 0.03) 0%, transparent 50%);
             pointer-events: none;
             z-index: -1;
         }
