@@ -3705,8 +3705,8 @@
                         <td style="padding: 4px 6px;"><strong style="color: ${auditStatusColor}; font-size: 9px;">${auditStatus || 'N/A'}</strong></td>
                         <td style="padding: 4px 6px; font-size: 9px;">${(row['Client Interaction'] || row['Interaction'] || 'N/A')}</td>
                         <td style="padding: 4px 6px; font-size: 9px;">${(row['Audit Frequency'] || row['Frequency'] || 'N/A')}</td>
-                        <td style="padding: 4px 6px; font-size: 9px;">${(row['BE SPOC - Audit'] || row['BE SPOC Audit'] || 'N/A')}</td>
-                        <td style="padding: 4px 6px; font-size: 9px;">${(row['BE SPOC - SLAs/KPIs'] || row['BE SPOC SLA'] || 'N/A')}</td>
+                        <td style="padding: 4px 6px; font-size: 9px; color: #000000; font-weight: 600;">${(row['BE SPOC - Audit'] || row['BE SPOC Audit'] || 'N/A')}</td>
+                        <td style="padding: 4px 6px; font-size: 9px; color: #000000; font-weight: 600;">${(row['BE SPOC - SLAs/KPIs'] || row['BE SPOC SLA'] || 'N/A')}</td>
                     </tr>
                 `;
             }).join('');
