@@ -145,7 +145,7 @@
             --primary-dark: #ee4415;      /* Darker Orange */
             --secondary: #ff6347;         /* Tomato Orange */
             --accent: #ff7f50;            /* Coral Accent */
-            --success: #10b981;           /* Green */
+            --success: #f04616;           /* Taggd Orange for success */
             --warning: #f04616;           /* Orange */
             --error: #dc2626;             /* Red */
             
@@ -222,13 +222,13 @@
             left: 0;
             right: 0;
             height: var(--header-height);
-            background: var(--bg-secondary);
-            border-bottom: 2px solid var(--border);
+            background: #ffffff;
+            border-bottom: 2px solid #e5e7eb;
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 1000;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
         
         .header-logo {
@@ -238,27 +238,30 @@
             transform: translateY(-50%);
             display: flex;
             align-items: center;
-            padding: 8px 16px;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
             z-index: 1002;
         }
         
-        .header-logo img {
-            height: 35px;
-            width: auto;
-            max-width: 160px;
-            object-fit: contain;
-            display: block;
+        .header-logo-text {
+            font-size: 28px;
+            font-weight: 800;
+            color: #18161a;
+            letter-spacing: -0.5px;
+        }
+        
+        .header-logo-text .logo-t {
+            color: #f04616;
         }
 
         .header h1 {
             font-size: 20px;
             font-weight: 700;
-            color: var(--text-primary);
+            color: #000000;
             text-align: center;
             line-height: 1.4;
+        }
+        
+        .header h1 span {
+            color: #6b7280;
         }
         
         .upload-btn {
@@ -720,7 +723,7 @@
         }
 
         .badge-success {
-            background: rgba(16, 185, 129, 0.2);
+            background: rgba(240, 70, 22, 0.2);
             color: var(--success);
         }
 
@@ -779,11 +782,13 @@
     <!-- HEADER -->
     <div class="header">
         <div class="header-logo">
-            <img src="/taggd-logo.png" alt="Taggd">
+            <div class="header-logo-text">
+                <span class="logo-t">T</span>aggd
+            </div>
         </div>
         <h1>
             Business Excellence<br>
-            <span style="font-size: 14px; font-weight: 500; color: #cbd5e1;">Comprehensive Quality Dashboard</span>
+            <span style="font-size: 14px; font-weight: 500; color: #6b7280;">Comprehensive Quality Dashboard</span>
         </h1>
         <button class="upload-btn" onclick="console.log('Button clicked!'); window.openUploadModal(); return false;">
             <i class="fas fa-upload"></i>
@@ -1029,7 +1034,7 @@
             <!-- KPI Cards -->
             <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 10px;">
                 <!-- Accuracy Score Card -->
-                <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 6px; padding: 10px; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <div style="background: linear-gradient(135deg, #f04616 0%, #ee4415 100%); border-radius: 6px; padding: 10px; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
                         <i class="fas fa-check-circle" style="font-size: 18px; opacity: 0.9;"></i>
                         <span style="font-size: 9px; opacity: 0.9; font-weight: 600;">ACCURACY</span>
@@ -1079,7 +1084,7 @@
                 </div>
 
                 <!-- Non-Critical Count Card -->
-                <div style="background: linear-gradient(135deg, #10b981 0%, #047857 100%); border-radius: 6px; padding: 10px; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <div style="background: linear-gradient(135deg, #f04616 0%, #ee4415 100%); border-radius: 6px; padding: 10px; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
                         <i class="fas fa-check-double" style="font-size: 18px; opacity: 0.9;"></i>
                         <span style="font-size: 9px; opacity: 0.9; font-weight: 600;">NON-CRITICAL</span>
@@ -1160,13 +1165,13 @@
             <!-- Filters Section - Card Style -->
             <div style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border: 1px solid #6ee7b7; border-radius: 6px; padding: 8px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
                 <div style="display: flex; align-items: center; margin-bottom: 6px;">
-                    <i class="fas fa-filter" style="color: #047857; font-size: 11px; margin-right: 6px;"></i>
-                    <span style="font-size: 10px; font-weight: 700; color: #065f46;">Filter Parameters</span>
+                    <i class="fas fa-filter" style="color: #ee4415; font-size: 11px; margin-right: 6px;"></i>
+                    <span style="font-size: 10px; font-weight: 700; color: #ee4415;">Filter Parameters</span>
                 </div>
                 <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 6px;">
                     <!-- Client Filter Card -->
                     <div style="background: white; border: 1px solid #6ee7b7; border-radius: 4px; padding: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                        <label style="display: block; font-size: 8px; font-weight: 600; color: #065f46; margin-bottom: 3px;">
+                        <label style="display: block; font-size: 8px; font-weight: 600; color: #ee4415; margin-bottom: 3px;">
                             <i class="fas fa-building" style="margin-right: 3px;"></i>Client
                         </label>
                         <select id="paramFilterClient" onchange="applyParameterFilters()" style="width: 100%; padding: 4px; font-size: 9px; border: 1px solid #cbd5e1; border-radius: 3px; background: white; color: #334155;">
@@ -1176,7 +1181,7 @@
                     
                     <!-- Region Filter Card -->
                     <div style="background: white; border: 1px solid #6ee7b7; border-radius: 4px; padding: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                        <label style="display: block; font-size: 8px; font-weight: 600; color: #065f46; margin-bottom: 3px;">
+                        <label style="display: block; font-size: 8px; font-weight: 600; color: #ee4415; margin-bottom: 3px;">
                             <i class="fas fa-map-marker-alt" style="margin-right: 3px;"></i>Region
                         </label>
                         <select id="paramFilterRegion" onchange="applyParameterFilters()" style="width: 100%; padding: 4px; font-size: 9px; border: 1px solid #cbd5e1; border-radius: 3px; background: white; color: #334155;">
@@ -1186,7 +1191,7 @@
                     
                     <!-- Stage Filter Card -->
                     <div style="background: white; border: 1px solid #6ee7b7; border-radius: 4px; padding: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                        <label style="display: block; font-size: 8px; font-weight: 600; color: #065f46; margin-bottom: 3px;">
+                        <label style="display: block; font-size: 8px; font-weight: 600; color: #ee4415; margin-bottom: 3px;">
                             <i class="fas fa-tasks" style="margin-right: 3px;"></i>Stage
                         </label>
                         <select id="paramFilterStage" onchange="applyParameterFilters()" style="width: 100%; padding: 4px; font-size: 9px; border: 1px solid #cbd5e1; border-radius: 3px; background: white; color: #334155;">
@@ -1196,7 +1201,7 @@
                     
                     <!-- Critical Type Filter Card -->
                     <div style="background: white; border: 1px solid #6ee7b7; border-radius: 4px; padding: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                        <label style="display: block; font-size: 8px; font-weight: 600; color: #065f46; margin-bottom: 3px;">
+                        <label style="display: block; font-size: 8px; font-weight: 600; color: #ee4415; margin-bottom: 3px;">
                             <i class="fas fa-exclamation-triangle" style="margin-right: 3px;"></i>Type
                         </label>
                         <select id="paramFilterCritical" onchange="applyParameterFilters()" style="width: 100%; padding: 4px; font-size: 9px; border: 1px solid #cbd5e1; border-radius: 3px; background: white; color: #334155;">
@@ -1208,7 +1213,7 @@
                     
                     <!-- Month Filter Card -->
                     <div style="background: white; border: 1px solid #6ee7b7; border-radius: 4px; padding: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                        <label style="display: block; font-size: 8px; font-weight: 600; color: #065f46; margin-bottom: 3px;">
+                        <label style="display: block; font-size: 8px; font-weight: 600; color: #ee4415; margin-bottom: 3px;">
                             <i class="fas fa-calendar" style="margin-right: 3px;"></i>Month
                         </label>
                         <select id="paramFilterMonth" onchange="applyParameterFilters()" style="width: 100%; padding: 4px; font-size: 9px; border: 1px solid #cbd5e1; border-radius: 3px; background: white; color: #334155;">
@@ -1232,7 +1237,7 @@
 
             <!-- KPI Cards - All in One Line (7 cards) -->
             <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-bottom: 10px;">
-                <div style="background: linear-gradient(135deg, #10b981 0%, #047857 100%); border-radius: 6px; padding: 8px; color: white;">
+                <div style="background: linear-gradient(135deg, #f04616 0%, #ee4415 100%); border-radius: 6px; padding: 8px; color: white;">
                     <div style="font-size: 9px; opacity: 0.85; margin-bottom: 3px;">TOTAL PARAMETERS</div>
                     <div style="font-size: 22px; font-weight: 700;" id="paramTotalCount">0</div>
                 </div>
@@ -1256,7 +1261,7 @@
                     <div style="font-size: 9px; opacity: 0.85; margin-bottom: 3px;">CRITICAL PARAMS</div>
                     <div style="font-size: 22px; font-weight: 700;" id="paramCriticalCount">0</div>
                 </div>
-                <div style="background: linear-gradient(135deg, #059669 0%, #047857 100%); border-radius: 6px; padding: 8px; color: white;">
+                <div style="background: linear-gradient(135deg, #ee4415 0%, #ee4415 100%); border-radius: 6px; padding: 8px; color: white;">
                     <div style="font-size: 9px; opacity: 0.85; margin-bottom: 3px;">NON-CRITICAL PARAMS</div>
                     <div style="font-size: 22px; font-weight: 700;" id="paramNonCriticalCount">0</div>
                 </div>
@@ -1364,7 +1369,7 @@
 
             <!-- KPI Cards - 5 cards -->
             <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 10px;">
-                <div style="background: linear-gradient(135deg, #10b981 0%, #047857 100%); border-radius: 6px; padding: 8px; color: white;">
+                <div style="background: linear-gradient(135deg, #f04616 0%, #ee4415 100%); border-radius: 6px; padding: 8px; color: white;">
                     <div style="font-size: 9px; opacity: 0.85; margin-bottom: 3px;">TOTAL RECRUITERS</div>
                     <div style="font-size: 22px; font-weight: 700;" id="recruiterTotalCount">0</div>
                 </div>
@@ -1380,7 +1385,7 @@
                     <div style="font-size: 9px; opacity: 0.85; margin-bottom: 3px;">CRITICAL ACCURACY</div>
                     <div style="font-size: 22px; font-weight: 700;" id="recruiterCriticalAccuracy">0%</div>
                 </div>
-                <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 6px; padding: 8px; color: white;">
+                <div style="background: linear-gradient(135deg, #f04616 0%, #ee4415 100%); border-radius: 6px; padding: 8px; color: white;">
                     <div style="font-size: 9px; opacity: 0.85; margin-bottom: 3px;">NON-CRITICAL ACC</div>
                     <div style="font-size: 22px; font-weight: 700;" id="recruiterNonCriticalAccuracy">0%</div>
                 </div>
@@ -1509,10 +1514,10 @@
             </div>
 
             <!-- RCA/CAPA SECTION - Compact Card Style -->
-            <div style="background: white; border-radius: 10px; padding: 10px; margin-bottom: 12px; box-shadow: 0 3px 10px rgba(16,185,129,0.15); border-left: 5px solid #10b981;">
+            <div style="background: white; border-radius: 10px; padding: 10px; margin-bottom: 12px; box-shadow: 0 3px 10px rgba(16,185,129,0.15); border-left: 5px solid #f04616;">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                    <h2 style="font-size: 12px; font-weight: 800; color: #065f46; margin: 0; display: flex; align-items: center;">
-                        <div style="background: linear-gradient(135deg, #10b981 0%, #065f46 100%); width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 8px; box-shadow: 0 3px 6px rgba(16,185,129,0.3);">
+                    <h2 style="font-size: 12px; font-weight: 800; color: #ee4415; margin: 0; display: flex; align-items: center;">
+                        <div style="background: linear-gradient(135deg, #f04616 0%, #ee4415 100%); width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 8px; box-shadow: 0 3px 6px rgba(16,185,129,0.3);">
                             <i class="fas fa-clipboard-check" style="color: white; font-size: 12px;"></i>
                         </div>
                         RCA / CAPA OVERVIEW
@@ -1525,7 +1530,7 @@
                     <!-- Left: KPI Cards Column -->
                     <div style="display: flex; flex-direction: column; gap: 6px;">
                         <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-radius: 6px; padding: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.08); border: 1.5px solid #bbf7d0;">
-                            <div style="color: #065f46; font-size: 7px; font-weight: 700; margin-bottom: 2px; text-transform: uppercase;">Total RCA/CAPA</div>
+                            <div style="color: #ee4415; font-size: 7px; font-weight: 700; margin-bottom: 2px; text-transform: uppercase;">Total RCA/CAPA</div>
                             <div style="color: #1e293b; font-size: 20px; font-weight: 900; line-height: 1;" id="rcaCapaTotal">0</div>
                             <div style="color: #64748b; font-size: 6px; margin-top: 1px; font-weight: 600;">WIP + Closed</div>
                         </div>
@@ -1743,9 +1748,9 @@
                     </div>
 
                     <!-- Status Card -->
-                    <div style="background: white; border-radius: 6px; padding: 6px; box-shadow: 0 2px 6px rgba(239,68,68,0.1); border-left: 3px solid #10b981;">
+                    <div style="background: white; border-radius: 6px; padding: 6px; box-shadow: 0 2px 6px rgba(239,68,68,0.1); border-left: 3px solid #f04616;">
                         <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 4px;">
-                            <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+                            <div style="background: linear-gradient(135deg, #f04616 0%, #ee4415 100%); width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
                                 <i class="fas fa-check-circle" style="color: white; font-size: 13px;"></i>
                             </div>
                             <div>
@@ -2627,7 +2632,7 @@
                                     <td style="padding: 8px; font-size: 11px; color: var(--text-primary); font-weight: 500;">${acc.name}</td>
                                     <td style="padding: 8px; text-align: right;">
                                         <span style="
-                                            background: #10b981; 
+                                            background: #f04616; 
                                             color: white; 
                                             padding: 3px 8px; 
                                             border-radius: 10px; 
@@ -2702,7 +2707,7 @@
                                         <td style="padding: 8px; font-size: 11px; color: var(--text-primary); font-weight: 500;">${acc.name}</td>
                                         <td style="padding: 8px; text-align: right;">
                                             <span style="
-                                                background: ${acc.accuracy < 70 ? '#ef4444' : acc.accuracy < 80 ? '#f59e0b' : '#10b981'}; 
+                                                background: ${acc.accuracy < 70 ? '#ef4444' : acc.accuracy < 80 ? '#f59e0b' : '#f04616'}; 
                                                 color: white; 
                                                 padding: 3px 8px; 
                                                 border-radius: 10px; 
@@ -3718,7 +3723,7 @@
                 // Color coding: Yes=Green, To Be Initiated=Amber, No=Red
                 let auditStatusColor = 'var(--text-muted)'; // default
                 if (auditStatusLower === 'yes') {
-                    auditStatusColor = '#10b981'; // green
+                    auditStatusColor = '#f04616'; // green
                 } else if (auditStatusLower === 'to be initiated') {
                     auditStatusColor = '#f59e0b'; // amber
                 } else if (auditStatusLower === 'no') {
@@ -4155,7 +4160,7 @@ Total Population: ${totalPop}
                                     onmouseout="this.style.background='transparent'">
                                     <td style="padding: 5px; font-size: 10px; color: var(--text-primary); font-weight: 600;">${row.region}</td>
                                     <td style="padding: 5px; text-align: center;">
-                                        <span style="background: #10b981; color: white; padding: 2px 6px; border-radius: 8px; font-size: 9px; font-weight: 700;">${row.accuracy}%</span>
+                                        <span style="background: #f04616; color: white; padding: 2px 6px; border-radius: 8px; font-size: 9px; font-weight: 700;">${row.accuracy}%</span>
                                     </td>
                                     <td style="padding: 5px; text-align: right; font-size: 10px; color: var(--text-primary); font-weight: 600;">${row.auditCount.toLocaleString()}</td>
                                 </tr>
@@ -4232,7 +4237,7 @@ Total Population: ${totalPop}
                                         onmouseout="this.style.background='transparent'">
                                         <td style="padding: 5px; font-size: 10px; color: var(--text-primary); font-weight: 600;">${icon} ${row.type}</td>
                                         <td style="padding: 5px; text-align: center;">
-                                            <span style="background: #10b981; color: white; padding: 2px 6px; border-radius: 8px; font-size: 9px; font-weight: 700;">${row.accuracy}%</span>
+                                            <span style="background: #f04616; color: white; padding: 2px 6px; border-radius: 8px; font-size: 9px; font-weight: 700;">${row.accuracy}%</span>
                                         </td>
                                         <td style="padding: 5px; text-align: right; font-size: 10px; color: var(--text-primary); font-weight: 600;">${row.auditCount.toLocaleString()}</td>
                                     </tr>
@@ -4310,7 +4315,7 @@ Total Population: ${totalPop}
                                         onmouseout="this.style.background='transparent'">
                                         <td style="padding: 5px; font-size: 10px; color: var(--text-primary); font-weight: 600;">${icon} ${row.stage}</td>
                                         <td style="padding: 5px; text-align: center;">
-                                            <span style="background: #10b981; color: white; padding: 2px 6px; border-radius: 8px; font-size: 9px; font-weight: 700;">${row.accuracy}%</span>
+                                            <span style="background: #f04616; color: white; padding: 2px 6px; border-radius: 8px; font-size: 9px; font-weight: 700;">${row.accuracy}%</span>
                                         </td>
                                         <td style="padding: 5px; text-align: right; font-size: 10px; color: var(--text-primary); font-weight: 600;">${row.auditCount.toLocaleString()}</td>
                                     </tr>
@@ -4403,7 +4408,7 @@ Total Population: ${totalPop}
                 summary += `<div><strong>⚙️ Audit Composition:</strong> `;
                 summary += `The audit encompasses <strong>${stageText}</strong> stage(s), categorized into `;
                 summary += `<span style="background: #dc2626; color: white; padding: 2px 6px; border-radius: 4px; font-weight: 700;">${criticalCount.toLocaleString()} Critical</span> and `;
-                summary += `<span style="background: #10b981; color: white; padding: 2px 6px; border-radius: 4px; font-weight: 700;">${nonCriticalCount.toLocaleString()} Non-Critical</span> opportunities.</div>`;
+                summary += `<span style="background: #f04616; color: white; padding: 2px 6px; border-radius: 4px; font-weight: 700;">${nonCriticalCount.toLocaleString()} Non-Critical</span> opportunities.</div>`;
                 
                 summary += `</div></div>`;
                 
@@ -4499,7 +4504,7 @@ Total Population: ${totalPop}
                                     onmouseout="this.style.background='transparent'">
                                     <td style="padding: 6px 8px; font-size: 11px; color: var(--text-primary); font-weight: 600;">👤 ${row.regionalHead}</td>
                                     <td style="padding: 6px 8px; text-align: center;">
-                                        <span style="background: #10b981; color: white; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: 700;">${row.accuracy}%</span>
+                                        <span style="background: #f04616; color: white; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: 700;">${row.accuracy}%</span>
                                     </td>
                                     <td style="padding: 6px 8px; text-align: center;">
                                         <span style="background: #3b82f6; color: white; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: 700;">${row.sample}%</span>
@@ -4607,7 +4612,7 @@ Total Population: ${totalPop}
                                     onmouseout="this.style.background='transparent'">
                                     <td style="padding: 6px 8px; font-size: 11px; color: var(--text-primary); font-weight: 600;">👥 ${row.practiceHead}</td>
                                     <td style="padding: 6px 8px; text-align: center;">
-                                        <span style="background: #10b981; color: white; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: 700;">${row.accuracy}%</span>
+                                        <span style="background: #f04616; color: white; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: 700;">${row.accuracy}%</span>
                                     </td>
                                     <td style="padding: 6px 8px; text-align: center;">
                                         <span style="background: #3b82f6; color: white; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: 700;">${row.sample}%</span>
@@ -4700,8 +4705,8 @@ Total Population: ${totalPop}
                             {
                                 label: 'Accuracy Score (%)',
                                 data: accuracyData,
-                                backgroundColor: 'rgba(16, 185, 129, 0.7)',
-                                borderColor: 'rgba(16, 185, 129, 1)',
+                                backgroundColor: 'rgba(240, 70, 22, 0.7)',
+                                borderColor: 'rgba(240, 70, 22, 1)',
                                 borderWidth: 2,
                                 yAxisID: 'y',
                                 order: 2
@@ -5132,7 +5137,7 @@ Total Population: ${totalPop}
                 let ratingColor = '';
                 if (accuracy >= 95) {
                     performanceRating = 'Excellent';
-                    ratingColor = '#10b981';
+                    ratingColor = '#f04616';
                 } else if (accuracy >= 85) {
                     performanceRating = 'Good';
                     ratingColor = '#3b82f6';
@@ -5175,7 +5180,7 @@ Total Population: ${totalPop}
                                 ${bestParam ? `
                                 <p style="margin: 0 0 8px 0;">
                                     <span style="font-weight: 700; color: var(--text-primary);">Best Performer:</span> 
-                                    <strong>${bestParam.param}</strong> achieved <span style="background: #10b981; color: white; padding: 2px 6px; border-radius: 8px; font-size: 9px;">${bestParam.accuracy.toFixed(1)}%</span> accuracy 
+                                    <strong>${bestParam.param}</strong> achieved <span style="background: #f04616; color: white; padding: 2px 6px; border-radius: 8px; font-size: 9px;">${bestParam.accuracy.toFixed(1)}%</span> accuracy 
                                     (${bestParam.auditCount.toLocaleString()} audits).
                                 </p>
                                 ` : ''}
@@ -5188,7 +5193,7 @@ Total Population: ${totalPop}
                                 ` : ''}
                                 <p style="margin: 0 0 8px 0;">
                                     <span style="font-weight: 700; color: var(--text-primary);">Performance Distribution:</span> 
-                                    <span style="color: #10b981; font-weight: 600;">${highPerformers}</span> high (≥90%), 
+                                    <span style="color: #f04616; font-weight: 600;">${highPerformers}</span> high (≥90%), 
                                     <span style="color: #f59e0b; font-weight: 600;">${mediumPerformers}</span> medium (70-89%), 
                                     <span style="color: #ef4444; font-weight: 600;">${lowPerformers}</span> low (<70%).
                                 </p>
@@ -5293,10 +5298,10 @@ Total Population: ${totalPop}
                                     onmouseout="this.style.background='transparent'">
                                     <td style="padding: 6px 8px; font-size: 10px; color: var(--text-primary); font-weight: 600;">${row.parameter}</td>
                                     <td style="padding: 6px 8px; text-align: center;">
-                                        ${row.accuracy === null ? '<span style="color: #6b7280; font-size: 9px; font-weight: 700;">NA</span>' : `<span style="background: ${row.accuracy >= 90 ? '#10b981' : row.accuracy >= 70 ? '#f59e0b' : '#ef4444'}; color: white; padding: 3px 8px; border-radius: 10px; font-size: 9px; font-weight: 700;">${row.accuracy.toFixed(1)}%</span>`}
+                                        ${row.accuracy === null ? '<span style="color: #6b7280; font-size: 9px; font-weight: 700;">NA</span>' : `<span style="background: ${row.accuracy >= 90 ? '#f04616' : row.accuracy >= 70 ? '#f59e0b' : '#ef4444'}; color: white; padding: 3px 8px; border-radius: 10px; font-size: 9px; font-weight: 700;">${row.accuracy.toFixed(1)}%</span>`}
                                     </td>
                                     <td style="padding: 6px 8px; text-align: center;">
-                                        <span style="background: ${row.error <= 5 ? '#10b981' : row.error <= 15 ? '#f59e0b' : '#ef4444'}; color: white; padding: 3px 8px; border-radius: 10px; font-size: 9px; font-weight: 700;">${row.error.toFixed(1)}%</span>
+                                        <span style="background: ${row.error <= 5 ? '#f04616' : row.error <= 15 ? '#f59e0b' : '#ef4444'}; color: white; padding: 3px 8px; border-radius: 10px; font-size: 9px; font-weight: 700;">${row.error.toFixed(1)}%</span>
                                     </td>
                                     <td style="padding: 6px 8px; text-align: right; font-size: 10px; color: var(--text-primary); font-weight: 700;">${row.auditCount.toLocaleString()}</td>
                                 </tr>
@@ -5421,7 +5426,7 @@ Total Population: ${totalPop}
                 // Color logic: Top performers (green), Bottom performers (red)
                 const colors = displayData.map((d, i) => {
                     const midPoint = Math.ceil(displayData.length / 2);
-                    return i < midPoint ? 'rgba(16, 185, 129, 0.8)' : 'rgba(239, 68, 68, 0.8)';
+                    return i < midPoint ? 'rgba(240, 70, 22, 0.8)' : 'rgba(239, 68, 68, 0.8)';
                 });
                 
                 // Destroy existing chart
@@ -6199,7 +6204,7 @@ Total Population: ${totalPop}
                     const percentage = projects.length > 0 ? Math.round((count / projects.length) * 100) : 0;
                     
                     // Color palette for different project types
-                    const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6', '#f97316'];
+                    const colors = ['#3b82f6', '#f04616', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6', '#f97316'];
                     const colorIndex = sortedProjectTypes.findIndex(([t]) => t === type);
                     const color = colors[colorIndex % colors.length];
                     
@@ -6404,7 +6409,7 @@ Total Population: ${totalPop}
                         color = '#ef4444';
                         bgColor = '#fef2f2';
                     } else if (impactLower.includes('low') || impactLower.includes('minor')) {
-                        color = '#10b981';
+                        color = '#f04616';
                         bgColor = '#f0fdf4';
                     }
                     
@@ -7007,7 +7012,7 @@ Total Population: ${totalPop}
                         </div>
                         
                         <!-- Opportunity Statement -->
-                        <div style="background: #f8fafc; border-radius: 6px; padding: 8px; border-left: 3px solid #10b981;">
+                        <div style="background: #f8fafc; border-radius: 6px; padding: 8px; border-left: 3px solid #f04616;">
                             <div style="color: #64748b; font-size: 8px; font-weight: 700; text-transform: uppercase; margin-bottom: 3px;">
                                 <i class="fas fa-lightbulb" style="margin-right: 4px;"></i>Opportunity Statement
                             </div>
@@ -7523,7 +7528,7 @@ Total Population: ${totalPop}
                     let color = '#64748b';
                     if (impactUpper.includes('HIGH') || impactUpper.includes('CRITICAL')) color = '#dc2626';
                     else if (impactUpper.includes('MEDIUM')) color = '#f59e0b';
-                    else if (impactUpper.includes('LOW')) color = '#10b981';
+                    else if (impactUpper.includes('LOW')) color = '#f04616';
                     
                     return `
                         <div style="display: flex; justify-content: space-between; align-items: center; padding: 3px 0; border-bottom: 1px solid #fee2e2;">
@@ -7548,7 +7553,7 @@ Total Population: ${totalPop}
                     .map(([status, count]) => {
                         const statusUpper = String(status).toUpperCase();
                         let color = '#64748b';
-                        if (statusUpper === 'CLOSED' || statusUpper.includes('COMPLETE')) color = '#10b981';
+                        if (statusUpper === 'CLOSED' || statusUpper.includes('COMPLETE')) color = '#f04616';
                         else if (statusUpper === 'OPEN' || statusUpper.includes('PROGRESS')) color = '#ef4444';
                         
                         return `
@@ -7612,7 +7617,7 @@ Total Population: ${totalPop}
                 const colors = [
                     '#ef4444', // red
                     '#f59e0b', // amber
-                    '#10b981', // green
+                    '#f04616', // green
                     '#3b82f6', // blue
                     '#8b5cf6', // purple
                     '#ec4899', // pink
@@ -7769,7 +7774,7 @@ Total Population: ${totalPop}
                                     const impactUpper = String(impact).toUpperCase();
                                     if (impactUpper.includes('HIGH') || impactUpper.includes('CRITICAL')) impactColor = '#dc2626';
                                     else if (impactUpper.includes('MEDIUM')) impactColor = '#f59e0b';
-                                    else if (impactUpper.includes('LOW')) impactColor = '#10b981';
+                                    else if (impactUpper.includes('LOW')) impactColor = '#f04616';
                                     
                                     return `
                                         <div 
@@ -7876,7 +7881,7 @@ Total Population: ${totalPop}
                 const impactUpper = String(impact).toUpperCase();
                 if (impactUpper.includes('HIGH') || impactUpper.includes('CRITICAL')) impactColor = '#dc2626';
                 else if (impactUpper.includes('MEDIUM')) impactColor = '#f59e0b';
-                else if (impactUpper.includes('LOW')) impactColor = '#10b981';
+                else if (impactUpper.includes('LOW')) impactColor = '#f04616';
                 
                 const detailsHTML = `
                     <div style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; padding: 10px; border-radius: 6px; margin-bottom: 10px;">
@@ -8055,13 +8060,13 @@ Total Population: ${totalPop}
                             label: 'Count',
                             data: Object.values(statusCounts),
                             backgroundColor: [
-                                'rgba(16, 185, 129, 0.8)',
+                                'rgba(240, 70, 22, 0.8)',
                                 'rgba(59, 130, 246, 0.8)',
                                 'rgba(245, 158, 11, 0.8)',
                                 'rgba(107, 114, 128, 0.8)'
                             ],
                             borderColor: [
-                                'rgba(16, 185, 129, 1)',
+                                'rgba(240, 70, 22, 1)',
                                 'rgba(59, 130, 246, 1)',
                                 'rgba(245, 158, 11, 1)',
                                 'rgba(107, 114, 128, 1)'
@@ -8154,12 +8159,12 @@ Total Population: ${totalPop}
                         <i class="fas fa-project-diagram" style="font-size: 20px; color: #3b82f6; opacity: 0.3;"></i>
                     </div>
                     
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: rgba(16, 185, 129, 0.05); border-radius: 6px; border-left: 3px solid #10b981;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: rgba(240, 70, 22, 0.05); border-radius: 6px; border-left: 3px solid #f04616;">
                         <div>
                             <div style="font-size: 9px; color: var(--text-muted); margin-bottom: 2px;">RCA/CAPA</div>
-                            <div style="font-size: 18px; font-weight: 700; color: #10b981;">${rcaCapa.length}</div>
+                            <div style="font-size: 18px; font-weight: 700; color: #f04616;">${rcaCapa.length}</div>
                         </div>
-                        <i class="fas fa-clipboard-check" style="font-size: 20px; color: #10b981; opacity: 0.3;"></i>
+                        <i class="fas fa-clipboard-check" style="font-size: 20px; color: #f04616; opacity: 0.3;"></i>
                     </div>
                     
                     <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: rgba(245, 158, 11, 0.05); border-radius: 6px; border-left: 3px solid #f59e0b;">
@@ -8208,7 +8213,7 @@ Total Population: ${totalPop}
                     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
                         <div style="text-align: center;">
                             <div style="font-size: 9px; color: var(--text-muted); margin-bottom: 4px;">Open</div>
-                            <div style="font-size: 20px; font-weight: 700; color: #10b981;">${open}</div>
+                            <div style="font-size: 20px; font-weight: 700; color: #f04616;">${open}</div>
                         </div>
                         <div style="text-align: center;">
                             <div style="font-size: 9px; color: var(--text-muted); margin-bottom: 4px;">In Progress</div>
@@ -8269,7 +8274,7 @@ Total Population: ${totalPop}
                     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
                         <div style="text-align: center;">
                             <div style="font-size: 9px; color: var(--text-muted); margin-bottom: 4px;">Open</div>
-                            <div style="font-size: 20px; font-weight: 700; color: #10b981;">${open}</div>
+                            <div style="font-size: 20px; font-weight: 700; color: #f04616;">${open}</div>
                         </div>
                         <div style="text-align: center;">
                             <div style="font-size: 9px; color: var(--text-muted); margin-bottom: 4px;">In Progress</div>
@@ -8286,7 +8291,7 @@ Total Population: ${totalPop}
                         ${topRegions.length > 0 ? topRegions.map(([region, count]) => `
                             <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,0.05);">
                                 <span style="font-size: 10px; color: var(--text-secondary);">${region}</span>
-                                <span style="font-size: 10px; font-weight: 600; color: #10b981;">${count}</span>
+                                <span style="font-size: 10px; font-weight: 600; color: #f04616;">${count}</span>
                             </div>
                         `).join('') : '<div style="font-size: 10px; color: var(--text-muted); text-align: center; padding: 10px;">No data available</div>'}
                     </div>
@@ -8612,7 +8617,7 @@ Total Population: ${totalPop}
                 let rating = '', ratingColor = '';
                 if (overallAccuracy >= 95) {
                     rating = 'Excellent';
-                    ratingColor = '#10b981';
+                    ratingColor = '#f04616';
                 } else if (overallAccuracy >= 85) {
                     rating = 'Good';
                     ratingColor = '#3b82f6';
@@ -8721,8 +8726,8 @@ Total Population: ${totalPop}
                         datasets: [{
                             label: 'Accuracy %',
                             data: [criticalAcc.toFixed(1), nonCriticalAcc.toFixed(1)],
-                            backgroundColor: ['rgba(239, 68, 68, 0.8)', 'rgba(16, 185, 129, 0.8)'],
-                            borderColor: ['rgba(239, 68, 68, 1)', 'rgba(16, 185, 129, 1)'],
+                            backgroundColor: ['rgba(239, 68, 68, 0.8)', 'rgba(240, 70, 22, 0.8)'],
+                            borderColor: ['rgba(239, 68, 68, 1)', 'rgba(240, 70, 22, 1)'],
                             borderWidth: 2
                         }]
                     },
@@ -8941,17 +8946,17 @@ Total Population: ${totalPop}
                                     <td style="padding: 6px 8px; text-align: center; font-size: 10px; color: var(--text-primary);">${row.totalAudits}</td>
                                     <td style="padding: 6px 8px; text-align: center;">
                                         ${row.accuracy === null ? '<span style="color: #6b7280; font-size: 9px; font-weight: 700;">NA</span>' : 
-                                        `<span style="background: ${row.accuracy >= 90 ? '#10b981' : row.accuracy >= 70 ? '#f59e0b' : '#ef4444'}; color: white; padding: 3px 8px; border-radius: 10px; font-size: 9px; font-weight: 700;">${row.accuracy.toFixed(1)}%</span>`}
+                                        `<span style="background: ${row.accuracy >= 90 ? '#f04616' : row.accuracy >= 70 ? '#f59e0b' : '#ef4444'}; color: white; padding: 3px 8px; border-radius: 10px; font-size: 9px; font-weight: 700;">${row.accuracy.toFixed(1)}%</span>`}
                                     </td>
                                     <td style="padding: 6px 8px; text-align: center;">
                                         ${row.criticalAccuracy === null ? '<span style="color: #6b7280; font-size: 9px; font-weight: 700;">NA</span>' : 
-                                        `<span style="background: ${row.criticalAccuracy >= 90 ? '#10b981' : row.criticalAccuracy >= 70 ? '#f59e0b' : '#ef4444'}; color: white; padding: 3px 8px; border-radius: 10px; font-size: 9px; font-weight: 700;">${row.criticalAccuracy.toFixed(1)}%</span>`}
+                                        `<span style="background: ${row.criticalAccuracy >= 90 ? '#f04616' : row.criticalAccuracy >= 70 ? '#f59e0b' : '#ef4444'}; color: white; padding: 3px 8px; border-radius: 10px; font-size: 9px; font-weight: 700;">${row.criticalAccuracy.toFixed(1)}%</span>`}
                                     </td>
                                     <td style="padding: 6px 8px; text-align: center;">
                                         ${row.nonCriticalAccuracy === null ? '<span style="color: #6b7280; font-size: 9px; font-weight: 700;">NA</span>' : 
-                                        `<span style="background: ${row.nonCriticalAccuracy >= 90 ? '#10b981' : row.nonCriticalAccuracy >= 70 ? '#f59e0b' : '#ef4444'}; color: white; padding: 3px 8px; border-radius: 10px; font-size: 9px; font-weight: 700;">${row.nonCriticalAccuracy.toFixed(1)}%</span>`}
+                                        `<span style="background: ${row.nonCriticalAccuracy >= 90 ? '#f04616' : row.nonCriticalAccuracy >= 70 ? '#f59e0b' : '#ef4444'}; color: white; padding: 3px 8px; border-radius: 10px; font-size: 9px; font-weight: 700;">${row.nonCriticalAccuracy.toFixed(1)}%</span>`}
                                     </td>
-                                    <td style="padding: 6px 8px; text-align: center; font-size: 10px; color: #10b981; font-weight: 600;">${row.count1}</td>
+                                    <td style="padding: 6px 8px; text-align: center; font-size: 10px; color: #f04616; font-weight: 600;">${row.count1}</td>
                                     <td style="padding: 6px 8px; text-align: center; font-size: 10px; color: #ef4444; font-weight: 600;">${row.count0}</td>
                                     <td style="padding: 6px 8px; text-align: center; font-size: 10px; color: #6b7280;">${row.countNA}</td>
                                 </tr>
@@ -9068,10 +9073,10 @@ Total Population: ${totalPop}
                                     <td style="padding: 6px 8px; font-size: 10px; color: var(--text-primary); font-weight: 600;">${row.parameter}</td>
                                     <td style="padding: 6px 8px; text-align: center;">
                                         ${row.accuracy === null ? '<span style="color: #6b7280; font-size: 9px; font-weight: 700;">NA</span>' : 
-                                        `<span style="background: ${row.accuracy >= 90 ? '#10b981' : row.accuracy >= 70 ? '#f59e0b' : '#ef4444'}; color: white; padding: 3px 8px; border-radius: 10px; font-size: 9px; font-weight: 700;">${row.accuracy.toFixed(1)}%</span>`}
+                                        `<span style="background: ${row.accuracy >= 90 ? '#f04616' : row.accuracy >= 70 ? '#f59e0b' : '#ef4444'}; color: white; padding: 3px 8px; border-radius: 10px; font-size: 9px; font-weight: 700;">${row.accuracy.toFixed(1)}%</span>`}
                                     </td>
                                     <td style="padding: 6px 8px; text-align: center; font-size: 10px; color: var(--text-primary);">${row.totalAudits}</td>
-                                    <td style="padding: 6px 8px; text-align: center; font-size: 10px; color: #10b981; font-weight: 600;">${row.count1}</td>
+                                    <td style="padding: 6px 8px; text-align: center; font-size: 10px; color: #f04616; font-weight: 600;">${row.count1}</td>
                                     <td style="padding: 6px 8px; text-align: center; font-size: 10px; color: #ef4444; font-weight: 600;">${row.count0}</td>
                                     <td style="padding: 6px 8px; text-align: center; font-size: 10px; color: #6b7280;">${row.countNA}</td>
                                 </tr>
