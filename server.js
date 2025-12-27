@@ -5,10 +5,48 @@ const path = require('path');
 const PORT = process.env.PORT || 3001;
 const HOST = '0.0.0.0';
 
+// MIME types for common file extensions
+const mimeTypes = {
+    '.html': 'text/html',
+    '.js': 'text/javascript',
+    '.css': 'text/css',
+    '.json': 'application/json',
+    '.png': 'image/png',
+    '.jpg': 'image/jpeg',
+    '.jpeg': 'image/jpeg',
+    '.gif': 'image/gif',
+    '.svg': 'image/svg+xml',
+    '.ico': 'image/x-icon'
+};
+
 const server = http.createServer((req, res) => {
     console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
     
-    // Determine which file to serve
+    // Try to serve static files from public folder first
+    if (req.url.match(/\.(jpg|jpeg|png|gif|svg|ico|css|js)$/)) {
+        const publicPath = path.join(__dirname, 'public', req.url);
+        
+        fs.readFile(publicPath, (err, content) => {
+            if (!err) {
+                const ext = path.extname(req.url);
+                const contentType = mimeTypes[ext] || 'application/octet-stream';
+                
+                res.writeHead(200, { 
+                    'Content-Type': contentType,
+                    'Cache-Control': 'public, max-age=86400'
+                });
+                res.end(content);
+                return;
+            }
+            
+            // If not found in public, return 404
+            res.writeHead(404, { 'Content-Type': 'text/plain' });
+            res.end('File not found');
+        });
+        return;
+    }
+    
+    // Determine which HTML file to serve
     let filePath;
     if (req.url === '/test' || req.url === '/test.html') {
         filePath = path.join(__dirname, 'test.html');
