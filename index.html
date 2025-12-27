@@ -140,20 +140,20 @@
         }
 
         :root {
-            /* Brand Colors - Orange Theme */
-            --primary: #ff6600;           /* Orange */
-            --primary-dark: #e65c00;      /* Darker Orange */
-            --secondary: #ff8533;         /* Light Orange */
-            --accent: #ffaa66;            /* Accent Orange */
+            /* Taggd Brand Colors - From PowerPoint Theme */
+            --primary: #f04616;           /* Taggd Orange (from logo) */
+            --primary-dark: #ee4415;      /* Darker Orange */
+            --secondary: #ff6347;         /* Tomato Orange */
+            --accent: #ff7f50;            /* Coral Accent */
             --success: #10b981;           /* Green */
-            --warning: #ff6600;           /* Orange */
+            --warning: #f04616;           /* Orange */
             --error: #dc2626;             /* Red */
             
-            /* Backgrounds - Dark Theme */
-            --bg-primary: #0d0d0d;        /* Pure Black */
-            --bg-secondary: #1a1a1a;      /* Dark Gray */
-            --bg-card: #1a1a1a;           /* Dark Card */
-            --bg-hover: #2a2a2a;          /* Medium Gray Hover */
+            /* Backgrounds - Dark Theme (from PowerPoint slide) */
+            --bg-primary: #000000;        /* Pure Black */
+            --bg-secondary: #080808;      /* Very Dark Gray */
+            --bg-card: #0d0d0d;           /* Dark Card */
+            --bg-hover: #1a1a1a;          /* Gray Hover */
             
             /* Text - Light on Dark */
             --text-primary: #f8fafc;      /* White Text */
@@ -161,7 +161,7 @@
             --text-muted: #94a3b8;        /* Muted Gray */
             
             /* Borders & Shadows */
-            --border: #333333;            /* Dark Border */
+            --border: #1a1a1a;            /* Dark Border */
             --shadow: rgba(0, 0, 0, 0.5); /* Dark Shadow */
             
             /* Spacing */
@@ -178,7 +178,7 @@
             overflow-x: hidden;
         }
 
-        /* Background Gradient Effect - Dark Orange Glow */
+        /* Background Gradient Effect - Taggd Orange Glow */
         body::before {
             content: '';
             position: fixed;
@@ -187,8 +187,8 @@
             right: 0;
             bottom: 0;
             background: 
-                radial-gradient(circle at 20% 20%, rgba(255, 102, 0, 0.08) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(255, 133, 51, 0.08) 0%, transparent 50%);
+                radial-gradient(circle at 20% 20%, rgba(240, 70, 22, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(238, 68, 21, 0.08) 0%, transparent 50%);
             pointer-events: none;
             z-index: -1;
         }
@@ -222,19 +222,37 @@
             left: 0;
             right: 0;
             height: var(--header-height);
-            background: #ffffff;
+            background: var(--bg-secondary);
             border-bottom: 2px solid var(--border);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 1000;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        }
+        
+        .header-logo {
+            position: absolute;
+            left: 24px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            align-items: center;
+            height: 50px;
+            z-index: 1002;
+        }
+        
+        .header-logo img {
+            height: 45px;
+            width: auto;
+            max-width: 180px;
+            object-fit: contain;
         }
 
         .header h1 {
             font-size: 20px;
             font-weight: 700;
-            color: #000000;
+            color: var(--text-primary);
             text-align: center;
             line-height: 1.4;
         }
@@ -266,7 +284,7 @@
 
         .upload-btn:hover {
             transform: translateY(-50%) translateY(-2px);
-            box-shadow: 0 6px 16px rgba(255, 102, 0, 0.4);
+            box-shadow: 0 6px 16px rgba(240, 70, 22, 0.4);
         }
 
         /* ==========================================
@@ -756,6 +774,9 @@
 <body>
     <!-- HEADER -->
     <div class="header">
+        <div class="header-logo">
+            <img src="/taggd-logo.png" alt="Taggd">
+        </div>
         <h1>
             Business Excellence<br>
             <span style="font-size: 14px; font-weight: 500; color: #cbd5e1;">Comprehensive Quality Dashboard</span>
