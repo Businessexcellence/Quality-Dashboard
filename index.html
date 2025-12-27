@@ -1234,7 +1234,7 @@
                         Clear
                     </button>
                 </div>
-                <div id="recruiterFilters" style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; width: 100%; overflow: visible;">
+                <div id="recruiterFilters" style="display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 6px; width: 100%; overflow: visible;">
                     <!-- Filters will be populated here dynamically -->
                 </div>
             </div>
@@ -9162,13 +9162,14 @@ Total Population: ${totalPop}
                     return;
                 }
                 
-                // Define 7 filters with icons (including Recruitment Stage)
+                // Define 8 filters with icons (including Stage and Practice Head)
                 const filters = [
                     { label: 'Account', field: 'Client', icon: 'building' },
                     { label: 'Month', field: 'Month', icon: 'calendar' },
                     { label: 'Stage', field: 'Stage', icon: 'tasks' },
                     { label: 'Regional Head', field: 'Regional Head', icon: 'user-shield' },
                     { label: 'Program Manager', field: 'Program Manager', icon: 'user-cog' },
+                    { label: 'Practice Head', field: 'Practice Head', icon: 'user-graduate' },
                     { label: 'Region', field: 'Region', icon: 'map-marker-alt' },
                     { label: 'Recruiter', field: 'Recruiter', icon: 'user-tie' }
                 ];
