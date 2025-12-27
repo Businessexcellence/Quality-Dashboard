@@ -4682,8 +4682,8 @@ Total Population: ${totalPop}
                 // Sample% = Sum of "Opportunity Count" / Sum of "Total Population"
                 const samplePercent = totalPopulation > 0 ? (totalOpportunityCount / totalPopulation * 100) : 0;
 
-                // Error% = Sum of "Opportunity Fail" / Sum of "Opportunity Count"
-                const errorPercent = totalOpportunityCount > 0 ? (totalOpportunityFail / totalOpportunityCount * 100) : 0;
+                // Error% = Sum of "Opportunity Fail" / (Sum of "Opportunity Count" - Sum of "Opportunity NA")
+                const errorPercent = denominator > 0 ? (totalOpportunityFail / denominator * 100) : 0;
 
                 // Audit Count = Sum of "Opportunity Count"
                 const auditCount = totalOpportunityCount;
@@ -5851,8 +5851,8 @@ Total Population: ${totalPop}
                 // Sample% = Sum of "Opportunity Count" / Sum of "Total Population"
                 const samplePercent = totalPopulation > 0 ? (totalOpportunityCount / totalPopulation * 100) : 0;
                 
-                // Error% = Sum of "Opportunity Fail" / Sum of "Opportunity Count"
-                const errorPercent = totalOpportunityCount > 0 ? (totalOpportunityFail / totalOpportunityCount * 100) : 0;
+                // Error% = Sum of "Opportunity Fail" / (Sum of "Opportunity Count" - Sum of "Opportunity NA")
+                const errorPercent = denominator > 0 ? (totalOpportunityFail / denominator * 100) : 0;
                 
                 // Overall Audit Count = Sum of "Opportunity Count"
                 const auditCount = totalOpportunityCount;
@@ -6053,8 +6053,8 @@ Total Population: ${totalPop}
                     // Sample% = Sum of "Opportunity Count" / Sum of "Total Population"
                     const sample = stats.totalPopulation > 0 ? (stats.opportunityCount / stats.totalPopulation * 100) : 0;
                     
-                    // Error% = Sum of "Opportunity Fail" / Sum of "Opportunity Count"
-                    const error = stats.opportunityCount > 0 ? (stats.opportunityFail / stats.opportunityCount * 100) : 0;
+                    // Error% = Sum of "Opportunity Fail" / (Sum of "Opportunity Count" - Sum of "Opportunity NA")
+                    const error = denominator > 0 ? (stats.opportunityFail / denominator * 100) : 0;
                     
                     return {
                         parameter: param,
