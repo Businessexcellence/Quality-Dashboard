@@ -82,48 +82,24 @@
         };
         
         // Define upload modal functions immediately
+        // Upload modal functions - Simple version
         window.openUploadModal = function() {
-            console.log('🎯 Opening upload modal...');
-            try {
-                var modal = document.getElementById('uploadModal');
-                if (modal) {
-                    modal.style.display = 'flex';
-                    modal.classList.add('active');
-                    console.log('✅ Upload modal opened');
-                } else {
-                    console.error('❌ Modal not found');
-                    alert('Upload modal not found!');
-                }
-            } catch (error) {
-                console.error('❌ Error opening modal:', error);
-                alert('Error: ' + error.message);
+            const modal = document.getElementById('uploadModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                modal.classList.add('active');
             }
         };
         
         window.closeUploadModal = function() {
-            console.log('🎯 Closing upload modal...');
-            try {
-                var modal = document.getElementById('uploadModal');
-                if (modal) {
-                    modal.style.display = 'none';
-                    modal.classList.remove('active');
-                    console.log('✅ Upload modal closed');
-                }
-            } catch (error) {
-                console.error('❌ Error closing modal:', error);
+            const modal = document.getElementById('uploadModal');
+            if (modal) {
+                modal.style.display = 'none';
+                modal.classList.remove('active');
+                // Reset progress
+                const progressContainer = document.getElementById('uploadProgress');
+                if (progressContainer) progressContainer.style.display = 'none';
             }
-        };
-        
-        console.log('✅ HEAD: Critical functions defined');
-        console.log('✅ window.switchTab:', typeof window.switchTab);
-        console.log('✅ window.openUploadModal:', typeof window.openUploadModal);
-        
-        // Initialize handleFileUpload as a deferred function
-        window.handleFileUpload = function(event) {
-            console.log('⚠️ HEAD: handleFileUpload called before full definition loaded');
-            console.log('📁 File:', event.target.files[0]?.name);
-            // Store the event for later processing
-            window._pendingFileUpload = event;
         };
     </script>
     
@@ -813,7 +789,7 @@
             Business Excellence<br>
             <span style="font-size: 14px; font-weight: 500;">Comprehensive Quality Dashboard</span>
         </h1>
-        <button class="upload-btn" onclick="console.log('Button clicked!'); window.openUploadModal(); return false;">
+        <button class="upload-btn" onclick="openUploadModal()">
             <i class="fas fa-upload"></i>
             Upload Excel
         </button>
@@ -1972,54 +1948,7 @@
         console.log('✅ Safe DOM utilities loaded');
 
         // ==========================================
-        // UPLOAD MODAL FUNCTIONS (Defined at top level)
-        // ==========================================
-        
-        console.log('🚀 Script loaded - defining upload functions');
-        
-        window.openUploadModal = function() {
-            console.log('🎯 Opening upload modal...');
-            try {
-                const modal = document.getElementById('uploadModal');
-                console.log('Modal element:', modal);
-                if (modal) {
-                    modal.style.display = 'flex';
-                    modal.classList.add('active');
-                    console.log('✅ Upload modal opened');
-                } else {
-                    console.error('❌ Upload modal not found!');
-                    alert('Error: Upload modal not found. Please refresh the page.');
-                }
-            } catch (error) {
-                console.error('❌ Error opening modal:', error);
-                alert('Error opening upload modal: ' + error.message);
-            }
-        };
-
-        window.closeUploadModal = function() {
-            console.log('🎯 Closing upload modal...');
-            try {
-                const modal = document.getElementById('uploadModal');
-                if (modal) {
-                    modal.style.display = 'none';
-                    modal.classList.remove('active');
-                    console.log('✅ Upload modal closed');
-                }
-            } catch (error) {
-                console.error('❌ Error closing modal:', error);
-            }
-        };
-        
-        // Test function
-        window.testUpload = function() {
-            console.log('✅ Test function working!');
-            alert('JavaScript is working! Now testing modal...');
-            window.openUploadModal();
-        };
-        
-        console.log('✅ Upload functions defined on window object');
-        console.log('window.openUploadModal:', typeof window.openUploadModal);
-        console.log('window.closeUploadModal:', typeof window.closeUploadModal);
+        // Upload functions already defined in HEAD section - no duplicates needed
         
         // ==========================================
         // NAVIGATION
@@ -2757,9 +2686,8 @@
                 return cleanRow;
             });
 
-            // Check available columns
-            const sampleRow = window.dashboardData.accountSummary[0];
-            console.log('📋 Available Account Summary columns:', Object.keys(sampleRow));
+            // Get filtered data (or all data if no filters applied)
+            const dataToCount = getFilteredAccountData();
 
             // Define 6 main filters - added Regional Head
             const filters = [
@@ -2772,19 +2700,19 @@
             ];
 
             container.innerHTML = filters.map(filter => {
-                // Get unique values for this filter
-                const values = [...new Set(window.dashboardData.accountSummary
+                // Get unique values for this filter from ALL data (not just filtered)
+                const allValues = [...new Set(window.dashboardData.accountSummary
                     .map(row => {
                         const value = row[filter.field];
                         return typeof value === 'string' ? value.trim() : value;
                     })
                     .filter(Boolean))];
 
-                if (values.length === 0) return '';
+                if (allValues.length === 0) return '';
 
-                // Calculate counts for each value
-                const valueCounts = values.map(value => {
-                    const count = window.dashboardData.accountSummary.filter(r => {
+                // Calculate counts for each value based on FILTERED data
+                const valueCounts = allValues.map(value => {
+                    const count = dataToCount.filter(r => {
                         const rowValue = r[filter.field];
                         const cleanRowValue = typeof rowValue === 'string' ? rowValue.trim() : rowValue;
                         return cleanRowValue === value;
@@ -2854,7 +2782,7 @@
                 `;
             }).join('');
             
-            console.log('✅ Very compact scrollable filters rendered');
+            console.log('✅ Account filters rendered with dynamic counts');
         }
 
         function applyAccountFilter(field, value) {
@@ -2891,6 +2819,9 @@
                 // Get filtered data
                 const filteredData = getFilteredAccountData();
                 
+                // Re-render filters with updated counts based on filtered data
+                renderAccountFilters();
+                
                 // Update ALL sections with filtered data
                 renderAccountTable();
                 renderAccountKPIsFiltered(filteredData);
@@ -2898,7 +2829,7 @@
                 renderRegionChartFiltered(filteredData);
                 renderBESPOCFiltered(filteredData);
                 
-                // Update button styles for ALL buttons
+                // Update button styles for ALL buttons (must be after renderAccountFilters)
                 document.querySelectorAll('.account-filter-btn').forEach(btn => {
                     const btnField = btn.getAttribute('data-field');
                     const btnValue = btn.getAttribute('data-value');
@@ -3975,18 +3906,6 @@ Total Population: ${totalPop}
                                         onmouseout="if(!this.classList.contains('active')){this.style.background='#f9fafb'; this.style.borderColor='var(--border)';}"
                                     >
                                         <span style="color: var(--text-primary); font-size: 8px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;">${filter.field === 'Week' ? 'Week ' + value : value}</span>
-                                        <span style="
-                                            background: var(--primary);
-                                            color: white;
-                                            padding: 1px 4px;
-                                            border-radius: 4px;
-                                            font-size: 8px;
-                                            font-weight: 700;
-                                            min-width: 16px;
-                                            text-align: center;
-                                            flex-shrink: 0;
-                                            margin-left: 3px;
-                                        ">${count}</span>
                                     </button>
                                 `).join('')}
                             </div>
