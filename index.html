@@ -1110,71 +1110,29 @@
         </div>
 
         <div id="audit-summary" class="tab-content">
-            <!-- Filters Section - Card Style -->
-            <div style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border: 1px solid #6ee7b7; border-radius: 6px; padding: 8px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                <div style="display: flex; align-items: center; margin-bottom: 6px;">
-                    <i class="fas fa-filter" style="color: #ee4415; font-size: 11px; margin-right: 6px;"></i>
-                    <span style="font-size: 10px; font-weight: 700; color: #ee4415;">Filter Parameters</span>
-                </div>
-                <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 6px;">
-                    <!-- Client Filter Card -->
-                    <div style="background: white; border: 1px solid #6ee7b7; border-radius: 4px; padding: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                        <label style="display: block; font-size: 8px; font-weight: 600; color: #ee4415; margin-bottom: 3px;">
-                            <i class="fas fa-building" style="margin-right: 3px;"></i>Client
-                        </label>
-                        <select id="paramFilterClient" onchange="applyParameterFilters()" style="width: 100%; padding: 4px; font-size: 9px; border: 1px solid #cbd5e1; border-radius: 3px; background: white; color: #334155;">
-                            <option value="">All Clients</option>
-                        </select>
+            <!-- Filters Section - Scrollable Button Style like Account Summary -->
+            <div style="background: white; border: 1px solid var(--border); border-radius: 6px; padding: 12px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <div style="display: flex; align-items: center;">
+                        <i class="fas fa-filter" style="color: var(--primary); font-size: 11px; margin-right: 6px;"></i>
+                        <span style="font-size: 10px; font-weight: 700; color: var(--text-primary); text-transform: uppercase;">FILTERS</span>
                     </div>
-                    
-                    <!-- Region Filter Card -->
-                    <div style="background: white; border: 1px solid #6ee7b7; border-radius: 4px; padding: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                        <label style="display: block; font-size: 8px; font-weight: 600; color: #ee4415; margin-bottom: 3px;">
-                            <i class="fas fa-map-marker-alt" style="margin-right: 3px;"></i>Region
-                        </label>
-                        <select id="paramFilterRegion" onchange="applyParameterFilters()" style="width: 100%; padding: 4px; font-size: 9px; border: 1px solid #cbd5e1; border-radius: 3px; background: white; color: #334155;">
-                            <option value="">All Regions</option>
-                        </select>
-                    </div>
-                    
-                    <!-- Stage Filter Card -->
-                    <div style="background: white; border: 1px solid #6ee7b7; border-radius: 4px; padding: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                        <label style="display: block; font-size: 8px; font-weight: 600; color: #ee4415; margin-bottom: 3px;">
-                            <i class="fas fa-tasks" style="margin-right: 3px;"></i>Stage
-                        </label>
-                        <select id="paramFilterStage" onchange="applyParameterFilters()" style="width: 100%; padding: 4px; font-size: 9px; border: 1px solid #cbd5e1; border-radius: 3px; background: white; color: #334155;">
-                            <option value="">All Stages</option>
-                        </select>
-                    </div>
-                    
-                    <!-- Critical Type Filter Card -->
-                    <div style="background: white; border: 1px solid #6ee7b7; border-radius: 4px; padding: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                        <label style="display: block; font-size: 8px; font-weight: 600; color: #ee4415; margin-bottom: 3px;">
-                            <i class="fas fa-exclamation-triangle" style="margin-right: 3px;"></i>Type
-                        </label>
-                        <select id="paramFilterCritical" onchange="applyParameterFilters()" style="width: 100%; padding: 4px; font-size: 9px; border: 1px solid #cbd5e1; border-radius: 3px; background: white; color: #334155;">
-                            <option value="">All Types</option>
-                            <option value="Critical">Critical</option>
-                            <option value="Non Critical">Non Critical</option>
-                        </select>
-                    </div>
-                    
-                    <!-- Month Filter Card -->
-                    <div style="background: white; border: 1px solid #6ee7b7; border-radius: 4px; padding: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                        <label style="display: block; font-size: 8px; font-weight: 600; color: #ee4415; margin-bottom: 3px;">
-                            <i class="fas fa-calendar" style="margin-right: 3px;"></i>Month
-                        </label>
-                        <select id="paramFilterMonth" onchange="applyParameterFilters()" style="width: 100%; padding: 4px; font-size: 9px; border: 1px solid #cbd5e1; border-radius: 3px; background: white; color: #334155;">
-                            <option value="">All Months</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <!-- Clear Button -->
-                <div style="text-align: right;">
-                    <button onclick="clearParameterFilters()" style="padding: 4px 12px; font-size: 9px; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; box-shadow: 0 2px 4px rgba(239,68,68,0.3);">
-                        <i class="fas fa-times-circle" style="margin-right: 4px;"></i>Clear All Filters
+                    <button onclick="clearParameterFilters()" style="
+                        background: #dc2626;
+                        color: white;
+                        border: none;
+                        padding: 4px 8px;
+                        border-radius: 4px;
+                        font-size: 8px;
+                        font-weight: 600;
+                        cursor: pointer;
+                        transition: all 0.2s;
+                    ">
+                        Clear
                     </button>
+                </div>
+                <div id="parameterFilters" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px;">
+                    <!-- Filters will be populated here dynamically -->
                 </div>
             </div>
 
@@ -4974,78 +4932,230 @@ Total Population: ${totalPop}
 
         function populateParameterFilters() {
             try {
+                const container = document.getElementById('parameterFilters');
                 const data = window.dashboardData.parameterAuditCount;
                 
-                // Get unique values from correct columns
-                // Column A - Client
-                const clients = [...new Set(data.map(row => row['Client']))].filter(v => v).sort();
-                // Column B - Region
-                const regions = [...new Set(data.map(row => row['Region']))].filter(v => v).sort();
-                // Column H - Stage
-                const stages = [...new Set(data.map(row => row['Stage']))].filter(v => v).sort();
-                // Column G - Critical/Non Critical (NOT column F which is Week)
-                const criticalTypes = [...new Set(data.map(row => row['Critical/Non Critical']))].filter(v => v).sort();
-                // Column D - Month
-                const months = [...new Set(data.map(row => row['Month']))].filter(v => v);
-                
-                // Sort months chronologically
-                const monthOrder = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-                months.sort((a, b) => monthOrder.indexOf(a) - monthOrder.indexOf(b));
-                
-                // Populate Client filter (Column A)
-                const clientSelect = document.getElementById('paramFilterClient');
-                if (clientSelect) {
-                    clientSelect.innerHTML = '<option value="">All Clients</option>';
-                    clients.forEach(client => {
-                        clientSelect.innerHTML += `<option value="${client}">${client}</option>`;
-                    });
+                if (!data || data.length === 0) {
+                    container.innerHTML = '<div style="padding: 20px; text-align: center; color: #94a3b8; grid-column: 1 / -1;">No data available</div>';
+                    return;
                 }
                 
-                // Populate Region filter (Column B)
-                const regionSelect = document.getElementById('paramFilterRegion');
-                if (regionSelect) {
-                    regionSelect.innerHTML = '<option value="">All Regions</option>';
-                    regions.forEach(region => {
-                        regionSelect.innerHTML += `<option value="${region}">${region}</option>`;
-                    });
-                }
+                // Define 6 filters with icons
+                const filters = [
+                    { label: 'Client', field: 'Client', icon: 'building' },
+                    { label: 'Region', field: 'Region', icon: 'map-marker-alt' },
+                    { label: 'Stage', field: 'Stage', icon: 'tasks' },
+                    { label: 'Critical/Non Critical', field: 'Critical/Non Critical', icon: 'exclamation-triangle' },
+                    { label: 'Month', field: 'Month', icon: 'calendar' },
+                    { label: 'Practice Head', field: 'Practice Head', icon: 'user-tie' }
+                ];
+
+                container.innerHTML = filters.map(filter => {
+                    let values;
+                    
+                    // Handle Practice Head from account mapping
+                    if (filter.field === 'Practice Head') {
+                        if (!window.clientToAccountMapping) {
+                            return '';
+                        }
+                        values = [...new Set(Object.values(window.clientToAccountMapping).map(m => m.practiceHead).filter(p => p))];
+                    } else {
+                        // Get unique values for this filter
+                        values = [...new Set(data
+                            .map(row => {
+                                const value = row[filter.field];
+                                return typeof value === 'string' ? value.trim() : value;
+                            })
+                            .filter(Boolean))];
+                    }
+
+                    if (values.length === 0) return '';
+
+                    // Calculate counts based on OTHER active filters (exclude current field)
+                    const valueCounts = values.map(value => {
+                        // Create temporary filters excluding current field
+                        const tempFilters = {...window.activeParameterFilters};
+                        delete tempFilters[filter.field];
+                        
+                        // Filter data based on other filters only
+                        let dataForCount = data;
+                        if (Object.keys(tempFilters).length > 0) {
+                            dataForCount = data.filter(row => {
+                                return Object.entries(tempFilters).every(([field, values]) => {
+                                    if (!values || values.length === 0) return true;
+                                    
+                                    // Special handling for Practice Head
+                                    if (field === 'Practice Head') {
+                                        const client = String(row['Client'] || '').trim();
+                                        const mapping = window.clientToAccountMapping[client];
+                                        if (!mapping) return false;
+                                        return values.some(v => mapping.practiceHead === v);
+                                    }
+                                    
+                                    const rowValue = row[field];
+                                    const cleanRowValue = typeof rowValue === 'string' ? rowValue.trim() : rowValue;
+                                    return values.some(v => {
+                                        const cleanFilterValue = typeof v === 'string' ? v.trim() : v;
+                                        return cleanRowValue === cleanFilterValue;
+                                    });
+                                });
+                            });
+                        }
+                        
+                        // Calculate sum of Opportunity Count for this value
+                        let count;
+                        if (filter.field === 'Practice Head') {
+                            count = dataForCount.reduce((sum, row) => {
+                                const client = String(row['Client'] || '').trim();
+                                const mapping = window.clientToAccountMapping[client];
+                                if (mapping && mapping.practiceHead === value) {
+                                    const oppCount = parseInt(row['Opportunity Count']) || 0;
+                                    return sum + oppCount;
+                                }
+                                return sum;
+                            }, 0);
+                        } else {
+                            count = dataForCount.reduce((sum, r) => {
+                                const rowValue = r[filter.field];
+                                const cleanRowValue = typeof rowValue === 'string' ? rowValue.trim() : rowValue;
+                                if (cleanRowValue === value) {
+                                    const oppCount = parseInt(r['Opportunity Count']) || 0;
+                                    return sum + oppCount;
+                                }
+                                return sum;
+                            }, 0);
+                        }
+                        return { value, count };
+                    }).sort((a, b) => b.count - a.count);
+
+                    // Special sorting for months
+                    if (filter.field === 'Month') {
+                        const monthOrder = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                        valueCounts.sort((a, b) => monthOrder.indexOf(a.value) - monthOrder.indexOf(b.value));
+                    }
+
+                    return `
+                        <div style="
+                            background: transparent; 
+                            border: 1px solid var(--border); 
+                            border-radius: 4px; 
+                            padding: 5px; 
+                        ">
+                            <div style="display: flex; align-items: center; gap: 3px; margin-bottom: 4px;">
+                                <i class="fas fa-${filter.icon}" style="color: var(--primary); font-size: 8px;"></i>
+                                <h3 style="font-size: 9px; font-weight: 700; color: var(--text-primary); margin: 0; text-transform: uppercase;">${filter.label}</h3>
+                            </div>
+                            <div style="
+                                display: flex; 
+                                flex-direction: column; 
+                                gap: 2px; 
+                                max-height: 85px; 
+                                overflow-y: auto;
+                                padding-right: 2px;
+                            ">
+                                ${valueCounts.map(({ value, count }) => `
+                                    <button 
+                                        onclick="applyParameterFilter('${filter.field}', '${String(value).replace(/'/g, "\\'")}')"
+                                        data-field="${filter.field}"
+                                        data-value="${String(value).replace(/"/g, '&quot;')}"
+                                        class="parameter-filter-btn"
+                                        style="
+                                            display: flex;
+                                            justify-content: space-between;
+                                            align-items: center;
+                                            padding: 3px 5px;
+                                            background: #f9fafb;
+                                            border: 1px solid var(--border);
+                                            border-radius: 3px;
+                                            cursor: pointer;
+                                            transition: all 0.2s;
+                                            text-align: left;
+                                            width: 100%;
+                                        "
+                                        onmouseover="if(!this.classList.contains('active')){this.style.background='#f0f1f3'; this.style.borderColor='var(--primary)';}"
+                                        onmouseout="if(!this.classList.contains('active')){this.style.background='#f9fafb'; this.style.borderColor='var(--border)';}"
+                                    >
+                                        <span style="color: var(--text-primary); font-size: 8px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;">${value}</span>
+                                        <span style="
+                                            background: var(--primary);
+                                            color: white;
+                                            padding: 1px 4px;
+                                            border-radius: 4px;
+                                            font-size: 8px;
+                                            font-weight: 700;
+                                            min-width: 16px;
+                                            text-align: center;
+                                            flex-shrink: 0;
+                                            margin-left: 3px;
+                                        ">${count}</span>
+                                    </button>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
                 
-                // Populate Stage filter (Column H)
-                const stageSelect = document.getElementById('paramFilterStage');
-                if (stageSelect) {
-                    stageSelect.innerHTML = '<option value="">All Stages</option>';
-                    stages.forEach(stage => {
-                        stageSelect.innerHTML += `<option value="${stage}">${stage}</option>`;
-                    });
-                }
-                
-                // Populate Critical/Non Critical filter (Column G)
-                const criticalSelect = document.getElementById('paramFilterCritical');
-                if (criticalSelect) {
-                    criticalSelect.innerHTML = '<option value="">All Types</option>';
-                    criticalTypes.forEach(type => {
-                        criticalSelect.innerHTML += `<option value="${type}">${type}</option>`;
-                    });
-                }
-                
-                // Populate Month filter (Column D)
-                const monthSelect = document.getElementById('paramFilterMonth');
-                if (monthSelect) {
-                    monthSelect.innerHTML = '<option value="">All Months</option>';
-                    months.forEach(month => {
-                        monthSelect.innerHTML += `<option value="${month}">${month}</option>`;
-                    });
-                }
-                
-                console.log('✅ Parameter filters populated:', {
-                    clients: clients.length,
-                    regions: regions.length,
-                    stages: stages.length,
-                    criticalTypes: criticalTypes.length,
-                    months: months.length
-                });
+                console.log('✅ Parameter filters rendered with dynamic counts');
             } catch (error) {
                 handleError(error, 'populateParameterFilters');
+            }
+        }
+
+        function applyParameterFilter(field, value) {
+            try {
+                console.log(`🔍 Parameter filter toggled: ${field} = ${value}`);
+                
+                // Initialize active filters if needed
+                if (!window.activeParameterFilters) {
+                    window.activeParameterFilters = {};
+                }
+                
+                // Initialize array for this field if needed
+                if (!window.activeParameterFilters[field]) {
+                    window.activeParameterFilters[field] = [];
+                }
+                
+                // Toggle the value
+                const valueIndex = window.activeParameterFilters[field].indexOf(value);
+                if (valueIndex > -1) {
+                    // Remove the value
+                    window.activeParameterFilters[field].splice(valueIndex, 1);
+                    
+                    // Remove field entirely if no values left
+                    if (window.activeParameterFilters[field].length === 0) {
+                        delete window.activeParameterFilters[field];
+                    }
+                } else {
+                    // Add the value
+                    window.activeParameterFilters[field].push(value);
+                }
+                
+                // Re-render filters with updated counts
+                populateParameterFilters();
+                
+                // Apply filters to data
+                applyParameterFilters();
+                
+                // Update button styles after re-render
+                document.querySelectorAll('.parameter-filter-btn').forEach(btn => {
+                    const btnField = btn.getAttribute('data-field');
+                    const btnValue = btn.getAttribute('data-value');
+                    
+                    const isActive = window.activeParameterFilters[btnField] && 
+                                    window.activeParameterFilters[btnField].includes(btnValue);
+                    
+                    if (isActive) {
+                        btn.classList.add('active');
+                        btn.style.background = 'rgba(240, 70, 22, 0.1)';
+                        btn.style.borderColor = 'var(--primary)';
+                    } else {
+                        btn.classList.remove('active');
+                        btn.style.background = '#f9fafb';
+                        btn.style.borderColor = 'var(--border)';
+                    }
+                });
+            } catch (error) {
+                handleError(error, 'applyParameterFilter');
             }
         }
 
@@ -5053,36 +5163,36 @@ Total Population: ${totalPop}
             try {
                 let data = window.dashboardData.parameterAuditCount;
                 
-                // Get filter values from correct columns
-                const clientFilter = safeGetElement('paramFilterClient')?.value || '';      // Column A
-                const regionFilter = safeGetElement('paramFilterRegion')?.value || '';      // Column B
-                const stageFilter = safeGetElement('paramFilterStage')?.value || '';        // Column H
-                const criticalFilter = safeGetElement('paramFilterCritical')?.value || '';  // Column G
-                const monthFilter = safeGetElement('paramFilterMonth')?.value || '';        // Column D
+                // Apply filters from active filters object
+                if (window.activeParameterFilters && Object.keys(window.activeParameterFilters).length > 0) {
+                    data = data.filter(row => {
+                        return Object.entries(window.activeParameterFilters).every(([field, values]) => {
+                            if (!values || values.length === 0) return true;
+                            
+                            // Special handling for Practice Head
+                            if (field === 'Practice Head') {
+                                const client = String(row['Client'] || '').trim();
+                                const mapping = window.clientToAccountMapping[client];
+                                if (!mapping) return false;
+                                return values.some(v => mapping.practiceHead === v);
+                            }
+                            
+                            const rowValue = row[field];
+                            const cleanRowValue = typeof rowValue === 'string' ? rowValue.trim() : rowValue;
+                            return values.some(v => {
+                                const cleanFilterValue = typeof v === 'string' ? v.trim() : v;
+                                return cleanRowValue === cleanFilterValue;
+                            });
+                        });
+                    });
+                }
                 
-                console.log('🔍 Applying filters:', { clientFilter, regionFilter, stageFilter, criticalFilter, monthFilter });
-                
-                // Apply filters to Parameter_Audit_Count data
-                let filteredData = data.filter(row => {
-                    // Column A - Client
-                    if (clientFilter && String(row['Client'] || '').trim() !== clientFilter) return false;
-                    // Column B - Region
-                    if (regionFilter && String(row['Region'] || '').trim() !== regionFilter) return false;
-                    // Column H - Stage
-                    if (stageFilter && String(row['Stage'] || '').trim() !== stageFilter) return false;
-                    // Column G - Critical/Non Critical
-                    if (criticalFilter && String(row['Critical/Non Critical'] || '').trim() !== criticalFilter) return false;
-                    // Column D - Month
-                    if (monthFilter && String(row['Month'] || '').trim() !== monthFilter) return false;
-                    return true;
-                });
-                
-                console.log('✅ Filtered data:', filteredData.length, 'rows');
+                console.log('✅ Filtered data:', data.length, 'rows');
                 
                 // Calculate and display metrics
-                calculateParameterMetrics(filteredData);
-                generateParameterTable(filteredData);
-                generateTopBottomChart(filteredData);
+                calculateParameterMetrics(data);
+                generateParameterTable(data);
+                generateTopBottomChart(data);
                 
             } catch (error) {
                 handleError(error, 'applyParameterFilters');
@@ -5091,13 +5201,15 @@ Total Population: ${totalPop}
 
         function clearParameterFilters() {
             try {
-                const filters = ['paramFilterClient', 'paramFilterRegion', 'paramFilterStage', 'paramFilterCritical', 'paramFilterMonth'];
-                filters.forEach(id => {
-                    const elem = safeGetElement(id);
-                    if (elem) elem.value = '';
-                });
-                document.getElementById('paramSearch').value = '';
+                // Clear active filters
+                window.activeParameterFilters = {};
+                
+                // Re-render filters
+                populateParameterFilters();
+                
+                // Apply (no filters = show all data)
                 applyParameterFilters();
+                
                 console.log('✅ Parameter filters cleared');
             } catch (error) {
                 handleError(error, 'clearParameterFilters');
