@@ -9166,15 +9166,15 @@ Total Population: ${totalPop}
                 console.log('📊 Recruiter Data Columns:', Object.keys(data[0] || {}));
                 console.log('📊 Total Recruiter Rows:', data.length);
                 
-                // Define 7 filters with icons (removed Stage for better width coverage)
+                // Define 7 filters with icons (removed Recruiter, kept Stage for better width coverage)
                 const filters = [
                     { label: 'Account', field: 'Client', icon: 'building' },
                     { label: 'Month', field: 'Month', icon: 'calendar' },
+                    { label: 'Stage', field: 'Stage', icon: 'tasks' },
                     { label: 'Regional Head', field: 'Regional Head', icon: 'user-shield' },
                     { label: 'Program Manager', field: 'Program Manager', icon: 'user-cog' },
                     { label: 'Practice Head', field: 'Practice Head', icon: 'user-graduate' },
-                    { label: 'Region', field: 'Region', icon: 'map-marker-alt' },
-                    { label: 'Recruiter', field: 'Recruiter', icon: 'user-tie' }
+                    { label: 'Region', field: 'Region', icon: 'map-marker-alt' }
                 ];
 
                 container.innerHTML = filters.map(filter => {
