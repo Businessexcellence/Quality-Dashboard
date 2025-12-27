@@ -1214,8 +1214,8 @@
 
         <div id="recruiter" class="tab-content">
             <!-- Filters Section - Scrollable Button Style like Account Summary -->
-            <div style="background: white; border: 1px solid var(--border); border-radius: 6px; padding: 8px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <div style="background: white; border: 1px solid var(--border); border-radius: 6px; padding: 10px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                     <div style="display: flex; align-items: center;">
                         <i class="fas fa-filter" style="color: var(--primary); font-size: 11px; margin-right: 6px;"></i>
                         <span style="font-size: 10px; font-weight: 700; color: var(--text-primary); text-transform: uppercase;">FILTERS</span>
@@ -1234,7 +1234,7 @@
                         Clear
                     </button>
                 </div>
-                <div id="recruiterFilters" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; height: 130px;">
+                <div id="recruiterFilters" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px;">
                     <!-- Filters will be populated here dynamically -->
                 </div>
             </div>
@@ -9230,24 +9230,23 @@ Total Population: ${totalPop}
 
                     return `
                         <div style="
-                            background: #fafafa; 
-                            border: 1px solid var(--border); 
-                            border-radius: 3px; 
-                            padding: 6px 5px; 
+                            background: white; 
+                            border: 1px solid #e2e8f0; 
+                            border-radius: 4px; 
+                            padding: 8px; 
                             display: flex;
                             flex-direction: column;
-                            height: 100%;
                         ">
-                            <div style="display: flex; align-items: center; gap: 3px; margin-bottom: 4px;">
-                                <i class="fas fa-${filter.icon}" style="color: var(--primary); font-size: 8px;"></i>
-                                <h3 style="font-size: 9px; font-weight: 700; color: var(--text-primary); margin: 0; text-transform: uppercase; line-height: 1;">${filter.label}</h3>
+                            <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 6px; padding-bottom: 4px; border-bottom: 1px solid #f1f5f9;">
+                                <i class="fas fa-${filter.icon}" style="color: var(--primary); font-size: 9px;"></i>
+                                <h3 style="font-size: 9px; font-weight: 700; color: var(--text-primary); margin: 0; text-transform: uppercase; line-height: 1.2;">${filter.label}</h3>
                             </div>
                             <div style="
                                 display: flex; 
                                 flex-direction: column; 
-                                gap: 2px; 
+                                gap: 3px; 
+                                max-height: 100px;
                                 overflow-y: auto;
-                                flex: 1;
                                 padding-right: 2px;
                             ">
                                 ${valueCounts.map(({ value, count }) => `
@@ -9260,31 +9259,31 @@ Total Population: ${totalPop}
                                             display: flex;
                                             justify-content: space-between;
                                             align-items: center;
-                                            padding: 3px 5px;
-                                            background: white;
-                                            border: 1px solid #e5e7eb;
-                                            border-radius: 3px;
+                                            padding: 4px 6px;
+                                            background: #f8fafc;
+                                            border: 1px solid #e2e8f0;
+                                            border-radius: 4px;
                                             cursor: pointer;
-                                            transition: all 0.2s;
+                                            transition: all 0.15s;
                                             text-align: left;
                                             width: 100%;
-                                            min-height: 22px;
+                                            font-size: 8px;
                                         "
-                                        onmouseover="if(!this.classList.contains('active')){this.style.background='#f0f9ff'; this.style.borderColor='var(--primary)';}"
-                                        onmouseout="if(!this.classList.contains('active')){this.style.background='white'; this.style.borderColor='#e5e7eb';}"
+                                        onmouseover="if(!this.classList.contains('active')){this.style.background='#fff7ed'; this.style.borderColor='var(--primary)'; this.style.transform='translateX(2px)';}"
+                                        onmouseout="if(!this.classList.contains('active')){this.style.background='#f8fafc'; this.style.borderColor='#e2e8f0'; this.style.transform='translateX(0)';}"
                                     >
-                                        <span style="color: var(--text-primary); font-size: 8px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;">${value}</span>
+                                        <span style="color: #334155; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;">${value}</span>
                                         <span style="
                                             background: var(--primary);
                                             color: white;
-                                            padding: 1px 5px;
-                                            border-radius: 10px;
-                                            font-size: 7px;
+                                            padding: 2px 6px;
+                                            border-radius: 12px;
+                                            font-size: 8px;
                                             font-weight: 700;
-                                            min-width: 20px;
+                                            min-width: 22px;
                                             text-align: center;
                                             flex-shrink: 0;
-                                            margin-left: 4px;
+                                            margin-left: 6px;
                                         ">${count}</span>
                                     </button>
                                 `).join('')}
