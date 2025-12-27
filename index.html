@@ -1234,7 +1234,7 @@
                         Clear
                     </button>
                 </div>
-                <div id="recruiterFilters" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px;">
+                <div id="recruiterFilters" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px;">
                     <!-- Filters will be populated here dynamically -->
                 </div>
             </div>
@@ -9158,10 +9158,11 @@ Total Population: ${totalPop}
                     return;
                 }
                 
-                // Define 6 filters with icons
+                // Define 7 filters with icons (including Week)
                 const filters = [
                     { label: 'Account', field: 'Client', icon: 'building' },
                     { label: 'Month', field: 'Month', icon: 'calendar' },
+                    { label: 'Week', field: 'Week', icon: 'calendar-week' },
                     { label: 'Regional Head', field: 'Regional Head', icon: 'user-shield' },
                     { label: 'Program Manager', field: 'Program Manager', icon: 'user-cog' },
                     { label: 'Region', field: 'Region', icon: 'map-marker-alt' },
