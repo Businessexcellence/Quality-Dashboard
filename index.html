@@ -1244,8 +1244,8 @@
                 <!-- Summary will be populated here -->
             </div>
 
-            <!-- KPI Cards - 5 cards -->
-            <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 10px;">
+            <!-- KPI Cards - 6 cards -->
+            <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 10px;">
                 <div style="background: linear-gradient(135deg, #f04616 0%, #ee4415 100%); border-radius: 6px; padding: 8px; color: white;">
                     <div style="font-size: 9px; opacity: 0.85; margin-bottom: 3px;">TOTAL RECRUITERS</div>
                     <div style="font-size: 22px; font-weight: 700;" id="recruiterTotalCount">0</div>
@@ -1265,6 +1265,10 @@
                 <div style="background: linear-gradient(135deg, #f04616 0%, #ee4415 100%); border-radius: 6px; padding: 8px; color: white;">
                     <div style="font-size: 9px; opacity: 0.85; margin-bottom: 3px;">NON-CRITICAL ACC</div>
                     <div style="font-size: 22px; font-weight: 700;" id="recruiterNonCriticalAccuracy">0%</div>
+                </div>
+                <div style="background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); border-radius: 6px; padding: 8px; color: white;">
+                    <div style="font-size: 9px; opacity: 0.85; margin-bottom: 3px;">ERROR %</div>
+                    <div style="font-size: 22px; font-weight: 700;" id="recruiterErrorPercentage">0%</div>
                 </div>
             </div>
 
@@ -9524,6 +9528,9 @@ Total Population: ${totalPop}
                 const nonCriticalDenominator = nonCriticalAll - nonCriticalCountNA;
                 const nonCriticalAccuracy = nonCriticalDenominator > 0 ? (nonCriticalCount1 / nonCriticalDenominator * 100) : 0;
                 
+                // Error % Calculation: Count of "0" / (Count of ("0"+"1"+"NA") - Count of "NA"))
+                const errorPercentage = overallDenominator > 0 ? (totalCount0 / overallDenominator * 100) : 0;
+                
                 // Total audits (all rows)
                 const totalAudits = data.length;
                 
@@ -9533,12 +9540,14 @@ Total Population: ${totalPop}
                 safeSetText('recruiterTotalAudits', totalAudits.toLocaleString());
                 safeSetText('recruiterCriticalAccuracy', criticalAccuracy.toFixed(1) + '%');
                 safeSetText('recruiterNonCriticalAccuracy', nonCriticalAccuracy.toFixed(1) + '%');
+                safeSetText('recruiterErrorPercentage', errorPercentage.toFixed(1) + '%');
                 
                 console.log('✅ Recruiter metrics calculated:', {
                     recruiters: uniqueRecruiters.size,
                     overallAccuracy: overallAccuracy.toFixed(1) + '%',
                     criticalAccuracy: criticalAccuracy.toFixed(1) + '%',
                     nonCriticalAccuracy: nonCriticalAccuracy.toFixed(1) + '%',
+                    errorPercentage: errorPercentage.toFixed(1) + '%',
                     totalAudits: totalAudits
                 });
             } catch (error) {
