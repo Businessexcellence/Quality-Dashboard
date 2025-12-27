@@ -3858,20 +3858,61 @@ Total Population: ${totalPop}
 
                     if (values.length === 0) return '';
 
-                    // Calculate counts for each value
+                    // Calculate counts for each value based on OTHER active filters (exclude current field)
                     const valueCounts = values.map(value => {
+                        // Create temporary filters excluding current field
+                        const tempFilters = {...window.activeTransactionalFilters};
+                        delete tempFilters[filter.field];
+                        
+                        // Filter data based on other filters only
+                        let dataForCount = data;
+                        if (Object.keys(tempFilters).length > 0) {
+                            dataForCount = data.filter(row => {
+                                return Object.entries(tempFilters).every(([field, values]) => {
+                                    if (!values || values.length === 0) return true;
+                                    
+                                    // Special handling for Practice Head
+                                    if (field === 'Practice Head') {
+                                        const client = String(row['Client'] || '').trim();
+                                        const mapping = window.clientToAccountMapping[client];
+                                        if (!mapping) return false;
+                                        return values.some(v => mapping.practiceHead === v);
+                                    }
+                                    
+                                    const rowValue = row[field] || row[filters.find(f => f.field === field)?.fieldAlt];
+                                    const cleanRowValue = typeof rowValue === 'string' ? rowValue.trim() : rowValue;
+                                    return values.some(v => {
+                                        const cleanFilterValue = typeof v === 'string' ? v.trim() : v;
+                                        return cleanRowValue === cleanFilterValue;
+                                    });
+                                });
+                            });
+                        }
+                        
+                        // Calculate sum of Opportunity Count for this value
                         let count;
                         if (filter.field === 'Practice Head') {
-                            // Count clients associated with this practice head
-                            count = Object.entries(window.clientToAccountMapping).filter(([client, mapping]) => 
-                                mapping.practiceHead === value
-                            ).length;
+                            // Sum opportunity count for clients associated with this practice head
+                            count = dataForCount.reduce((sum, row) => {
+                                const client = String(row['Client'] || '').trim();
+                                const mapping = window.clientToAccountMapping[client];
+                                if (mapping && mapping.practiceHead === value) {
+                                    const oppCount = parseInt(row['Opportunity Count']) || 0;
+                                    return sum + oppCount;
+                                }
+                                return sum;
+                            }, 0);
                         } else {
-                            count = data.filter(r => {
+                            // Sum opportunity count for rows matching this value
+                            count = dataForCount.reduce((sum, r) => {
                                 const rowValue = r[filter.field] || (filter.fieldAlt ? r[filter.fieldAlt] : null);
                                 const cleanRowValue = typeof rowValue === 'string' ? rowValue.trim() : rowValue;
-                                return cleanRowValue === value;
-                            }).length;
+                                if (cleanRowValue === value) {
+                                    const oppCount = parseInt(r['Opportunity Count']) || 0;
+                                    return sum + oppCount;
+                                }
+                                return sum;
+                            }, 0);
                         }
                         return { value, count };
                     }).sort((a, b) => b.count - a.count);
@@ -3924,6 +3965,18 @@ Total Population: ${totalPop}
                                         onmouseout="if(!this.classList.contains('active')){this.style.background='#f9fafb'; this.style.borderColor='var(--border)';}"
                                     >
                                         <span style="color: var(--text-primary); font-size: 8px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;">${filter.field === 'Week' ? 'Week ' + value : value}</span>
+                                        <span style="
+                                            background: var(--primary);
+                                            color: white;
+                                            padding: 1px 4px;
+                                            border-radius: 4px;
+                                            font-size: 8px;
+                                            font-weight: 700;
+                                            min-width: 16px;
+                                            text-align: center;
+                                            flex-shrink: 0;
+                                            margin-left: 3px;
+                                        ">${count}</span>
                                     </button>
                                 `).join('')}
                             </div>
@@ -3951,20 +4004,11 @@ Total Population: ${totalPop}
                     window.activeTransactionalFilters[field] = [];
                 }
                 
-                // Find button and toggle
-                const buttons = document.querySelectorAll(`.transactional-filter-btn[data-field="${field}"][data-value="${value.replace(/"/g, '&quot;')}"]`);
-                const button = buttons[0];
-                
-                if (!button) return;
-                
                 // Toggle the value
                 const valueIndex = window.activeTransactionalFilters[field].indexOf(value);
                 if (valueIndex > -1) {
                     // Remove the value
                     window.activeTransactionalFilters[field].splice(valueIndex, 1);
-                    button.classList.remove('active');
-                    button.style.background = '#f9fafb';
-                    button.style.borderColor = 'var(--border)';
                     
                     // Remove field entirely if no values left
                     if (window.activeTransactionalFilters[field].length === 0) {
@@ -3973,13 +4017,32 @@ Total Population: ${totalPop}
                 } else {
                     // Add the value
                     window.activeTransactionalFilters[field].push(value);
-                    button.classList.add('active');
-                    button.style.background = 'rgba(240, 70, 22, 0.1)';
-                    button.style.borderColor = 'var(--primary)';
                 }
                 
-                // Apply filters
+                // Re-render filters with updated counts
+                populateTransactionalFilters();
+                
+                // Apply filters to data
                 applyTransactionalFilters();
+                
+                // Update button styles after re-render
+                document.querySelectorAll('.transactional-filter-btn').forEach(btn => {
+                    const btnField = btn.getAttribute('data-field');
+                    const btnValue = btn.getAttribute('data-value');
+                    
+                    const isActive = window.activeTransactionalFilters[btnField] && 
+                                    window.activeTransactionalFilters[btnField].includes(btnValue);
+                    
+                    if (isActive) {
+                        btn.classList.add('active');
+                        btn.style.background = 'rgba(240, 70, 22, 0.1)';
+                        btn.style.borderColor = 'var(--primary)';
+                    } else {
+                        btn.classList.remove('active');
+                        btn.style.background = '#f9fafb';
+                        btn.style.borderColor = 'var(--border)';
+                    }
+                });
             } catch (error) {
                 handleError(error, 'applyTransactionalFilter');
             }
