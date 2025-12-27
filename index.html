@@ -4425,6 +4425,15 @@ Total Population: ${totalPop}
                         const monthOrder = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
                         valueCounts.sort((a, b) => monthOrder.indexOf(a.value) - monthOrder.indexOf(b.value));
                     }
+                    
+                    // Special sorting for weeks (Week 1, Week 2, etc.)
+                    if (filter.field === 'Week') {
+                        valueCounts.sort((a, b) => {
+                            const weekNumA = parseInt(String(a.value).replace(/\D/g, '')) || 0;
+                            const weekNumB = parseInt(String(b.value).replace(/\D/g, '')) || 0;
+                            return weekNumA - weekNumB;
+                        });
+                    }
 
                     return `
                         <div style="
@@ -5513,13 +5522,14 @@ Total Population: ${totalPop}
                     return;
                 }
                 
-                // Define 6 filters with icons
+                // Define 7 filters with icons (including Week)
                 const filters = [
                     { label: 'Client', field: 'Client', icon: 'building' },
                     { label: 'Region', field: 'Region', icon: 'map-marker-alt' },
                     { label: 'Stage', field: 'Stage', icon: 'tasks' },
                     { label: 'Critical/Non Critical', field: 'Critical/Non Critical', icon: 'exclamation-triangle' },
                     { label: 'Month', field: 'Month', icon: 'calendar' },
+                    { label: 'Week', field: 'Week', icon: 'calendar-week' },
                     { label: 'Practice Head', field: 'Practice Head', icon: 'user-tie' }
                 ];
 
@@ -5605,6 +5615,15 @@ Total Population: ${totalPop}
                     if (filter.field === 'Month') {
                         const monthOrder = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
                         valueCounts.sort((a, b) => monthOrder.indexOf(a.value) - monthOrder.indexOf(b.value));
+                    }
+                    
+                    // Special sorting for weeks (Week 1, Week 2, etc.)
+                    if (filter.field === 'Week') {
+                        valueCounts.sort((a, b) => {
+                            const weekNumA = parseInt(String(a.value).replace(/\D/g, '')) || 0;
+                            const weekNumB = parseInt(String(b.value).replace(/\D/g, '')) || 0;
+                            return weekNumA - weekNumB;
+                        });
                     }
 
                     return `
@@ -9197,6 +9216,15 @@ Total Population: ${totalPop}
                     if (filter.field === 'Month') {
                         const monthOrder = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
                         valueCounts.sort((a, b) => monthOrder.indexOf(a.value) - monthOrder.indexOf(b.value));
+                    }
+                    
+                    // Special sorting for weeks (Week 1, Week 2, etc.)
+                    if (filter.field === 'Week') {
+                        valueCounts.sort((a, b) => {
+                            const weekNumA = parseInt(String(a.value).replace(/\D/g, '')) || 0;
+                            const weekNumB = parseInt(String(b.value).replace(/\D/g, '')) || 0;
+                            return weekNumA - weekNumB;
+                        });
                     }
 
                     return `
