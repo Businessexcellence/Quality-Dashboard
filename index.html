@@ -27,6 +27,9 @@
         window.switchTab = function(tabId, clickedElement) {
             console.log('🔄 Switching to tab:', tabId);
             try {
+                // Close navigation sidebar
+                window.closeNavigation();
+                
                 // Hide all tabs
                 var tabs = document.querySelectorAll('.tab-content');
                 for (var i = 0; i < tabs.length; i++) {
@@ -78,6 +81,29 @@
             } catch (error) {
                 console.error('❌ Error switching tab:', error);
                 alert('Error switching tab: ' + error.message);
+            }
+        };
+        
+        // Navigation toggle functionality
+        window.toggleNavigation = function() {
+            const nav = document.querySelector('.nav-sidebar');
+            const overlay = document.querySelector('.nav-overlay');
+            
+            if (nav && overlay) {
+                nav.classList.toggle('expanded');
+                overlay.classList.toggle('active');
+                console.log('🔄 Navigation toggled:', nav.classList.contains('expanded') ? 'expanded' : 'collapsed');
+            }
+        };
+        
+        window.closeNavigation = function() {
+            const nav = document.querySelector('.nav-sidebar');
+            const overlay = document.querySelector('.nav-overlay');
+            
+            if (nav && overlay) {
+                nav.classList.remove('expanded');
+                overlay.classList.remove('active');
+                console.log('✅ Navigation closed');
             }
         };
         
@@ -316,20 +342,27 @@
             background: #1a1a1a;
             border-right: 1px solid #333333;
             overflow: hidden;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 999;
             pointer-events: auto;
+        }
+
+        .nav-sidebar.expanded {
+            width: var(--nav-width-expanded);
+            box-shadow: 4px 0 12px rgba(0, 0, 0, 0.3);
         }
 
         .nav-item {
             display: flex;
             align-items: center;
-            justify-content: center;
-            padding: 16px;
+            padding: 16px 20px;
             color: #cbd5e1;
             cursor: pointer;
             transition: all 0.3s ease;
             border-left: 3px solid transparent;
+            white-space: nowrap;
             pointer-events: auto;
+            position: relative;
         }
 
         .nav-item:hover {
@@ -343,17 +376,45 @@
             color: #ffffff;
             border-left-color: var(--primary);
         }
-            color: var(--primary);
-            border-left-color: var(--primary);
-        }
 
         .nav-item i {
+            width: 20px;
             font-size: 20px;
             flex-shrink: 0;
+            text-align: center;
         }
 
         .nav-item span {
-            display: none;
+            font-size: 13px;
+            font-weight: 500;
+            margin-left: 16px;
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-sidebar.expanded .nav-item span {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Navigation Toggle Overlay */
+        .nav-overlay {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 998;
+        }
+
+        .nav-overlay.active {
+            opacity: 1;
+            visibility: visible;
         }
 
         /* ==========================================
@@ -804,40 +865,41 @@
     </div>
 
     <!-- NAVIGATION SIDEBAR -->
-    <nav class="nav-sidebar">
-        <div class="nav-item active" onclick="console.log('Click: Home'); window.switchTab('home', this)">
+    <div class="nav-overlay" onclick="window.closeNavigation()"></div>
+    <nav class="nav-sidebar" id="navSidebar">
+        <div class="nav-item active" onclick="window.switchTab('home', this)">
             <i class="fas fa-home"></i>
             <span>Home</span>
         </div>
-        <div class="nav-item" onclick="console.log('Click: Account Summary'); window.switchTab('account-summary', this)">
+        <div class="nav-item" onclick="window.switchTab('account-summary', this)">
             <i class="fas fa-building"></i>
             <span>Account Summary</span>
         </div>
-        <div class="nav-item" onclick="console.log('Click: Transactional'); window.switchTab('transactional', this)">
+        <div class="nav-item" onclick="window.switchTab('transactional', this)">
             <i class="fas fa-exchange-alt"></i>
             <span>Transactional Overview</span>
         </div>
-        <div class="nav-item" onclick="console.log('Click: Parameter Performance'); window.switchTab('audit-summary', this)">
+        <div class="nav-item" onclick="window.switchTab('audit-summary', this)">
             <i class="fas fa-clipboard-check"></i>
             <span>Parameter Performance</span>
         </div>
-        <div class="nav-item" onclick="console.log('Click: Recruiter'); window.switchTab('recruiter', this)">
+        <div class="nav-item" onclick="window.switchTab('recruiter', this)">
             <i class="fas fa-users"></i>
             <span>Recruiter Insights</span>
         </div>
-        <div class="nav-item" onclick="console.log('Click: Strategic'); window.switchTab('strategic', this)">
+        <div class="nav-item" onclick="window.switchTab('strategic', this)">
             <i class="fas fa-chart-line"></i>
             <span>Strategic Overview</span>
         </div>
-        <div class="nav-item" onclick="console.log('Click: Projects'); window.switchTab('projects', this)">
+        <div class="nav-item" onclick="window.switchTab('projects', this)">
             <i class="fas fa-project-diagram"></i>
             <span>Project Summary</span>
         </div>
-        <div class="nav-item" onclick="console.log('Click: RCA'); window.switchTab('rca-capa', this)">
+        <div class="nav-item" onclick="window.switchTab('rca-capa', this)">
             <i class="fas fa-tools"></i>
             <span>RCA & CAPA</span>
         </div>
-        <div class="nav-item" onclick="console.log('Click: CSAT'); window.switchTab('csat', this)">
+        <div class="nav-item" onclick="window.switchTab('csat', this)">
             <i class="fas fa-smile"></i>
             <span>Customer Satisfaction</span>
         </div>
@@ -9138,6 +9200,26 @@ Total Population: ${totalPop}
         
         window.addEventListener('DOMContentLoaded', () => {
             console.log('✅ Dashboard initialized');
+            
+            // Setup navigation toggle on icon click
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                const icon = item.querySelector('i');
+                if (icon) {
+                    icon.addEventListener('click', (e) => {
+                        e.stopPropagation(); // Prevent the nav-item click
+                        const nav = document.querySelector('.nav-sidebar');
+                        const isExpanded = nav.classList.contains('expanded');
+                        
+                        if (!isExpanded) {
+                            // If collapsed, expand to show names
+                            window.toggleNavigation();
+                        }
+                        // If already expanded, let the nav-item click handler do its job
+                    });
+                }
+            });
+            console.log('✅ Navigation toggle event listeners attached');
             
             // Attach file input change listener
             const fileInput = document.getElementById('fileInput');
