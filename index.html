@@ -4196,7 +4196,7 @@ Total Population: ${totalPop}
                                     onmouseout="this.style.background='transparent'">
                                     <td style="padding: 5px; font-size: 10px; color: var(--text-primary); font-weight: 600;">${row.region}</td>
                                     <td style="padding: 5px; text-align: center;">
-                                        <span style="background: #f04616; color: white; padding: 2px 6px; border-radius: 8px; font-size: 9px; font-weight: 700;">${row.accuracy}%</span>
+                                        <span style="background: ${row.accuracy > 90 ? '#10b981' : row.accuracy >= 75 ? '#f59e0b' : '#ef4444'}; color: white; padding: 2px 6px; border-radius: 8px; font-size: 9px; font-weight: 700;">${row.accuracy}%</span>
                                     </td>
                                     <td style="padding: 5px; text-align: right; font-size: 10px; color: var(--text-primary); font-weight: 600;">${row.auditCount.toLocaleString()}</td>
                                 </tr>
@@ -4273,7 +4273,7 @@ Total Population: ${totalPop}
                                         onmouseout="this.style.background='transparent'">
                                         <td style="padding: 5px; font-size: 10px; color: var(--text-primary); font-weight: 600;">${icon} ${row.type}</td>
                                         <td style="padding: 5px; text-align: center;">
-                                            <span style="background: #f04616; color: white; padding: 2px 6px; border-radius: 8px; font-size: 9px; font-weight: 700;">${row.accuracy}%</span>
+                                            <span style="background: ${row.accuracy > 90 ? '#10b981' : row.accuracy >= 75 ? '#f59e0b' : '#ef4444'}; color: white; padding: 2px 6px; border-radius: 8px; font-size: 9px; font-weight: 700;">${row.accuracy}%</span>
                                         </td>
                                         <td style="padding: 5px; text-align: right; font-size: 10px; color: var(--text-primary); font-weight: 600;">${row.auditCount.toLocaleString()}</td>
                                     </tr>
@@ -4351,7 +4351,7 @@ Total Population: ${totalPop}
                                         onmouseout="this.style.background='transparent'">
                                         <td style="padding: 5px; font-size: 10px; color: var(--text-primary); font-weight: 600;">${icon} ${row.stage}</td>
                                         <td style="padding: 5px; text-align: center;">
-                                            <span style="background: #f04616; color: white; padding: 2px 6px; border-radius: 8px; font-size: 9px; font-weight: 700;">${row.accuracy}%</span>
+                                            <span style="background: ${row.accuracy > 90 ? '#10b981' : row.accuracy >= 75 ? '#f59e0b' : '#ef4444'}; color: white; padding: 2px 6px; border-radius: 8px; font-size: 9px; font-weight: 700;">${row.accuracy}%</span>
                                         </td>
                                         <td style="padding: 5px; text-align: right; font-size: 10px; color: var(--text-primary); font-weight: 600;">${row.auditCount.toLocaleString()}</td>
                                     </tr>
@@ -4540,7 +4540,7 @@ Total Population: ${totalPop}
                                     onmouseout="this.style.background='transparent'">
                                     <td style="padding: 6px 8px; font-size: 11px; color: var(--text-primary); font-weight: 600;">👤 ${row.regionalHead}</td>
                                     <td style="padding: 6px 8px; text-align: center;">
-                                        <span style="background: #f04616; color: white; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: 700;">${row.accuracy}%</span>
+                                        <span style="background: ${row.accuracy > 90 ? '#10b981' : row.accuracy >= 75 ? '#f59e0b' : '#ef4444'}; color: white; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: 700;">${row.accuracy}%</span>
                                     </td>
                                     <td style="padding: 6px 8px; text-align: center;">
                                         <span style="background: #3b82f6; color: white; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: 700;">${row.sample}%</span>
@@ -4648,7 +4648,7 @@ Total Population: ${totalPop}
                                     onmouseout="this.style.background='transparent'">
                                     <td style="padding: 6px 8px; font-size: 11px; color: var(--text-primary); font-weight: 600;">👥 ${row.practiceHead}</td>
                                     <td style="padding: 6px 8px; text-align: center;">
-                                        <span style="background: #f04616; color: white; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: 700;">${row.accuracy}%</span>
+                                        <span style="background: ${row.accuracy > 90 ? '#10b981' : row.accuracy >= 75 ? '#f59e0b' : '#ef4444'}; color: white; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: 700;">${row.accuracy}%</span>
                                     </td>
                                     <td style="padding: 6px 8px; text-align: center;">
                                         <span style="background: #3b82f6; color: white; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: 700;">${row.sample}%</span>
@@ -5370,14 +5370,14 @@ Total Population: ${totalPop}
                                 ${bestParam ? `
                                 <p style="margin: 0 0 8px 0;">
                                     <span style="font-weight: 700; color: var(--text-primary);">Best Performer:</span> 
-                                    <strong>${bestParam.param}</strong> achieved <span style="background: #f04616; color: white; padding: 2px 6px; border-radius: 8px; font-size: 9px;">${bestParam.accuracy.toFixed(1)}%</span> accuracy 
+                                    <strong>${bestParam.param}</strong> achieved <span style="background: ${bestParam.accuracy > 90 ? '#10b981' : bestParam.accuracy >= 75 ? '#f59e0b' : '#ef4444'}; color: white; padding: 2px 6px; border-radius: 8px; font-size: 9px;">${bestParam.accuracy.toFixed(1)}%</span> accuracy 
                                     (${bestParam.auditCount.toLocaleString()} audits).
                                 </p>
                                 ` : ''}
                                 ${worstParam ? `
                                 <p style="margin: 0 0 8px 0;">
                                     <span style="font-weight: 700; color: var(--text-primary);">Needs Attention:</span> 
-                                    <strong>${worstParam.param}</strong> at <span style="background: #ef4444; color: white; padding: 2px 6px; border-radius: 8px; font-size: 9px;">${worstParam.accuracy.toFixed(1)}%</span> accuracy 
+                                    <strong>${worstParam.param}</strong> at <span style="background: ${worstParam.accuracy > 90 ? '#10b981' : worstParam.accuracy >= 75 ? '#f59e0b' : '#ef4444'}; color: white; padding: 2px 6px; border-radius: 8px; font-size: 9px;">${worstParam.accuracy.toFixed(1)}%</span> accuracy 
                                     (${worstParam.auditCount.toLocaleString()} audits) requires improvement.
                                 </p>
                                 ` : ''}
@@ -5488,7 +5488,7 @@ Total Population: ${totalPop}
                                     onmouseout="this.style.background='transparent'">
                                     <td style="padding: 6px 8px; font-size: 10px; color: var(--text-primary); font-weight: 600;">${row.parameter}</td>
                                     <td style="padding: 6px 8px; text-align: center;">
-                                        ${row.accuracy === null ? '<span style="color: #6b7280; font-size: 9px; font-weight: 700;">NA</span>' : `<span style="background: ${row.accuracy >= 90 ? '#f04616' : row.accuracy >= 70 ? '#f59e0b' : '#ef4444'}; color: white; padding: 3px 8px; border-radius: 10px; font-size: 9px; font-weight: 700;">${row.accuracy.toFixed(1)}%</span>`}
+                                        ${row.accuracy === null ? '<span style="color: #6b7280; font-size: 9px; font-weight: 700;">NA</span>' : `<span style="background: ${row.accuracy > 90 ? '#10b981' : row.accuracy >= 75 ? '#f59e0b' : '#ef4444'}; color: white; padding: 3px 8px; border-radius: 10px; font-size: 9px; font-weight: 700;">${row.accuracy.toFixed(1)}%</span>`}
                                     </td>
                                     <td style="padding: 6px 8px; text-align: center;">
                                         <span style="background: ${row.error <= 5 ? '#f04616' : row.error <= 15 ? '#f59e0b' : '#ef4444'}; color: white; padding: 3px 8px; border-radius: 10px; font-size: 9px; font-weight: 700;">${row.error.toFixed(1)}%</span>
@@ -9260,15 +9260,15 @@ Total Population: ${totalPop}
                                     <td style="padding: 6px 8px; text-align: center; font-size: 10px; color: var(--text-primary);">${row.totalAudits}</td>
                                     <td style="padding: 6px 8px; text-align: center;">
                                         ${row.accuracy === null ? '<span style="color: #6b7280; font-size: 9px; font-weight: 700;">NA</span>' : 
-                                        `<span style="background: ${row.accuracy >= 90 ? '#f04616' : row.accuracy >= 70 ? '#f59e0b' : '#ef4444'}; color: white; padding: 3px 8px; border-radius: 10px; font-size: 9px; font-weight: 700;">${row.accuracy.toFixed(1)}%</span>`}
+                                        `<span style="background: ${row.accuracy > 90 ? '#10b981' : row.accuracy >= 75 ? '#f59e0b' : '#ef4444'}; color: white; padding: 3px 8px; border-radius: 10px; font-size: 9px; font-weight: 700;">${row.accuracy.toFixed(1)}%</span>`}
                                     </td>
                                     <td style="padding: 6px 8px; text-align: center;">
                                         ${row.criticalAccuracy === null ? '<span style="color: #6b7280; font-size: 9px; font-weight: 700;">NA</span>' : 
-                                        `<span style="background: ${row.criticalAccuracy >= 90 ? '#f04616' : row.criticalAccuracy >= 70 ? '#f59e0b' : '#ef4444'}; color: white; padding: 3px 8px; border-radius: 10px; font-size: 9px; font-weight: 700;">${row.criticalAccuracy.toFixed(1)}%</span>`}
+                                        `<span style="background: ${row.criticalAccuracy > 90 ? '#10b981' : row.criticalAccuracy >= 75 ? '#f59e0b' : '#ef4444'}; color: white; padding: 3px 8px; border-radius: 10px; font-size: 9px; font-weight: 700;">${row.criticalAccuracy.toFixed(1)}%</span>`}
                                     </td>
                                     <td style="padding: 6px 8px; text-align: center;">
                                         ${row.nonCriticalAccuracy === null ? '<span style="color: #6b7280; font-size: 9px; font-weight: 700;">NA</span>' : 
-                                        `<span style="background: ${row.nonCriticalAccuracy >= 90 ? '#f04616' : row.nonCriticalAccuracy >= 70 ? '#f59e0b' : '#ef4444'}; color: white; padding: 3px 8px; border-radius: 10px; font-size: 9px; font-weight: 700;">${row.nonCriticalAccuracy.toFixed(1)}%</span>`}
+                                        `<span style="background: ${row.nonCriticalAccuracy > 90 ? '#10b981' : row.nonCriticalAccuracy >= 75 ? '#f59e0b' : '#ef4444'}; color: white; padding: 3px 8px; border-radius: 10px; font-size: 9px; font-weight: 700;">${row.nonCriticalAccuracy.toFixed(1)}%</span>`}
                                     </td>
                                     <td style="padding: 6px 8px; text-align: center; font-size: 10px; color: #f04616; font-weight: 600;">${row.count1}</td>
                                     <td style="padding: 6px 8px; text-align: center; font-size: 10px; color: #ef4444; font-weight: 600;">${row.count0}</td>
