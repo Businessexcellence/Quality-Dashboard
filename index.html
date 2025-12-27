@@ -1234,7 +1234,7 @@
                         Clear
                     </button>
                 </div>
-                <div id="recruiterFilters" style="display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 1px; width: 100%; overflow: visible;">
+                <div id="recruiterFilters" style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2px; width: 100%; overflow: visible;">
                     <!-- Filters will be populated here dynamically -->
                 </div>
             </div>
@@ -9166,11 +9166,10 @@ Total Population: ${totalPop}
                 console.log('📊 Recruiter Data Columns:', Object.keys(data[0] || {}));
                 console.log('📊 Total Recruiter Rows:', data.length);
                 
-                // Define 8 filters with icons (including Stage and Practice Head)
+                // Define 7 filters with icons (removed Stage for better width coverage)
                 const filters = [
                     { label: 'Account', field: 'Client', icon: 'building' },
                     { label: 'Month', field: 'Month', icon: 'calendar' },
-                    { label: 'Stage', field: 'Stage', icon: 'tasks' },
                     { label: 'Regional Head', field: 'Regional Head', icon: 'user-shield' },
                     { label: 'Program Manager', field: 'Program Manager', icon: 'user-cog' },
                     { label: 'Practice Head', field: 'Practice Head', icon: 'user-graduate' },
