@@ -1234,7 +1234,7 @@
                         Clear
                     </button>
                 </div>
-                <div id="recruiterFilters" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px;">
+                <div id="recruiterFilters" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px;">
                     <!-- Filters will be populated here dynamically -->
                 </div>
             </div>
@@ -9230,10 +9230,13 @@ Total Population: ${totalPop}
 
                     return `
                         <div style="
-                            background: transparent; 
+                            background: white; 
                             border: 1px solid var(--border); 
                             border-radius: 4px; 
-                            padding: 5px; 
+                            padding: 6px; 
+                            display: flex;
+                            flex-direction: column;
+                            min-height: 110px;
                         ">
                             <div style="display: flex; align-items: center; gap: 3px; margin-bottom: 4px;">
                                 <i class="fas fa-${filter.icon}" style="color: var(--primary); font-size: 8px;"></i>
@@ -9246,6 +9249,7 @@ Total Population: ${totalPop}
                                 max-height: 85px; 
                                 overflow-y: auto;
                                 padding-right: 2px;
+                                flex: 1;
                             ">
                                 ${valueCounts.map(({ value, count }) => `
                                     <button 
