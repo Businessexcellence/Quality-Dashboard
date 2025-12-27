@@ -2982,15 +2982,35 @@
                         `;
                     }).join('');
                 
-                // Render India map with region overlays
+                // Render India map with region overlays using SVG
                 container.innerHTML = `
-                    <div style="position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
-                        <img src="/india-map.jpg" alt="India Map" style="
-                            max-width: 100%;
-                            max-height: 100%;
-                            object-fit: contain;
-                            opacity: 0.85;
-                        ">
+                    <div style="position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: white;">
+                        <svg viewBox="0 0 400 500" style="max-width: 100%; max-height: 100%; opacity: 0.3;">
+                            <!-- Simplified India Map Outline -->
+                            <path d="M 200 20 
+                                     L 220 40 L 240 35 L 260 45 L 280 40 L 300 50 L 320 60 L 340 80
+                                     L 350 100 L 355 120 L 360 140 L 365 160 L 368 180 L 370 200
+                                     L 368 220 L 365 240 L 360 260 L 355 280 L 345 300 L 335 315
+                                     L 320 330 L 300 340 L 280 345 L 260 348 L 240 350 L 220 348
+                                     L 200 470 L 190 465 L 180 460 L 170 450 L 160 440 L 150 425
+                                     L 140 410 L 130 390 L 120 370 L 110 350 L 100 330 L 95 310
+                                     L 90 290 L 85 270 L 82 250 L 80 230 L 82 210 L 85 190
+                                     L 90 170 L 100 150 L 110 130 L 120 110 L 130 90 L 145 70
+                                     L 160 55 L 175 42 L 190 30 Z"
+                                  fill="none" 
+                                  stroke="#9ca3af" 
+                                  stroke-width="2"/>
+                            
+                            <!-- State Boundaries (simplified) -->
+                            <line x1="160" y1="100" x2="340" y2="100" stroke="#d1d5db" stroke-width="1"/>
+                            <line x1="140" y1="180" x2="360" y2="180" stroke="#d1d5db" stroke-width="1"/>
+                            <line x1="130" y1="260" x2="350" y2="260" stroke="#d1d5db" stroke-width="1"/>
+                            <line x1="150" y1="340" x2="320" y2="340" stroke="#d1d5db" stroke-width="1"/>
+                            
+                            <line x1="220" y1="60" x2="220" y2="450" stroke="#d1d5db" stroke-width="1"/>
+                            <line x1="280" y1="80" x2="260" y2="420" stroke="#d1d5db" stroke-width="1"/>
+                            <line x1="160" y1="90" x2="180" y2="430" stroke="#d1d5db" stroke-width="1"/>
+                        </svg>
                         ${regionLabels}
                     </div>
                 `;
@@ -3348,7 +3368,7 @@
                 `;
             });
 
-            // Render India map with overlays
+            // Render India map with overlays using SVG
             container.innerHTML = `
                 <div style="
                     position: relative;
@@ -3358,17 +3378,34 @@
                     align-items: center;
                     justify-content: center;
                     overflow: hidden;
+                    background: white;
                 ">
-                    <img src="/india-map.jpg" 
-                         alt="India Map" 
-                         style="
-                            max-width: 100%;
-                            max-height: 100%;
-                            object-fit: contain;
-                            opacity: 0.85;
-                         "
-                         onerror="this.parentElement.innerHTML='<div style=text-align:center;padding:40px;color:var(--text-muted);><i class=fas fa-exclamation-triangle style=font-size:48px;color:#f04616;margin-bottom:16px;></i><h3 style=color:var(--text-primary);margin-bottom:8px;>Map Image Not Found</h3><p>India map image is missing. Please check /india-map.jpg</p></div>'"
-                    />
+                    <svg viewBox="0 0 400 500" style="max-width: 100%; max-height: 100%; opacity: 0.3;">
+                        <!-- Simplified India Map Outline -->
+                        <path d="M 200 20 
+                                 L 220 40 L 240 35 L 260 45 L 280 40 L 300 50 L 320 60 L 340 80
+                                 L 350 100 L 355 120 L 360 140 L 365 160 L 368 180 L 370 200
+                                 L 368 220 L 365 240 L 360 260 L 355 280 L 345 300 L 335 315
+                                 L 320 330 L 300 340 L 280 345 L 260 348 L 240 350 L 220 348
+                                 L 200 470 L 190 465 L 180 460 L 170 450 L 160 440 L 150 425
+                                 L 140 410 L 130 390 L 120 370 L 110 350 L 100 330 L 95 310
+                                 L 90 290 L 85 270 L 82 250 L 80 230 L 82 210 L 85 190
+                                 L 90 170 L 100 150 L 110 130 L 120 110 L 130 90 L 145 70
+                                 L 160 55 L 175 42 L 190 30 Z"
+                              fill="none" 
+                              stroke="#9ca3af" 
+                              stroke-width="2"/>
+                        
+                        <!-- State Boundaries (simplified) -->
+                        <line x1="160" y1="100" x2="340" y2="100" stroke="#d1d5db" stroke-width="1"/>
+                        <line x1="140" y1="180" x2="360" y2="180" stroke="#d1d5db" stroke-width="1"/>
+                        <line x1="130" y1="260" x2="350" y2="260" stroke="#d1d5db" stroke-width="1"/>
+                        <line x1="150" y1="340" x2="320" y2="340" stroke="#d1d5db" stroke-width="1"/>
+                        
+                        <line x1="220" y1="60" x2="220" y2="450" stroke="#d1d5db" stroke-width="1"/>
+                        <line x1="280" y1="80" x2="260" y2="420" stroke="#d1d5db" stroke-width="1"/>
+                        <line x1="160" y1="90" x2="180" y2="430" stroke="#d1d5db" stroke-width="1"/>
+                    </svg>
                     ${overlayHTML}
                 </div>
             `;
