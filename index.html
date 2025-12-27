@@ -141,28 +141,31 @@
 
         :root {
             /* Taggd Brand Colors - From PowerPoint Theme */
-            --primary: #f04616;           /* Taggd Orange (from logo) */
+            --primary: #f04616;           /* Taggd Orange (primary) */
             --primary-dark: #ee4415;      /* Darker Orange */
-            --secondary: #ff6347;         /* Tomato Orange */
-            --accent: #ff7f50;            /* Coral Accent */
+            --primary-light: #ff6347;     /* Light Orange for highlights */
+            --secondary: #ff7f50;         /* Coral Orange */
+            --accent: #ffa07a;            /* Light Salmon Accent */
             --success: #f04616;           /* Taggd Orange for success */
-            --warning: #f04616;           /* Orange */
-            --error: #dc2626;             /* Red */
+            --warning: #f59e0b;           /* Amber for warnings */
+            --error: #dc2626;             /* Red for errors */
             
-            /* Backgrounds - Dark Theme (from PowerPoint slide) */
+            /* Backgrounds - High Contrast */
             --bg-primary: #000000;        /* Pure Black */
-            --bg-secondary: #080808;      /* Very Dark Gray */
-            --bg-card: #0d0d0d;           /* Dark Card */
-            --bg-hover: #1a1a1a;          /* Gray Hover */
+            --bg-secondary: #0a0a0a;      /* Very Dark Gray */
+            --bg-card: #ffffff;           /* White Cards for content */
+            --bg-hover: #f8f9fa;          /* Light Gray Hover */
             
-            /* Text - Light on Dark */
-            --text-primary: #f8fafc;      /* White Text */
-            --text-secondary: #cbd5e1;    /* Light Gray */
-            --text-muted: #94a3b8;        /* Muted Gray */
+            /* Text - Black for Readability */
+            --text-primary: #000000;      /* Black Text */
+            --text-secondary: #1a1a1a;    /* Dark Gray */
+            --text-muted: #6b7280;        /* Medium Gray */
+            --text-on-dark: #ffffff;      /* White text on dark backgrounds */
             
             /* Borders & Shadows */
-            --border: #1a1a1a;            /* Dark Border */
-            --shadow: rgba(0, 0, 0, 0.5); /* Dark Shadow */
+            --border: #e5e7eb;            /* Light Gray Border */
+            --border-dark: #1a1a1a;       /* Dark Border */
+            --shadow: rgba(0, 0, 0, 0.1); /* Subtle Shadow */
             
             /* Spacing */
             --nav-width: 60px;
@@ -172,13 +175,13 @@
 
         body {
             font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
-            background: var(--bg-primary);
+            background: #f5f5f5;
             color: var(--text-primary);
             font-size: 13px;
             overflow-x: hidden;
         }
 
-        /* Background Gradient Effect - Taggd Orange Glow */
+        /* Background Gradient Effect - Subtle */
         body::before {
             content: '';
             position: fixed;
@@ -186,9 +189,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: 
-                radial-gradient(circle at 20% 20%, rgba(240, 70, 22, 0.08) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(238, 68, 21, 0.08) 0%, transparent 50%);
+            background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
             pointer-events: none;
             z-index: -1;
         }
@@ -222,13 +223,13 @@
             left: 0;
             right: 0;
             height: var(--header-height);
-            background: #ffffff;
-            border-bottom: 2px solid #e5e7eb;
+            background: #000000;
+            border-bottom: 2px solid #1a1a1a;
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 1000;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
         }
         
         .header-logo {
@@ -244,24 +245,32 @@
         .header-logo-text {
             font-size: 28px;
             font-weight: 800;
-            color: #18161a;
-            letter-spacing: -0.5px;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 2px;
         }
         
-        .header-logo-text .logo-t {
-            color: #f04616;
+        .header-logo-text .logo-dot {
+            width: 8px;
+            height: 8px;
+            background: #f04616;
+            border-radius: 50%;
+            display: inline-block;
+            margin-left: 2px;
         }
 
         .header h1 {
             font-size: 20px;
             font-weight: 700;
-            color: #000000;
+            color: #ffffff;
             text-align: center;
             line-height: 1.4;
         }
         
         .header h1 span {
-            color: #6b7280;
+            color: #cbd5e1;
         }
         
         .upload-btn {
@@ -304,8 +313,8 @@
             top: var(--header-height);
             bottom: 0;
             width: var(--nav-width);
-            background: var(--bg-secondary);
-            border-right: 1px solid var(--border);
+            background: #1a1a1a;
+            border-right: 1px solid #333333;
             overflow: hidden;
             transition: width 0.3s ease;
             z-index: 999;
@@ -320,7 +329,7 @@
             display: flex;
             align-items: center;
             padding: 16px 20px;
-            color: var(--text-secondary);
+            color: #cbd5e1;
             cursor: pointer;
             transition: all 0.3s ease;
             border-left: 3px solid transparent;
@@ -329,13 +338,16 @@
         }
 
         .nav-item:hover {
-            background: var(--bg-hover);
-            color: var(--text-primary);
+            background: #2a2a2a;
+            color: #ffffff;
             border-left-color: var(--primary);
         }
 
         .nav-item.active {
-            background: rgba(240, 70, 22, 0.1);
+            background: rgba(240, 70, 22, 0.15);
+            color: #ffffff;
+            border-left-color: var(--primary);
+        }
             color: var(--primary);
             border-left-color: var(--primary);
         }
@@ -361,10 +373,14 @@
             margin-top: var(--header-height);
             padding: 24px;
             min-height: calc(100vh - var(--header-height));
+            background: #ffffff;
         }
 
         .tab-content {
             display: none;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
         }
 
         .tab-content.active {
@@ -783,12 +799,12 @@
     <div class="header">
         <div class="header-logo">
             <div class="header-logo-text">
-                <span class="logo-t">T</span>aggd
+                Taggd<span class="logo-dot"></span>
             </div>
         </div>
         <h1>
             Business Excellence<br>
-            <span style="font-size: 14px; font-weight: 500; color: #6b7280;">Comprehensive Quality Dashboard</span>
+            <span style="font-size: 14px; font-weight: 500;">Comprehensive Quality Dashboard</span>
         </h1>
         <button class="upload-btn" onclick="console.log('Button clicked!'); window.openUploadModal(); return false;">
             <i class="fas fa-upload"></i>
