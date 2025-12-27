@@ -2920,13 +2920,8 @@
 
         function renderRegionChartFiltered(filteredData) {
             try {
-                const canvas = document.getElementById('regionChart');
-                if (!canvas) return;
-                
-                // Destroy existing chart
-                if (window.regionChartInstance) {
-                    window.regionChartInstance.destroy();
-                }
+                const container = document.getElementById('regionChartContainer');
+                if (!container) return;
                 
                 // Count accounts by region
                 const regionCounts = {};
@@ -2935,96 +2930,72 @@
                     regionCounts[region] = (regionCounts[region] || 0) + 1;
                 });
                 
-                const labels = [];
-                const data = [];
-                const colors = ['#f04616', '#ee4415', '#ff6347', '#ff7f50', '#ffa07a', '#ffb380'];
+                // Define region positions on India map (approximate coordinates as percentages)
+                const regionPositions = {
+                    'North': { top: '20%', left: '35%' },
+                    'South': { top: '75%', left: '45%' },
+                    'East': { top: '40%', left: '70%' },
+                    'West': { top: '45%', left: '15%' },
+                    'Central': { top: '50%', left: '45%' },
+                    'Northeast': { top: '15%', left: '75%' },
+                    'Delhi NCR': { top: '25%', left: '40%' },
+                    'Mumbai': { top: '55%', left: '20%' },
+                    'Bangalore': { top: '70%', left: '45%' },
+                    'Chennai': { top: '72%', left: '55%' },
+                    'Kolkata': { top: '35%', left: '72%' },
+                    'Hyderabad': { top: '65%', left: '50%' },
+                    'Pune': { top: '62%', left: '28%' }
+                };
                 
-                Object.entries(regionCounts)
-                    .sort((a, b) => b[1] - a[1])
-                    .forEach(([region, count]) => {
-                        labels.push(region);
-                        data.push(count);
-                    });
+                // Generate region labels HTML
+                const regionLabels = Object.entries(regionCounts)
+                    .map(([region, count]) => {
+                        const position = regionPositions[region] || { top: '50%', left: '50%' };
+                        const total = Object.values(regionCounts).reduce((a, b) => a + b, 0);
+                        const percentage = ((count / total) * 100).toFixed(0);
+                        
+                        return `
+                            <div style="
+                                position: absolute;
+                                top: ${position.top};
+                                left: ${position.left};
+                                transform: translate(-50%, -50%);
+                                background: rgba(240, 70, 22, 0.9);
+                                color: white;
+                                padding: 6px 12px;
+                                border-radius: 20px;
+                                font-size: 11px;
+                                font-weight: 700;
+                                box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+                                cursor: pointer;
+                                transition: all 0.2s;
+                                white-space: nowrap;
+                                z-index: 10;
+                            "
+                            onclick="filterByRegion('${region}')"
+                            onmouseover="this.style.transform='translate(-50%, -50%) scale(1.1)'; this.style.boxShadow='0 4px 12px rgba(240,70,22,0.5)'"
+                            onmouseout="this.style.transform='translate(-50%, -50%) scale(1)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.3)'"
+                            title="Click to filter by ${region}">
+                                <i class="fas fa-map-marker-alt" style="margin-right: 4px;"></i>
+                                ${region}: ${count}
+                            </div>
+                        `;
+                    }).join('');
                 
-                const ctx = canvas.getContext('2d');
-                window.regionChartInstance = new Chart(ctx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            data: data,
-                            backgroundColor: colors.slice(0, labels.length),
-                            borderColor: '#ffffff',
-                            borderWidth: 3,
-                            hoverOffset: 15
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: true,
-                        plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: {
-                                    padding: 10,
-                                    font: { size: 9, family: "'Inter', 'Segoe UI', sans-serif", weight: '700' },
-                                    color: '#000000',
-                                    usePointStyle: true,
-                                    pointStyle: 'circle',
-                                    boxWidth: 10,
-                                    boxHeight: 10,
-                                    generateLabels: function(chart) {
-                                        const data = chart.data;
-                                        if (data.labels.length && data.datasets.length) {
-                                            return data.labels.map((label, i) => {
-                                                const value = data.datasets[0].data[i];
-                                                const total = data.datasets[0].data.reduce((a, b) => a + b, 0);
-                                                const percentage = ((value / total) * 100).toFixed(0);
-                                                
-                                                // Determine color based on accuracy percentage
-                                                let textColor = '#000000'; // Default black
-                                                if (percentage > 90) {
-                                                    textColor = '#10b981'; // Green for > 90%
-                                                } else if (percentage >= 75) {
-                                                    textColor = '#f59e0b'; // Amber for 75-90%
-                                                } else {
-                                                    textColor = '#ef4444'; // Red for < 75%
-                                                }
-                                                
-                                                return {
-                                                    text: `${label}: ${value} (${percentage}%)`,
-                                                    fillStyle: data.datasets[0].backgroundColor[i],
-                                                    fontColor: textColor,
-                                                    hidden: false,
-                                                    index: i
-                                                };
-                                            });
-                                        }
-                                        return [];
-                                    }
-                                }
-                            },
-                            tooltip: {
-                                enabled: true,
-                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                                padding: 8,
-                                titleFont: { size: 10, weight: 'bold' },
-                                bodyFont: { size: 9 },
-                                callbacks: {
-                                    label: function(context) {
-                                        const label = context.label || '';
-                                        const value = context.parsed;
-                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                        const percentage = ((value / total) * 100).toFixed(1);
-                                        return `${label}: ${value} accounts (${percentage}%)`;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
+                // Render India map with region overlays
+                container.innerHTML = `
+                    <div style="position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                        <img src="/india-map.jpg" alt="India Map" style="
+                            max-width: 100%;
+                            max-height: 100%;
+                            object-fit: contain;
+                            opacity: 0.85;
+                        ">
+                        ${regionLabels}
+                    </div>
+                `;
                 
-                console.log('✅ Filtered Region chart rendered');
+                console.log('✅ India map rendered with region overlays:', Object.keys(regionCounts).length, 'regions');
             } catch (error) {
                 handleError(error, 'renderRegionChartFiltered');
             }
@@ -3272,41 +3243,25 @@
         }
 
         function renderRegionChart() {
-            console.log('🗺️ Starting renderRegionChart()');
+            console.log('🗺️ Starting renderRegionChart() - India Map Version');
             
-            // Check if Chart.js is loaded
-            if (typeof Chart === 'undefined') {
-                console.error('❌ Chart.js library not loaded!');
+            const container = document.getElementById('regionChartContainer');
+            if (!container) {
+                console.error('❌ Container element #regionChartContainer not found');
                 return;
             }
-            
-            const canvas = document.getElementById('regionChart');
-            if (!canvas) {
-                console.error('❌ Canvas element #regionChart not found');
-                return;
-            }
-            
-            console.log('✅ Canvas found:', canvas);
 
             // Check if we have data
             if (!window.dashboardData || !window.dashboardData.accountSummary || window.dashboardData.accountSummary.length === 0) {
                 console.warn('⚠️ No account summary data available');
-                const container = document.getElementById('regionChartContainer');
-                if (container) {
-                    container.innerHTML = `
-                        <div style="text-align: center; padding: 40px; color: var(--text-muted);">
-                            <i class="fas fa-map-marker-alt" style="font-size: 48px; color: var(--primary); margin-bottom: 16px;"></i>
-                            <h3 style="color: var(--text-primary); margin-bottom: 8px;">No Data Available</h3>
-                            <p>Upload an Excel file to see the region distribution.</p>
-                        </div>
-                    `;
-                }
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+                        <i class="fas fa-map-marker-alt" style="font-size: 48px; color: var(--primary); margin-bottom: 16px;"></i>
+                        <h3 style="color: var(--text-primary); margin-bottom: 8px;">No Data Available</h3>
+                        <p>Upload an Excel file to see the region distribution.</p>
+                    </div>
+                `;
                 return;
-            }
-
-            // Clear existing chart if any
-            if (window.regionChartInstance) {
-                window.regionChartInstance.destroy();
             }
 
             // Count accounts by exact Region column values (Column E from Account_Summary sheet)
@@ -3333,7 +3288,6 @@
             // Check if we have any region data
             if (Object.keys(regionCounts).length === 0) {
                 console.warn('⚠️ No region data found in Region column');
-                const container = document.getElementById('regionChartContainer');
                 container.innerHTML = `
                     <div style="text-align: center; padding: 40px; color: var(--text-muted);">
                         <i class="fas fa-map-marker-alt" style="font-size: 48px; color: var(--primary); margin-bottom: 16px;"></i>
@@ -3344,155 +3298,82 @@
                 return;
             }
 
-            // Prepare data for chart - use exact region names from data
-            const labels = [];
-            const data = [];
-            const colors = [
-                '#f04616',  // Taggd Orange - Primary
-                '#ee4415',  // Taggd Orange - Dark
-                '#ff6347',  // Tomato Orange
-                '#ff7f50',  // Coral
-                '#ffa07a',  // Light Salmon
-                '#ffb380'   // Light Orange
-            ];
+            // Define region positions on the India map (approximate positions - can be adjusted)
+            const regionPositions = {
+                'North': { top: '20%', left: '35%' },
+                'South': { top: '75%', left: '45%' },
+                'East': { top: '40%', left: '70%' },
+                'West': { top: '45%', left: '15%' },
+                'Central': { top: '50%', left: '45%' },
+                'Northeast': { top: '15%', left: '75%' },
+                'Delhi NCR': { top: '25%', left: '40%' },
+                'Mumbai': { top: '55%', left: '20%' },
+                'Bangalore': { top: '70%', left: '45%' },
+                'Chennai': { top: '72%', left: '55%' },
+                'Kolkata': { top: '35%', left: '72%' },
+                'Hyderabad': { top: '65%', left: '50%' },
+                'Pune': { top: '62%', left: '28%' }
+            };
 
-            // Sort by count (descending) and create arrays
-            Object.entries(regionCounts)
-                .sort((a, b) => b[1] - a[1])
-                .forEach(([region, count]) => {
-                    labels.push(region);
-                    data.push(count);
-                });
-            
-            console.log('🗺️ Chart labels:', labels);
-            console.log('🗺️ Chart data:', data);
-
-            // Create professional donut chart with error handling
-            try {
-                const ctx = canvas.getContext('2d');
-                if (!ctx) {
-                    console.error('❌ Failed to get 2D context from canvas');
-                    return;
-                }
+            // Build region overlay HTML
+            let overlayHTML = '';
+            Object.entries(regionCounts).forEach(([region, count]) => {
+                const position = regionPositions[region] || { top: '50%', left: '50%' };
                 
-                console.log('✅ Got 2D context, creating chart...');
-                
-                window.regionChartInstance = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: data,
-                        backgroundColor: colors.slice(0, labels.length),
-                        borderColor: '#ffffff',
-                        borderWidth: 3,
-                        hoverOffset: 15
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                padding: 10,
-                                font: {
-                                    size: 9,
-                                    family: "'Inter', 'Segoe UI', sans-serif",
-                                    weight: '700'
-                                },
-                                color: '#000000',
-                                usePointStyle: true,
-                                pointStyle: 'circle',
-                                boxWidth: 10,
-                                boxHeight: 10,
-                                generateLabels: function(chart) {
-                                    const data = chart.data;
-                                    if (data.labels.length && data.datasets.length) {
-                                        return data.labels.map((label, i) => {
-                                            const value = data.datasets[0].data[i];
-                                            const total = data.datasets[0].data.reduce((a, b) => a + b, 0);
-                                            const percentage = ((value / total) * 100).toFixed(0);
-                                            
-                                            // Determine color based on accuracy percentage
-                                            let textColor = '#000000'; // Default black
-                                            if (percentage > 90) {
-                                                textColor = '#10b981'; // Green for > 90%
-                                            } else if (percentage >= 75) {
-                                                textColor = '#f59e0b'; // Amber for 75-90%
-                                            } else {
-                                                textColor = '#ef4444'; // Red for < 75%
-                                            }
-                                            
-                                            return {
-                                                text: `${label}: ${value} (${percentage}%)`,
-                                                fillStyle: data.datasets[0].backgroundColor[i],
-                                                fontColor: textColor,
-                                                hidden: false,
-                                                index: i
-                                            };
-                                        });
-                                    }
-                                    return [];
-                                }
-                            }
-                        },
-                        tooltip: {
-                            enabled: true,
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                            padding: 8,
-                            titleFont: {
-                                size: 10,
-                                weight: 'bold'
-                            },
-                            bodyFont: {
-                                size: 9
-                            },
-                            callbacks: {
-                                label: function(context) {
-                                    const label = context.label || '';
-                                    const value = context.parsed;
-                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                    const percentage = ((value / total) * 100).toFixed(1);
-                                    return `${label}: ${value} accounts (${percentage}%)`;
-                                }
-                            }
-                        }
-                    },
-                    cutout: '65%',
-                    animation: {
-                        animateRotate: true,
-                        animateScale: true,
-                        duration: 1000,
-                        easing: 'easeInOutQuart'
-                    },
-                    onClick: (event, elements) => {
-                        if (elements.length > 0) {
-                            const index = elements[0].index;
-                            const region = labels[index];
-                            filterByRegion(region);
-                        }
-                    }
-                }
+                overlayHTML += `
+                    <div style="
+                        position: absolute;
+                        top: ${position.top};
+                        left: ${position.left};
+                        transform: translate(-50%, -50%);
+                        background: rgba(240, 70, 22, 0.9);
+                        color: white;
+                        padding: 6px 12px;
+                        border-radius: 20px;
+                        font-size: 11px;
+                        font-weight: 700;
+                        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+                        cursor: pointer;
+                        transition: all 0.2s;
+                        white-space: nowrap;
+                        z-index: 10;
+                    "
+                    onclick="filterByRegion('${region}')"
+                    onmouseover="this.style.transform='translate(-50%, -50%) scale(1.1)'; this.style.boxShadow='0 4px 12px rgba(240,70,22,0.5)'"
+                    onmouseout="this.style.transform='translate(-50%, -50%) scale(1)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.3)'"
+                    title="Click to filter by ${region}">
+                        <i class="fas fa-map-marker-alt" style="margin-right: 4px;"></i>
+                        ${region}: ${count}
+                    </div>
+                `;
             });
 
-            console.log('✅ Region chart rendered successfully with', labels.length, 'regions');
-            } catch (error) {
-                console.error('❌ Error creating chart:', error);
-                console.error('Error details:', error.message, error.stack);
-                const container = document.getElementById('regionChartContainer');
-                if (container) {
-                    container.innerHTML = `
-                        <div style="text-align: center; padding: 40px; color: var(--text-muted);">
-                            <i class="fas fa-exclamation-triangle" style="font-size: 48px; color: #f04616; margin-bottom: 16px;"></i>
-                            <h3 style="color: var(--text-primary); margin-bottom: 8px;">Chart Error</h3>
-                            <p>Failed to render chart: ${error.message}</p>
-                            <p style="font-size: 12px; margin-top: 8px;">Check console (F12) for details.</p>
-                        </div>
-                    `;
-                }
-            }
+            // Render India map with overlays
+            container.innerHTML = `
+                <div style="
+                    position: relative;
+                    width: 100%;
+                    height: 100%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    overflow: hidden;
+                ">
+                    <img src="/india-map.jpg" 
+                         alt="India Map" 
+                         style="
+                            max-width: 100%;
+                            max-height: 100%;
+                            object-fit: contain;
+                            opacity: 0.85;
+                         "
+                         onerror="this.parentElement.innerHTML='<div style=text-align:center;padding:40px;color:var(--text-muted);><i class=fas fa-exclamation-triangle style=font-size:48px;color:#f04616;margin-bottom:16px;></i><h3 style=color:var(--text-primary);margin-bottom:8px;>Map Image Not Found</h3><p>India map image is missing. Please check /india-map.jpg</p></div>'"
+                    />
+                    ${overlayHTML}
+                </div>
+            `;
+
+            console.log('✅ India map with', Object.keys(regionCounts).length, 'regions rendered successfully');
         }
 
         function filterByRegion(region) {
