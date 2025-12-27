@@ -82,6 +82,8 @@
                         window.refreshProjectsTab();
                     } else if (tabId === 'rca-capa' && typeof window.refreshRcaCapaTab === 'function') {
                         window.refreshRcaCapaTab();
+                    } else if (tabId === 'csat' && typeof window.refreshCSATTab === 'function') {
+                        window.refreshCSATTab();
                     }
                 }
             } catch (error) {
@@ -1696,10 +1698,132 @@
         </div>
 
         <div id="csat" class="tab-content">
-            <div class="empty-state">
-                <i class="fas fa-smile"></i>
-                <h3>Customer Satisfaction</h3>
-                <p>Coming soon...</p>
+            <!-- CSAT Header -->
+            <div style="margin-bottom: 20px;">
+                <h2 style="font-size: 18px; font-weight: 700; color: var(--text-primary); margin: 0 0 8px 0;">
+                    <i class="fas fa-smile" style="color: var(--primary); margin-right: 8px;"></i>
+                    Customer Satisfaction (CSAT)
+                </h2>
+                <p style="font-size: 13px; color: var(--text-secondary); margin: 0;">
+                    Customer feedback and satisfaction metrics
+                </p>
+            </div>
+
+            <!-- CSAT KPIs Row -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                <!-- Average CSAT Score -->
+                <div class="stat-card" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                    <div class="stat-icon" style="background: rgba(255,255,255,0.2);">
+                        <i class="fas fa-smile-beam"></i>
+                    </div>
+                    <div class="stat-value" id="avgCsatScore">0</div>
+                    <div class="stat-label">Average CSAT Score</div>
+                </div>
+
+                <!-- Total Responses -->
+                <div class="stat-card" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);">
+                    <div class="stat-icon" style="background: rgba(255,255,255,0.2);">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <div class="stat-value" id="totalCsatResponses">0</div>
+                    <div class="stat-label">Total Responses</div>
+                </div>
+
+                <!-- Satisfaction Rate -->
+                <div class="stat-card" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                    <div class="stat-icon" style="background: rgba(255,255,255,0.2);">
+                        <i class="fas fa-thumbs-up"></i>
+                    </div>
+                    <div class="stat-value" id="satisfactionRate">0%</div>
+                    <div class="stat-label">Satisfaction Rate (≥4)</div>
+                </div>
+
+                <!-- Detractors -->
+                <div class="stat-card" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">
+                    <div class="stat-icon" style="background: rgba(255,255,255,0.2);">
+                        <i class="fas fa-thumbs-down"></i>
+                    </div>
+                    <div class="stat-value" id="detractorCount">0</div>
+                    <div class="stat-label">Detractors (≤2)</div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px; margin-bottom: 20px;">
+                <!-- CSAT Score Distribution -->
+                <div class="card">
+                    <h3 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin: 0 0 15px 0; display: flex; align-items: center;">
+                        <i class="fas fa-chart-pie" style="color: var(--primary); font-size: 12px; margin-right: 8px;"></i>
+                        CSAT Score Distribution
+                    </h3>
+                    <div style="height: 250px;">
+                        <canvas id="csatDistributionChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- CSAT Trend Over Time -->
+                <div class="card">
+                    <h3 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin: 0 0 15px 0; display: flex; align-items: center;">
+                        <i class="fas fa-chart-line" style="color: var(--primary); font-size: 12px; margin-right: 8px;"></i>
+                        CSAT Trend Over Time
+                    </h3>
+                    <div style="height: 250px;">
+                        <canvas id="csatTrendChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Regional/Category Analysis -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px; margin-bottom: 20px;">
+                <!-- CSAT by Region/Category -->
+                <div class="card">
+                    <h3 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin: 0 0 15px 0; display: flex; align-items: center;">
+                        <i class="fas fa-map-marked-alt" style="color: var(--primary); font-size: 12px; margin-right: 8px;"></i>
+                        CSAT by Region
+                    </h3>
+                    <div style="height: 250px;">
+                        <canvas id="csatByRegionChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- CSAT by Account -->
+                <div class="card">
+                    <h3 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin: 0 0 15px 0; display: flex; align-items: center;">
+                        <i class="fas fa-building" style="color: var(--primary); font-size: 12px; margin-right: 8px;"></i>
+                        Top & Bottom Accounts
+                    </h3>
+                    <div style="max-height: 250px; overflow-y: auto;">
+                        <div id="csatByAccountList" style="font-size: 11px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CSAT Data Table -->
+            <div class="card">
+                <h3 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin: 0 0 15px 0; display: flex; align-items: center; justify-content: space-between;">
+                    <span>
+                        <i class="fas fa-table" style="color: var(--primary); font-size: 12px; margin-right: 8px;"></i>
+                        CSAT Feedback Details
+                    </span>
+                    <span id="csatTableCount" style="font-size: 12px; color: var(--text-secondary);">0 records</span>
+                </h3>
+                <div style="overflow-x: auto;">
+                    <table id="csatTable" class="data-table">
+                        <thead>
+                            <tr id="csatTableHeader">
+                                <!-- Headers will be dynamically populated -->
+                            </tr>
+                        </thead>
+                        <tbody id="csatTableBody">
+                            <tr>
+                                <td colspan="100%" class="empty-state">
+                                    <i class="fas fa-inbox" style="font-size: 48px; opacity: 0.3; margin-bottom: 10px;"></i>
+                                    <p>No CSAT data available. Upload Base File.xlsx to load data.</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -1955,6 +2079,524 @@
             window.switchTab('account-summary');
         };
 
+        // ==========================================
+        // CUSTOMER SATISFACTION (CSAT) TAB
+        // ==========================================
+        
+        window.refreshCSATTab = function() {
+            console.log('🔄 Refreshing CSAT tab');
+            try {
+                if (!window.dashboardData || !window.dashboardData.csat || window.dashboardData.csat.length === 0) {
+                    console.warn('⚠️ No CSAT data available');
+                    return;
+                }
+                
+                renderCSATKPIs();
+                renderCSATDistributionChart();
+                renderCSATTrendChart();
+                renderCSATByRegionChart();
+                renderCSATByAccountList();
+                renderCSATTable();
+                
+                console.log('✅ CSAT tab refreshed');
+            } catch (error) {
+                handleError(error, 'refreshCSATTab');
+            }
+        };
+        
+        function renderCSATKPIs() {
+            try {
+                const data = window.dashboardData.csat || [];
+                if (data.length === 0) return;
+                
+                // Calculate KPIs
+                let totalScore = 0;
+                let validScores = 0;
+                let satisfied = 0; // Score >= 4
+                let detractors = 0; // Score <= 2
+                
+                data.forEach(row => {
+                    const score = parseFloat(row['CSAT Score'] || row['Score'] || 0);
+                    if (score > 0) {
+                        totalScore += score;
+                        validScores++;
+                        if (score >= 4) satisfied++;
+                        if (score <= 2) detractors++;
+                    }
+                });
+                
+                const avgScore = validScores > 0 ? (totalScore / validScores).toFixed(1) : 0;
+                const satisfactionRate = validScores > 0 ? ((satisfied / validScores) * 100).toFixed(0) : 0;
+                
+                // Update KPIs
+                safeSetText('avgCsatScore', avgScore);
+                safeSetText('totalCsatResponses', data.length.toLocaleString());
+                safeSetText('satisfactionRate', satisfactionRate + '%');
+                safeSetText('detractorCount', detractors.toLocaleString());
+                
+                console.log('✅ CSAT KPIs rendered');
+            } catch (error) {
+                handleError(error, 'renderCSATKPIs');
+            }
+        }
+        
+        function renderCSATDistributionChart() {
+            try {
+                const canvas = document.getElementById('csatDistributionChart');
+                if (!canvas) return;
+                
+                const data = window.dashboardData.csat || [];
+                if (data.length === 0) return;
+                
+                // Count scores by rating (1-5)
+                const distribution = { '1': 0, '2': 0, '3': 0, '4': 0, '5': 0 };
+                
+                data.forEach(row => {
+                    const score = Math.round(parseFloat(row['CSAT Score'] || row['Score'] || 0));
+                    if (score >= 1 && score <= 5) {
+                        distribution[score]++;
+                    }
+                });
+                
+                const ctx = canvas.getContext('2d');
+                
+                if (window.csatDistributionChartInstance) {
+                    window.csatDistributionChartInstance.destroy();
+                }
+                
+                window.csatDistributionChartInstance = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['1 - Very Dissatisfied', '2 - Dissatisfied', '3 - Neutral', '4 - Satisfied', '5 - Very Satisfied'],
+                        datasets: [{
+                            data: [distribution['1'], distribution['2'], distribution['3'], distribution['4'], distribution['5']],
+                            backgroundColor: ['#ef4444', '#f97316', '#f59e0b', '#10b981', '#059669'],
+                            borderWidth: 2,
+                            borderColor: '#ffffff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: {
+                                    font: { size: 10 },
+                                    padding: 10,
+                                    usePointStyle: true
+                                }
+                            },
+                            datalabels: {
+                                display: true,
+                                color: '#ffffff',
+                                font: { size: 11, weight: 'bold' },
+                                formatter: function(value, context) {
+                                    if (value === 0) return '';
+                                    return value;
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        const percentage = ((context.parsed / total) * 100).toFixed(1);
+                                        return context.label + ': ' + context.parsed + ' (' + percentage + '%)';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+                
+                console.log('✅ CSAT Distribution chart rendered');
+            } catch (error) {
+                handleError(error, 'renderCSATDistributionChart');
+            }
+        }
+        
+        function renderCSATTrendChart() {
+            try {
+                const canvas = document.getElementById('csatTrendChart');
+                if (!canvas) return;
+                
+                const data = window.dashboardData.csat || [];
+                if (data.length === 0) return;
+                
+                // Group by month or date
+                const trendData = {};
+                
+                data.forEach(row => {
+                    const date = row['Date'] || row['Survey Date'] || row['Month'] || 'Unknown';
+                    const score = parseFloat(row['CSAT Score'] || row['Score'] || 0);
+                    
+                    if (!trendData[date]) {
+                        trendData[date] = { total: 0, count: 0 };
+                    }
+                    
+                    if (score > 0) {
+                        trendData[date].total += score;
+                        trendData[date].count++;
+                    }
+                });
+                
+                // Calculate averages
+                const labels = Object.keys(trendData).sort();
+                const avgScores = labels.map(label => {
+                    const avg = trendData[label].total / trendData[label].count;
+                    return avg.toFixed(2);
+                });
+                const responseCounts = labels.map(label => trendData[label].count);
+                
+                const ctx = canvas.getContext('2d');
+                
+                if (window.csatTrendChartInstance) {
+                    window.csatTrendChartInstance.destroy();
+                }
+                
+                window.csatTrendChartInstance = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Average CSAT Score',
+                                data: avgScores,
+                                borderColor: '#10b981',
+                                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                                borderWidth: 3,
+                                pointRadius: 5,
+                                pointBackgroundColor: '#10b981',
+                                yAxisID: 'y',
+                                tension: 0.3
+                            },
+                            {
+                                label: 'Response Count',
+                                data: responseCounts,
+                                type: 'bar',
+                                backgroundColor: 'rgba(59, 130, 246, 0.5)',
+                                borderColor: '#3b82f6',
+                                borderWidth: 1,
+                                yAxisID: 'y1'
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top',
+                                labels: {
+                                    font: { size: 10 },
+                                    usePointStyle: true
+                                }
+                            },
+                            datalabels: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                type: 'linear',
+                                position: 'left',
+                                title: {
+                                    display: true,
+                                    text: 'CSAT Score (1-5)',
+                                    font: { size: 11, weight: '600' }
+                                },
+                                min: 0,
+                                max: 5,
+                                ticks: {
+                                    font: { size: 10 }
+                                },
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.05)'
+                                }
+                            },
+                            y1: {
+                                type: 'linear',
+                                position: 'right',
+                                title: {
+                                    display: true,
+                                    text: 'Response Count',
+                                    font: { size: 11, weight: '600' }
+                                },
+                                ticks: {
+                                    font: { size: 10 }
+                                },
+                                grid: {
+                                    drawOnChartArea: false
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    font: { size: 10 }
+                                },
+                                grid: {
+                                    display: false
+                                }
+                            }
+                        }
+                    }
+                });
+                
+                console.log('✅ CSAT Trend chart rendered');
+            } catch (error) {
+                handleError(error, 'renderCSATTrendChart');
+            }
+        }
+        
+        function renderCSATByRegionChart() {
+            try {
+                const canvas = document.getElementById('csatByRegionChart');
+                if (!canvas) return;
+                
+                const data = window.dashboardData.csat || [];
+                if (data.length === 0) return;
+                
+                // Group by region
+                const regionData = {};
+                
+                data.forEach(row => {
+                    const region = row['Region'] || row['Location'] || 'Unknown';
+                    const score = parseFloat(row['CSAT Score'] || row['Score'] || 0);
+                    
+                    if (!regionData[region]) {
+                        regionData[region] = { total: 0, count: 0 };
+                    }
+                    
+                    if (score > 0) {
+                        regionData[region].total += score;
+                        regionData[region].count++;
+                    }
+                });
+                
+                // Calculate averages and sort
+                const regions = Object.keys(regionData)
+                    .map(region => ({
+                        name: region,
+                        avg: (regionData[region].total / regionData[region].count).toFixed(2),
+                        count: regionData[region].count
+                    }))
+                    .sort((a, b) => b.avg - a.avg);
+                
+                const labels = regions.map(r => r.name);
+                const scores = regions.map(r => r.avg);
+                
+                const ctx = canvas.getContext('2d');
+                
+                if (window.csatByRegionChartInstance) {
+                    window.csatByRegionChartInstance.destroy();
+                }
+                
+                window.csatByRegionChartInstance = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Average CSAT Score',
+                            data: scores,
+                            backgroundColor: '#f04616',
+                            borderColor: '#ee4415',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        indexAxis: 'y',
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            datalabels: {
+                                display: true,
+                                align: 'end',
+                                anchor: 'end',
+                                color: '#1f2937',
+                                font: { size: 10, weight: 'bold' },
+                                formatter: function(value) {
+                                    return value;
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                min: 0,
+                                max: 5,
+                                ticks: {
+                                    font: { size: 10 }
+                                },
+                                grid: {
+                                    color: '#f3f4f6'
+                                }
+                            },
+                            y: {
+                                ticks: {
+                                    font: { size: 10 }
+                                },
+                                grid: {
+                                    display: false
+                                }
+                            }
+                        }
+                    }
+                });
+                
+                console.log('✅ CSAT by Region chart rendered');
+            } catch (error) {
+                handleError(error, 'renderCSATByRegionChart');
+            }
+        }
+        
+        function renderCSATByAccountList() {
+            try {
+                const container = document.getElementById('csatByAccountList');
+                if (!container) return;
+                
+                const data = window.dashboardData.csat || [];
+                if (data.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: var(--text-muted); padding: 20px;">No data available</p>';
+                    return;
+                }
+                
+                // Group by account
+                const accountData = {};
+                
+                data.forEach(row => {
+                    const account = row['Account'] || row['Client'] || row['Company'] || 'Unknown';
+                    const score = parseFloat(row['CSAT Score'] || row['Score'] || 0);
+                    
+                    if (!accountData[account]) {
+                        accountData[account] = { total: 0, count: 0 };
+                    }
+                    
+                    if (score > 0) {
+                        accountData[account].total += score;
+                        accountData[account].count++;
+                    }
+                });
+                
+                // Calculate averages and sort
+                const accounts = Object.keys(accountData)
+                    .map(account => ({
+                        name: account,
+                        avg: (accountData[account].total / accountData[account].count).toFixed(2),
+                        count: accountData[account].count
+                    }))
+                    .sort((a, b) => b.avg - a.avg);
+                
+                // Top 5 and Bottom 5
+                const top5 = accounts.slice(0, 5);
+                const bottom5 = accounts.slice(-5).reverse();
+                
+                let html = '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">';
+                
+                // Top performers
+                html += '<div>';
+                html += '<h4 style="font-size: 12px; font-weight: 700; color: #10b981; margin-bottom: 10px;"><i class="fas fa-arrow-up"></i> Top 5 Accounts</h4>';
+                html += '<div style="display: flex; flex-direction: column; gap: 8px;">';
+                top5.forEach((acc, index) => {
+                    html += `
+                        <div style="display: flex; justify-content: space-between; padding: 8px; background: #f0fdf4; border-radius: 6px; border-left: 3px solid #10b981;">
+                            <span style="font-size: 11px; font-weight: 600;">${index + 1}. ${acc.name}</span>
+                            <span style="font-size: 11px; font-weight: 700; color: #10b981;">${acc.avg}</span>
+                        </div>
+                    `;
+                });
+                html += '</div></div>';
+                
+                // Bottom performers
+                html += '<div>';
+                html += '<h4 style="font-size: 12px; font-weight: 700; color: #ef4444; margin-bottom: 10px;"><i class="fas fa-arrow-down"></i> Bottom 5 Accounts</h4>';
+                html += '<div style="display: flex; flex-direction: column; gap: 8px;">';
+                bottom5.forEach((acc, index) => {
+                    html += `
+                        <div style="display: flex; justify-content: space-between; padding: 8px; background: #fef2f2; border-radius: 6px; border-left: 3px solid #ef4444;">
+                            <span style="font-size: 11px; font-weight: 600;">${index + 1}. ${acc.name}</span>
+                            <span style="font-size: 11px; font-weight: 700; color: #ef4444;">${acc.avg}</span>
+                        </div>
+                    `;
+                });
+                html += '</div></div>';
+                
+                html += '</div>';
+                
+                container.innerHTML = html;
+                
+                console.log('✅ CSAT by Account list rendered');
+            } catch (error) {
+                handleError(error, 'renderCSATByAccountList');
+            }
+        }
+        
+        function renderCSATTable() {
+            try {
+                const data = window.dashboardData.csat || [];
+                const headerRow = document.getElementById('csatTableHeader');
+                const tbody = document.getElementById('csatTableBody');
+                const countSpan = document.getElementById('csatTableCount');
+                
+                if (!headerRow || !tbody) return;
+                
+                if (data.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="100%" class="empty-state">
+                                <i class="fas fa-inbox" style="font-size: 48px; opacity: 0.3; margin-bottom: 10px;"></i>
+                                <p>No CSAT data available. Upload Base File.xlsx to load data.</p>
+                            </td>
+                        </tr>
+                    `;
+                    if (countSpan) countSpan.textContent = '0 records';
+                    return;
+                }
+                
+                // Update count
+                if (countSpan) countSpan.textContent = data.length.toLocaleString() + ' records';
+                
+                // Get headers from first row
+                const headers = Object.keys(data[0]);
+                
+                // Render headers
+                headerRow.innerHTML = headers.map(header => `<th>${header}</th>`).join('');
+                
+                // Render rows
+                tbody.innerHTML = data.map(row => {
+                    const cells = headers.map(header => {
+                        let value = row[header];
+                        
+                        // Format CSAT Score with color
+                        if (header.toLowerCase().includes('score') || header.toLowerCase().includes('csat')) {
+                            const score = parseFloat(value);
+                            if (!isNaN(score)) {
+                                let color = '#6b7280';
+                                if (score >= 4) color = '#10b981';
+                                else if (score >= 3) color = '#f59e0b';
+                                else color = '#ef4444';
+                                
+                                return `<td><span style="font-weight: 700; color: ${color};">${score.toFixed(1)}</span></td>`;
+                            }
+                        }
+                        
+                        return `<td>${value !== null && value !== undefined ? value : ''}</td>`;
+                    }).join('');
+                    
+                    return `<tr>${cells}</tr>`;
+                }).join('');
+                
+                console.log('✅ CSAT table rendered with', data.length, 'rows');
+            } catch (error) {
+                handleError(error, 'renderCSATTable');
+            }
+        }
+        
         // ==========================================
         // UPLOAD MODAL
         // ==========================================
