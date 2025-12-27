@@ -2686,9 +2686,6 @@
                 return cleanRow;
             });
 
-            // Get filtered data (or all data if no filters applied)
-            const dataToCount = getFilteredAccountData();
-
             // Define 6 main filters - added Regional Head
             const filters = [
                 { label: 'Client Interaction', field: 'Client Interaction', icon: 'handshake' },
@@ -2710,9 +2707,30 @@
 
                 if (allValues.length === 0) return '';
 
-                // Calculate counts for each value based on FILTERED data
+                // Calculate counts for each value based on OTHER active filters (exclude current field)
                 const valueCounts = allValues.map(value => {
-                    const count = dataToCount.filter(r => {
+                    // Create temporary filters excluding current field
+                    const tempFilters = {...window.activeAccountFilters};
+                    delete tempFilters[filter.field];
+                    
+                    // Filter data based on other filters only
+                    let dataForCount = window.dashboardData.accountSummary;
+                    if (Object.keys(tempFilters).length > 0) {
+                        dataForCount = window.dashboardData.accountSummary.filter(row => {
+                            return Object.entries(tempFilters).every(([field, values]) => {
+                                if (!values || values.length === 0) return true;
+                                const rowValue = row[field];
+                                const cleanRowValue = typeof rowValue === 'string' ? rowValue.trim() : rowValue;
+                                return values.some(v => {
+                                    const cleanFilterValue = typeof v === 'string' ? v.trim() : v;
+                                    return cleanRowValue === cleanFilterValue;
+                                });
+                            });
+                        });
+                    }
+                    
+                    // Count how many rows match this specific value
+                    const count = dataForCount.filter(r => {
                         const rowValue = r[filter.field];
                         const cleanRowValue = typeof rowValue === 'string' ? rowValue.trim() : rowValue;
                         return cleanRowValue === value;
