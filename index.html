@@ -916,7 +916,7 @@
                 
                 <!-- Region Chart (Larger) -->
                 <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 8px; height: 220px;">
-                    <h3 style="font-size: 11px; margin: 0 0 6px 0; font-weight: 700; color: #f8fafc;">
+                    <h3 style="font-size: 11px; margin: 0 0 6px 0; font-weight: 700; color: #000000;">
                         <i class="fas fa-chart-pie" style="font-size: 9px; color: var(--primary);"></i> REGION DISTRIBUTION
                     </h3>
                     <div id="regionChartContainer" style="padding: 2px; height: 195px; display: flex; align-items: center; justify-content: center;">
@@ -2968,7 +2968,7 @@
                                 labels: {
                                     padding: 10,
                                     font: { size: 9, family: "'Inter', 'Segoe UI', sans-serif", weight: '700' },
-                                    color: '#ffffff',
+                                    color: '#000000',
                                     usePointStyle: true,
                                     pointStyle: 'circle',
                                     boxWidth: 10,
@@ -2980,10 +2980,21 @@
                                                 const value = data.datasets[0].data[i];
                                                 const total = data.datasets[0].data.reduce((a, b) => a + b, 0);
                                                 const percentage = ((value / total) * 100).toFixed(0);
+                                                
+                                                // Determine color based on accuracy percentage
+                                                let textColor = '#000000'; // Default black
+                                                if (percentage > 90) {
+                                                    textColor = '#10b981'; // Green for > 90%
+                                                } else if (percentage >= 75) {
+                                                    textColor = '#f59e0b'; // Amber for 75-90%
+                                                } else {
+                                                    textColor = '#ef4444'; // Red for < 75%
+                                                }
+                                                
                                                 return {
                                                     text: `${label}: ${value} (${percentage}%)`,
                                                     fillStyle: data.datasets[0].backgroundColor[i],
-                                                    fontColor: '#ffffff',
+                                                    fontColor: textColor,
                                                     hidden: false,
                                                     index: i
                                                 };
@@ -3391,7 +3402,7 @@
                                     family: "'Inter', 'Segoe UI', sans-serif",
                                     weight: '700'
                                 },
-                                color: '#ffffff',
+                                color: '#000000',
                                 usePointStyle: true,
                                 pointStyle: 'circle',
                                 boxWidth: 10,
@@ -3403,10 +3414,21 @@
                                             const value = data.datasets[0].data[i];
                                             const total = data.datasets[0].data.reduce((a, b) => a + b, 0);
                                             const percentage = ((value / total) * 100).toFixed(0);
+                                            
+                                            // Determine color based on accuracy percentage
+                                            let textColor = '#000000'; // Default black
+                                            if (percentage > 90) {
+                                                textColor = '#10b981'; // Green for > 90%
+                                            } else if (percentage >= 75) {
+                                                textColor = '#f59e0b'; // Amber for 75-90%
+                                            } else {
+                                                textColor = '#ef4444'; // Red for < 75%
+                                            }
+                                            
                                             return {
                                                 text: `${label}: ${value} (${percentage}%)`,
                                                 fillStyle: data.datasets[0].backgroundColor[i],
-                                                fontColor: '#ffffff',
+                                                fontColor: textColor,
                                                 hidden: false,
                                                 index: i
                                             };
