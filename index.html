@@ -978,69 +978,18 @@
 
         <!-- OTHER TABS (Placeholders) -->
         <div id="transactional" class="tab-content">
-            <!-- Filters Section - Card Style -->
-            <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 1px solid #fcd34d; border-radius: 6px; padding: 8px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                <div style="display: flex; align-items: center; margin-bottom: 6px;">
-                    <i class="fas fa-filter" style="color: #d97706; font-size: 11px; margin-right: 6px;"></i>
-                    <span style="font-size: 10px; font-weight: 700; color: #92400e;">Filter Transactional Data</span>
-                </div>
-                <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 6px;">
-                    <!-- Client Filter Card -->
-                    <div style="background: white; border: 1px solid #fcd34d; border-radius: 4px; padding: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                        <label style="display: block; font-size: 8px; font-weight: 600; color: #92400e; margin-bottom: 3px;">
-                            <i class="fas fa-building" style="margin-right: 3px;"></i>Client
-                        </label>
-                        <select id="filterClient" onchange="applyTransactionalFilters()" style="width: 100%; padding: 4px; font-size: 9px; border: 1px solid #cbd5e1; border-radius: 3px; background: white; color: #334155;">
-                            <option value="">All Clients</option>
-                        </select>
-                    </div>
-                    
-                    <!-- Practice Head Filter Card -->
-                    <div style="background: white; border: 1px solid #fcd34d; border-radius: 4px; padding: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                        <label style="display: block; font-size: 8px; font-weight: 600; color: #92400e; margin-bottom: 3px;">
-                            <i class="fas fa-user-tie" style="margin-right: 3px;"></i>Practice Head
-                        </label>
-                        <select id="filterPracticeHead" onchange="applyTransactionalFilters()" style="width: 100%; padding: 4px; font-size: 9px; border: 1px solid #cbd5e1; border-radius: 3px; background: white; color: #334155;">
-                            <option value="">All Practice Heads</option>
-                        </select>
-                    </div>
-                    
-                    <!-- Financial Year Filter Card -->
-                    <div style="background: white; border: 1px solid #fcd34d; border-radius: 4px; padding: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                        <label style="display: block; font-size: 8px; font-weight: 600; color: #92400e; margin-bottom: 3px;">
-                            <i class="fas fa-calendar-alt" style="margin-right: 3px;"></i>Year
-                        </label>
-                        <select id="filterFinancialYear" onchange="applyTransactionalFilters()" style="width: 100%; padding: 4px; font-size: 9px; border: 1px solid #cbd5e1; border-radius: 3px; background: white; color: #334155;">
-                            <option value="">All Years</option>
-                        </select>
-                    </div>
-                    
-                    <!-- Month Filter Card -->
-                    <div style="background: white; border: 1px solid #fcd34d; border-radius: 4px; padding: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                        <label style="display: block; font-size: 8px; font-weight: 600; color: #92400e; margin-bottom: 3px;">
-                            <i class="fas fa-calendar" style="margin-right: 3px;"></i>Month
-                        </label>
-                        <select id="filterMonth" onchange="applyTransactionalFilters()" style="width: 100%; padding: 4px; font-size: 9px; border: 1px solid #cbd5e1; border-radius: 3px; background: white; color: #334155;">
-                            <option value="">All Months</option>
-                        </select>
-                    </div>
-                    
-                    <!-- Week Filter Card -->
-                    <div style="background: white; border: 1px solid #fcd34d; border-radius: 4px; padding: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                        <label style="display: block; font-size: 8px; font-weight: 600; color: #92400e; margin-bottom: 3px;">
-                            <i class="fas fa-clock" style="margin-right: 3px;"></i>Week
-                        </label>
-                        <select id="filterWeek" onchange="applyTransactionalFilters()" style="width: 100%; padding: 4px; font-size: 9px; border: 1px solid #cbd5e1; border-radius: 3px; background: white; color: #334155;">
-                            <option value="">All Weeks</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <!-- Clear Button -->
-                <div style="text-align: right;">
-                    <button onclick="clearTransactionalFilters()" style="padding: 4px 12px; font-size: 9px; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; box-shadow: 0 2px 4px rgba(239,68,68,0.3);">
-                        <i class="fas fa-times-circle" style="margin-right: 4px;"></i>Clear All Filters
+            <!-- Filters Section - Account Summary Style -->
+            <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 10px; margin-bottom: 10px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <h2 style="font-size: 11px; color: var(--text-primary); margin: 0; font-weight: 700;">
+                        <i class="fas fa-filter" style="font-size: 9px;"></i> FILTERS
+                    </h2>
+                    <button onclick="clearTransactionalFilters()" style="background: var(--error); border: none; color: white; padding: 3px 8px; border-radius: 3px; cursor: pointer; font-size: 9px; font-weight: 600;">
+                        <i class="fas fa-times"></i> Clear
                     </button>
+                </div>
+                <div id="transactionalFilters" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px;">
+                    <!-- 6 Filters generated dynamically with counts -->
                 </div>
             </div>
 
@@ -3895,8 +3844,14 @@ Total Population: ${totalPop}
 
         function populateTransactionalFilters() {
             try {
+                const container = document.getElementById('transactionalFilters');
                 const data = window.dashboardData.parameterAuditCount;
                 const accountData = window.dashboardData.accountSummary;
+                
+                if (!data || data.length === 0) {
+                    container.innerHTML = '<div style="padding: 20px; text-align: center; color: #94a3b8; grid-column: 1 / -1;">No data available</div>';
+                    return;
+                }
                 
                 // Build client-to-account mapping for Practice Head filtering
                 window.clientToAccountMapping = {};
@@ -3926,103 +3881,222 @@ Total Population: ${totalPop}
                     });
                 }
                 
-                // Get unique Clients
-                const clients = [...new Set(data.map(row => String(row['Client'] || '').trim()).filter(c => c))];
-                const clientSelect = safeGetElement('filterClient');
-                if (clientSelect) {
-                    clientSelect.innerHTML = '<option value="">All Clients</option>' + 
-                        clients.sort().map(client => `<option value="${client}">${client}</option>`).join('');
-                }
+                // Define 6 filters with icons
+                const filters = [
+                    { label: 'Client', field: 'Client', icon: 'building' },
+                    { label: 'Practice Head', field: 'Practice Head', icon: 'user-tie' },
+                    { label: 'Financial Year', field: 'Financial Year', icon: 'calendar-alt', fieldAlt: 'Finanical Year' },
+                    { label: 'Month', field: 'Month', icon: 'calendar' },
+                    { label: 'Week', field: 'Week', icon: 'clock' },
+                    { label: 'Region', field: 'Region', icon: 'map-marker-alt' }
+                ];
+
+                container.innerHTML = filters.map(filter => {
+                    let values;
+                    
+                    // Handle Practice Head from mapping
+                    if (filter.field === 'Practice Head') {
+                        values = [...new Set(Object.values(window.clientToAccountMapping).map(m => m.practiceHead).filter(p => p))];
+                    } else {
+                        // Get unique values for this filter
+                        values = [...new Set(data
+                            .map(row => {
+                                const value = row[filter.field] || (filter.fieldAlt ? row[filter.fieldAlt] : null);
+                                return typeof value === 'string' ? value.trim() : value;
+                            })
+                            .filter(Boolean))];
+                    }
+
+                    if (values.length === 0) return '';
+
+                    // Calculate counts for each value
+                    const valueCounts = values.map(value => {
+                        let count;
+                        if (filter.field === 'Practice Head') {
+                            // Count clients associated with this practice head
+                            count = Object.entries(window.clientToAccountMapping).filter(([client, mapping]) => 
+                                mapping.practiceHead === value
+                            ).length;
+                        } else {
+                            count = data.filter(r => {
+                                const rowValue = r[filter.field] || (filter.fieldAlt ? r[filter.fieldAlt] : null);
+                                const cleanRowValue = typeof rowValue === 'string' ? rowValue.trim() : rowValue;
+                                return cleanRowValue === value;
+                            }).length;
+                        }
+                        return { value, count };
+                    }).sort((a, b) => b.count - a.count);
+
+                    // Special sorting for months
+                    if (filter.field === 'Month') {
+                        const monthOrder = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                        valueCounts.sort((a, b) => monthOrder.indexOf(a.value) - monthOrder.indexOf(b.value));
+                    }
+
+                    return `
+                        <div style="
+                            background: transparent; 
+                            border: 1px solid var(--border); 
+                            border-radius: 4px; 
+                            padding: 5px; 
+                        ">
+                            <div style="display: flex; align-items: center; gap: 3px; margin-bottom: 4px;">
+                                <i class="fas fa-${filter.icon}" style="color: var(--primary); font-size: 8px;"></i>
+                                <h3 style="font-size: 9px; font-weight: 700; color: var(--text-primary); margin: 0; text-transform: uppercase;">${filter.label}</h3>
+                            </div>
+                            <div style="
+                                display: flex; 
+                                flex-direction: column; 
+                                gap: 2px; 
+                                max-height: 85px; 
+                                overflow-y: auto;
+                                padding-right: 2px;
+                            ">
+                                ${valueCounts.map(({ value, count }) => `
+                                    <button 
+                                        onclick="applyTransactionalFilter('${filter.field}', '${String(value).replace(/'/g, "\\'")}')"
+                                        data-field="${filter.field}"
+                                        data-value="${String(value).replace(/"/g, '&quot;')}"
+                                        class="transactional-filter-btn"
+                                        style="
+                                            display: flex;
+                                            justify-content: space-between;
+                                            align-items: center;
+                                            padding: 3px 5px;
+                                            background: #f9fafb;
+                                            border: 1px solid var(--border);
+                                            border-radius: 3px;
+                                            cursor: pointer;
+                                            transition: all 0.2s;
+                                            text-align: left;
+                                            width: 100%;
+                                        "
+                                        onmouseover="if(!this.classList.contains('active')){this.style.background='#f0f1f3'; this.style.borderColor='var(--primary)';}"
+                                        onmouseout="if(!this.classList.contains('active')){this.style.background='#f9fafb'; this.style.borderColor='var(--border)';}"
+                                    >
+                                        <span style="color: var(--text-primary); font-size: 8px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;">${filter.field === 'Week' ? 'Week ' + value : value}</span>
+                                        <span style="
+                                            background: var(--primary);
+                                            color: white;
+                                            padding: 1px 4px;
+                                            border-radius: 4px;
+                                            font-size: 8px;
+                                            font-weight: 700;
+                                            min-width: 16px;
+                                            text-align: center;
+                                            flex-shrink: 0;
+                                            margin-left: 3px;
+                                        ">${count}</span>
+                                    </button>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
                 
-                // Get unique Practice Heads from mapping
-                const practiceHeads = [...new Set(Object.values(window.clientToAccountMapping).map(m => m.practiceHead).filter(p => p))];
-                const practiceHeadSelect = safeGetElement('filterPracticeHead');
-                if (practiceHeadSelect) {
-                    practiceHeadSelect.innerHTML = '<option value="">All Practice Heads</option>' + 
-                        practiceHeads.sort().map(ph => `<option value="${ph}">${ph}</option>`).join('');
-                }
-                
-                // Get unique Financial Years
-                const years = [...new Set(data.map(row => String(row['Finanical Year'] || row['Financial Year'] || '').trim()).filter(y => y))];
-                const yearSelect = safeGetElement('filterFinancialYear');
-                if (yearSelect) {
-                    yearSelect.innerHTML = '<option value="">All Years</option>' + 
-                        years.sort().map(year => `<option value="${year}">${year}</option>`).join('');
-                }
-                
-                // Get unique Months
-                const months = [...new Set(data.map(row => String(row['Month'] || '').trim()).filter(m => m))];
-                const monthOrder = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-                const sortedMonths = months.sort((a, b) => monthOrder.indexOf(a) - monthOrder.indexOf(b));
-                const monthSelect = safeGetElement('filterMonth');
-                if (monthSelect) {
-                    monthSelect.innerHTML = '<option value="">All Months</option>' + 
-                        sortedMonths.map(month => `<option value="${month}">${month}</option>`).join('');
-                }
-                
-                // Get unique Weeks
-                const weeks = [...new Set(data.map(row => String(row['Week'] || '').trim()).filter(w => w))];
-                const weekSelect = safeGetElement('filterWeek');
-                if (weekSelect) {
-                    weekSelect.innerHTML = '<option value="">All Weeks</option>' + 
-                        weeks.sort((a, b) => parseInt(a) - parseInt(b)).map(week => `<option value="${week}">Week ${week}</option>`).join('');
-                }
-                
-                console.log('✅ Filters populated:', clients.length, 'clients,', practiceHeads.length, 'practice heads,', years.length, 'years,', months.length, 'months,', weeks.length, 'weeks');
+                console.log('✅ Transactional filters rendered with counts');
             } catch (error) {
                 handleError(error, 'populateTransactionalFilters');
             }
         }
 
+        function applyTransactionalFilter(field, value) {
+            try {
+                console.log(`🔍 Transactional filter toggled: ${field} = ${value}`);
+                
+                // Initialize active filters if needed
+                if (!window.activeTransactionalFilters) {
+                    window.activeTransactionalFilters = {};
+                }
+                
+                // Initialize array for this field if needed
+                if (!window.activeTransactionalFilters[field]) {
+                    window.activeTransactionalFilters[field] = [];
+                }
+                
+                // Find button and toggle
+                const buttons = document.querySelectorAll(`.transactional-filter-btn[data-field="${field}"][data-value="${value.replace(/"/g, '&quot;')}"]`);
+                const button = buttons[0];
+                
+                if (!button) return;
+                
+                // Toggle the value
+                const valueIndex = window.activeTransactionalFilters[field].indexOf(value);
+                if (valueIndex > -1) {
+                    // Remove the value
+                    window.activeTransactionalFilters[field].splice(valueIndex, 1);
+                    button.classList.remove('active');
+                    button.style.background = '#f9fafb';
+                    button.style.borderColor = 'var(--border)';
+                    
+                    // Remove field entirely if no values left
+                    if (window.activeTransactionalFilters[field].length === 0) {
+                        delete window.activeTransactionalFilters[field];
+                    }
+                } else {
+                    // Add the value
+                    window.activeTransactionalFilters[field].push(value);
+                    button.classList.add('active');
+                    button.style.background = 'rgba(240, 70, 22, 0.1)';
+                    button.style.borderColor = 'var(--primary)';
+                }
+                
+                // Apply filters
+                applyTransactionalFilters();
+            } catch (error) {
+                handleError(error, 'applyTransactionalFilter');
+            }
+        }
+
         function applyTransactionalFilters() {
             try {
-                const clientFilter = safeGetElement('filterClient')?.value || '';
-                const practiceHeadFilter = safeGetElement('filterPracticeHead')?.value || '';
-                const yearFilter = safeGetElement('filterFinancialYear')?.value || '';
-                const monthFilter = safeGetElement('filterMonth')?.value || '';
-                const weekFilter = safeGetElement('filterWeek')?.value || '';
-                
                 // Get filtered data
                 let filteredData = window.dashboardData.parameterAuditCount;
                 
-                if (clientFilter) {
-                    filteredData = filteredData.filter(row => 
-                        String(row['Client'] || '').trim() === clientFilter
-                    );
+                // Apply filters from active filters object
+                if (window.activeTransactionalFilters) {
+                    Object.keys(window.activeTransactionalFilters).forEach(field => {
+                        const values = window.activeTransactionalFilters[field];
+                        if (values && values.length > 0) {
+                            if (field === 'Practice Head' && window.clientToAccountMapping) {
+                                // Filter by Practice Head using mapping
+                                const matchingClients = Object.keys(window.clientToAccountMapping).filter(client => 
+                                    values.includes(window.clientToAccountMapping[client].practiceHead)
+                                );
+                                filteredData = filteredData.filter(row => 
+                                    matchingClients.includes(String(row['Client'] || '').trim())
+                                );
+                            } else if (field === 'Financial Year') {
+                                filteredData = filteredData.filter(row => {
+                                    const rowValue = String(row['Finanical Year'] || row['Financial Year'] || '').trim();
+                                    return values.includes(rowValue);
+                                });
+                            } else {
+                                filteredData = filteredData.filter(row => {
+                                    const rowValue = String(row[field] || '').trim();
+                                    return values.includes(rowValue);
+                                });
+                            }
+                        }
+                    });
                 }
                 
-                // Filter by Practice Head using mapping
-                if (practiceHeadFilter && window.clientToAccountMapping) {
-                    const matchingClients = Object.keys(window.clientToAccountMapping).filter(client => 
-                        window.clientToAccountMapping[client].practiceHead === practiceHeadFilter
-                    );
-                    filteredData = filteredData.filter(row => 
-                        matchingClients.includes(String(row['Client'] || '').trim())
-                    );
-                }
-                
-                if (yearFilter) {
-                    filteredData = filteredData.filter(row => 
-                        String(row['Finanical Year'] || row['Financial Year'] || '').trim() === yearFilter
-                    );
-                }
-                
-                if (monthFilter) {
-                    filteredData = filteredData.filter(row => 
-                        String(row['Month'] || '').trim() === monthFilter
-                    );
-                }
-                
-                if (weekFilter) {
-                    filteredData = filteredData.filter(row => 
-                        String(row['Week'] || '').trim() === weekFilter
-                    );
-                }
-                
-                console.log('🔍 Filtered data:', filteredData.length, 'rows (Client:', clientFilter || 'All', ', Practice Head:', practiceHeadFilter || 'All', ', Year:', yearFilter || 'All', ', Month:', monthFilter || 'All', ', Week:', weekFilter || 'All', ')');
+                console.log('🔍 Filtered data:', filteredData.length, 'rows');
                 
                 // Generate summary
-                generateSummary(filteredData, clientFilter, practiceHeadFilter, yearFilter, monthFilter, weekFilter);
+                const summaryFilters = {};
+                if (window.activeTransactionalFilters) {
+                    Object.keys(window.activeTransactionalFilters).forEach(field => {
+                        summaryFilters[field] = window.activeTransactionalFilters[field].join(', ');
+                    });
+                }
+                generateSummary(filteredData, 
+                    summaryFilters['Client'] || '', 
+                    summaryFilters['Practice Head'] || '', 
+                    summaryFilters['Financial Year'] || '', 
+                    summaryFilters['Month'] || '', 
+                    summaryFilters['Week'] || ''
+                );
                 
                 // Calculate all metrics with filtered data
                 calculateOverallMetrics(filteredData);
@@ -4037,23 +4111,27 @@ Total Population: ${totalPop}
                 handleError(error, 'applyTransactionalFilters');
             }
         }
+                
+            } catch (error) {
+                handleError(error, 'applyTransactionalFilters');
+            }
+        }
 
         function clearTransactionalFilters() {
             try {
-                const clientSelect = safeGetElement('filterClient');
-                const practiceHeadSelect = safeGetElement('filterPracticeHead');
-                const yearSelect = safeGetElement('filterFinancialYear');
-                const monthSelect = safeGetElement('filterMonth');
-                const weekSelect = safeGetElement('filterWeek');
+                // Clear active filters
+                window.activeTransactionalFilters = {};
                 
-                if (clientSelect) clientSelect.value = '';
-                if (practiceHeadSelect) practiceHeadSelect.value = '';
-                if (yearSelect) yearSelect.value = '';
-                if (monthSelect) monthSelect.value = '';
-                if (weekSelect) weekSelect.value = '';
+                // Remove active class from all buttons
+                document.querySelectorAll('.transactional-filter-btn.active').forEach(btn => {
+                    btn.classList.remove('active');
+                    btn.style.background = '#f9fafb';
+                    btn.style.borderColor = 'var(--border)';
+                });
                 
+                // Reapply filters (will show all data)
                 applyTransactionalFilters();
-                console.log('✅ Filters cleared');
+                console.log('✅ Transactional filters cleared');
             } catch (error) {
                 handleError(error, 'clearTransactionalFilters');
             }
