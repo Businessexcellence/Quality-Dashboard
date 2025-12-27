@@ -1202,65 +1202,31 @@
         </div>
 
         <div id="recruiter" class="tab-content">
-            <!-- Filters Section - Card Style -->
-            <div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border: 1px solid #bae6fd; border-radius: 6px; padding: 8px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                <div style="display: flex; align-items: center; margin-bottom: 6px;">
-                    <i class="fas fa-filter" style="color: #0284c7; font-size: 11px; margin-right: 6px;"></i>
-                    <span style="font-size: 10px; font-weight: 700; color: #0369a1;">Filter Recruiters</span>
+            <!-- Filters Section - Scrollable Button Style like Account Summary -->
+            <div style="background: white; border: 1px solid var(--border); border-radius: 6px; padding: 12px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <div style="display: flex; align-items: center;">
+                        <i class="fas fa-filter" style="color: var(--primary); font-size: 11px; margin-right: 6px;"></i>
+                        <span style="font-size: 10px; font-weight: 700; color: var(--text-primary); text-transform: uppercase;">FILTERS</span>
+                    </div>
+                    <button onclick="clearRecruiterFilters()" style="
+                        background: #dc2626;
+                        color: white;
+                        border: none;
+                        padding: 4px 8px;
+                        border-radius: 4px;
+                        font-size: 8px;
+                        font-weight: 600;
+                        cursor: pointer;
+                        transition: all 0.2s;
+                    ">
+                        Clear
+                    </button>
                 </div>
-                <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 6px;">
-                    <!-- Account Filter Card -->
-                    <div style="background: white; border: 1px solid #bae6fd; border-radius: 4px; padding: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                        <label style="display: block; font-size: 8px; font-weight: 600; color: #0369a1; margin-bottom: 3px;">
-                            <i class="fas fa-building" style="margin-right: 3px;"></i>Account
-                        </label>
-                        <select id="recruiterFilterAccount" onchange="applyRecruiterFilters()" style="width: 100%; padding: 4px; font-size: 9px; border: 1px solid #cbd5e1; border-radius: 3px; background: white; color: #334155;">
-                            <option value="">All Accounts</option>
-                        </select>
-                    </div>
-                    
-                    <!-- Month Filter Card -->
-                    <div style="background: white; border: 1px solid #bae6fd; border-radius: 4px; padding: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                        <label style="display: block; font-size: 8px; font-weight: 600; color: #0369a1; margin-bottom: 3px;">
-                            <i class="fas fa-calendar" style="margin-right: 3px;"></i>Month
-                        </label>
-                        <select id="recruiterFilterMonth" onchange="applyRecruiterFilters()" style="width: 100%; padding: 4px; font-size: 9px; border: 1px solid #cbd5e1; border-radius: 3px; background: white; color: #334155;">
-                            <option value="">All Months</option>
-                        </select>
-                    </div>
-                    
-                    <!-- Regional Head Filter Card -->
-                    <div style="background: white; border: 1px solid #bae6fd; border-radius: 4px; padding: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                        <label style="display: block; font-size: 8px; font-weight: 600; color: #0369a1; margin-bottom: 3px;">
-                            <i class="fas fa-user-tie" style="margin-right: 3px;"></i>Regional Head
-                        </label>
-                        <select id="recruiterFilterRegionalHead" onchange="applyRecruiterFilters()" style="width: 100%; padding: 4px; font-size: 9px; border: 1px solid #cbd5e1; border-radius: 3px; background: white; color: #334155;">
-                            <option value="">All Regional Heads</option>
-                        </select>
-                    </div>
-                    
-                    <!-- Program Manager Filter Card -->
-                    <div style="background: white; border: 1px solid #bae6fd; border-radius: 4px; padding: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                        <label style="display: block; font-size: 8px; font-weight: 600; color: #0369a1; margin-bottom: 3px;">
-                            <i class="fas fa-user-cog" style="margin-right: 3px;"></i>Program Manager
-                        </label>
-                        <select id="recruiterFilterProgramManager" onchange="applyRecruiterFilters()" style="width: 100%; padding: 4px; font-size: 9px; border: 1px solid #cbd5e1; border-radius: 3px; background: white; color: #334155;">
-                            <option value="">All Program Managers</option>
-                        </select>
-                    </div>
-                    
-                    <!-- Region Filter Card -->
-                    <div style="background: white; border: 1px solid #bae6fd; border-radius: 4px; padding: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                        <label style="display: block; font-size: 8px; font-weight: 600; color: #0369a1; margin-bottom: 3px;">
-                            <i class="fas fa-map-marker-alt" style="margin-right: 3px;"></i>Region
-                        </label>
-                        <select id="recruiterFilterRegion" onchange="applyRecruiterFilters()" style="width: 100%; padding: 4px; font-size: 9px; border: 1px solid #cbd5e1; border-radius: 3px; background: white; color: #334155;">
-                            <option value="">All Regions</option>
-                        </select>
-                    </div>
+                <div id="recruiterFilters" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px;">
+                    <!-- Filters will be populated here dynamically -->
                 </div>
-                
-                <!-- Clear Button -->
+            </div>
                 <div style="text-align: right;">
                     <button onclick="clearRecruiterFilters()" style="padding: 4px 12px; font-size: 9px; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; box-shadow: 0 2px 4px rgba(239,68,68,0.3);">
                         <i class="fas fa-times-circle" style="margin-right: 4px;"></i>Clear All Filters
@@ -8544,105 +8510,226 @@ Total Population: ${totalPop}
 
         function populateRecruiterFilters() {
             try {
+                const container = document.getElementById('recruiterFilters');
                 const data = window.dashboardData.recruiterAuditCount;
                 
-                // Get unique values from correct columns
-                // Column A - Client (named "Client" in Excel)
-                const accounts = [...new Set(data.map(row => String(row['Client'] || '').trim()))].filter(v => v).sort();
-                // Column C - Month
-                const months = [...new Set(data.map(row => String(row['Month'] || '').trim()))].filter(v => v);
-                // Column G - Program Manager
-                const programManagers = [...new Set(data.map(row => String(row['Program Manager'] || '').trim()))].filter(v => v).sort();
-                // Column N - Region
-                const regions = [...new Set(data.map(row => String(row['Region'] || '').trim()))].filter(v => v).sort();
-                // Regional Head - need to check column
-                const regionalHeads = [...new Set(data.map(row => String(row['Regional Head'] || '').trim()))].filter(v => v).sort();
-                
-                // Sort months chronologically
-                const monthOrder = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-                months.sort((a, b) => monthOrder.indexOf(a) - monthOrder.indexOf(b));
-                
-                // Populate Account filter
-                const accountSelect = document.getElementById('recruiterFilterAccount');
-                if (accountSelect) {
-                    accountSelect.innerHTML = '<option value="">All Accounts</option>';
-                    accounts.forEach(account => {
-                        accountSelect.innerHTML += `<option value="${account}">${account}</option>`;
-                    });
+                if (!data || data.length === 0) {
+                    container.innerHTML = '<div style="padding: 20px; text-align: center; color: #94a3b8; grid-column: 1 / -1;">No data available</div>';
+                    return;
                 }
                 
-                // Populate Month filter
-                const monthSelect = document.getElementById('recruiterFilterMonth');
-                if (monthSelect) {
-                    monthSelect.innerHTML = '<option value="">All Months</option>';
-                    months.forEach(month => {
-                        monthSelect.innerHTML += `<option value="${month}">${month}</option>`;
-                    });
-                }
+                // Define 6 filters with icons
+                const filters = [
+                    { label: 'Account', field: 'Client', icon: 'building' },
+                    { label: 'Month', field: 'Month', icon: 'calendar' },
+                    { label: 'Regional Head', field: 'Regional Head', icon: 'user-shield' },
+                    { label: 'Program Manager', field: 'Program Manager', icon: 'user-cog' },
+                    { label: 'Region', field: 'Region', icon: 'map-marker-alt' },
+                    { label: 'Recruiter', field: 'Recruiter', icon: 'user-tie' }
+                ];
+
+                container.innerHTML = filters.map(filter => {
+                    // Get unique values for this filter
+                    const values = [...new Set(data
+                        .map(row => {
+                            const value = row[filter.field];
+                            return typeof value === 'string' ? value.trim() : value;
+                        })
+                        .filter(Boolean))];
+
+                    if (values.length === 0) return '';
+
+                    // Calculate counts based on OTHER active filters (exclude current field)
+                    const valueCounts = values.map(value => {
+                        // Create temporary filters excluding current field
+                        const tempFilters = {...window.activeRecruiterFilters};
+                        delete tempFilters[filter.field];
+                        
+                        // Filter data based on other filters only
+                        let dataForCount = data;
+                        if (Object.keys(tempFilters).length > 0) {
+                            dataForCount = data.filter(row => {
+                                return Object.entries(tempFilters).every(([field, values]) => {
+                                    if (!values || values.length === 0) return true;
+                                    
+                                    const rowValue = row[field];
+                                    const cleanRowValue = typeof rowValue === 'string' ? rowValue.trim() : rowValue;
+                                    return values.some(v => {
+                                        const cleanFilterValue = typeof v === 'string' ? v.trim() : v;
+                                        return cleanRowValue === cleanFilterValue;
+                                    });
+                                });
+                            });
+                        }
+                        
+                        // Count rows matching this value
+                        const count = dataForCount.filter(r => {
+                            const rowValue = r[filter.field];
+                            const cleanRowValue = typeof rowValue === 'string' ? rowValue.trim() : rowValue;
+                            return cleanRowValue === value;
+                        }).length;
+                        
+                        return { value, count };
+                    }).sort((a, b) => b.count - a.count);
+
+                    // Special sorting for months
+                    if (filter.field === 'Month') {
+                        const monthOrder = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                        valueCounts.sort((a, b) => monthOrder.indexOf(a.value) - monthOrder.indexOf(b.value));
+                    }
+
+                    return `
+                        <div style="
+                            background: transparent; 
+                            border: 1px solid var(--border); 
+                            border-radius: 4px; 
+                            padding: 5px; 
+                        ">
+                            <div style="display: flex; align-items: center; gap: 3px; margin-bottom: 4px;">
+                                <i class="fas fa-${filter.icon}" style="color: var(--primary); font-size: 8px;"></i>
+                                <h3 style="font-size: 9px; font-weight: 700; color: var(--text-primary); margin: 0; text-transform: uppercase;">${filter.label}</h3>
+                            </div>
+                            <div style="
+                                display: flex; 
+                                flex-direction: column; 
+                                gap: 2px; 
+                                max-height: 85px; 
+                                overflow-y: auto;
+                                padding-right: 2px;
+                            ">
+                                ${valueCounts.map(({ value, count }) => `
+                                    <button 
+                                        onclick="applyRecruiterFilter('${filter.field}', '${String(value).replace(/'/g, "\\'")}')"
+                                        data-field="${filter.field}"
+                                        data-value="${String(value).replace(/"/g, '&quot;')}"
+                                        class="recruiter-filter-btn"
+                                        style="
+                                            display: flex;
+                                            justify-content: space-between;
+                                            align-items: center;
+                                            padding: 3px 5px;
+                                            background: #f9fafb;
+                                            border: 1px solid var(--border);
+                                            border-radius: 3px;
+                                            cursor: pointer;
+                                            transition: all 0.2s;
+                                            text-align: left;
+                                            width: 100%;
+                                        "
+                                        onmouseover="if(!this.classList.contains('active')){this.style.background='#f0f1f3'; this.style.borderColor='var(--primary)';}"
+                                        onmouseout="if(!this.classList.contains('active')){this.style.background='#f9fafb'; this.style.borderColor='var(--border)';}"
+                                    >
+                                        <span style="color: var(--text-primary); font-size: 8px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;">${value}</span>
+                                        <span style="
+                                            background: var(--primary);
+                                            color: white;
+                                            padding: 1px 4px;
+                                            border-radius: 4px;
+                                            font-size: 8px;
+                                            font-weight: 700;
+                                            min-width: 16px;
+                                            text-align: center;
+                                            flex-shrink: 0;
+                                            margin-left: 3px;
+                                        ">${count}</span>
+                                    </button>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
                 
-                // Populate Regional Head filter
-                const regionalHeadSelect = document.getElementById('recruiterFilterRegionalHead');
-                if (regionalHeadSelect) {
-                    regionalHeadSelect.innerHTML = '<option value="">All Regional Heads</option>';
-                    regionalHeads.forEach(rh => {
-                        regionalHeadSelect.innerHTML += `<option value="${rh}">${rh}</option>`;
-                    });
-                }
-                
-                // Populate Program Manager filter
-                const programManagerSelect = document.getElementById('recruiterFilterProgramManager');
-                if (programManagerSelect) {
-                    programManagerSelect.innerHTML = '<option value="">All Program Managers</option>';
-                    programManagers.forEach(pm => {
-                        programManagerSelect.innerHTML += `<option value="${pm}">${pm}</option>`;
-                    });
-                }
-                
-                // Populate Region filter
-                const regionSelect = document.getElementById('recruiterFilterRegion');
-                if (regionSelect) {
-                    regionSelect.innerHTML = '<option value="">All Regions</option>';
-                    regions.forEach(region => {
-                        regionSelect.innerHTML += `<option value="${region}">${region}</option>`;
-                    });
-                }
-                
-                console.log('✅ Recruiter filters populated:', {
-                    accounts: accounts.length,
-                    months: months.length,
-                    regionalHeads: regionalHeads.length,
-                    programManagers: programManagers.length,
-                    regions: regions.length
-                });
+                console.log('✅ Recruiter filters rendered with dynamic counts');
             } catch (error) {
                 handleError(error, 'populateRecruiterFilters');
             }
         }
 
+        function applyRecruiterFilter(field, value) {
+            try {
+                console.log(`🔍 Recruiter filter toggled: ${field} = ${value}`);
+                
+                // Initialize active filters if needed
+                if (!window.activeRecruiterFilters) {
+                    window.activeRecruiterFilters = {};
+                }
+                
+                // Initialize array for this field if needed
+                if (!window.activeRecruiterFilters[field]) {
+                    window.activeRecruiterFilters[field] = [];
+                }
+                
+                // Toggle the value
+                const valueIndex = window.activeRecruiterFilters[field].indexOf(value);
+                if (valueIndex > -1) {
+                    // Remove the value
+                    window.activeRecruiterFilters[field].splice(valueIndex, 1);
+                    
+                    // Remove field entirely if no values left
+                    if (window.activeRecruiterFilters[field].length === 0) {
+                        delete window.activeRecruiterFilters[field];
+                    }
+                } else {
+                    // Add the value
+                    window.activeRecruiterFilters[field].push(value);
+                }
+                
+                // Re-render filters with updated counts
+                populateRecruiterFilters();
+                
+                // Apply filters to data
+                applyRecruiterFilters();
+                
+                // Update button styles after re-render
+                document.querySelectorAll('.recruiter-filter-btn').forEach(btn => {
+                    const btnField = btn.getAttribute('data-field');
+                    const btnValue = btn.getAttribute('data-value');
+                    
+                    const isActive = window.activeRecruiterFilters[btnField] && 
+                                    window.activeRecruiterFilters[btnField].includes(btnValue);
+                    
+                    if (isActive) {
+                        btn.classList.add('active');
+                        btn.style.background = 'rgba(240, 70, 22, 0.1)';
+                        btn.style.borderColor = 'var(--primary)';
+                    } else {
+                        btn.classList.remove('active');
+                        btn.style.background = '#f9fafb';
+                        btn.style.borderColor = 'var(--border)';
+                    }
+                });
+            } catch (error) {
+                handleError(error, 'applyRecruiterFilter');
+            }
+        }
+
         function applyRecruiterFilters() {
             try {
-                const accountFilter = document.getElementById('recruiterFilterAccount')?.value || '';
-                const monthFilter = document.getElementById('recruiterFilterMonth')?.value || '';
-                const regionalHeadFilter = document.getElementById('recruiterFilterRegionalHead')?.value || '';
-                const programManagerFilter = document.getElementById('recruiterFilterProgramManager')?.value || '';
-                const regionFilter = document.getElementById('recruiterFilterRegion')?.value || '';
+                let data = window.dashboardData.recruiterAuditCount;
                 
-                let filteredData = window.dashboardData.recruiterAuditCount.filter(row => {
-                    return (!accountFilter || String(row['Client'] || '').trim() === accountFilter) &&
-                           (!monthFilter || String(row['Month'] || '').trim() === monthFilter) &&
-                           (!regionalHeadFilter || String(row['Regional Head'] || '').trim() === regionalHeadFilter) &&
-                           (!programManagerFilter || String(row['Program Manager'] || '').trim() === programManagerFilter) &&
-                           (!regionFilter || String(row['Region'] || '').trim() === regionFilter);
-                });
+                // Apply filters from active filters object
+                if (window.activeRecruiterFilters && Object.keys(window.activeRecruiterFilters).length > 0) {
+                    data = data.filter(row => {
+                        return Object.entries(window.activeRecruiterFilters).every(([field, values]) => {
+                            if (!values || values.length === 0) return true;
+                            
+                            const rowValue = row[field];
+                            const cleanRowValue = typeof rowValue === 'string' ? rowValue.trim() : rowValue;
+                            return values.some(v => {
+                                const cleanFilterValue = typeof v === 'string' ? v.trim() : v;
+                                return cleanRowValue === cleanFilterValue;
+                            });
+                        });
+                    });
+                }
                 
-                console.log(`🔍 Filters applied: ${filteredData.length} rows`);
+                console.log(`🔍 Filters applied: ${data.length} rows`);
                 
                 // Calculate and display metrics
-                calculateRecruiterMetrics(filteredData);
-                generateRecruiterSummary(filteredData);
-                generateRecruiterTable(filteredData);
-                // Don't call generateRecruiterParameterTable - will be empty until recruiter is clicked
-                generateRecruiterParameterTable(filteredData, null);
+                calculateRecruiterMetrics(data);
+                generateRecruiterSummary(data);
+                generateRecruiterTable(data);
+                generateRecruiterParameterTable(data, null);
                 
                 // Add click handlers for recruiter names after table is generated
                 setTimeout(() => {
@@ -8662,7 +8749,7 @@ Total Population: ${totalPop}
                             this.style.backgroundColor = 'rgba(59, 130, 246, 0.1)';
                             
                             // Filter data for selected recruiter only
-                            const recruiterData = filteredData.filter(row => 
+                            const recruiterData = data.filter(row => 
                                 String(row['Recruiter Name'] || '').trim() === recruiterName
                             );
                             
@@ -8675,7 +8762,7 @@ Total Population: ${totalPop}
                             generateRecruiterSummary(recruiterData, recruiterName);
                             
                             // Generate parameter table for selected recruiter
-                            generateRecruiterParameterTable(filteredData, recruiterName);
+                            generateRecruiterParameterTable(data, recruiterName);
                         });
                     });
                 }, 100);
@@ -8687,12 +8774,15 @@ Total Population: ${totalPop}
 
         function clearRecruiterFilters() {
             try {
-                document.getElementById('recruiterFilterAccount').value = '';
-                document.getElementById('recruiterFilterMonth').value = '';
-                document.getElementById('recruiterFilterRegionalHead').value = '';
-                document.getElementById('recruiterFilterProgramManager').value = '';
-                document.getElementById('recruiterFilterRegion').value = '';
+                // Clear active filters
+                window.activeRecruiterFilters = {};
+                
+                // Re-render filters
+                populateRecruiterFilters();
+                
+                // Apply (no filters = show all data)
                 applyRecruiterFilters();
+                
                 console.log('✅ Recruiter filters cleared');
             } catch (error) {
                 handleError(error, 'clearRecruiterFilters');
