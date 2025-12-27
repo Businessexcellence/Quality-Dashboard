@@ -1234,7 +1234,7 @@
                         Clear
                     </button>
                 </div>
-                <div id="recruiterFilters" style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; width: 100%;">
+                <div id="recruiterFilters" style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; width: 100%; overflow: visible;">
                     <!-- Filters will be populated here dynamically -->
                 </div>
             </div>
@@ -9295,7 +9295,8 @@ Total Population: ${totalPop}
                     `;
                 }).join('');
                 
-                console.log('✅ Recruiter filters rendered with dynamic counts');
+                console.log(`✅ Recruiter filters rendered: ${filters.length} filters with dynamic counts`);
+                console.log('Filter labels:', filters.map(f => f.label).join(', '));
             } catch (error) {
                 handleError(error, 'populateRecruiterFilters');
             }
