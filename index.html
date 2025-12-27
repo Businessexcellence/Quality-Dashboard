@@ -1142,7 +1142,7 @@
                         Clear
                     </button>
                 </div>
-                <div id="parameterFilters" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px;">
+                <div id="parameterFilters" style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; width: 100%;">
                     <!-- Filters will be populated here dynamically -->
                 </div>
             </div>
@@ -1234,7 +1234,7 @@
                         Clear
                     </button>
                 </div>
-                <div id="recruiterFilters" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px;">
+                <div id="recruiterFilters" style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; width: 100%;">
                     <!-- Filters will be populated here dynamically -->
                 </div>
             </div>
@@ -4440,7 +4440,9 @@ Total Population: ${totalPop}
                             background: transparent; 
                             border: 1px solid var(--border); 
                             border-radius: 4px; 
-                            padding: 5px; 
+                            padding: 5px;
+                            width: 100%;
+                            box-sizing: border-box;
                         ">
                             <div style="display: flex; align-items: center; gap: 3px; margin-bottom: 4px;">
                                 <i class="fas fa-${filter.icon}" style="color: var(--primary); font-size: 8px;"></i>
@@ -5631,7 +5633,9 @@ Total Population: ${totalPop}
                             background: transparent; 
                             border: 1px solid var(--border); 
                             border-radius: 4px; 
-                            padding: 5px; 
+                            padding: 5px;
+                            width: 100%;
+                            box-sizing: border-box;
                         ">
                             <div style="display: flex; align-items: center; gap: 3px; margin-bottom: 4px;">
                                 <i class="fas fa-${filter.icon}" style="color: var(--primary); font-size: 8px;"></i>
@@ -9233,7 +9237,9 @@ Total Population: ${totalPop}
                             background: transparent; 
                             border: 1px solid var(--border); 
                             border-radius: 4px; 
-                            padding: 5px; 
+                            padding: 5px;
+                            width: 100%;
+                            box-sizing: border-box;
                         ">
                             <div style="display: flex; align-items: center; gap: 3px; margin-bottom: 4px;">
                                 <i class="fas fa-${filter.icon}" style="color: var(--primary); font-size: 8px;"></i>
