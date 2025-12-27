@@ -27,9 +27,6 @@
         window.switchTab = function(tabId, clickedElement) {
             console.log('🔄 Switching to tab:', tabId);
             try {
-                // Close navigation sidebar
-                window.closeNavigation();
-                
                 // Hide all tabs
                 var tabs = document.querySelectorAll('.tab-content');
                 for (var i = 0; i < tabs.length; i++) {
@@ -81,29 +78,6 @@
             } catch (error) {
                 console.error('❌ Error switching tab:', error);
                 alert('Error switching tab: ' + error.message);
-            }
-        };
-        
-        // Navigation toggle functionality
-        window.toggleNavigation = function() {
-            const nav = document.querySelector('.nav-sidebar');
-            const overlay = document.querySelector('.nav-overlay');
-            
-            if (nav && overlay) {
-                nav.classList.toggle('expanded');
-                overlay.classList.toggle('active');
-                console.log('🔄 Navigation toggled:', nav.classList.contains('expanded') ? 'expanded' : 'collapsed');
-            }
-        };
-        
-        window.closeNavigation = function() {
-            const nav = document.querySelector('.nav-sidebar');
-            const overlay = document.querySelector('.nav-overlay');
-            
-            if (nav && overlay) {
-                nav.classList.remove('expanded');
-                overlay.classList.remove('active');
-                console.log('✅ Navigation closed');
             }
         };
         
@@ -347,7 +321,7 @@
             pointer-events: auto;
         }
 
-        .nav-sidebar.expanded {
+        .nav-sidebar:hover {
             width: var(--nav-width-expanded);
             box-shadow: 4px 0 12px rgba(0, 0, 0, 0.3);
         }
@@ -378,8 +352,8 @@
         }
 
         .nav-item i {
-            width: 20px;
-            font-size: 20px;
+            width: 16px;
+            font-size: 16px;
             flex-shrink: 0;
             text-align: center;
         }
@@ -393,28 +367,9 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .nav-sidebar.expanded .nav-item span {
+        .nav-sidebar:hover .nav-item span {
             opacity: 1;
             transform: translateX(0);
-        }
-
-        /* Navigation Toggle Overlay */
-        .nav-overlay {
-            position: fixed;
-            top: var(--header-height);
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            z-index: 998;
-        }
-
-        .nav-overlay.active {
-            opacity: 1;
-            visibility: visible;
         }
 
         /* ==========================================
@@ -865,7 +820,6 @@
     </div>
 
     <!-- NAVIGATION SIDEBAR -->
-    <div class="nav-overlay" onclick="window.closeNavigation()"></div>
     <nav class="nav-sidebar" id="navSidebar">
         <div class="nav-item active" onclick="window.switchTab('home', this)">
             <i class="fas fa-home"></i>
@@ -9200,26 +9154,6 @@ Total Population: ${totalPop}
         
         window.addEventListener('DOMContentLoaded', () => {
             console.log('✅ Dashboard initialized');
-            
-            // Setup navigation toggle on icon click
-            const navItems = document.querySelectorAll('.nav-item');
-            navItems.forEach(item => {
-                const icon = item.querySelector('i');
-                if (icon) {
-                    icon.addEventListener('click', (e) => {
-                        e.stopPropagation(); // Prevent the nav-item click
-                        const nav = document.querySelector('.nav-sidebar');
-                        const isExpanded = nav.classList.contains('expanded');
-                        
-                        if (!isExpanded) {
-                            // If collapsed, expand to show names
-                            window.toggleNavigation();
-                        }
-                        // If already expanded, let the nav-item click handler do its job
-                    });
-                }
-            });
-            console.log('✅ Navigation toggle event listeners attached');
             
             // Attach file input change listener
             const fileInput = document.getElementById('fileInput');
