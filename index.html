@@ -2496,9 +2496,11 @@
                 if (coverageData.length > 0) {
                     console.log('📊 Coverage Respondents & Levels data:', coverageData);
                     
-                    // Organize data into two sections
-                    const individualResponseData = [];
-                    const levelWiseResponseData = [];
+                    // View 1: Polled and Responded (using Financial Year, Parameter, Sub Parameter 1, Sub Parameter 2, Values)
+                    const polledRespondedData = {};
+                    
+                    // View 2: Senior and Operational Level (using Financial Year, Parameter, Sub Parameter 1, Sub Parameter 2, Level, Values)
+                    const levelWiseData = {};
                     
                     coverageData.forEach(row => {
                         const financialYear = String(row['Financial Year'] || '').trim();
@@ -2508,110 +2510,139 @@
                         const level = String(row['Level'] || '').trim();
                         const value = parseFloat(row['Values'] || 0);
                         
-                        const dataItem = {
-                            year: financialYear,
-                            parameter,
-                            subParam1,
-                            subParam2,
-                            level,
-                            value
-                        };
+                        // View 1: Check Sub Parameter 2 for "Polled" or "Responded"
+                        if (subParam2.toLowerCase().includes('polled') || subParam2.toLowerCase().includes('responded')) {
+                            if (!polledRespondedData[financialYear]) {
+                                polledRespondedData[financialYear] = { polled: 0, responded: 0 };
+                            }
+                            if (subParam2.toLowerCase().includes('polled')) {
+                                polledRespondedData[financialYear].polled = value;
+                            } else if (subParam2.toLowerCase().includes('responded')) {
+                                polledRespondedData[financialYear].responded = value;
+                            }
+                        }
                         
-                        // Categorize based on Sub Parameter 1
-                        if (subParam1.toLowerCase().includes('individual') || subParam1.toLowerCase().includes('response rate')) {
-                            individualResponseData.push(dataItem);
-                        } else if (subParam1.toLowerCase().includes('level') || level) {
-                            levelWiseResponseData.push(dataItem);
+                        // View 2: Check Level for "Senior" or "Operational"
+                        if (level && (level.toLowerCase().includes('senior') || level.toLowerCase().includes('operational'))) {
+                            if (!levelWiseData[financialYear]) {
+                                levelWiseData[financialYear] = { senior: 0, operational: 0 };
+                            }
+                            if (level.toLowerCase().includes('senior')) {
+                                levelWiseData[financialYear].senior = value;
+                            } else if (level.toLowerCase().includes('operational')) {
+                                levelWiseData[financialYear].operational = value;
+                            }
                         }
                     });
+                    
+                    console.log('📊 Polled & Responded Data:', polledRespondedData);
+                    console.log('📊 Level Wise Data:', levelWiseData);
                     
                     html += '<h4 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin: 20px 0 16px 0; border-bottom: 3px solid var(--primary); padding-bottom: 8px; display: flex; align-items: center;"><i class="fas fa-users" style="margin-right: 8px; color: var(--primary);"></i>Coverage: Respondents & Levels Overview</h4>';
                     
                     html += '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">';
                     
-                    // Section 1: Individual Response Rate
+                    // View 1: Individual Response Rate (Polled vs Responded)
                     html += '<div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border: 2px solid #0ea5e9; border-radius: 12px; padding: 16px;">';
-                    html += '<h5 style="font-size: 12px; font-weight: 800; color: #0c4a6e; margin: 0 0 12px 0; display: flex; align-items: center;"><i class="fas fa-user-check" style="margin-right: 6px; color: #0ea5e9;"></i>Individual Response Rate</h5>';
+                    html += '<h5 style="font-size: 12px; font-weight: 800; color: #0c4a6e; margin: 0 0 14px 0; display: flex; align-items: center;"><i class="fas fa-users-cog" style="margin-right: 6px; color: #0ea5e9;"></i>Individual Response Rate</h5>';
                     
-                    if (individualResponseData.length > 0) {
-                        // Group by year
-                        const byYear = {};
-                        individualResponseData.forEach(item => {
-                            if (!byYear[item.year]) byYear[item.year] = [];
-                            byYear[item.year].push(item);
-                        });
-                        
-                        Object.keys(byYear).sort().forEach(year => {
-                            const yearData = byYear[year];
-                            const avgValue = yearData.reduce((sum, item) => sum + item.value, 0) / yearData.length;
-                            const maxValue = Math.max(...yearData.map(item => item.value));
+                    if (Object.keys(polledRespondedData).length > 0) {
+                        Object.keys(polledRespondedData).sort().forEach(year => {
+                            const data = polledRespondedData[year];
+                            const responseRate = data.polled > 0 ? ((data.responded / data.polled) * 100) : 0;
                             
                             html += `
-                                <div style="background: white; border-radius: 8px; padding: 12px; margin-bottom: 10px; border: 1px solid #bae6fd;">
-                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                        <span style="font-size: 11px; font-weight: 700; color: #0369a1;">FY ${year}</span>
-                                        <span style="font-size: 18px; font-weight: 900; color: #0ea5e9;">${avgValue.toFixed(1)}%</span>
-                                    </div>
-                                    <div style="background: #e0f2fe; height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 8px;">
-                                        <div style="background: #0ea5e9; height: 100%; width: ${avgValue}%; transition: width 0.5s ease;"></div>
-                                    </div>
-                                    ${yearData.map(item => `
-                                        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 9px; color: #64748b; margin-top: 4px;">
-                                            <span>${item.subParam2 || item.subParam1}</span>
-                                            <span style="font-weight: 600; color: #0369a1;">${item.value.toFixed(1)}%</span>
+                                <div style="background: white; border-radius: 10px; padding: 14px; margin-bottom: 12px; border: 2px solid #bae6fd; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                        <span style="font-size: 12px; font-weight: 800; color: #0369a1;">FY ${year}</span>
+                                        <div style="background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%); color: white; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 700;">
+                                            ${responseRate.toFixed(1)}% Response
                                         </div>
-                                    `).join('')}
+                                    </div>
+                                    
+                                    <!-- Polled -->
+                                    <div style="margin-bottom: 10px;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                            <span style="font-size: 10px; font-weight: 600; color: #475569; display: flex; align-items: center;">
+                                                <span style="display: inline-block; width: 8px; height: 8px; background: #94a3b8; border-radius: 2px; margin-right: 6px;"></span>
+                                                Polled
+                                            </span>
+                                            <span style="font-size: 16px; font-weight: 900; color: #475569;">${data.polled}</span>
+                                        </div>
+                                        <div style="background: #e2e8f0; height: 8px; border-radius: 4px; overflow: hidden;">
+                                            <div style="background: #94a3b8; height: 100%; width: 100%; transition: width 0.5s ease;"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Responded -->
+                                    <div style="margin-bottom: 4px;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                            <span style="font-size: 10px; font-weight: 600; color: #0369a1; display: flex; align-items: center;">
+                                                <span style="display: inline-block; width: 8px; height: 8px; background: #0ea5e9; border-radius: 2px; margin-right: 6px;"></span>
+                                                Responded
+                                            </span>
+                                            <span style="font-size: 16px; font-weight: 900; color: #0ea5e9;">${data.responded}</span>
+                                        </div>
+                                        <div style="background: #e0f2fe; height: 8px; border-radius: 4px; overflow: hidden;">
+                                            <div style="background: #0ea5e9; height: 100%; width: ${responseRate}%; transition: width 0.5s ease;"></div>
+                                        </div>
+                                    </div>
                                 </div>
                             `;
                         });
                     } else {
-                        html += '<div style="text-align: center; padding: 20px; color: #64748b; font-size: 10px;">No individual response data available</div>';
+                        html += '<div style="text-align: center; padding: 30px; color: #64748b; font-size: 10px;"><i class="fas fa-info-circle" style="font-size: 24px; opacity: 0.3; margin-bottom: 8px;"></i><div>No Polled/Responded data available</div></div>';
                     }
                     
                     html += '</div>';
                     
-                    // Section 2: Level Wise Response Rate
+                    // View 2: Level Wise Response Rate (Senior vs Operational)
                     html += '<div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 2px solid #10b981; border-radius: 12px; padding: 16px;">';
-                    html += '<h5 style="font-size: 12px; font-weight: 800; color: #065f46; margin: 0 0 12px 0; display: flex; align-items: center;"><i class="fas fa-layer-group" style="margin-right: 6px; color: #10b981;"></i>Level Wise Response Rate</h5>';
+                    html += '<h5 style="font-size: 12px; font-weight: 800; color: #065f46; margin: 0 0 14px 0; display: flex; align-items: center;"><i class="fas fa-sitemap" style="margin-right: 6px; color: #10b981;"></i>Level Wise Response Rate</h5>';
                     
-                    if (levelWiseResponseData.length > 0) {
-                        // Group by year and level
-                        const byYearAndLevel = {};
-                        levelWiseResponseData.forEach(item => {
-                            if (!byYearAndLevel[item.year]) byYearAndLevel[item.year] = {};
-                            const levelKey = item.level || item.subParam2 || 'Other';
-                            if (!byYearAndLevel[item.year][levelKey]) byYearAndLevel[item.year][levelKey] = [];
-                            byYearAndLevel[item.year][levelKey].push(item);
-                        });
-                        
-                        Object.keys(byYearAndLevel).sort().forEach(year => {
-                            const levels = byYearAndLevel[year];
+                    if (Object.keys(levelWiseData).length > 0) {
+                        Object.keys(levelWiseData).sort().forEach(year => {
+                            const data = levelWiseData[year];
+                            const maxValue = Math.max(data.senior, data.operational);
                             
-                            html += `<div style="background: white; border-radius: 8px; padding: 12px; margin-bottom: 10px; border: 1px solid #bbf7d0;">`;
-                            html += `<div style="font-size: 11px; font-weight: 700; color: #047857; margin-bottom: 10px;">FY ${year}</div>`;
-                            
-                            Object.entries(levels).forEach(([level, items]) => {
-                                const avgValue = items.reduce((sum, item) => sum + item.value, 0) / items.length;
-                                const maxInYear = Math.max(...Object.values(levels).flat().map(item => item.value));
-                                const isMax = avgValue === maxInYear;
-                                
-                                html += `
-                                    <div style="margin-bottom: 8px;">
+                            html += `
+                                <div style="background: white; border-radius: 10px; padding: 14px; margin-bottom: 12px; border: 2px solid #bbf7d0; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                        <span style="font-size: 12px; font-weight: 800; color: #047857;">FY ${year}</span>
+                                    </div>
+                                    
+                                    <!-- Senior Level -->
+                                    <div style="margin-bottom: 10px;">
                                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                                            <span style="font-size: 10px; font-weight: 600; color: #065f46;">${level}${isMax ? ' 👑' : ''}</span>
-                                            <span style="font-size: 16px; font-weight: 900; color: ${isMax ? '#10b981' : '#6b7280'};">${avgValue.toFixed(1)}%</span>
+                                            <span style="font-size: 10px; font-weight: 600; color: #047857; display: flex; align-items: center;">
+                                                <span style="display: inline-block; width: 8px; height: 8px; background: #10b981; border-radius: 2px; margin-right: 6px;"></span>
+                                                Senior Level ${data.senior === maxValue ? '👑' : ''}
+                                            </span>
+                                            <span style="font-size: 16px; font-weight: 900; color: ${data.senior === maxValue ? '#10b981' : '#6b7280'};">${data.senior.toFixed(1)}%</span>
                                         </div>
-                                        <div style="background: #dcfce7; height: 6px; border-radius: 3px; overflow: hidden;">
-                                            <div style="background: ${isMax ? '#10b981' : '#6b7280'}; height: 100%; width: ${(avgValue / 100) * 100}%; transition: width 0.5s ease;"></div>
+                                        <div style="background: #dcfce7; height: 8px; border-radius: 4px; overflow: hidden;">
+                                            <div style="background: ${data.senior === maxValue ? '#10b981' : '#6b7280'}; height: 100%; width: ${data.senior}%; transition: width 0.5s ease;"></div>
                                         </div>
                                     </div>
-                                `;
-                            });
-                            
-                            html += `</div>`;
+                                    
+                                    <!-- Operational Level -->
+                                    <div style="margin-bottom: 4px;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                            <span style="font-size: 10px; font-weight: 600; color: #047857; display: flex; align-items: center;">
+                                                <span style="display: inline-block; width: 8px; height: 8px; background: ${data.operational === maxValue ? '#10b981' : '#94a3b8'}; border-radius: 2px; margin-right: 6px;"></span>
+                                                Operational Level ${data.operational === maxValue ? '👑' : ''}
+                                            </span>
+                                            <span style="font-size: 16px; font-weight: 900; color: ${data.operational === maxValue ? '#10b981' : '#6b7280'};">${data.operational.toFixed(1)}%</span>
+                                        </div>
+                                        <div style="background: #dcfce7; height: 8px; border-radius: 4px; overflow: hidden;">
+                                            <div style="background: ${data.operational === maxValue ? '#10b981' : '#6b7280'}; height: 100%; width: ${data.operational}%; transition: width 0.5s ease;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
                         });
                     } else {
-                        html += '<div style="text-align: center; padding: 20px; color: #64748b; font-size: 10px;">No level-wise response data available</div>';
+                        html += '<div style="text-align: center; padding: 30px; color: #64748b; font-size: 10px;"><i class="fas fa-info-circle" style="font-size: 24px; opacity: 0.3; margin-bottom: 8px;"></i><div>No Level Wise data available</div></div>';
                     }
                     
                     html += '</div>';
