@@ -2483,77 +2483,138 @@
                 html += '<div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #fcd34d; font-size: 9px; color: #92400e;"><em>💡 All links open in a new tab. Data collected from publicly available reports and industry benchmarks.</em></div>';
                 html += '</div>';
                 
-                // Add other parameters comparison (filtered data)
+                // Add Coverage Respondents & Levels Overview
                 const filteredData = getFilteredCSATData();
-                const parameterMap = {};
                 
-                filteredData.forEach(row => {
-                    const parameter = row['Parameter']; // Column C
-                    const subParam1 = String(row['Sub Parameter 1'] || '').trim();
-                    const subParam2 = String(row['Sub Parameter 2'] || '').trim();
-                    const subParam3 = String(row['Sub Parameter 3'] || '').trim();
-                    const value = parseFloat(row['Values'] || 0); // Column G - UPDATED
-                    
-                    if (!parameter || parameter.toLowerCase().includes('nps')) return; // Skip NPS as it's shown above
-                    
-                    if (!parameterMap[parameter]) {
-                        parameterMap[parameter] = { taggd: 0, competitor: 0, industry: 0 };
-                    }
-                    
-                    // Check all sub-parameters for matching keywords
-                    const allSubParams = (subParam1 + ' ' + subParam2 + ' ' + subParam3).toLowerCase();
-                    
-                    if (allSubParams.includes('taggd')) {
-                        parameterMap[parameter].taggd = value;
-                    } else if (allSubParams.includes('competitor')) {
-                        parameterMap[parameter].competitor = value;
-                    } else if (allSubParams.includes('industry')) {
-                        parameterMap[parameter].industry = value;
-                    }
+                // Extract data for "Coverage Respondents & Levels" parameter
+                const coverageData = filteredData.filter(row => {
+                    const parameter = String(row['Parameter'] || '').trim();
+                    return parameter.toLowerCase().includes('coverage') && 
+                           (parameter.toLowerCase().includes('respondent') || parameter.toLowerCase().includes('level'));
                 });
                 
-                // Add other parameters comparison if any
-                if (Object.keys(parameterMap).length > 0) {
-                    html += '<h4 style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin: 20px 0 12px 0; border-bottom: 2px solid var(--primary); padding-bottom: 6px;">📈 Additional Metrics</h4>';
-                    html += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px;">';
+                if (coverageData.length > 0) {
+                    console.log('📊 Coverage Respondents & Levels data:', coverageData);
                     
-                    Object.entries(parameterMap).forEach(([parameter, values]) => {
-                        const maxValue = Math.max(values.taggd, values.competitor, values.industry);
-                        if (maxValue === 0) return;
+                    // Organize data into two sections
+                    const individualResponseData = [];
+                    const levelWiseResponseData = [];
+                    
+                    coverageData.forEach(row => {
+                        const financialYear = String(row['Financial Year'] || '').trim();
+                        const parameter = String(row['Parameter'] || '').trim();
+                        const subParam1 = String(row['Sub Parameter 1'] || '').trim();
+                        const subParam2 = String(row['Sub Parameter 2'] || '').trim();
+                        const level = String(row['Level'] || '').trim();
+                        const value = parseFloat(row['Values'] || 0);
                         
-                        html += `
-                            <div style="background: #f9fafb; border: 1px solid var(--border); border-radius: 6px; padding: 12px;">
-                                <h5 style="font-size: 11px; font-weight: 700; color: var(--text-primary); margin: 0 0 8px 0;">${parameter}</h5>
-                                <div style="margin-bottom: 6px;">
-                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-                                        <span style="font-size: 9px; color: var(--text-secondary);">Taggd</span>
-                                        <span style="font-size: 10px; font-weight: 700; color: ${values.taggd === maxValue && maxValue > 0 ? 'var(--primary)' : 'var(--text-primary)'};">${values.taggd.toFixed(1)}</span>
-                                    </div>
-                                    <div style="background: #e5e7eb; height: 5px; border-radius: 3px; overflow: hidden;">
-                                        <div style="background: ${values.taggd === maxValue && maxValue > 0 ? 'var(--primary)' : '#6b7280'}; height: 100%; width: ${maxValue > 0 ? (values.taggd / maxValue) * 100 : 0}%;"></div>
-                                    </div>
-                                </div>
-                                <div style="margin-bottom: 6px;">
-                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-                                        <span style="font-size: 9px; color: var(--text-secondary);">Competitor</span>
-                                        <span style="font-size: 10px; font-weight: 700; color: ${values.competitor === maxValue && maxValue > 0 ? 'var(--primary)' : 'var(--text-primary)'};">${values.competitor.toFixed(1)}</span>
-                                    </div>
-                                    <div style="background: #e5e7eb; height: 5px; border-radius: 3px; overflow: hidden;">
-                                        <div style="background: ${values.competitor === maxValue && maxValue > 0 ? 'var(--primary)' : '#6b7280'}; height: 100%; width: ${maxValue > 0 ? (values.competitor / maxValue) * 100 : 0}%;"></div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-                                        <span style="font-size: 9px; color: var(--text-secondary);">Industry</span>
-                                        <span style="font-size: 10px; font-weight: 700; color: ${values.industry === maxValue && maxValue > 0 ? 'var(--primary)' : 'var(--text-primary)'};">${values.industry.toFixed(1)}</span>
-                                    </div>
-                                    <div style="background: #e5e7eb; height: 5px; border-radius: 3px; overflow: hidden;">
-                                        <div style="background: ${values.industry === maxValue && maxValue > 0 ? 'var(--primary)' : '#6b7280'}; height: 100%; width: ${maxValue > 0 ? (values.industry / maxValue) * 100 : 0}%;"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
+                        const dataItem = {
+                            year: financialYear,
+                            parameter,
+                            subParam1,
+                            subParam2,
+                            level,
+                            value
+                        };
+                        
+                        // Categorize based on Sub Parameter 1
+                        if (subParam1.toLowerCase().includes('individual') || subParam1.toLowerCase().includes('response rate')) {
+                            individualResponseData.push(dataItem);
+                        } else if (subParam1.toLowerCase().includes('level') || level) {
+                            levelWiseResponseData.push(dataItem);
+                        }
                     });
+                    
+                    html += '<h4 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin: 20px 0 16px 0; border-bottom: 3px solid var(--primary); padding-bottom: 8px; display: flex; align-items: center;"><i class="fas fa-users" style="margin-right: 8px; color: var(--primary);"></i>Coverage: Respondents & Levels Overview</h4>';
+                    
+                    html += '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">';
+                    
+                    // Section 1: Individual Response Rate
+                    html += '<div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border: 2px solid #0ea5e9; border-radius: 12px; padding: 16px;">';
+                    html += '<h5 style="font-size: 12px; font-weight: 800; color: #0c4a6e; margin: 0 0 12px 0; display: flex; align-items: center;"><i class="fas fa-user-check" style="margin-right: 6px; color: #0ea5e9;"></i>Individual Response Rate</h5>';
+                    
+                    if (individualResponseData.length > 0) {
+                        // Group by year
+                        const byYear = {};
+                        individualResponseData.forEach(item => {
+                            if (!byYear[item.year]) byYear[item.year] = [];
+                            byYear[item.year].push(item);
+                        });
+                        
+                        Object.keys(byYear).sort().forEach(year => {
+                            const yearData = byYear[year];
+                            const avgValue = yearData.reduce((sum, item) => sum + item.value, 0) / yearData.length;
+                            const maxValue = Math.max(...yearData.map(item => item.value));
+                            
+                            html += `
+                                <div style="background: white; border-radius: 8px; padding: 12px; margin-bottom: 10px; border: 1px solid #bae6fd;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <span style="font-size: 11px; font-weight: 700; color: #0369a1;">FY ${year}</span>
+                                        <span style="font-size: 18px; font-weight: 900; color: #0ea5e9;">${avgValue.toFixed(1)}%</span>
+                                    </div>
+                                    <div style="background: #e0f2fe; height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 8px;">
+                                        <div style="background: #0ea5e9; height: 100%; width: ${avgValue}%; transition: width 0.5s ease;"></div>
+                                    </div>
+                                    ${yearData.map(item => `
+                                        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 9px; color: #64748b; margin-top: 4px;">
+                                            <span>${item.subParam2 || item.subParam1}</span>
+                                            <span style="font-weight: 600; color: #0369a1;">${item.value.toFixed(1)}%</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            `;
+                        });
+                    } else {
+                        html += '<div style="text-align: center; padding: 20px; color: #64748b; font-size: 10px;">No individual response data available</div>';
+                    }
+                    
+                    html += '</div>';
+                    
+                    // Section 2: Level Wise Response Rate
+                    html += '<div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 2px solid #10b981; border-radius: 12px; padding: 16px;">';
+                    html += '<h5 style="font-size: 12px; font-weight: 800; color: #065f46; margin: 0 0 12px 0; display: flex; align-items: center;"><i class="fas fa-layer-group" style="margin-right: 6px; color: #10b981;"></i>Level Wise Response Rate</h5>';
+                    
+                    if (levelWiseResponseData.length > 0) {
+                        // Group by year and level
+                        const byYearAndLevel = {};
+                        levelWiseResponseData.forEach(item => {
+                            if (!byYearAndLevel[item.year]) byYearAndLevel[item.year] = {};
+                            const levelKey = item.level || item.subParam2 || 'Other';
+                            if (!byYearAndLevel[item.year][levelKey]) byYearAndLevel[item.year][levelKey] = [];
+                            byYearAndLevel[item.year][levelKey].push(item);
+                        });
+                        
+                        Object.keys(byYearAndLevel).sort().forEach(year => {
+                            const levels = byYearAndLevel[year];
+                            
+                            html += `<div style="background: white; border-radius: 8px; padding: 12px; margin-bottom: 10px; border: 1px solid #bbf7d0;">`;
+                            html += `<div style="font-size: 11px; font-weight: 700; color: #047857; margin-bottom: 10px;">FY ${year}</div>`;
+                            
+                            Object.entries(levels).forEach(([level, items]) => {
+                                const avgValue = items.reduce((sum, item) => sum + item.value, 0) / items.length;
+                                const maxInYear = Math.max(...Object.values(levels).flat().map(item => item.value));
+                                const isMax = avgValue === maxInYear;
+                                
+                                html += `
+                                    <div style="margin-bottom: 8px;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                            <span style="font-size: 10px; font-weight: 600; color: #065f46;">${level}${isMax ? ' 👑' : ''}</span>
+                                            <span style="font-size: 16px; font-weight: 900; color: ${isMax ? '#10b981' : '#6b7280'};">${avgValue.toFixed(1)}%</span>
+                                        </div>
+                                        <div style="background: #dcfce7; height: 6px; border-radius: 3px; overflow: hidden;">
+                                            <div style="background: ${isMax ? '#10b981' : '#6b7280'}; height: 100%; width: ${(avgValue / 100) * 100}%; transition: width 0.5s ease;"></div>
+                                        </div>
+                                    </div>
+                                `;
+                            });
+                            
+                            html += `</div>`;
+                        });
+                    } else {
+                        html += '<div style="text-align: center; padding: 20px; color: #64748b; font-size: 10px;">No level-wise response data available</div>';
+                    }
+                    
+                    html += '</div>';
                     
                     html += '</div>';
                 }
