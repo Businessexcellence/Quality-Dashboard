@@ -2618,7 +2618,10 @@
                                                 <span style="display: inline-block; width: 8px; height: 8px; background: #10b981; border-radius: 2px; margin-right: 6px;"></span>
                                                 Senior Level ${data.senior === maxValue ? '👑' : ''}
                                             </span>
-                                            <span style="font-size: 16px; font-weight: 900; color: ${data.senior === maxValue ? '#10b981' : '#6b7280'};">${data.senior.toFixed(1)}%</span>
+                                            <div style="display: flex; align-items: baseline; gap: 6px;">
+                                                <span style="font-size: 16px; font-weight: 900; color: ${data.senior === maxValue ? '#10b981' : '#6b7280'};">${data.senior.toFixed(1)}</span>
+                                                <span style="font-size: 10px; font-weight: 600; color: #64748b;">(${data.senior.toFixed(1)}%)</span>
+                                            </div>
                                         </div>
                                         <div style="background: #dcfce7; height: 8px; border-radius: 4px; overflow: hidden;">
                                             <div style="background: ${data.senior === maxValue ? '#10b981' : '#6b7280'}; height: 100%; width: ${data.senior}%; transition: width 0.5s ease;"></div>
@@ -2632,7 +2635,10 @@
                                                 <span style="display: inline-block; width: 8px; height: 8px; background: ${data.operational === maxValue ? '#10b981' : '#94a3b8'}; border-radius: 2px; margin-right: 6px;"></span>
                                                 Operational Level ${data.operational === maxValue ? '👑' : ''}
                                             </span>
-                                            <span style="font-size: 16px; font-weight: 900; color: ${data.operational === maxValue ? '#10b981' : '#6b7280'};">${data.operational.toFixed(1)}%</span>
+                                            <div style="display: flex; align-items: baseline; gap: 6px;">
+                                                <span style="font-size: 16px; font-weight: 900; color: ${data.operational === maxValue ? '#10b981' : '#6b7280'};">${data.operational.toFixed(1)}</span>
+                                                <span style="font-size: 10px; font-weight: 600; color: #64748b;">(${data.operational.toFixed(1)}%)</span>
+                                            </div>
                                         </div>
                                         <div style="background: #dcfce7; height: 8px; border-radius: 4px; overflow: hidden;">
                                             <div style="background: ${data.operational === maxValue ? '#10b981' : '#6b7280'}; height: 100%; width: ${data.operational}%; transition: width 0.5s ease;"></div>
