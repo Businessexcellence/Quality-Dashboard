@@ -2297,6 +2297,8 @@
                     const subParam1 = String(row['Sub Parameter 1'] || '').trim(); // Column G
                     const value = parseFloat(row['Values'] || 0); // Column J
                     
+                    console.log(`Processing row: Parameter="${parameter}", Sub Parameter 1="${subParam1}", Value=${value}`);
+                    
                     if (!parameter) return;
                     
                     if (!parameterMap[parameter]) {
@@ -2304,12 +2306,18 @@
                     }
                     
                     // Map Sub Parameter 1 to the comparison categories
-                    if (subParam1.toLowerCase().includes('taggd')) {
+                    const subParam1Lower = subParam1.toLowerCase();
+                    if (subParam1Lower.includes('taggd')) {
+                        console.log(`  -> Matched Taggd: ${value}`);
                         parameterMap[parameter].taggd = value;
-                    } else if (subParam1.toLowerCase().includes('competitor')) {
+                    } else if (subParam1Lower.includes('competitor')) {
+                        console.log(`  -> Matched Competitor: ${value}`);
                         parameterMap[parameter].competitor = value;
-                    } else if (subParam1.toLowerCase().includes('industry')) {
+                    } else if (subParam1Lower.includes('industry')) {
+                        console.log(`  -> Matched Industry: ${value}`);
                         parameterMap[parameter].industry = value;
+                    } else {
+                        console.log(`  -> No match for: "${subParam1}"`);
                     }
                 });
                 
