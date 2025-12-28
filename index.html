@@ -3965,18 +3965,23 @@
             
             const spocAuditMap = {};
             window.dashboardData.accountSummary.forEach((row, index) => {
-                const spoc = String(row['BE SPOC - Audit'] || row['BE SPOC Audit'] || row['SPOC Audit'] || 'Unassigned').trim();
-                const account = String(row['Account'] || 'Unknown').trim();
-                if (!spocAuditMap[spoc]) spocAuditMap[spoc] = [];
-                spocAuditMap[spoc].push(account);
+                // Only include accounts where Audit Status is "Yes"
+                const auditStatus = row['Audit Status'] ? String(row['Audit Status']).trim() : '';
                 
-                if (index < 3) {
-                    console.log(`Row ${index + 1}: SPOC="${spoc}", Account="${account}"`);
+                if (auditStatus.toUpperCase() === 'YES') {
+                    const spoc = String(row['BE SPOC - Audit'] || row['BE SPOC Audit'] || row['SPOC Audit'] || 'Unassigned').trim();
+                    const account = String(row['Account'] || 'Unknown').trim();
+                    if (!spocAuditMap[spoc]) spocAuditMap[spoc] = [];
+                    spocAuditMap[spoc].push(account);
+                    
+                    if (index < 3) {
+                        console.log(`Row ${index + 1}: SPOC="${spoc}", Account="${account}", Audit Status="${auditStatus}"`);
+                    }
                 }
             });
 
-            console.log('📊 BE SPOC Audit map:', spocAuditMap);
-            console.log('📊 Total SPOCs:', Object.keys(spocAuditMap).length);
+            console.log('📊 BE SPOC Audit map (Audit Status = Yes only):', spocAuditMap);
+            console.log('📊 Total SPOCs with Audit Status = Yes:', Object.keys(spocAuditMap).length);
 
             const sortedSPOCAudit = Object.entries(spocAuditMap).sort((a, b) => b[1].length - a[1].length);
             
