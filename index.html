@@ -2066,6 +2066,11 @@
                     return;
                 }
                 
+                // Debug: Log available columns
+                console.log('📊 CSAT Data Columns:', Object.keys(data[0] || {}));
+                console.log('📊 Total CSAT Rows:', data.length);
+                console.log('📊 Sample row:', data[0]);
+                
                 // Define 2 filters (Financial Year and Parameter)
                 const filters = [
                     { label: 'Financial Year', field: 'Financial Year', icon: 'calendar-alt' },
@@ -2271,6 +2276,11 @@
             try {
                 const container = document.getElementById('npsComparisonContainer');
                 const data = getFilteredCSATData();
+                
+                console.log('📊 Filtered CSAT data for NPS:', data.length, 'rows');
+                if (data.length > 0) {
+                    console.log('📊 Sample filtered row:', data[0]);
+                }
                 
                 if (data.length === 0) {
                     container.innerHTML = '<div style="text-align: center; padding: 20px; color: #9ca3af;">No data available for comparison</div>';
