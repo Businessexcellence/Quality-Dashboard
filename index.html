@@ -2625,7 +2625,7 @@
                     
                     html += '</div>';
                     
-                    // View 2: Level Wise Response Rate (Senior vs Operational) - Matching Taggd Orange Theme
+                    // View 2: Level Wise Response Rate (Senior vs Operational) - Matching Taggd Orange Theme - Compact
                     html += '<div style="background: linear-gradient(135deg, #fff5f0 0%, #ffe5d9 100%); border: 1px solid #f97316; border-radius: 8px; padding: 10px; height: fit-content;">';
                     html += '<h5 style="font-size: 11px; font-weight: 800; color: #c2410c; margin: 0 0 8px 0; display: flex; align-items: center;"><i class="fas fa-sitemap" style="margin-right: 4px; color: #f97316; font-size: 10px;"></i>Level Wise Response Rate</h5>';
                     
@@ -2647,36 +2647,28 @@
                                         </div>
                                     </div>
                                     
-                                    <!-- Senior Level -->
-                                    <div style="margin-bottom: 6px;">
-                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
+                                    <!-- Senior Level - Compact -->
+                                    <div style="margin-bottom: 4px;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
                                             <span style="font-size: 9px; font-weight: 600; color: #c2410c; display: flex; align-items: center;">
                                                 <span style="display: inline-block; width: 6px; height: 6px; background: #f97316; border-radius: 2px; margin-right: 4px;"></span>
-                                                Senior ${seniorRate === maxRate && maxRate > 0 ? '👑' : ''}
+                                                Senior ${seniorRate === maxRate && maxRate > 0 ? '👑' : ''} <span style="font-size: 7px; color: #64748b; margin-left: 4px;">(${data.senior.responded}/${data.senior.polled})</span>
                                             </span>
                                             <span style="font-size: 13px; font-weight: 900; color: ${seniorRate === maxRate ? '#f97316' : '#6b7280'};">${seniorRate.toFixed(1)}%</span>
-                                        </div>
-                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; font-size: 8px; color: #64748b;">
-                                            <span>Resp: <strong style="color: #c2410c;">${data.senior.responded}</strong></span>
-                                            <span>Poll: <strong style="color: #c2410c;">${data.senior.polled}</strong></span>
                                         </div>
                                         <div style="background: #ffedd5; height: 6px; border-radius: 3px; overflow: hidden;">
                                             <div style="background: ${seniorRate === maxRate ? '#f97316' : '#6b7280'}; height: 100%; width: ${seniorRate}%; transition: width 0.5s ease;"></div>
                                         </div>
                                     </div>
                                     
-                                    <!-- Operational Level -->
+                                    <!-- Operational Level - Compact -->
                                     <div style="margin-bottom: 2px;">
-                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
                                             <span style="font-size: 9px; font-weight: 600; color: #c2410c; display: flex; align-items: center;">
                                                 <span style="display: inline-block; width: 6px; height: 6px; background: ${operationalRate === maxRate ? '#f97316' : '#94a3b8'}; border-radius: 2px; margin-right: 4px;"></span>
-                                                Operational ${operationalRate === maxRate && maxRate > 0 ? '👑' : ''}
+                                                Operational ${operationalRate === maxRate && maxRate > 0 ? '👑' : ''} <span style="font-size: 7px; color: #64748b; margin-left: 4px;">(${data.operational.responded}/${data.operational.polled})</span>
                                             </span>
                                             <span style="font-size: 13px; font-weight: 900; color: ${operationalRate === maxRate ? '#f97316' : '#6b7280'};">${operationalRate.toFixed(1)}%</span>
-                                        </div>
-                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; font-size: 8px; color: #64748b;">
-                                            <span>Resp: <strong style="color: #c2410c;">${data.operational.responded}</strong></span>
-                                            <span>Poll: <strong style="color: #c2410c;">${data.operational.polled}</strong></span>
                                         </div>
                                         <div style="background: #ffedd5; height: 6px; border-radius: 3px; overflow: hidden;">
                                             <div style="background: ${operationalRate === maxRate ? '#f97316' : '#6b7280'}; height: 100%; width: ${operationalRate}%; transition: width 0.5s ease;"></div>
