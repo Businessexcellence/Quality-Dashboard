@@ -2522,15 +2522,22 @@
                             }
                         }
                         
-                        // View 2: Check Level for "Senior" or "Operational"
+                        // View 2: Check Level for "Senior" or "Operational" AND Sub Parameter 2 for "Polled" or "Responded"
                         if (level && (level.toLowerCase().includes('senior') || level.toLowerCase().includes('operational'))) {
                             if (!levelWiseData[financialYear]) {
-                                levelWiseData[financialYear] = { senior: 0, operational: 0 };
+                                levelWiseData[financialYear] = { 
+                                    senior: { polled: 0, responded: 0 },
+                                    operational: { polled: 0, responded: 0 }
+                                };
                             }
-                            if (level.toLowerCase().includes('senior')) {
-                                levelWiseData[financialYear].senior = value;
-                            } else if (level.toLowerCase().includes('operational')) {
-                                levelWiseData[financialYear].operational = value;
+                            
+                            const levelType = level.toLowerCase().includes('senior') ? 'senior' : 'operational';
+                            
+                            // Check Sub Parameter 2 for Polled or Responded
+                            if (subParam2.toLowerCase().includes('polled')) {
+                                levelWiseData[financialYear][levelType].polled = value;
+                            } else if (subParam2.toLowerCase().includes('responded')) {
+                                levelWiseData[financialYear][levelType].responded = value;
                             }
                         }
                     });
@@ -2603,7 +2610,11 @@
                     if (Object.keys(levelWiseData).length > 0) {
                         Object.keys(levelWiseData).sort().forEach(year => {
                             const data = levelWiseData[year];
-                            const maxValue = Math.max(data.senior, data.operational);
+                            
+                            // Calculate response rates
+                            const seniorRate = data.senior.polled > 0 ? ((data.senior.responded / data.senior.polled) * 100) : 0;
+                            const operationalRate = data.operational.polled > 0 ? ((data.operational.responded / data.operational.polled) * 100) : 0;
+                            const maxRate = Math.max(seniorRate, operationalRate);
                             
                             html += `
                                 <div style="background: white; border-radius: 10px; padding: 14px; margin-bottom: 12px; border: 2px solid #bbf7d0; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
@@ -2612,36 +2623,42 @@
                                     </div>
                                     
                                     <!-- Senior Level -->
-                                    <div style="margin-bottom: 10px;">
-                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                    <div style="margin-bottom: 12px;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                                             <span style="font-size: 10px; font-weight: 600; color: #047857; display: flex; align-items: center;">
                                                 <span style="display: inline-block; width: 8px; height: 8px; background: #10b981; border-radius: 2px; margin-right: 6px;"></span>
-                                                Senior Level ${data.senior === maxValue ? '👑' : ''}
+                                                Senior Level ${seniorRate === maxRate && maxRate > 0 ? '👑' : ''}
                                             </span>
                                             <div style="display: flex; align-items: baseline; gap: 6px;">
-                                                <span style="font-size: 16px; font-weight: 900; color: ${data.senior === maxValue ? '#10b981' : '#6b7280'};">${data.senior.toFixed(1)}</span>
-                                                <span style="font-size: 10px; font-weight: 600; color: #64748b;">(${data.senior.toFixed(1)}%)</span>
+                                                <span style="font-size: 16px; font-weight: 900; color: ${seniorRate === maxRate ? '#10b981' : '#6b7280'};">${seniorRate.toFixed(1)}%</span>
                                             </div>
                                         </div>
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; font-size: 9px; color: #64748b;">
+                                            <span>Responded: <strong style="color: #047857;">${data.senior.responded}</strong></span>
+                                            <span>Polled: <strong style="color: #047857;">${data.senior.polled}</strong></span>
+                                        </div>
                                         <div style="background: #dcfce7; height: 8px; border-radius: 4px; overflow: hidden;">
-                                            <div style="background: ${data.senior === maxValue ? '#10b981' : '#6b7280'}; height: 100%; width: ${data.senior}%; transition: width 0.5s ease;"></div>
+                                            <div style="background: ${seniorRate === maxRate ? '#10b981' : '#6b7280'}; height: 100%; width: ${seniorRate}%; transition: width 0.5s ease;"></div>
                                         </div>
                                     </div>
                                     
                                     <!-- Operational Level -->
                                     <div style="margin-bottom: 4px;">
-                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                                             <span style="font-size: 10px; font-weight: 600; color: #047857; display: flex; align-items: center;">
-                                                <span style="display: inline-block; width: 8px; height: 8px; background: ${data.operational === maxValue ? '#10b981' : '#94a3b8'}; border-radius: 2px; margin-right: 6px;"></span>
-                                                Operational Level ${data.operational === maxValue ? '👑' : ''}
+                                                <span style="display: inline-block; width: 8px; height: 8px; background: ${operationalRate === maxRate ? '#10b981' : '#94a3b8'}; border-radius: 2px; margin-right: 6px;"></span>
+                                                Operational Level ${operationalRate === maxRate && maxRate > 0 ? '👑' : ''}
                                             </span>
                                             <div style="display: flex; align-items: baseline; gap: 6px;">
-                                                <span style="font-size: 16px; font-weight: 900; color: ${data.operational === maxValue ? '#10b981' : '#6b7280'};">${data.operational.toFixed(1)}</span>
-                                                <span style="font-size: 10px; font-weight: 600; color: #64748b;">(${data.operational.toFixed(1)}%)</span>
+                                                <span style="font-size: 16px; font-weight: 900; color: ${operationalRate === maxRate ? '#10b981' : '#6b7280'};">${operationalRate.toFixed(1)}%</span>
                                             </div>
                                         </div>
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; font-size: 9px; color: #64748b;">
+                                            <span>Responded: <strong style="color: #047857;">${data.operational.responded}</strong></span>
+                                            <span>Polled: <strong style="color: #047857;">${data.operational.polled}</strong></span>
+                                        </div>
                                         <div style="background: #dcfce7; height: 8px; border-radius: 4px; overflow: hidden;">
-                                            <div style="background: ${data.operational === maxValue ? '#10b981' : '#6b7280'}; height: 100%; width: ${data.operational}%; transition: width 0.5s ease;"></div>
+                                            <div style="background: ${operationalRate === maxRate ? '#10b981' : '#6b7280'}; height: 100%; width: ${operationalRate}%; transition: width 0.5s ease;"></div>
                                         </div>
                                     </div>
                                 </div>
