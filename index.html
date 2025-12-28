@@ -3150,25 +3150,26 @@
             
             console.log(`📊 Total Projects: ${window.dashboardData.projects.length}`);
             
-            // Log all status values to see what we have
-            const allStatuses = window.dashboardData.projects.map((p, idx) => {
-                const status = p.Status || p.status || p.STATUS || '';
-                if (idx < 5) { // Log first 5 for debugging
-                    console.log(`Project ${idx + 1} Status:`, status, 'Type:', typeof status);
-                }
-                return status;
-            });
-            
-            console.log('📋 All unique status values:', [...new Set(allStatuses)]);
+            // Use same logic as Strategic Overview - use getProjectStatus helper
+            const getProjectStatus = window.getProjectStatus;
             
             const closedCount = window.dashboardData.projects.filter(p => {
-                const status = p.Status || p.status || p.STATUS || '';
-                const statusStr = status ? status.toString().toLowerCase().trim() : '';
-                const isClosed = statusStr.includes('closed') || statusStr === 'closed';
-                return isClosed;
+                const status = getProjectStatus(p).toUpperCase().trim();
+                return status === 'CLOSED' || status.includes('CLOSED') || 
+                       status === 'COMPLETE' || status.includes('COMPLETE');
             }).length;
             
             console.log(`📊 Closed Projects Count: ${closedCount} out of ${window.dashboardData.projects.length}`);
+            
+            // Log first few for debugging
+            if (window.dashboardData.projects.length > 0) {
+                console.log('🔍 First 3 project statuses:', window.dashboardData.projects.slice(0, 3).map((p, idx) => ({
+                    index: idx + 1,
+                    detectedStatus: getProjectStatus(p),
+                    rawStatus: p.Status || p['__EMPTY_6'] || 'N/A'
+                })));
+            }
+            
             return closedCount;
         }
 
