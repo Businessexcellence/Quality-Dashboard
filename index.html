@@ -2469,9 +2469,18 @@
                 
                 html += `</div></div>`;
                 
-                // Add data source note
-                html += '<div style="padding: 12px; background: #fffbeb; border-left: 4px solid #f59e0b; border-radius: 6px; font-size: 10px; color: #78350f; margin-bottom: 20px;">';
-                html += '<strong>📌 Data Sources:</strong> Taggd NPS from CSAT sheet (Column G). Competitor data: Randstad (Comparably), Adecco Group (Annual Reports 2022-2024: 32→35→37), ManpowerGroup (Comparably), Industry Average (ClearlyRated 2024 Staffing Benchmark Report).';
+                // Add data source note with clickable links
+                html += '<div style="padding: 14px; background: #fffbeb; border-left: 4px solid #f59e0b; border-radius: 6px; font-size: 10px; color: #78350f; margin-bottom: 20px; line-height: 1.6;">';
+                html += '<div style="font-weight: 700; margin-bottom: 8px; font-size: 11px;">📌 Data Sources & References:</div>';
+                html += '<div style="margin-bottom: 6px;"><strong>🎯 Taggd NPS:</strong> Internal CSAT data (Column G, Parameter: NPS Score)</div>';
+                html += '<div style="margin-bottom: 4px;"><strong>🏢 Competitor NPS Data:</strong></div>';
+                html += '<ul style="margin: 4px 0 4px 16px; padding: 0; list-style: disc;">';
+                html += '<li style="margin-bottom: 3px;"><strong>Randstad (NPS: 19):</strong> <a href="https://www.comparably.com/brands/randstad" target="_blank" rel="noopener noreferrer" style="color: #0ea5e9; text-decoration: underline; font-weight: 600;">Comparably - Randstad NPS</a></li>';
+                html += '<li style="margin-bottom: 3px;"><strong>Adecco Group (2022: 32, 2023: 35, 2024: 37):</strong> <a href="https://www.adeccogroup.com/-/media/project/adecco-group/adeccogroup/pdf-files/Annual-Report-2022/Adecco-Group-Annual-Report-2022.pdf" target="_blank" rel="noopener noreferrer" style="color: #0ea5e9; text-decoration: underline; font-weight: 600;">2022 Annual Report</a>, <a href="https://www.adeccogroup.com/-/media/project/Adecco%20Group/adeccogroup/pdf-files/2024-march/the-adecco-group-annual-report-2023.pdf" target="_blank" rel="noopener noreferrer" style="color: #0ea5e9; text-decoration: underline; font-weight: 600;">2023 Annual Report</a>, <a href="https://www.adeccogroup.com/-/media/project/adecco-group/adeccogroup/pdf-files/2025-march/the-adecco-group-annual-report-2024.pdf" target="_blank" rel="noopener noreferrer" style="color: #0ea5e9; text-decoration: underline; font-weight: 600;">2024 Annual Report</a></li>';
+                html += '<li style="margin-bottom: 3px;"><strong>ManpowerGroup (NPS: 2):</strong> <a href="https://www.comparably.com/brands/manpowergroup" target="_blank" rel="noopener noreferrer" style="color: #0ea5e9; text-decoration: underline; font-weight: 600;">Comparably - ManpowerGroup NPS</a></li>';
+                html += '<li style="margin-bottom: 3px;"><strong>Industry Average (2022: 43, 2023: 44, 2024: 45):</strong> <a href="https://www.clearlyrated.com/industry-benchmark/nps-benchmarks-for-the-staffing-industry" target="_blank" rel="noopener noreferrer" style="color: #0ea5e9; text-decoration: underline; font-weight: 600;">ClearlyRated 2024 Staffing Industry Benchmark Report</a></li>';
+                html += '</ul>';
+                html += '<div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #fcd34d; font-size: 9px; color: #92400e;"><em>💡 All links open in a new tab. Data collected from publicly available reports and industry benchmarks.</em></div>';
                 html += '</div>';
                 
                 // Add other parameters comparison (filtered data)
