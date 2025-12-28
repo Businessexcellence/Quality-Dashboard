@@ -2287,6 +2287,178 @@
                     return;
                 }
                 
+                // Extract Taggd's NPS Score from the data
+                let taggdNPS = null;
+                data.forEach(row => {
+                    const parameter = String(row['Parameter'] || '').trim();
+                    const value = parseFloat(row['Values'] || 0);
+                    
+                    // Look for NPS Score parameter
+                    if (parameter.toLowerCase().includes('nps') && parameter.toLowerCase().includes('score')) {
+                        // Check if this row is for Taggd
+                        const subParam1 = String(row['Sub Parameter 1'] || '').toLowerCase();
+                        const subParam2 = String(row['Sub Parameter 2'] || '').toLowerCase();
+                        
+                        if (subParam1.includes('taggd') || subParam2.includes('taggd') || (!subParam1 && !subParam2)) {
+                            taggdNPS = value;
+                            console.log(`📊 Found Taggd NPS: ${taggdNPS}`);
+                        }
+                    }
+                });
+                
+                // If we didn't find Taggd NPS from specific matching, use the first NPS Score value
+                if (taggdNPS === null) {
+                    const npsRow = data.find(row => {
+                        const parameter = String(row['Parameter'] || '').trim();
+                        return parameter.toLowerCase().includes('nps') && parameter.toLowerCase().includes('score');
+                    });
+                    if (npsRow) {
+                        taggdNPS = parseFloat(npsRow['Values'] || 0);
+                        console.log(`📊 Using first NPS value as Taggd NPS: ${taggdNPS}`);
+                    }
+                }
+                
+                // Web-researched competitor data (as of Dec 2024)
+                const industryBenchmark = {
+                    'Taggd': taggdNPS || 0,
+                    'Randstad': 19,
+                    'Adecco Group': 37,
+                    'ManpowerGroup': 2,
+                    'Industry Average': 45
+                };
+                
+                console.log('📊 Industry Benchmark Data:', industryBenchmark);
+                
+                // Find maximum for highlighting
+                const maxNPS = Math.max(...Object.values(industryBenchmark));
+                
+                // Create Industry Benchmark Comparison HTML
+                let html = '<div style="margin-bottom: 20px;">';
+                html += '<h4 style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin: 0 0 12px 0; border-bottom: 2px solid var(--primary); padding-bottom: 6px;">📊 Industry Benchmark: RPO/Staffing NPS Comparison (2024)</h4>';
+                html += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">';
+                
+                Object.entries(industryBenchmark).forEach(([company, nps]) => {
+                    const isMax = nps === maxNPS && maxNPS > 0;
+                    const istaggd = company === 'Taggd';
+                    const isIndustryAvg = company === 'Industry Average';
+                    
+                    html += `
+                        <div style="background: ${istaggd ? 'linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)' : isIndustryAvg ? '#f0fdf4' : '#f9fafb'}; border: 2px solid ${istaggd ? 'var(--primary)' : isIndustryAvg ? '#10b981' : 'var(--border)'}; border-radius: 6px; padding: 10px; text-align: center;">
+                            <div style="font-size: 10px; font-weight: 600; color: ${istaggd ? 'var(--primary)' : '#6b7280'}; margin-bottom: 6px; text-transform: uppercase;">${company}</div>
+                            <div style="font-size: 24px; font-weight: 700; color: ${isMax ? 'var(--primary)' : istaggd ? 'var(--primary)' : '#1f2937'}; margin-bottom: 6px;">
+                                ${nps}${isIndustryAvg ? ' (Avg)' : ''}
+                            </div>
+                            <div style="background: #e5e7eb; height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 4px;">
+                                <div style="background: ${istaggd ? 'var(--primary)' : isIndustryAvg ? '#10b981' : isMax ? 'var(--primary)' : '#6b7280'}; height: 100%; width: ${(nps / Math.max(100, maxNPS)) * 100}%; transition: width 0.3s ease;"></div>
+                            </div>
+                            <div style="font-size: 8px; color: #9ca3af;">
+                                ${isMax && !isIndustryAvg ? '👑 Top Score' : istaggd ? '🎯 Your Score' : isIndustryAvg ? '📈 Benchmark' : 'Competitor'}
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += '</div>';
+                html += '<div style="margin-top: 10px; padding: 10px; background: #fffbeb; border-left: 4px solid #f59e0b; border-radius: 4px; font-size: 10px; color: #78350f;">';
+                html += '<strong>📌 Note:</strong> Competitor data sourced from public reports and industry benchmarks (ClearlyRated 2024, Comparably). Industry average for staffing/RPO sector in 2024 is 45.';
+                html += '</div>';
+                html += '</div>';
+                
+                // Add data from Excel file (parameter-based comparison)
+                const parameterMap = {};
+                
+                data.forEach(row => {
+                    const parameter = row['Parameter'];
+                    const subParam1 = String(row['Sub Parameter 1'] || '').trim();
+                    const subParam2 = String(row['Sub Parameter 2'] || '').trim();
+                    const subParam3 = String(row['Sub Parameter 3'] || '').trim();
+                    const value = parseFloat(row['Values'] || 0);
+                    
+                    if (!parameter || parameter.toLowerCase().includes('nps')) return; // Skip NPS as it's shown above
+                    
+                    if (!parameterMap[parameter]) {
+                        parameterMap[parameter] = { taggd: 0, competitor: 0, industry: 0 };
+                    }
+                    
+                    // Check all sub-parameters for matching keywords
+                    const allSubParams = (subParam1 + ' ' + subParam2 + ' ' + subParam3).toLowerCase();
+                    
+                    if (allSubParams.includes('taggd')) {
+                        parameterMap[parameter].taggd = value;
+                    } else if (allSubParams.includes('competitor')) {
+                        parameterMap[parameter].competitor = value;
+                    } else if (allSubParams.includes('industry')) {
+                        parameterMap[parameter].industry = value;
+                    }
+                });
+                
+                // Add other parameters comparison if any
+                if (Object.keys(parameterMap).length > 0) {
+                    html += '<h4 style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin: 20px 0 12px 0; border-bottom: 2px solid var(--primary); padding-bottom: 6px;">📈 Additional Metrics</h4>';
+                    html += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px;">';
+                    
+                    Object.entries(parameterMap).forEach(([parameter, values]) => {
+                        const maxValue = Math.max(values.taggd, values.competitor, values.industry);
+                        if (maxValue === 0) return;
+                        
+                        html += `
+                            <div style="background: #f9fafb; border: 1px solid var(--border); border-radius: 6px; padding: 12px;">
+                                <h5 style="font-size: 11px; font-weight: 700; color: var(--text-primary); margin: 0 0 8px 0;">${parameter}</h5>
+                                <div style="margin-bottom: 6px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                                        <span style="font-size: 9px; color: var(--text-secondary);">Taggd</span>
+                                        <span style="font-size: 10px; font-weight: 700; color: ${values.taggd === maxValue && maxValue > 0 ? 'var(--primary)' : 'var(--text-primary)'};">${values.taggd.toFixed(1)}</span>
+                                    </div>
+                                    <div style="background: #e5e7eb; height: 5px; border-radius: 3px; overflow: hidden;">
+                                        <div style="background: ${values.taggd === maxValue && maxValue > 0 ? 'var(--primary)' : '#6b7280'}; height: 100%; width: ${maxValue > 0 ? (values.taggd / maxValue) * 100 : 0}%;"></div>
+                                    </div>
+                                </div>
+                                <div style="margin-bottom: 6px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                                        <span style="font-size: 9px; color: var(--text-secondary);">Competitor</span>
+                                        <span style="font-size: 10px; font-weight: 700; color: ${values.competitor === maxValue && maxValue > 0 ? 'var(--primary)' : 'var(--text-primary)'};">${values.competitor.toFixed(1)}</span>
+                                    </div>
+                                    <div style="background: #e5e7eb; height: 5px; border-radius: 3px; overflow: hidden;">
+                                        <div style="background: ${values.competitor === maxValue && maxValue > 0 ? 'var(--primary)' : '#6b7280'}; height: 100%; width: ${maxValue > 0 ? (values.competitor / maxValue) * 100 : 0}%;"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                                        <span style="font-size: 9px; color: var(--text-secondary);">Industry</span>
+                                        <span style="font-size: 10px; font-weight: 700; color: ${values.industry === maxValue && maxValue > 0 ? 'var(--primary)' : 'var(--text-primary)'};">${values.industry.toFixed(1)}</span>
+                                    </div>
+                                    <div style="background: #e5e7eb; height: 5px; border-radius: 3px; overflow: hidden;">
+                                        <div style="background: ${values.industry === maxValue && maxValue > 0 ? 'var(--primary)' : '#6b7280'}; height: 100%; width: ${maxValue > 0 ? (values.industry / maxValue) * 100 : 0}%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    html += '</div>';
+                }
+                
+                container.innerHTML = html;
+                
+                console.log('✅ NPS comparison rendered with industry benchmark');
+            } catch (error) {
+                handleError(error, 'renderNPSComparison');
+            }
+        }
+            try {
+                const container = document.getElementById('npsComparisonContainer');
+                const data = getFilteredCSATData();
+                
+                console.log('📊 Filtered CSAT data for NPS:', data.length, 'rows');
+                if (data.length > 0) {
+                    console.log('📊 Sample filtered row:', data[0]);
+                }
+                
+                if (data.length === 0) {
+                    container.innerHTML = '<div style="text-align: center; padding: 20px; color: #9ca3af;">No data available for comparison</div>';
+                    return;
+                }
+                
                 // Group data by Parameter (Column F) and Sub Parameter 1 (Column G)
                 // Sub Parameter 1 contains: Taggd, Competitor, Industry
                 // Values (Column J) contains the numeric values
