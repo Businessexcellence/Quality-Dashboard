@@ -9921,6 +9921,11 @@ Total Population: ${totalPop}
             refreshParameterPerformanceTab(); // Parameter Performance Tab
             refreshRecruiterTab(); // Recruiter Insight Tab
             refreshStrategicTab(); // Strategic Overview Tab
+            
+            // Refresh CSAT tab
+            if (typeof window.refreshCSATTab === 'function') {
+                window.refreshCSATTab();
+            }
         }
 
         // ==========================================
