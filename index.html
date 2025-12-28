@@ -993,63 +993,57 @@
             <!-- KPI Cards -->
             <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 10px;">
                 <!-- Accuracy Score Card -->
-                <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 10px; color: #000000; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
-                        <i class="fas fa-check-circle" style="font-size: 18px; color: #000000;"></i>
-                        <span style="font-size: 9px; font-weight: 600; color: #000000;">ACCURACY</span>
+                <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 8px; color: #000000;">
+                    <div style="font-size: 9px; margin-bottom: 3px; color: #000000; display: flex; align-items: center; gap: 4px;">
+                        <i class="fas fa-check-circle" style="font-size: 10px; color: #000000; font-weight: 400;"></i>
+                        <span>ACCURACY</span>
                     </div>
-                    <div style="font-size: 24px; font-weight: 700; margin-bottom: 2px; color: #000000;" id="overallAccuracy">0%</div>
-                    <div style="font-size: 9px; color: #000000;">Accuracy Score</div>
+                    <div style="font-size: 22px; font-weight: 700; color: #000000;" id="overallAccuracy">0%</div>
                 </div>
 
                 <!-- Sample % Card -->
-                <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 10px; color: #000000; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
-                        <i class="fas fa-percentage" style="font-size: 18px; color: #000000;"></i>
-                        <span style="font-size: 9px; font-weight: 600; color: #000000;">SAMPLE</span>
+                <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 8px; color: #000000;">
+                    <div style="font-size: 9px; margin-bottom: 3px; color: #000000; display: flex; align-items: center; gap: 4px;">
+                        <i class="fas fa-percentage" style="font-size: 10px; color: #000000; font-weight: 400;"></i>
+                        <span>SAMPLE</span>
                     </div>
-                    <div style="font-size: 24px; font-weight: 700; margin-bottom: 2px; color: #000000;" id="overallSample">0%</div>
-                    <div style="font-size: 9px; color: #000000;">Sample %</div>
+                    <div style="font-size: 22px; font-weight: 700; color: #000000;" id="overallSample">0%</div>
                 </div>
 
                 <!-- Error % Card -->
-                <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 10px; color: #000000; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
-                        <i class="fas fa-exclamation-triangle" style="font-size: 18px; color: #000000;"></i>
-                        <span style="font-size: 9px; font-weight: 600; color: #000000;">ERROR</span>
+                <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 8px; color: #000000;">
+                    <div style="font-size: 9px; margin-bottom: 3px; color: #000000; display: flex; align-items: center; gap: 4px;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 10px; color: #000000; font-weight: 400;"></i>
+                        <span>ERROR</span>
                     </div>
-                    <div style="font-size: 24px; font-weight: 700; margin-bottom: 2px; color: #000000;" id="overallError">0%</div>
-                    <div style="font-size: 9px; color: #000000;">Error %</div>
+                    <div style="font-size: 22px; font-weight: 700; color: #000000;" id="overallError">0%</div>
                 </div>
 
                 <!-- Audit Count Card -->
-                <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 10px; color: #000000; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
-                        <i class="fas fa-clipboard-list" style="font-size: 18px; color: #000000;"></i>
-                        <span style="font-size: 9px; font-weight: 600; color: #000000;">AUDITS</span>
+                <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 8px; color: #000000;">
+                    <div style="font-size: 9px; margin-bottom: 3px; color: #000000; display: flex; align-items: center; gap: 4px;">
+                        <i class="fas fa-clipboard-list" style="font-size: 10px; color: #000000; font-weight: 400;"></i>
+                        <span>AUDITS</span>
                     </div>
-                    <div style="font-size: 24px; font-weight: 700; margin-bottom: 2px; color: #000000;" id="overallAuditCount">0</div>
-                    <div style="font-size: 9px; color: #000000;">Total Audits</div>
+                    <div style="font-size: 22px; font-weight: 700; color: #000000;" id="overallAuditCount">0</div>
                 </div>
 
                 <!-- Critical Count Card -->
-                <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 10px; color: #000000; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
-                        <i class="fas fa-exclamation-circle" style="font-size: 18px; color: #000000;"></i>
-                        <span style="font-size: 9px; font-weight: 600; color: #000000;">CRITICAL</span>
+                <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 8px; color: #000000;">
+                    <div style="font-size: 9px; margin-bottom: 3px; color: #000000; display: flex; align-items: center; gap: 4px;">
+                        <i class="fas fa-exclamation-circle" style="font-size: 10px; color: #000000; font-weight: 400;"></i>
+                        <span>CRITICAL</span>
                     </div>
-                    <div style="font-size: 24px; font-weight: 700; margin-bottom: 2px; color: #000000;" id="criticalCount">0</div>
-                    <div style="font-size: 9px; color: #000000;">Critical Audits</div>
+                    <div style="font-size: 22px; font-weight: 700; color: #000000;" id="criticalCount">0</div>
                 </div>
 
                 <!-- Non-Critical Count Card -->
-                <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 10px; color: #000000; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
-                        <i class="fas fa-check-double" style="font-size: 18px; color: #000000;"></i>
-                        <span style="font-size: 9px; font-weight: 600; color: #000000;">NON-CRITICAL</span>
+                <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 8px; color: #000000;">
+                    <div style="font-size: 9px; margin-bottom: 3px; color: #000000; display: flex; align-items: center; gap: 4px;">
+                        <i class="fas fa-check-double" style="font-size: 10px; color: #000000; font-weight: 400;"></i>
+                        <span>NON-CRITICAL</span>
                     </div>
-                    <div style="font-size: 24px; font-weight: 700; margin-bottom: 2px; color: #000000;" id="nonCriticalCount">0</div>
-                    <div style="font-size: 9px; color: #000000;">Non-Critical Audits</div>
+                    <div style="font-size: 22px; font-weight: 700; color: #000000;" id="nonCriticalCount">0</div>
                 </div>
             </div>
 
@@ -1155,31 +1149,52 @@
             <!-- KPI Cards - All in One Line (7 cards) -->
             <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-bottom: 10px;">
                 <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 8px; color: #000000;">
-                    <div style="font-size: 9px; margin-bottom: 3px; color: #000000;">TOTAL PARAMETERS</div>
+                    <div style="font-size: 9px; margin-bottom: 3px; color: #000000; display: flex; align-items: center; gap: 4px;">
+                        <i class="fas fa-list-ol" style="font-size: 10px; color: #000000; font-weight: 400;"></i>
+                        <span>TOTAL PARAMETERS</span>
+                    </div>
                     <div style="font-size: 22px; font-weight: 700; color: #000000;" id="paramTotalCount">0</div>
                 </div>
                 <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 8px; color: #000000;">
-                    <div style="font-size: 9px; margin-bottom: 3px; color: #000000;">ACCURACY %</div>
+                    <div style="font-size: 9px; margin-bottom: 3px; color: #000000; display: flex; align-items: center; gap: 4px;">
+                        <i class="fas fa-check-circle" style="font-size: 10px; color: #000000; font-weight: 400;"></i>
+                        <span>ACCURACY %</span>
+                    </div>
                     <div style="font-size: 22px; font-weight: 700; color: #000000;" id="paramAvgAccuracy">0%</div>
                 </div>
                 <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 8px; color: #000000;">
-                    <div style="font-size: 9px; margin-bottom: 3px; color: #000000;">SAMPLE %</div>
+                    <div style="font-size: 9px; margin-bottom: 3px; color: #000000; display: flex; align-items: center; gap: 4px;">
+                        <i class="fas fa-percentage" style="font-size: 10px; color: #000000; font-weight: 400;"></i>
+                        <span>SAMPLE %</span>
+                    </div>
                     <div style="font-size: 22px; font-weight: 700; color: #000000;" id="paramAvgSample">0%</div>
                 </div>
                 <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 8px; color: #000000;">
-                    <div style="font-size: 9px; margin-bottom: 3px; color: #000000;">ERROR %</div>
+                    <div style="font-size: 9px; margin-bottom: 3px; color: #000000; display: flex; align-items: center; gap: 4px;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 10px; color: #000000; font-weight: 400;"></i>
+                        <span>ERROR %</span>
+                    </div>
                     <div style="font-size: 22px; font-weight: 700; color: #000000;" id="paramAvgError">0%</div>
                 </div>
                 <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 8px; color: #000000;">
-                    <div style="font-size: 9px; margin-bottom: 3px; color: #000000;">TOTAL AUDITS</div>
+                    <div style="font-size: 9px; margin-bottom: 3px; color: #000000; display: flex; align-items: center; gap: 4px;">
+                        <i class="fas fa-clipboard-list" style="font-size: 10px; color: #000000; font-weight: 400;"></i>
+                        <span>TOTAL AUDITS</span>
+                    </div>
                     <div style="font-size: 22px; font-weight: 700; color: #000000;" id="paramTotalAudits">0</div>
                 </div>
                 <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 8px; color: #000000;">
-                    <div style="font-size: 9px; margin-bottom: 3px; color: #000000;">CRITICAL PARAMS</div>
+                    <div style="font-size: 9px; margin-bottom: 3px; color: #000000; display: flex; align-items: center; gap: 4px;">
+                        <i class="fas fa-exclamation-circle" style="font-size: 10px; color: #000000; font-weight: 400;"></i>
+                        <span>CRITICAL PARAMS</span>
+                    </div>
                     <div style="font-size: 22px; font-weight: 700; color: #000000;" id="paramCriticalCount">0</div>
                 </div>
                 <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 8px; color: #000000;">
-                    <div style="font-size: 9px; margin-bottom: 3px; color: #000000;">NON-CRITICAL PARAMS</div>
+                    <div style="font-size: 9px; margin-bottom: 3px; color: #000000; display: flex; align-items: center; gap: 4px;">
+                        <i class="fas fa-check-double" style="font-size: 10px; color: #000000; font-weight: 400;"></i>
+                        <span>NON-CRITICAL PARAMS</span>
+                    </div>
                     <div style="font-size: 22px; font-weight: 700; color: #000000;" id="paramNonCriticalCount">0</div>
                 </div>
             </div>
@@ -1247,27 +1262,45 @@
             <!-- KPI Cards - 6 cards -->
             <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 10px;">
                 <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 8px; color: #000000;">
-                    <div style="font-size: 9px; margin-bottom: 3px; color: #000000;">TOTAL RECRUITERS</div>
+                    <div style="font-size: 9px; margin-bottom: 3px; color: #000000; display: flex; align-items: center; gap: 4px;">
+                        <i class="fas fa-users" style="font-size: 10px; color: #000000; font-weight: 400;"></i>
+                        <span>TOTAL RECRUITERS</span>
+                    </div>
                     <div style="font-size: 22px; font-weight: 700; color: #000000;" id="recruiterTotalCount">0</div>
                 </div>
                 <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 8px; color: #000000;">
-                    <div style="font-size: 9px; margin-bottom: 3px; color: #000000;">OVERALL ACCURACY</div>
+                    <div style="font-size: 9px; margin-bottom: 3px; color: #000000; display: flex; align-items: center; gap: 4px;">
+                        <i class="fas fa-check-circle" style="font-size: 10px; color: #000000; font-weight: 400;"></i>
+                        <span>OVERALL ACCURACY</span>
+                    </div>
                     <div style="font-size: 22px; font-weight: 700; color: #000000;" id="recruiterOverallAccuracy">0%</div>
                 </div>
                 <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 8px; color: #000000;">
-                    <div style="font-size: 9px; margin-bottom: 3px; color: #000000;">TOTAL AUDITS</div>
+                    <div style="font-size: 9px; margin-bottom: 3px; color: #000000; display: flex; align-items: center; gap: 4px;">
+                        <i class="fas fa-clipboard-list" style="font-size: 10px; color: #000000; font-weight: 400;"></i>
+                        <span>TOTAL AUDITS</span>
+                    </div>
                     <div style="font-size: 22px; font-weight: 700; color: #000000;" id="recruiterTotalAudits">0</div>
                 </div>
                 <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 8px; color: #000000;">
-                    <div style="font-size: 9px; margin-bottom: 3px; color: #000000;">CRITICAL ACCURACY</div>
+                    <div style="font-size: 9px; margin-bottom: 3px; color: #000000; display: flex; align-items: center; gap: 4px;">
+                        <i class="fas fa-star" style="font-size: 10px; color: #000000; font-weight: 400;"></i>
+                        <span>CRITICAL ACCURACY</span>
+                    </div>
                     <div style="font-size: 22px; font-weight: 700; color: #000000;" id="recruiterCriticalAccuracy">0%</div>
                 </div>
                 <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 8px; color: #000000;">
-                    <div style="font-size: 9px; margin-bottom: 3px; color: #000000;">NON-CRITICAL ACC</div>
+                    <div style="font-size: 9px; margin-bottom: 3px; color: #000000; display: flex; align-items: center; gap: 4px;">
+                        <i class="fas fa-check-double" style="font-size: 10px; color: #000000; font-weight: 400;"></i>
+                        <span>NON-CRITICAL ACC</span>
+                    </div>
                     <div style="font-size: 22px; font-weight: 700; color: #000000;" id="recruiterNonCriticalAccuracy">0%</div>
                 </div>
                 <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 8px; color: #000000;">
-                    <div style="font-size: 9px; margin-bottom: 3px; color: #000000;">ERROR %</div>
+                    <div style="font-size: 9px; margin-bottom: 3px; color: #000000; display: flex; align-items: center; gap: 4px;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 10px; color: #000000; font-weight: 400;"></i>
+                        <span>ERROR %</span>
+                    </div>
                     <div style="font-size: 22px; font-weight: 700; color: #000000;" id="recruiterErrorPercentage">0%</div>
                 </div>
             </div>
