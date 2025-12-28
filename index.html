@@ -1340,105 +1340,135 @@
                         </button>
                     </div>
                 </div>
-                <div id="strategicFilters" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;">
-                    <!-- 4 Filters generated dynamically with counts -->
+                <div id="strategicFilters" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 6px;">
+                    <!-- Filters generated dynamically with counts - auto-fit layout -->
                 </div>
             </div>
 
-            <!-- PROJECTS SECTION - Compact Card Style -->
-            <div style="background: white; border-radius: 10px; padding: 10px; margin-bottom: 12px; box-shadow: 0 3px 10px rgba(59,130,246,0.15); border-left: 5px solid #3b82f6;">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                    <h2 style="font-size: 12px; font-weight: 800; color: #1e40af; margin: 0; display: flex; align-items: center;">
-                        <div style="background: linear-gradient(135deg, #f04616 0%, #ee4415 100%); width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 8px; box-shadow: 0 3px 6px rgba(59,130,246,0.3);">
-                            <i class="fas fa-project-diagram" style="color: white; font-size: 12px;"></i>
+            <!-- PROJECTS SECTION - Improved Modern Layout -->
+            <div style="background: white; border-radius: 10px; padding: 14px; margin-bottom: 12px; box-shadow: 0 3px 10px rgba(59,130,246,0.15); border-left: 5px solid #3b82f6;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                    <h2 style="font-size: 13px; font-weight: 800; color: #1e40af; margin: 0; display: flex; align-items: center;">
+                        <div style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 10px; box-shadow: 0 3px 6px rgba(59,130,246,0.3);">
+                            <i class="fas fa-project-diagram" style="color: white; font-size: 14px;"></i>
                         </div>
                         PROJECTS OVERVIEW
                     </h2>
                 </div>
                 
-                <!-- Compact 3-Column Layout -->
-                <div style="display: grid; grid-template-columns: 160px 1fr 1fr; gap: 12px;">
-                    
-                    <!-- Left: KPI Cards Column -->
-                    <div style="display: flex; flex-direction: column; gap: 6px;">
-                        <div style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-radius: 6px; padding: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.08); border: 1.5px solid #bfdbfe;">
-                            <div style="color: #1e40af; font-size: 7px; font-weight: 700; margin-bottom: 2px; text-transform: uppercase;">Total Projects</div>
-                            <div style="color: #1e293b; font-size: 20px; font-weight: 900; line-height: 1;" id="projectsTotal">0</div>
-                            <div style="color: #64748b; font-size: 6px; margin-top: 1px; font-weight: 600;">WIP + Closed</div>
+                <!-- Modern 2-Row Layout -->
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 10px;">
+                    <!-- KPI Card 1: Total Projects -->
+                    <div style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-radius: 8px; padding: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); border: 2px solid #bfdbfe;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
+                            <div style="color: #1e40af; font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Total Projects</div>
+                            <i class="fas fa-tasks" style="color: #3b82f6; font-size: 14px; opacity: 0.3;"></i>
                         </div>
-                        <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 6px; padding: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.08); border: 1.5px solid #fde047;">
-                            <div style="color: #92400e; font-size: 7px; font-weight: 700; margin-bottom: 2px; text-transform: uppercase;">Closed</div>
-                            <div style="color: #f59e0b; font-size: 20px; font-weight: 900; line-height: 1;" id="projectsClosed">0</div>
-                        </div>
-                        <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 6px; padding: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.08); border: 1.5px solid #93c5fd;">
-                            <div style="color: #1e3a8a; font-size: 7px; font-weight: 700; margin-bottom: 2px; text-transform: uppercase;">Work In Progress</div>
-                            <div style="color: #3b82f6; font-size: 20px; font-weight: 900; line-height: 1;" id="projectsWIP">0</div>
-                        </div>
+                        <div style="color: #1e293b; font-size: 26px; font-weight: 900; line-height: 1; margin-bottom: 2px;" id="projectsTotal">0</div>
+                        <div style="color: #64748b; font-size: 7px; margin-top: 2px; font-weight: 600;">WIP + Closed</div>
                     </div>
                     
-                    <!-- Middle: Status Distribution -->
-                    <div style="background: #f8fafc; border-radius: 6px; padding: 8px; border: 1.5px solid #e2e8f0;">
-                        <h3 style="font-size: 9px; font-weight: 800; color: #334155; margin: 0 0 6px 0; text-transform: uppercase; letter-spacing: 0.3px;">
-                            <i class="fas fa-chart-bar" style="color: #3b82f6; margin-right: 4px; font-size: 8px;"></i>Status Distribution
-                        </h3>
-                        <div id="projectsStatusBreakdown" style="max-height: 140px; overflow-y: auto; padding-right: 4px;"></div>
+                    <!-- KPI Card 2: Closed -->
+                    <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 8px; padding: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); border: 2px solid #fde047;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
+                            <div style="color: #92400e; font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Closed</div>
+                            <i class="fas fa-check-circle" style="color: #f59e0b; font-size: 14px; opacity: 0.3;"></i>
+                        </div>
+                        <div style="color: #92400e; font-size: 26px; font-weight: 900; line-height: 1; margin-bottom: 2px;" id="projectsClosed">0</div>
+                        <div style="color: #78350f; font-size: 7px; margin-top: 2px; font-weight: 600;">Completed Projects</div>
                     </div>
                     
-                    <!-- Right: Project Type -->
-                    <div style="background: #f8fafc; border-radius: 6px; padding: 8px; border: 1.5px solid #e2e8f0;">
-                        <h3 style="font-size: 9px; font-weight: 800; color: #334155; margin: 0 0 6px 0; text-transform: uppercase; letter-spacing: 0.3px;">
-                            <i class="fas fa-layer-group" style="color: #3b82f6; margin-right: 4px; font-size: 8px;"></i>Project Types
+                    <!-- KPI Card 3: WIP -->
+                    <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 8px; padding: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); border: 2px solid #93c5fd;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
+                            <div style="color: #1e3a8a; font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Work In Progress</div>
+                            <i class="fas fa-spinner" style="color: #3b82f6; font-size: 14px; opacity: 0.3;"></i>
+                        </div>
+                        <div style="color: #1e3a8a; font-size: 26px; font-weight: 900; line-height: 1; margin-bottom: 2px;" id="projectsWIP">0</div>
+                        <div style="color: #1e40af; font-size: 7px; margin-top: 2px; font-weight: 600;">Active Projects</div>
+                    </div>
+                </div>
+                
+                <!-- Charts Row -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <!-- Status Distribution -->
+                    <div style="background: #f8fafc; border-radius: 8px; padding: 10px; border: 2px solid #e2e8f0;">
+                        <h3 style="font-size: 9px; font-weight: 800; color: #334155; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 0.3px; display: flex; align-items: center;">
+                            <i class="fas fa-chart-bar" style="color: #3b82f6; margin-right: 6px; font-size: 10px;"></i>Status Distribution
                         </h3>
-                        <div id="projectsTypeBreakdown" style="display: flex; flex-direction: column; gap: 6px; max-height: 140px; overflow-y: auto; padding-right: 4px;"></div>
+                        <div id="projectsStatusBreakdown" style="max-height: 150px; overflow-y: auto; padding-right: 4px;"></div>
+                    </div>
+                    
+                    <!-- Project Types -->
+                    <div style="background: #f8fafc; border-radius: 8px; padding: 10px; border: 2px solid #e2e8f0;">
+                        <h3 style="font-size: 9px; font-weight: 800; color: #334155; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 0.3px; display: flex; align-items: center;">
+                            <i class="fas fa-layer-group" style="color: #3b82f6; margin-right: 6px; font-size: 10px;"></i>Project Types
+                        </h3>
+                        <div id="projectsTypeBreakdown" style="display: flex; flex-direction: column; gap: 6px; max-height: 150px; overflow-y: auto; padding-right: 4px;"></div>
                     </div>
                 </div>
             </div>
 
-            <!-- RCA/CAPA SECTION - Compact Card Style -->
-            <div style="background: white; border-radius: 10px; padding: 10px; margin-bottom: 12px; box-shadow: 0 3px 10px rgba(16,185,129,0.15); border-left: 5px solid #f04616;">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                    <h2 style="font-size: 12px; font-weight: 800; color: #ee4415; margin: 0; display: flex; align-items: center;">
-                        <div style="background: linear-gradient(135deg, #f04616 0%, #ee4415 100%); width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 8px; box-shadow: 0 3px 6px rgba(16,185,129,0.3);">
-                            <i class="fas fa-clipboard-check" style="color: white; font-size: 12px;"></i>
+            <!-- RCA/CAPA SECTION - Improved Modern Layout -->
+            <div style="background: white; border-radius: 10px; padding: 14px; margin-bottom: 12px; box-shadow: 0 3px 10px rgba(239,68,68,0.15); border-left: 5px solid #ef4444;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                    <h2 style="font-size: 13px; font-weight: 800; color: #dc2626; margin: 0; display: flex; align-items: center;">
+                        <div style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 10px; box-shadow: 0 3px 6px rgba(239,68,68,0.3);">
+                            <i class="fas fa-clipboard-check" style="color: white; font-size: 14px;"></i>
                         </div>
                         RCA / CAPA OVERVIEW
                     </h2>
                 </div>
                 
-                <!-- Compact 3-Column Layout -->
-                <div style="display: grid; grid-template-columns: 160px 1fr 1fr; gap: 12px;">
-                    
-                    <!-- Left: KPI Cards Column -->
-                    <div style="display: flex; flex-direction: column; gap: 6px;">
-                        <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-radius: 6px; padding: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.08); border: 1.5px solid #bbf7d0;">
-                            <div style="color: #ee4415; font-size: 7px; font-weight: 700; margin-bottom: 2px; text-transform: uppercase;">Total RCA/CAPA</div>
-                            <div style="color: #1e293b; font-size: 20px; font-weight: 900; line-height: 1;" id="rcaCapaTotal">0</div>
-                            <div style="color: #64748b; font-size: 6px; margin-top: 1px; font-weight: 600;">WIP + Closed</div>
+                <!-- Modern 2-Row Layout -->
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 10px;">
+                    <!-- KPI Card 1: Total RCA/CAPA -->
+                    <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-radius: 8px; padding: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); border: 2px solid #bbf7d0;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
+                            <div style="color: #15803d; font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Total RCA/CAPA</div>
+                            <i class="fas fa-clipboard-list" style="color: #22c55e; font-size: 14px; opacity: 0.3;"></i>
                         </div>
-                        <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 6px; padding: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.08); border: 1.5px solid #fde047;">
-                            <div style="color: #92400e; font-size: 7px; font-weight: 700; margin-bottom: 2px; text-transform: uppercase;">Closed</div>
-                            <div style="color: #f59e0b; font-size: 20px; font-weight: 900; line-height: 1;" id="rcaCapaClosed">0</div>
-                        </div>
-                        <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 6px; padding: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.08); border: 1.5px solid #93c5fd;">
-                            <div style="color: #1e3a8a; font-size: 7px; font-weight: 700; margin-bottom: 2px; text-transform: uppercase;">Work In Progress</div>
-                            <div style="color: #3b82f6; font-size: 20px; font-weight: 900; line-height: 1;" id="rcaCapaWIP">0</div>
-                        </div>
+                        <div style="color: #1e293b; font-size: 26px; font-weight: 900; line-height: 1; margin-bottom: 2px;" id="rcaCapaTotal">0</div>
+                        <div style="color: #64748b; font-size: 7px; margin-top: 2px; font-weight: 600;">WIP + Closed</div>
                     </div>
                     
-                    <!-- Middle: Error Type -->
-                    <div style="background: #f8fafc; border-radius: 6px; padding: 8px; border: 1.5px solid #e2e8f0;">
-                        <h3 style="font-size: 9px; font-weight: 800; color: #334155; margin: 0 0 6px 0; text-transform: uppercase; letter-spacing: 0.3px;">
-                            <i class="fas fa-exclamation-triangle" style="color: #ef4444; margin-right: 4px; font-size: 8px;"></i>Error Types
-                        </h3>
-                        <div id="rcaCapaErrorType" style="display: flex; flex-direction: column; gap: 6px; max-height: 140px; overflow-y: auto; padding-right: 4px;"></div>
+                    <!-- KPI Card 2: Closed -->
+                    <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 8px; padding: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); border: 2px solid #fde047;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
+                            <div style="color: #92400e; font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Closed</div>
+                            <i class="fas fa-check-double" style="color: #f59e0b; font-size: 14px; opacity: 0.3;"></i>
+                        </div>
+                        <div style="color: #92400e; font-size: 26px; font-weight: 900; line-height: 1; margin-bottom: 2px;" id="rcaCapaClosed">0</div>
+                        <div style="color: #78350f; font-size: 7px; margin-top: 2px; font-weight: 600;">Resolved Issues</div>
                     </div>
                     
-                    <!-- Right: Impact -->
-                    <div style="background: #f8fafc; border-radius: 6px; padding: 8px; border: 1.5px solid #e2e8f0;">
-                        <h3 style="font-size: 9px; font-weight: 800; color: #334155; margin: 0 0 6px 0; text-transform: uppercase; letter-spacing: 0.3px;">
-                            <i class="fas fa-bolt" style="color: #f59e0b; margin-right: 4px; font-size: 8px;"></i>Impact Levels
+                    <!-- KPI Card 3: WIP -->
+                    <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 8px; padding: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); border: 2px solid #93c5fd;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
+                            <div style="color: #1e3a8a; font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Work In Progress</div>
+                            <i class="fas fa-hourglass-half" style="color: #3b82f6; font-size: 14px; opacity: 0.3;"></i>
+                        </div>
+                        <div style="color: #1e3a8a; font-size: 26px; font-weight: 900; line-height: 1; margin-bottom: 2px;" id="rcaCapaWIP">0</div>
+                        <div style="color: #1e40af; font-size: 7px; margin-top: 2px; font-weight: 600;">Active Issues</div>
+                    </div>
+                </div>
+                
+                <!-- Charts Row -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <!-- Error Types -->
+                    <div style="background: #f8fafc; border-radius: 8px; padding: 10px; border: 2px solid #e2e8f0;">
+                        <h3 style="font-size: 9px; font-weight: 800; color: #334155; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 0.3px; display: flex; align-items: center;">
+                            <i class="fas fa-exclamation-triangle" style="color: #ef4444; margin-right: 6px; font-size: 10px;"></i>Error Types
                         </h3>
-                        <div id="rcaCapaImpact" style="display: flex; flex-direction: column; gap: 6px; max-height: 140px; overflow-y: auto; padding-right: 4px;"></div>
+                        <div id="rcaCapaErrorType" style="display: flex; flex-direction: column; gap: 6px; max-height: 150px; overflow-y: auto; padding-right: 4px;"></div>
+                    </div>
+                    
+                    <!-- Impact Levels -->
+                    <div style="background: #f8fafc; border-radius: 8px; padding: 10px; border: 2px solid #e2e8f0;">
+                        <h3 style="font-size: 9px; font-weight: 800; color: #334155; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 0.3px; display: flex; align-items: center;">
+                            <i class="fas fa-bolt" style="color: #f59e0b; margin-right: 6px; font-size: 10px;"></i>Impact Levels
+                        </h3>
+                        <div id="rcaCapaImpact" style="display: flex; flex-direction: column; gap: 6px; max-height: 150px; overflow-y: auto; padding-right: 4px;"></div>
                     </div>
                 </div>
             </div>
@@ -1481,8 +1511,8 @@
                         </button>
                     </div>
                 </div>
-                <div id="projectFilters" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px;">
-                    <!-- 6 Filters generated dynamically with counts -->
+                <div id="projectFilters" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 6px;">
+                    <!-- Filters generated dynamically with counts - auto-fit layout -->
                 </div>
             </div>
 
