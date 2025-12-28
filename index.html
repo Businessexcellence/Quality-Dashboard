@@ -2305,99 +2305,176 @@
         function renderNPSComparison() {
             try {
                 const container = document.getElementById('npsComparisonContainer');
-                const data = getFilteredCSATData();
+                // Use ALL CSAT data (not filtered) to get all years
+                const allData = window.dashboardData.csat || [];
                 
-                console.log('📊 Filtered CSAT data for NPS:', data.length, 'rows');
-                if (data.length > 0) {
-                    console.log('📊 Sample filtered row:', data[0]);
+                console.log('📊 All CSAT data for NPS:', allData.length, 'rows');
+                if (allData.length > 0) {
+                    console.log('📊 Sample CSAT row:', allData[0]);
                 }
                 
-                if (data.length === 0) {
+                if (allData.length === 0) {
                     container.innerHTML = '<div style="text-align: center; padding: 20px; color: #9ca3af;">No data available for comparison</div>';
                     return;
                 }
                 
-                // Extract Taggd's NPS Score from the data
-                let taggdNPS = null;
-                data.forEach(row => {
+                // Extract NPS data for each year (2022, 2023, 2024)
+                const npsDataByYear = {
+                    '2022': { taggd: 0, competitor: 0, industry: 0 },
+                    '2023': { taggd: 0, competitor: 0, industry: 0 },
+                    '2024': { taggd: 0, competitor: 0, industry: 0 }
+                };
+                
+                allData.forEach(row => {
                     const parameter = String(row['Parameter'] || '').trim();
+                    const financialYear = String(row['Financial Year'] || '').trim();
                     const value = parseFloat(row['Values'] || 0);
                     
                     // Look for NPS Score parameter
                     if (parameter.toLowerCase().includes('nps') && parameter.toLowerCase().includes('score')) {
-                        // Check if this row is for Taggd
-                        const subParam1 = String(row['Sub Parameter 1'] || '').toLowerCase();
-                        const subParam2 = String(row['Sub Parameter 2'] || '').toLowerCase();
-                        
-                        if (subParam1.includes('taggd') || subParam2.includes('taggd') || (!subParam1 && !subParam2)) {
-                            taggdNPS = value;
-                            console.log(`📊 Found Taggd NPS: ${taggdNPS}`);
+                        // Check which year
+                        if (financialYear.includes('2022') || financialYear === '2022') {
+                            const subParam1 = String(row['Sub Parameter 1'] || '').toLowerCase();
+                            if (subParam1.includes('taggd')) {
+                                npsDataByYear['2022'].taggd = value;
+                                console.log(`📊 Found Taggd NPS 2022: ${value}`);
+                            } else if (subParam1.includes('competitor')) {
+                                npsDataByYear['2022'].competitor = value;
+                                console.log(`📊 Found Competitor NPS 2022: ${value}`);
+                            } else if (subParam1.includes('industry')) {
+                                npsDataByYear['2022'].industry = value;
+                                console.log(`📊 Found Industry NPS 2022: ${value}`);
+                            }
+                        } else if (financialYear.includes('2023') || financialYear === '2023') {
+                            const subParam1 = String(row['Sub Parameter 1'] || '').toLowerCase();
+                            if (subParam1.includes('taggd')) {
+                                npsDataByYear['2023'].taggd = value;
+                                console.log(`📊 Found Taggd NPS 2023: ${value}`);
+                            } else if (subParam1.includes('competitor')) {
+                                npsDataByYear['2023'].competitor = value;
+                                console.log(`📊 Found Competitor NPS 2023: ${value}`);
+                            } else if (subParam1.includes('industry')) {
+                                npsDataByYear['2023'].industry = value;
+                                console.log(`📊 Found Industry NPS 2023: ${value}`);
+                            }
+                        } else if (financialYear.includes('2024') || financialYear === '2024') {
+                            const subParam1 = String(row['Sub Parameter 1'] || '').toLowerCase();
+                            if (subParam1.includes('taggd')) {
+                                npsDataByYear['2024'].taggd = value;
+                                console.log(`📊 Found Taggd NPS 2024: ${value}`);
+                            } else if (subParam1.includes('competitor')) {
+                                npsDataByYear['2024'].competitor = value;
+                                console.log(`📊 Found Competitor NPS 2024: ${value}`);
+                            } else if (subParam1.includes('industry')) {
+                                npsDataByYear['2024'].industry = value;
+                                console.log(`📊 Found Industry NPS 2024: ${value}`);
+                            }
                         }
                     }
                 });
                 
-                // If we didn't find Taggd NPS from specific matching, use the first NPS Score value
-                if (taggdNPS === null) {
-                    const npsRow = data.find(row => {
-                        const parameter = String(row['Parameter'] || '').trim();
-                        return parameter.toLowerCase().includes('nps') && parameter.toLowerCase().includes('score');
-                    });
-                    if (npsRow) {
-                        taggdNPS = parseFloat(npsRow['Values'] || 0);
-                        console.log(`📊 Using first NPS value as Taggd NPS: ${taggdNPS}`);
-                    }
-                }
+                console.log('📊 NPS Data By Year:', npsDataByYear);
                 
-                // Web-researched competitor data (as of Dec 2024)
-                const industryBenchmark = {
-                    'Taggd': taggdNPS || 0,
-                    'Randstad': 19,
-                    'Adecco Group': 37,
-                    'ManpowerGroup': 2,
-                    'Industry Average': 45
-                };
-                
-                console.log('📊 Industry Benchmark Data:', industryBenchmark);
-                
-                // Find maximum for highlighting
-                const maxNPS = Math.max(...Object.values(industryBenchmark));
-                
-                // Create Industry Benchmark Comparison HTML
+                // Create Year-wise NPS Comparison HTML
                 let html = '<div style="margin-bottom: 20px;">';
-                html += '<h4 style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin: 0 0 12px 0; border-bottom: 2px solid var(--primary); padding-bottom: 6px;">📊 Industry Benchmark: RPO/Staffing NPS Comparison (2024)</h4>';
-                html += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">';
+                html += '<h4 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin: 0 0 16px 0; border-bottom: 3px solid var(--primary); padding-bottom: 8px; display: flex; align-items: center;"><i class="fas fa-chart-line" style="margin-right: 8px; color: var(--primary);"></i>NPS Score Comparison: 2022 - 2024</h4>';
                 
-                Object.entries(industryBenchmark).forEach(([company, nps]) => {
-                    const isMax = nps === maxNPS && maxNPS > 0;
-                    const istaggd = company === 'Taggd';
-                    const isIndustryAvg = company === 'Industry Average';
+                // Create a card for each year
+                html += '<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px;">';
+                
+                ['2022', '2023', '2024'].forEach((year, index) => {
+                    const yearData = npsDataByYear[year];
+                    const maxNPS = Math.max(yearData.taggd, yearData.competitor, yearData.industry);
+                    const hasData = maxNPS > 0;
+                    
+                    // Color scheme for each year
+                    const yearColors = {
+                        '2022': { primary: '#8b5cf6', light: '#f3e8ff', border: '#c4b5fd' },
+                        '2023': { primary: '#3b82f6', light: '#dbeafe', border: '#93c5fd' },
+                        '2024': { primary: '#10b981', light: '#d1fae5', border: '#6ee7b7' }
+                    };
+                    const colors = yearColors[year];
                     
                     html += `
-                        <div style="background: ${istaggd ? 'linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)' : isIndustryAvg ? '#f0fdf4' : '#f9fafb'}; border: 2px solid ${istaggd ? 'var(--primary)' : isIndustryAvg ? '#10b981' : 'var(--border)'}; border-radius: 6px; padding: 10px; text-align: center;">
-                            <div style="font-size: 10px; font-weight: 600; color: ${istaggd ? 'var(--primary)' : '#6b7280'}; margin-bottom: 6px; text-transform: uppercase;">${company}</div>
-                            <div style="font-size: 24px; font-weight: 700; color: ${isMax ? 'var(--primary)' : istaggd ? 'var(--primary)' : '#1f2937'}; margin-bottom: 6px;">
-                                ${nps}${isIndustryAvg ? ' (Avg)' : ''}
+                        <div style="background: white; border: 3px solid ${colors.border}; border-radius: 12px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                            <div style="text-align: center; margin-bottom: 14px;">
+                                <div style="display: inline-block; background: ${colors.light}; border: 2px solid ${colors.primary}; border-radius: 8px; padding: 8px 16px;">
+                                    <div style="font-size: 11px; font-weight: 600; color: ${colors.primary}; text-transform: uppercase; letter-spacing: 0.5px;">Financial Year</div>
+                                    <div style="font-size: 24px; font-weight: 900; color: ${colors.primary}; margin-top: 2px;">${year}</div>
+                                </div>
                             </div>
-                            <div style="background: #e5e7eb; height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 4px;">
-                                <div style="background: ${istaggd ? 'var(--primary)' : isIndustryAvg ? '#10b981' : isMax ? 'var(--primary)' : '#6b7280'}; height: 100%; width: ${(nps / Math.max(100, maxNPS)) * 100}%; transition: width 0.3s ease;"></div>
-                            </div>
-                            <div style="font-size: 8px; color: #9ca3af;">
-                                ${isMax && !isIndustryAvg ? '👑 Top Score' : istaggd ? '🎯 Your Score' : isIndustryAvg ? '📈 Benchmark' : 'Competitor'}
-                            </div>
+                            
+                            ${!hasData ? `
+                                <div style="text-align: center; padding: 20px; color: #9ca3af; font-size: 10px;">
+                                    <i class="fas fa-info-circle" style="font-size: 24px; margin-bottom: 8px; opacity: 0.3;"></i>
+                                    <div>No NPS data available</div>
+                                </div>
+                            ` : `
+                                <!-- Taggd -->
+                                <div style="margin-bottom: 12px; background: ${colors.light}; border-radius: 6px; padding: 10px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                        <div style="font-size: 10px; font-weight: 700; color: ${colors.primary}; text-transform: uppercase;">🎯 Taggd</div>
+                                        <div style="font-size: 20px; font-weight: 900; color: ${yearData.taggd === maxNPS ? colors.primary : '#1f2937'};">
+                                            ${yearData.taggd}${yearData.taggd === maxNPS ? ' 👑' : ''}
+                                        </div>
+                                    </div>
+                                    <div style="background: white; height: 10px; border-radius: 5px; overflow: hidden;">
+                                        <div style="background: ${colors.primary}; height: 100%; width: ${(yearData.taggd / maxNPS) * 100}%; transition: width 0.5s ease;"></div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Competitor -->
+                                <div style="margin-bottom: 12px; background: #f9fafb; border-radius: 6px; padding: 10px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                        <div style="font-size: 10px; font-weight: 700; color: #6b7280; text-transform: uppercase;">🏢 Competitor</div>
+                                        <div style="font-size: 20px; font-weight: 900; color: ${yearData.competitor === maxNPS ? colors.primary : '#1f2937'};">
+                                            ${yearData.competitor}${yearData.competitor === maxNPS ? ' 👑' : ''}
+                                        </div>
+                                    </div>
+                                    <div style="background: #e5e7eb; height: 10px; border-radius: 5px; overflow: hidden;">
+                                        <div style="background: #6b7280; height: 100%; width: ${(yearData.competitor / maxNPS) * 100}%; transition: width 0.5s ease;"></div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Industry -->
+                                <div style="background: #f9fafb; border-radius: 6px; padding: 10px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                        <div style="font-size: 10px; font-weight: 700; color: #6b7280; text-transform: uppercase;">📊 Industry Avg</div>
+                                        <div style="font-size: 20px; font-weight: 900; color: ${yearData.industry === maxNPS ? colors.primary : '#1f2937'};">
+                                            ${yearData.industry}${yearData.industry === maxNPS ? ' 👑' : ''}
+                                        </div>
+                                    </div>
+                                    <div style="background: #e5e7eb; height: 10px; border-radius: 5px; overflow: hidden;">
+                                        <div style="background: #6b7280; height: 100%; width: ${(yearData.industry / maxNPS) * 100}%; transition: width 0.5s ease;"></div>
+                                    </div>
+                                </div>
+                            `}
                         </div>
                     `;
                 });
                 
                 html += '</div>';
-                html += '<div style="margin-top: 10px; padding: 10px; background: #fffbeb; border-left: 4px solid #f59e0b; border-radius: 4px; font-size: 10px; color: #78350f;">';
-                html += '<strong>📌 Note:</strong> Competitor data sourced from public reports and industry benchmarks (ClearlyRated 2024, Comparably). Industry average for staffing/RPO sector in 2024 is 45.';
-                html += '</div>';
+                
+                // Add trend analysis
+                const taggdTrend = npsDataByYear['2024'].taggd - npsDataByYear['2022'].taggd;
+                const trendIcon = taggdTrend > 0 ? '📈' : taggdTrend < 0 ? '📉' : '➡️';
+                const trendColor = taggdTrend > 0 ? '#10b981' : taggdTrend < 0 ? '#ef4444' : '#6b7280';
+                
+                html += '<div style="padding: 12px; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-left: 4px solid #0ea5e9; border-radius: 6px; font-size: 11px; color: #0c4a6e;">';
+                html += '<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;"><strong style="font-size: 12px;">📊 Trend Analysis (2022 → 2024)</strong></div>';
+                html += `<div style="display: flex; align-items: center; gap: 6px;">`;
+                html += `<span style="font-weight: 600;">Taggd NPS Movement:</span>`;
+                html += `<span style="font-size: 16px; font-weight: 900; color: ${trendColor};">${trendIcon} ${taggdTrend > 0 ? '+' : ''}${taggdTrend.toFixed(0)} points</span>`;
+                html += `<span style="color: #64748b; font-size: 10px;">(${npsDataByYear['2022'].taggd} → ${npsDataByYear['2024'].taggd})</span>`;
+                html += `</div></div>`;
+                
                 html += '</div>';
                 
-                // Add data from Excel file (parameter-based comparison)
+                // Add other parameters comparison (filtered data)
+                const filteredData = getFilteredCSATData();
                 const parameterMap = {};
                 
-                data.forEach(row => {
+                filteredData.forEach(row => {
                     const parameter = row['Parameter'];
                     const subParam1 = String(row['Sub Parameter 1'] || '').trim();
                     const subParam2 = String(row['Sub Parameter 2'] || '').trim();
@@ -2470,7 +2547,7 @@
                 
                 container.innerHTML = html;
                 
-                console.log('✅ NPS comparison rendered with industry benchmark');
+                console.log('✅ NPS comparison rendered with year-wise data (2022, 2023, 2024)');
             } catch (error) {
                 handleError(error, 'renderNPSComparison');
             }
