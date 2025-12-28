@@ -2625,9 +2625,9 @@
                     
                     html += '</div>';
                     
-                    // View 2: Level Wise Response Rate (Senior vs Operational)
-                    html += '<div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 1px solid #10b981; border-radius: 8px; padding: 10px; height: fit-content;">';
-                    html += '<h5 style="font-size: 11px; font-weight: 800; color: #065f46; margin: 0 0 8px 0; display: flex; align-items: center;"><i class="fas fa-sitemap" style="margin-right: 4px; color: #10b981; font-size: 10px;"></i>Level Wise Response Rate</h5>';
+                    // View 2: Level Wise Response Rate (Senior vs Operational) - Matching Taggd Orange Theme
+                    html += '<div style="background: linear-gradient(135deg, #fff5f0 0%, #ffe5d9 100%); border: 1px solid #f97316; border-radius: 8px; padding: 10px; height: fit-content;">';
+                    html += '<h5 style="font-size: 11px; font-weight: 800; color: #c2410c; margin: 0 0 8px 0; display: flex; align-items: center;"><i class="fas fa-sitemap" style="margin-right: 4px; color: #f97316; font-size: 10px;"></i>Level Wise Response Rate</h5>';
                     
                     if (Object.keys(levelWiseData).length > 0) {
                         Object.keys(levelWiseData).sort().forEach(year => {
@@ -2639,55 +2639,54 @@
                             const maxRate = Math.max(seniorRate, operationalRate);
                             
                             html += `
-                                <div style="background: white; border-radius: 6px; padding: 8px; margin-bottom: 8px; border: 1px solid #bbf7d0; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                                <div style="background: white; border-radius: 6px; padding: 8px; margin-bottom: 8px; border: 1px solid #fed7aa; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
                                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                                        <span style="font-size: 10px; font-weight: 800; color: #047857;">FY ${year}</span>
+                                        <span style="font-size: 10px; font-weight: 800; color: #c2410c;">FY ${year}</span>
+                                        <div style="background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 700;">
+                                            ${maxRate.toFixed(1)}%
+                                        </div>
                                     </div>
                                     
                                     <!-- Senior Level -->
-                                    <div style="margin-bottom: 8px;">
-                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                                            <span style="font-size: 9px; font-weight: 600; color: #047857; display: flex; align-items: center;">
-                                                <span style="display: inline-block; width: 6px; height: 6px; background: #10b981; border-radius: 2px; margin-right: 4px;"></span>
+                                    <div style="margin-bottom: 6px;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
+                                            <span style="font-size: 9px; font-weight: 600; color: #c2410c; display: flex; align-items: center;">
+                                                <span style="display: inline-block; width: 6px; height: 6px; background: #f97316; border-radius: 2px; margin-right: 4px;"></span>
                                                 Senior ${seniorRate === maxRate && maxRate > 0 ? '👑' : ''}
                                             </span>
-                                            <div style="display: flex; align-items: baseline; gap: 4px;">
-                                                <span style="font-size: 13px; font-weight: 900; color: ${seniorRate === maxRate ? '#10b981' : '#6b7280'};">${seniorRate.toFixed(1)}%</span>
-                                            </div>
+                                            <span style="font-size: 13px; font-weight: 900; color: ${seniorRate === maxRate ? '#f97316' : '#6b7280'};">${seniorRate.toFixed(1)}%</span>
                                         </div>
                                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; font-size: 8px; color: #64748b;">
-                                            <span>Resp: <strong style="color: #047857;">${data.senior.responded}</strong></span>
-                                            <span>Poll: <strong style="color: #047857;">${data.senior.polled}</strong></span>
+                                            <span>Resp: <strong style="color: #c2410c;">${data.senior.responded}</strong></span>
+                                            <span>Poll: <strong style="color: #c2410c;">${data.senior.polled}</strong></span>
                                         </div>
-                                        <div style="background: #dcfce7; height: 6px; border-radius: 3px; overflow: hidden;">
-                                            <div style="background: ${seniorRate === maxRate ? '#10b981' : '#6b7280'}; height: 100%; width: ${seniorRate}%; transition: width 0.5s ease;"></div>
+                                        <div style="background: #ffedd5; height: 6px; border-radius: 3px; overflow: hidden;">
+                                            <div style="background: ${seniorRate === maxRate ? '#f97316' : '#6b7280'}; height: 100%; width: ${seniorRate}%; transition: width 0.5s ease;"></div>
                                         </div>
                                     </div>
                                     
                                     <!-- Operational Level -->
                                     <div style="margin-bottom: 2px;">
-                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                                            <span style="font-size: 9px; font-weight: 600; color: #047857; display: flex; align-items: center;">
-                                                <span style="display: inline-block; width: 6px; height: 6px; background: ${operationalRate === maxRate ? '#10b981' : '#94a3b8'}; border-radius: 2px; margin-right: 4px;"></span>
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
+                                            <span style="font-size: 9px; font-weight: 600; color: #c2410c; display: flex; align-items: center;">
+                                                <span style="display: inline-block; width: 6px; height: 6px; background: ${operationalRate === maxRate ? '#f97316' : '#94a3b8'}; border-radius: 2px; margin-right: 4px;"></span>
                                                 Operational ${operationalRate === maxRate && maxRate > 0 ? '👑' : ''}
                                             </span>
-                                            <div style="display: flex; align-items: baseline; gap: 4px;">
-                                                <span style="font-size: 13px; font-weight: 900; color: ${operationalRate === maxRate ? '#10b981' : '#6b7280'};">${operationalRate.toFixed(1)}%</span>
-                                            </div>
+                                            <span style="font-size: 13px; font-weight: 900; color: ${operationalRate === maxRate ? '#f97316' : '#6b7280'};">${operationalRate.toFixed(1)}%</span>
                                         </div>
                                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; font-size: 8px; color: #64748b;">
-                                            <span>Resp: <strong style="color: #047857;">${data.operational.responded}</strong></span>
-                                            <span>Poll: <strong style="color: #047857;">${data.operational.polled}</strong></span>
+                                            <span>Resp: <strong style="color: #c2410c;">${data.operational.responded}</strong></span>
+                                            <span>Poll: <strong style="color: #c2410c;">${data.operational.polled}</strong></span>
                                         </div>
-                                        <div style="background: #dcfce7; height: 6px; border-radius: 3px; overflow: hidden;">
-                                            <div style="background: ${operationalRate === maxRate ? '#10b981' : '#6b7280'}; height: 100%; width: ${operationalRate}%; transition: width 0.5s ease;"></div>
+                                        <div style="background: #ffedd5; height: 6px; border-radius: 3px; overflow: hidden;">
+                                            <div style="background: ${operationalRate === maxRate ? '#f97316' : '#6b7280'}; height: 100%; width: ${operationalRate}%; transition: width 0.5s ease;"></div>
                                         </div>
                                     </div>
                                 </div>
                             `;
                         });
                     } else {
-                        html += '<div style="text-align: center; padding: 30px; color: #64748b; font-size: 10px;"><i class="fas fa-info-circle" style="font-size: 24px; opacity: 0.3; margin-bottom: 8px;"></i><div>No Level Wise data available</div></div>';
+                        html += '<div style="text-align: center; padding: 20px; color: #64748b; font-size: 9px;"><i class="fas fa-info-circle" style="font-size: 18px; opacity: 0.3; margin-bottom: 6px;"></i><div>No Level Wise data available</div></div>';
                     }
                     
                     html += '</div>';
@@ -5169,19 +5168,19 @@ Total Population: ${totalPop}
                 // Opening statement
                 summary += `<div style="margin-bottom: 8px;"><strong>📊 Audit Overview:</strong> `;
                 summary += `This ${filterText ? 'filtered ' : ''}audit analysis covers <span style="background: var(--primary); color: white; padding: 2px 6px; border-radius: 4px; font-weight: 700;">${totalRecords.toLocaleString()}</span> records `;
-                summary += `across <span style="background: #3b82f6; color: white; padding: 2px 6px; border-radius: 4px; font-weight: 700;">${uniqueParameters}</span> parameters${filterText}.</div>`;
+                summary += `across <span style="background: var(--primary); color: white; padding: 2px 6px; border-radius: 4px; font-weight: 700;">${uniqueParameters}</span> parameters${filterText}.</div>`;
                 
                 // Coverage details
                 summary += `<div style="margin-bottom: 8px;"><strong>🌍 Coverage:</strong> `;
-                summary += `The data spans <span style="background: #8b5cf6; color: white; padding: 2px 6px; border-radius: 4px; font-weight: 700;">${uniqueClients}</span> client(s) `;
-                summary += `operating in <span style="background: #ec4899; color: white; padding: 2px 6px; border-radius: 4px; font-weight: 700;">${uniqueRegions}</span> region(s), `;
-                summary += `managed by <span style="background: #f59e0b; color: white; padding: 2px 6px; border-radius: 4px; font-weight: 700;">${regionalHeadsInData.size}</span> regional head(s).</div>`;
+                summary += `The data spans <span style="background: var(--primary); color: white; padding: 2px 6px; border-radius: 4px; font-weight: 700;">${uniqueClients}</span> client(s) `;
+                summary += `operating in <span style="background: var(--primary); color: white; padding: 2px 6px; border-radius: 4px; font-weight: 700;">${uniqueRegions}</span> region(s), `;
+                summary += `managed by <span style="background: var(--primary); color: white; padding: 2px 6px; border-radius: 4px; font-weight: 700;">${regionalHeadsInData.size}</span> regional head(s).</div>`;
                 
                 // Stage and criticality
                 summary += `<div><strong>⚙️ Audit Composition:</strong> `;
                 summary += `The audit encompasses <strong>${stageText}</strong> stage(s), categorized into `;
-                summary += `<span style="background: #dc2626; color: white; padding: 2px 6px; border-radius: 4px; font-weight: 700;">${criticalCount.toLocaleString()} Critical</span> and `;
-                summary += `<span style="background: #f04616; color: white; padding: 2px 6px; border-radius: 4px; font-weight: 700;">${nonCriticalCount.toLocaleString()} Non-Critical</span> opportunities.</div>`;
+                summary += `<span style="background: var(--primary); color: white; padding: 2px 6px; border-radius: 4px; font-weight: 700;">${criticalCount.toLocaleString()} Critical</span> and `;
+                summary += `<span style="background: var(--primary); color: white; padding: 2px 6px; border-radius: 4px; font-weight: 700;">${nonCriticalCount.toLocaleString()} Non-Critical</span> opportunities.</div>`;
                 
                 summary += `</div></div>`;
                 
