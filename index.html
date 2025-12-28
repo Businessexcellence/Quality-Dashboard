@@ -2071,7 +2071,7 @@
                 console.log('📊 Total CSAT Rows:', data.length);
                 console.log('📊 Sample row:', data[0]);
                 
-                // Define 2 filters (Financial Year and Parameter)
+                // Define 2 filters (Financial Year from Column B, Parameter from Column F)
                 const filters = [
                     { label: 'Financial Year', field: 'Financial Year', icon: 'calendar-alt' },
                     { label: 'Parameter', field: 'Parameter', icon: 'list-alt' }
@@ -2287,20 +2287,33 @@
                     return;
                 }
                 
-                // Group data by Parameter
+                // Group data by Parameter (Column F) and Sub Parameter 1 (Column G)
+                // Sub Parameter 1 contains: Taggd, Competitor, Industry
+                // Values (Column J) contains the numeric values
                 const parameterMap = {};
                 
                 data.forEach(row => {
-                    const parameter = row['Parameter'];
-                    const taggd = parseFloat(row['Taggd'] || 0);
-                    const competitor = parseFloat(row['Competitor'] || 0);
-                    const industry = parseFloat(row['Industry'] || 0);
-                    const value = parseFloat(row['Value'] || 0);
+                    const parameter = row['Parameter']; // Column F
+                    const subParam1 = String(row['Sub Parameter 1'] || '').trim(); // Column G
+                    const value = parseFloat(row['Values'] || 0); // Column J
                     
-                    if (parameter && !parameterMap[parameter]) {
-                        parameterMap[parameter] = { taggd, competitor, industry, value };
+                    if (!parameter) return;
+                    
+                    if (!parameterMap[parameter]) {
+                        parameterMap[parameter] = { taggd: 0, competitor: 0, industry: 0 };
+                    }
+                    
+                    // Map Sub Parameter 1 to the comparison categories
+                    if (subParam1.toLowerCase().includes('taggd')) {
+                        parameterMap[parameter].taggd = value;
+                    } else if (subParam1.toLowerCase().includes('competitor')) {
+                        parameterMap[parameter].competitor = value;
+                    } else if (subParam1.toLowerCase().includes('industry')) {
+                        parameterMap[parameter].industry = value;
                     }
                 });
+                
+                console.log('📊 Parameter Map:', parameterMap);
                 
                 // Create comparison HTML
                 let html = '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px;">';
@@ -2308,40 +2321,37 @@
                 Object.entries(parameterMap).forEach(([parameter, values]) => {
                     const maxValue = Math.max(values.taggd, values.competitor, values.industry);
                     
+                    // Skip if all values are 0
+                    if (maxValue === 0) return;
+                    
                     html += `
                         <div style="background: #f9fafb; border: 1px solid var(--border); border-radius: 6px; padding: 12px;">
                             <h4 style="font-size: 12px; font-weight: 700; color: var(--text-primary); margin: 0 0 10px 0;">${parameter}</h4>
                             <div style="margin-bottom: 8px;">
                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
                                     <span style="font-size: 10px; color: var(--text-secondary);">Taggd</span>
-                                    <span style="font-size: 11px; font-weight: 700; color: ${values.taggd === maxValue ? 'var(--primary)' : 'var(--text-primary)'};">${values.taggd.toFixed(1)}</span>
+                                    <span style="font-size: 11px; font-weight: 700; color: ${values.taggd === maxValue && maxValue > 0 ? 'var(--primary)' : 'var(--text-primary)'};">${values.taggd.toFixed(1)}</span>
                                 </div>
                                 <div style="background: #e5e7eb; height: 6px; border-radius: 3px; overflow: hidden;">
-                                    <div style="background: ${values.taggd === maxValue ? 'var(--primary)' : '#6b7280'}; height: 100%; width: ${(values.taggd / Math.max(100, maxValue)) * 100}%;"></div>
+                                    <div style="background: ${values.taggd === maxValue && maxValue > 0 ? 'var(--primary)' : '#6b7280'}; height: 100%; width: ${maxValue > 0 ? (values.taggd / maxValue) * 100 : 0}%;"></div>
                                 </div>
                             </div>
                             <div style="margin-bottom: 8px;">
                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
                                     <span style="font-size: 10px; color: var(--text-secondary);">Competitor</span>
-                                    <span style="font-size: 11px; font-weight: 700; color: ${values.competitor === maxValue ? 'var(--primary)' : 'var(--text-primary)'};">${values.competitor.toFixed(1)}</span>
+                                    <span style="font-size: 11px; font-weight: 700; color: ${values.competitor === maxValue && maxValue > 0 ? 'var(--primary)' : 'var(--text-primary)'};">${values.competitor.toFixed(1)}</span>
                                 </div>
                                 <div style="background: #e5e7eb; height: 6px; border-radius: 3px; overflow: hidden;">
-                                    <div style="background: ${values.competitor === maxValue ? 'var(--primary)' : '#6b7280'}; height: 100%; width: ${(values.competitor / Math.max(100, maxValue)) * 100}%;"></div>
+                                    <div style="background: ${values.competitor === maxValue && maxValue > 0 ? 'var(--primary)' : '#6b7280'}; height: 100%; width: ${maxValue > 0 ? (values.competitor / maxValue) * 100 : 0}%;"></div>
                                 </div>
                             </div>
                             <div style="margin-bottom: 8px;">
                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
                                     <span style="font-size: 10px; color: var(--text-secondary);">Industry</span>
-                                    <span style="font-size: 11px; font-weight: 700; color: ${values.industry === maxValue ? 'var(--primary)' : 'var(--text-primary)'};">${values.industry.toFixed(1)}</span>
+                                    <span style="font-size: 11px; font-weight: 700; color: ${values.industry === maxValue && maxValue > 0 ? 'var(--primary)' : 'var(--text-primary)'};">${values.industry.toFixed(1)}</span>
                                 </div>
                                 <div style="background: #e5e7eb; height: 6px; border-radius: 3px; overflow: hidden;">
-                                    <div style="background: ${values.industry === maxValue ? 'var(--primary)' : '#6b7280'}; height: 100%; width: ${(values.industry / Math.max(100, maxValue)) * 100}%;"></div>
-                                </div>
-                            </div>
-                            <div style="border-top: 1px solid var(--border); padding-top: 8px; margin-top: 8px;">
-                                <div style="display: flex; justify-content: space-between; align-items: center;">
-                                    <span style="font-size: 10px; font-weight: 600; color: var(--text-primary);">Reference Value</span>
-                                    <span style="font-size: 12px; font-weight: 700; color: var(--primary);">${values.value.toFixed(1)}</span>
+                                    <div style="background: ${values.industry === maxValue && maxValue > 0 ? 'var(--primary)' : '#6b7280'}; height: 100%; width: ${maxValue > 0 ? (values.industry / maxValue) * 100 : 0}%;"></div>
                                 </div>
                             </div>
                         </div>
@@ -2349,7 +2359,12 @@
                 });
                 
                 html += '</div>';
-                container.innerHTML = html;
+                
+                if (html === '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px;"></div>') {
+                    container.innerHTML = '<div style="text-align: center; padding: 20px; color: #9ca3af;">No comparison data available with current filters</div>';
+                } else {
+                    container.innerHTML = html;
+                }
                 
                 console.log('✅ NPS comparison rendered with', Object.keys(parameterMap).length, 'parameters');
             } catch (error) {
