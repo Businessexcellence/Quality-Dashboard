@@ -3230,24 +3230,30 @@
                     return;
                 }
 
-                // Calculate accuracy by account with intelligent filtering
+                // Calculate accuracy by account
                 const accounts = calculateAccountAccuracy();
                 
-                // Top performers: High accuracy (>=70%) AND significant audit count (>=10)
+                console.log('🏆 Top Performers calculation - Total accounts:', accounts.length);
+                
+                // Top performers: Simply the 5 HIGHEST accuracy accounts
                 const topPerformers = accounts
-                    .filter(acc => acc.accuracy >= 70 && acc.auditCount >= 10)
                     .sort((a, b) => {
-                        // Primary sort: accuracy descending
-                        if (Math.abs(b.accuracy - a.accuracy) > 5) {
+                        // Primary sort: HIGHEST accuracy first
+                        if (Math.abs(b.accuracy - a.accuracy) > 0.1) {
                             return b.accuracy - a.accuracy;
                         }
-                        // Secondary sort: audit count descending (more audits = more reliable)
+                        // Secondary sort: More audits first (more reliable data)
                         return b.auditCount - a.auditCount;
                     })
                     .slice(0, 5);
 
+                console.log('🏆 Top 5 Performers:');
+                topPerformers.forEach((acc, idx) => {
+                    console.log(`  ${idx + 1}. ${acc.name}: ${acc.accuracy.toFixed(1)}% accuracy, ${acc.auditCount} audits`);
+                });
+
                 if (topPerformers.length === 0) {
-                    container.innerHTML = '<div class="empty-state" style="padding: 20px; text-align: center; color: var(--text-muted);">No accounts meet top performer criteria (70%+ accuracy, 10+ audits)</div>';
+                    container.innerHTML = '<div class="empty-state" style="padding: 20px; text-align: center; color: var(--text-muted);">No data available</div>';
                     return;
                 }
 
@@ -3339,40 +3345,26 @@
 
                 const accounts = calculateAccountAccuracy();
                 
-                console.log('📊 Total accounts for Needs Attention analysis:', accounts.length);
-                console.log('📊 ALL accounts with details:', accounts.map(a => `${a.name}: ${a.accuracy.toFixed(1)}% accuracy (${a.auditCount} parameter audits, ${a.opportunityCount} total opportunities)`));
-                console.log('📊 Accounts sorted by accuracy (ascending):', [...accounts].sort((a,b) => a.accuracy - b.accuracy).slice(0, 10).map(a => `${a.name}: ${a.accuracy.toFixed(1)}% (${a.auditCount} audits)`));
+                console.log('⚠️ Needs Attention calculation - Total accounts:', accounts.length);
+                console.log('⚠️ ALL accounts with details:', accounts.map(a => `${a.name}: ${a.accuracy.toFixed(1)}% accuracy (${a.auditCount} parameter audits, ${a.opportunityCount} total opportunities)`));
+                console.log('⚠️ Accounts sorted by accuracy (ascending):', [...accounts].sort((a,b) => a.accuracy - b.accuracy).slice(0, 10).map(a => `${a.name}: ${a.accuracy.toFixed(1)}% (${a.auditCount} audits)`));
 
-                // Identify top performers first (same logic as renderTopAccounts)
-                const topPerformerNames = new Set(
-                    accounts
-                        .filter(acc => acc.accuracy >= 70 && acc.auditCount >= 10)
-                        .map(acc => acc.name)
-                );
-                
-                console.log('📊 Top Performers (excluded from Needs Attention):', Array.from(topPerformerNames));
-
-                // Needs Attention: Show MINIMUM ACCURACY accounts
-                // Simple logic: Lowest accuracy accounts (excluding top performers)
-                // Sort by: 1) Accuracy ascending (lowest first), 2) Audit count descending (more audits = more concern)
+                // Needs Attention: Simply the 5 LOWEST accuracy accounts
                 const needsAttention = accounts
-                    .filter(acc => !topPerformerNames.has(acc.name)) // EXCLUDE top performers
                     .sort((a, b) => {
-                        // Primary sort: Lowest accuracy first
+                        // Primary sort: LOWEST accuracy first
                         if (Math.abs(a.accuracy - b.accuracy) > 0.1) {
                             return a.accuracy - b.accuracy; // Ascending (lowest first)
                         }
-                        // Secondary sort: Higher audit count first (more data = more reliable)
+                        // Secondary sort: More audits first (more data = more concerning)
                         return b.auditCount - a.auditCount;
                     })
-                    .slice(0, 5); // Top 5 lowest accuracy accounts
+                    .slice(0, 5);
                 
-                console.log('📊 Needs Attention (5 lowest accuracy accounts):');
+                console.log('⚠️ Needs Attention (5 lowest accuracy accounts):');
                 needsAttention.forEach((acc, idx) => {
                     console.log(`  ${idx + 1}. ${acc.name}: ${acc.accuracy.toFixed(1)}% accuracy, ${acc.auditCount} audits`);
                 });
-
-                console.log('📊 Total accounts needing attention:', needsAttention.length);
 
                 if (needsAttention.length > 0) {
                     bottomAccountsContainer.innerHTML = `
@@ -3418,10 +3410,10 @@
                         </table>
                     `;
                 } else {
-                    bottomAccountsContainer.innerHTML = '<div class="empty-state" style="padding: 20px; text-align: center; color: var(--text-muted);">No accounts need attention (all accounts performing well)</div>';
+                    bottomAccountsContainer.innerHTML = '<div class="empty-state" style="padding: 20px; text-align: center; color: var(--text-muted);">No data available</div>';
                 }
 
-                console.log('✅ Needs Attention rendered:', needsAttention.length, 'accounts (lowest accuracy, excluding top performers)');
+                console.log('✅ Needs Attention rendered:', needsAttention.length, 'accounts (lowest accuracy)');
             } catch (error) {
                 handleError(error, 'renderInsights');
             }
