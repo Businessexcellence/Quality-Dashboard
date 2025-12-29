@@ -3308,9 +3308,11 @@
                 if (!account) return;
 
                 if (!accounts[account]) {
-                    accounts[account] = { pass: 0, count: 0, na: 0 };
+                    accounts[account] = { pass: 0, count: 0, na: 0, auditRows: 0 };
                 }
 
+                // Each row in Parameter_Audit_Count represents one parameter audit
+                accounts[account].auditRows += 1;
                 accounts[account].pass += parseFloat(row['Opportunity Pass']) || 0;
                 accounts[account].count += parseFloat(row['Opportunity Count']) || 0;
                 accounts[account].na += parseFloat(row['Opportunity NA']) || 0;
@@ -3323,7 +3325,8 @@
                 return { 
                     name, 
                     accuracy: parseFloat(accuracy.toFixed(2)), 
-                    auditCount: data.count,
+                    auditCount: data.auditRows, // Number of parameter audits (rows)
+                    opportunityCount: data.count, // Total opportunities
                     validAudits: denominator
                 };
             });
@@ -3337,7 +3340,7 @@
                 const accounts = calculateAccountAccuracy();
                 
                 console.log('📊 Total accounts for Needs Attention analysis:', accounts.length);
-                console.log('📊 ALL accounts:', accounts.map(a => `${a.name}: ${a.accuracy.toFixed(1)}% (${a.auditCount} audits)`));
+                console.log('📊 ALL accounts with details:', accounts.map(a => `${a.name}: ${a.accuracy.toFixed(1)}% accuracy (${a.auditCount} parameter audits, ${a.opportunityCount} total opportunities)`));
                 console.log('📊 Accounts sorted by accuracy (ascending):', [...accounts].sort((a,b) => a.accuracy - b.accuracy).slice(0, 10).map(a => `${a.name}: ${a.accuracy.toFixed(1)}% (${a.auditCount} audits)`));
 
                 // Identify top performers first (same logic as renderTopAccounts)
@@ -3351,9 +3354,10 @@
 
                 // Needs Attention: Show accounts that need improvement
                 // EXCLUDE top performers to avoid duplication
+                // Show accounts with low accuracy, prioritizing those with more audits
                 const needsAttention = accounts
-                    .filter(acc => acc.auditCount >= 3) // Minimum audits threshold
                     .filter(acc => !topPerformerNames.has(acc.name)) // EXCLUDE top performers
+                    .filter(acc => acc.accuracy < 80) // Focus on accounts needing improvement (below 80%)
                     .map(acc => {
                         // Calculate priority score
                         // Strategy: (100 - accuracy) × sqrt(auditCount) 
@@ -3421,7 +3425,7 @@
                         </table>
                     `;
                 } else {
-                    bottomAccountsContainer.innerHTML = '<div class="empty-state" style="padding: 20px; text-align: center; color: var(--text-muted);">No accounts with 3+ audits found</div>';
+                    bottomAccountsContainer.innerHTML = '<div class="empty-state" style="padding: 20px; text-align: center; color: var(--text-muted);">No accounts need attention (all accounts performing well)</div>';
                 }
 
                 console.log('✅ Needs Attention rendered:', needsAttention.length, 'accounts (scored by accuracy gap × audit weight)');
