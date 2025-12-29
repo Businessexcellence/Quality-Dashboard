@@ -6601,22 +6601,22 @@ Total Population: ${totalPop}
                     // Create filter with scroll and counts
                     return `
                         <div style="
-                            background: white; 
-                            border: 2px solid #ffccb3; 
-                            border-radius: 6px; 
-                            padding: 6px; 
+                            background: transparent; 
+                            border: 1px solid var(--border); 
+                            border-radius: 4px; 
+                            padding: 5px; 
                         ">
-                            <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 4px;">
+                            <div style="display: flex; align-items: center; gap: 3px; margin-bottom: 4px;">
                                 <i class="fas fa-${filter.icon}" style="color: var(--primary); font-size: 8px;"></i>
-                                <h3 style="font-size: 9px; font-weight: 700; color: var(--primary); margin: 0; text-transform: uppercase;">${filter.label}</h3>
+                                <h3 style="font-size: 9px; font-weight: 700; color: var(--text-primary); margin: 0; text-transform: uppercase;">${filter.label}</h3>
                             </div>
                             <div class="strategic-filter-options" data-filter-field="${filter.field}" style="
                                 display: flex; 
                                 flex-direction: column; 
                                 gap: 2px; 
-                                max-height: 90px; 
+                                max-height: 85px; 
                                 overflow-y: auto;
-                                padding-right: 3px;
+                                padding-right: 2px;
                             ">
                                 ${valueCounts.map(({ value, count }) => `
                                     <button 
@@ -6630,28 +6630,29 @@ Total Population: ${totalPop}
                                             justify-content: space-between;
                                             align-items: center;
                                             padding: 3px 5px;
-                                            background: #faf5ff;
-                                            border: 1px solid #ffccb3;
+                                            background: #f9fafb;
+                                            border: 1px solid var(--border);
                                             border-radius: 3px;
                                             cursor: pointer;
                                             transition: all 0.2s;
                                             text-align: left;
                                             width: 100%;
                                         "
-                                        onmouseover="if(!this.classList.contains('active')){ this.style.background='#ffe5d9'; this.style.borderColor='#f04616'; }"
-                                        onmouseout="if(!this.classList.contains('active')){ this.style.background='#faf5ff'; this.style.borderColor='#ffccb3'; }"
+                                        onmouseover="if(!this.classList.contains('active')){ this.style.background='#f0f1f3'; this.style.borderColor='var(--primary)'; }"
+                                        onmouseout="if(!this.classList.contains('active')){ this.style.background='#f9fafb'; this.style.borderColor='var(--border)'; }"
                                     >
-                                        <span style="color: #1e293b; font-size: 8px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;" title="${value}">${value}</span>
+                                        <span style="color: var(--text-primary); font-size: 8px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;" title="${value}">${value}</span>
                                         <span style="
-                                            background: linear-gradient(135deg, #f04616 0%, #ee4415 100%);
+                                            background: var(--primary);
                                             color: white;
                                             padding: 1px 4px;
-                                            border-radius: 8px;
-                                            font-size: 7px;
+                                            border-radius: 4px;
+                                            font-size: 8px;
                                             font-weight: 700;
-                                            margin-left: 4px;
-                                            min-width: 20px;
+                                            min-width: 16px;
                                             text-align: center;
+                                            flex-shrink: 0;
+                                            margin-left: 3px;
                                         ">${count}</span>
                                     </button>
                                 `).join('')}
@@ -7553,22 +7554,22 @@ Total Population: ${totalPop}
                     
                     return `
                         <div style="
-                            background: white; 
-                            border: 2px solid #ffccb3; 
-                            border-radius: 6px; 
-                            padding: 6px; 
+                            background: transparent; 
+                            border: 1px solid var(--border); 
+                            border-radius: 4px; 
+                            padding: 5px; 
                         ">
-                            <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 4px;">
+                            <div style="display: flex; align-items: center; gap: 3px; margin-bottom: 4px;">
                                 <i class="fas fa-${filter.icon}" style="color: var(--primary); font-size: 8px;"></i>
-                                <h3 style="font-size: 9px; font-weight: 700; color: var(--primary); margin: 0; text-transform: uppercase;">${filter.label}</h3>
+                                <h3 style="font-size: 9px; font-weight: 700; color: var(--text-primary); margin: 0; text-transform: uppercase;">${filter.label}</h3>
                             </div>
                             <div class="project-filter-options" data-filter-field="${filter.field}" style="
                                 display: flex; 
                                 flex-direction: column; 
                                 gap: 2px; 
-                                max-height: 90px; 
+                                max-height: 85px; 
                                 overflow-y: auto;
-                                padding-right: 3px;
+                                padding-right: 2px;
                             ">
                                 ${valueCounts.map(({ value, count }) => {
                                     const escapedValue = String(value).replace(/'/g, "\\'");
@@ -7585,28 +7586,29 @@ Total Population: ${totalPop}
                                             justify-content: space-between;
                                             align-items: center;
                                             padding: 3px 5px;
-                                            background: #faf5ff;
-                                            border: 1px solid #ffccb3;
+                                            background: #f9fafb;
+                                            border: 1px solid var(--border);
                                             border-radius: 3px;
                                             cursor: pointer;
                                             transition: all 0.2s;
                                             text-align: left;
                                             width: 100%;
                                         "
-                                        onmouseover="if(!this.classList.contains('active')){ this.style.background='#ffe5d9'; this.style.borderColor='#f04616'; }"
-                                        onmouseout="if(!this.classList.contains('active')){ this.style.background='#faf5ff'; this.style.borderColor='#ffccb3'; }"
+                                        onmouseover="if(!this.classList.contains('active')){ this.style.background='#f0f1f3'; this.style.borderColor='var(--primary)'; }"
+                                        onmouseout="if(!this.classList.contains('active')){ this.style.background='#f9fafb'; this.style.borderColor='var(--border)'; }"
                                     >
-                                        <span style="color: #1e293b; font-size: 8px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;" title="${value}">${value}</span>
+                                        <span style="color: var(--text-primary); font-size: 8px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;" title="${value}">${value}</span>
                                         <span style="
-                                            background: linear-gradient(135deg, #f04616 0%, #ee4415 100%);
+                                            background: var(--primary);
                                             color: white;
                                             padding: 1px 4px;
-                                            border-radius: 8px;
-                                            font-size: 7px;
+                                            border-radius: 4px;
+                                            font-size: 8px;
                                             font-weight: 700;
-                                            margin-left: 4px;
-                                            min-width: 20px;
+                                            min-width: 16px;
                                             text-align: center;
+                                            flex-shrink: 0;
+                                            margin-left: 3px;
                                         ">${count}</span>
                                     </button>
                                 `;
