@@ -3282,7 +3282,7 @@
                                             border-radius: 10px; 
                                             font-size: 10px; 
                                             font-weight: 700;
-                                        ">${acc.auditCount}</span>
+                                        ">${acc.auditCount.toLocaleString()}</span>
                                     </td>
                                     <td style="padding: 8px; text-align: right;">
                                         <span style="
@@ -3314,11 +3314,10 @@
                 if (!account) return;
 
                 if (!accounts[account]) {
-                    accounts[account] = { pass: 0, count: 0, na: 0, auditRows: 0 };
+                    accounts[account] = { pass: 0, count: 0, na: 0 };
                 }
 
-                // Each row in Parameter_Audit_Count represents one parameter audit
-                accounts[account].auditRows += 1;
+                // Aggregate all opportunities and passes
                 accounts[account].pass += parseFloat(row['Opportunity Pass']) || 0;
                 accounts[account].count += parseFloat(row['Opportunity Count']) || 0;
                 accounts[account].na += parseFloat(row['Opportunity NA']) || 0;
@@ -3330,9 +3329,10 @@
                 const accuracy = denominator > 0 ? (data.pass / denominator * 100) : 0;
                 return { 
                     name, 
-                    accuracy: parseFloat(accuracy.toFixed(2)), 
-                    auditCount: data.auditRows, // Number of parameter audits (rows)
-                    opportunityCount: data.count, // Total opportunities
+                    accuracy: parseFloat(accuracy.toFixed(1)), // Overall accuracy %
+                    auditCount: data.count, // TOTAL audit count (sum of all Opportunity Count)
+                    totalPass: data.pass,
+                    totalNA: data.na,
                     validAudits: denominator
                 };
             });
@@ -3346,7 +3346,7 @@
                 const accounts = calculateAccountAccuracy();
                 
                 console.log('⚠️ Needs Attention calculation - Total accounts:', accounts.length);
-                console.log('⚠️ ALL accounts with details:', accounts.map(a => `${a.name}: ${a.accuracy.toFixed(1)}% accuracy (${a.auditCount} parameter audits, ${a.opportunityCount} total opportunities)`));
+                console.log('⚠️ ALL accounts with details:', accounts.map(a => `${a.name}: ${a.accuracy.toFixed(1)}% accuracy (${a.auditCount} total audits)`));
                 console.log('⚠️ Accounts sorted by accuracy (ascending):', [...accounts].sort((a,b) => a.accuracy - b.accuracy).slice(0, 10).map(a => `${a.name}: ${a.accuracy.toFixed(1)}% (${a.auditCount} audits)`));
 
                 // Needs Attention: Simply the 5 LOWEST accuracy accounts
@@ -3386,13 +3386,13 @@
                                         <td style="padding: 8px; font-size: 11px; color: var(--text-primary); font-weight: 500;">${acc.name}</td>
                                         <td style="padding: 8px; text-align: right;">
                                             <span style="
-                                                background: ${acc.auditCount >= 20 ? '#ef4444' : acc.auditCount >= 10 ? '#f59e0b' : '#6b7280'}; 
+                                                background: ${acc.auditCount >= 10000 ? '#ef4444' : acc.auditCount >= 5000 ? '#f59e0b' : '#6b7280'}; 
                                                 color: white; 
                                                 padding: 3px 8px; 
                                                 border-radius: 10px; 
                                                 font-size: 10px; 
                                                 font-weight: 700;
-                                            ">${acc.auditCount}</span>
+                                            ">${acc.auditCount.toLocaleString()}</span>
                                         </td>
                                         <td style="padding: 8px; text-align: right;">
                                             <span style="
