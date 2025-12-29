@@ -3335,26 +3335,37 @@
                 if (!bottomAccountsContainer) return;
 
                 const accounts = calculateAccountAccuracy();
+                
+                console.log('📊 Total accounts for Needs Attention analysis:', accounts.length);
+                console.log('📊 ALL accounts:', accounts.map(a => `${a.name}: ${a.accuracy.toFixed(1)}% (${a.auditCount} audits)`));
+                console.log('📊 Accounts sorted by accuracy (ascending):', [...accounts].sort((a,b) => a.accuracy - b.accuracy).slice(0, 10).map(a => `${a.name}: ${a.accuracy.toFixed(1)}% (${a.auditCount} audits)`));
 
-                // Needs Attention: Intelligent scoring based on accuracy AND audit count
-                // Priority Score = (100 - accuracy) * log(auditCount)
-                // Higher score = needs more attention
+                // Needs Attention: Show accounts that need improvement
+                // Prioritize: Low accuracy OR (decent accuracy with many audits where improvement matters)
                 const needsAttention = accounts
-                    .filter(acc => acc.auditCount >= 5 && acc.accuracy < 80) // Minimum threshold
+                    .filter(acc => acc.auditCount >= 3) // Minimum audits threshold
                     .map(acc => {
                         // Calculate priority score
-                        // Low accuracy matters more, but audit count amplifies it
-                        const accuracyGap = 100 - acc.accuracy; // How far from perfect
-                        const auditWeight = Math.log10(acc.auditCount + 1); // Logarithmic scaling
+                        // Strategy: (100 - accuracy) × sqrt(auditCount) 
+                        // This gives more weight to low accuracy accounts with many audits
+                        const accuracyGap = 100 - acc.accuracy; // Gap from perfect
+                        const auditWeight = Math.sqrt(acc.auditCount); // Square root scaling (more aggressive than log)
                         const priorityScore = accuracyGap * auditWeight;
+                        
+                        console.log(`Account: ${acc.name}, Accuracy: ${acc.accuracy.toFixed(1)}%, Audits: ${acc.auditCount}, Gap: ${accuracyGap.toFixed(1)}, Weight: ${auditWeight.toFixed(2)}, Priority: ${priorityScore.toFixed(2)}`);
                         
                         return {
                             ...acc,
-                            priorityScore
+                            priorityScore,
+                            accuracyGap,
+                            auditWeight
                         };
                     })
                     .sort((a, b) => b.priorityScore - a.priorityScore) // Highest priority first
-                    .slice(0, 5);
+                    .slice(0, 5); // Top 5 accounts needing attention
+
+                console.log('📊 Filtered accounts needing attention:', needsAttention.length);
+                console.log('📊 Top 3 priority:', needsAttention.slice(0, 3).map(a => `${a.name}: ${a.accuracy.toFixed(1)}% (${a.auditCount} audits, score: ${a.priorityScore.toFixed(2)})`));
 
                 if (needsAttention.length > 0) {
                     bottomAccountsContainer.innerHTML = `
@@ -3386,7 +3397,7 @@
                                         </td>
                                         <td style="padding: 8px; text-align: right;">
                                             <span style="
-                                                background: ${acc.accuracy < 50 ? '#dc2626' : acc.accuracy < 65 ? '#f59e0b' : '#f97316'}; 
+                                                background: ${acc.accuracy < 50 ? '#dc2626' : acc.accuracy < 65 ? '#f59e0b' : acc.accuracy < 80 ? '#f97316' : '#10b981'}; 
                                                 color: white; 
                                                 padding: 3px 8px; 
                                                 border-radius: 10px; 
@@ -3400,11 +3411,10 @@
                         </table>
                     `;
                 } else {
-                    bottomAccountsContainer.innerHTML = '<div class="empty-state" style="padding: 20px; text-align: center; color: var(--text-muted);">No accounts need attention</div>';
+                    bottomAccountsContainer.innerHTML = '<div class="empty-state" style="padding: 20px; text-align: center; color: var(--text-muted);">No accounts with 3+ audits found</div>';
                 }
 
-                console.log('✅ Insights rendered:', needsAttention.length, 'accounts needing attention (scored by accuracy gap × audit weight)');
-                console.log('📊 Top priority accounts:', needsAttention.slice(0, 3).map(a => `${a.name}: ${a.accuracy.toFixed(1)}% (${a.auditCount} audits, score: ${a.priorityScore.toFixed(2)})`));
+                console.log('✅ Needs Attention rendered:', needsAttention.length, 'accounts (scored by accuracy gap × audit weight)');
             } catch (error) {
                 handleError(error, 'renderInsights');
             }
