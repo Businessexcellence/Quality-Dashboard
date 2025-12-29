@@ -3340,10 +3340,20 @@
                 console.log('📊 ALL accounts:', accounts.map(a => `${a.name}: ${a.accuracy.toFixed(1)}% (${a.auditCount} audits)`));
                 console.log('📊 Accounts sorted by accuracy (ascending):', [...accounts].sort((a,b) => a.accuracy - b.accuracy).slice(0, 10).map(a => `${a.name}: ${a.accuracy.toFixed(1)}% (${a.auditCount} audits)`));
 
+                // Identify top performers first (same logic as renderTopAccounts)
+                const topPerformerNames = new Set(
+                    accounts
+                        .filter(acc => acc.accuracy >= 70 && acc.auditCount >= 10)
+                        .map(acc => acc.name)
+                );
+                
+                console.log('📊 Top Performers (excluded from Needs Attention):', Array.from(topPerformerNames));
+
                 // Needs Attention: Show accounts that need improvement
-                // Prioritize: Low accuracy OR (decent accuracy with many audits where improvement matters)
+                // EXCLUDE top performers to avoid duplication
                 const needsAttention = accounts
                     .filter(acc => acc.auditCount >= 3) // Minimum audits threshold
+                    .filter(acc => !topPerformerNames.has(acc.name)) // EXCLUDE top performers
                     .map(acc => {
                         // Calculate priority score
                         // Strategy: (100 - accuracy) × sqrt(auditCount) 
