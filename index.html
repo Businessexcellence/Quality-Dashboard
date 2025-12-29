@@ -3230,9 +3230,26 @@
                     return;
                 }
 
-                // Calculate accuracy by account (limit to top 5)
+                // Calculate accuracy by account with intelligent filtering
                 const accounts = calculateAccountAccuracy();
-                const top5 = accounts.sort((a, b) => b.accuracy - a.accuracy).slice(0, 5);
+                
+                // Top performers: High accuracy (>=70%) AND significant audit count (>=10)
+                const topPerformers = accounts
+                    .filter(acc => acc.accuracy >= 70 && acc.auditCount >= 10)
+                    .sort((a, b) => {
+                        // Primary sort: accuracy descending
+                        if (Math.abs(b.accuracy - a.accuracy) > 5) {
+                            return b.accuracy - a.accuracy;
+                        }
+                        // Secondary sort: audit count descending (more audits = more reliable)
+                        return b.auditCount - a.auditCount;
+                    })
+                    .slice(0, 5);
+
+                if (topPerformers.length === 0) {
+                    container.innerHTML = '<div class="empty-state" style="padding: 20px; text-align: center; color: var(--text-muted);">No accounts meet top performer criteria (70%+ accuracy, 10+ audits)</div>';
+                    return;
+                }
 
                 container.innerHTML = `
                     <table style="width: 100%; border-collapse: collapse;">
@@ -3240,11 +3257,12 @@
                             <tr style="border-bottom: 2px solid var(--border); background: rgba(16,185,129,0.05);">
                                 <th style="padding: 8px; text-align: left; font-size: 10px; font-weight: 700; color: var(--text-primary);">#</th>
                                 <th style="padding: 8px; text-align: left; font-size: 10px; font-weight: 700; color: var(--text-primary);">Account</th>
+                                <th style="padding: 8px; text-align: right; font-size: 10px; font-weight: 700; color: var(--text-primary);">Audits</th>
                                 <th style="padding: 8px; text-align: right; font-size: 10px; font-weight: 700; color: var(--text-primary);">Accuracy</th>
                             </tr>
                         </thead>
                         <tbody>
-                            ${top5.map((acc, idx) => `
+                            ${topPerformers.map((acc, idx) => `
                                 <tr style="border-bottom: 1px solid var(--border); transition: background 0.2s;" 
                                     onmouseover="this.style.background='var(--bg-hover)'" 
                                     onmouseout="this.style.background='transparent'">
@@ -3252,7 +3270,17 @@
                                     <td style="padding: 8px; font-size: 11px; color: var(--text-primary); font-weight: 500;">${acc.name}</td>
                                     <td style="padding: 8px; text-align: right;">
                                         <span style="
-                                            background: #f04616; 
+                                            background: #3b82f6; 
+                                            color: white; 
+                                            padding: 3px 8px; 
+                                            border-radius: 10px; 
+                                            font-size: 10px; 
+                                            font-weight: 700;
+                                        ">${acc.auditCount}</span>
+                                    </td>
+                                    <td style="padding: 8px; text-align: right;">
+                                        <span style="
+                                            background: #10b981; 
                                             color: white; 
                                             padding: 3px 8px; 
                                             border-radius: 10px; 
@@ -3266,7 +3294,7 @@
                     </table>
                 `;
                 
-                console.log('✅ Top accounts rendered:', top5.length, 'accounts');
+                console.log('✅ Top accounts rendered:', topPerformers.length, 'accounts (70%+ accuracy, 10+ audits)');
             } catch (error) {
                 handleError(error, 'renderTopAccounts');
             }
@@ -3291,8 +3319,13 @@
             return Object.keys(accounts).map(name => {
                 const data = accounts[name];
                 const denominator = data.count - data.na;
-                const accuracy = denominator > 0 ? (data.pass / denominator * 100).toFixed(2) : 0;
-                return { name, accuracy: parseFloat(accuracy), count: data.count };
+                const accuracy = denominator > 0 ? (data.pass / denominator * 100) : 0;
+                return { 
+                    name, 
+                    accuracy: parseFloat(accuracy.toFixed(2)), 
+                    auditCount: data.count,
+                    validAudits: denominator
+                };
             });
         }
 
@@ -3303,23 +3336,36 @@
 
                 const accounts = calculateAccountAccuracy();
 
-                // Populate Needs Attention section with lowest performing accounts (limit to 5)
-                const lowestPerformers = accounts
-                    .sort((a, b) => a.accuracy - b.accuracy)
+                // Needs Attention: Low accuracy (<70%) with significant audit count (>=5)
+                // OR very low accuracy (<50%) regardless of count
+                const needsAttention = accounts
+                    .filter(acc => 
+                        (acc.accuracy < 70 && acc.auditCount >= 5) || 
+                        (acc.accuracy < 50 && acc.auditCount >= 3)
+                    )
+                    .sort((a, b) => {
+                        // Primary sort: accuracy ascending (worst first)
+                        if (Math.abs(a.accuracy - b.accuracy) > 5) {
+                            return a.accuracy - b.accuracy;
+                        }
+                        // Secondary sort: audit count descending (more audits = more concerning)
+                        return b.auditCount - a.auditCount;
+                    })
                     .slice(0, 5);
 
-                if (lowestPerformers.length > 0) {
+                if (needsAttention.length > 0) {
                     bottomAccountsContainer.innerHTML = `
                         <table style="width: 100%; border-collapse: collapse;">
                             <thead>
                                 <tr style="border-bottom: 2px solid var(--border); background: rgba(255,102,0,0.05);">
                                     <th style="padding: 8px; text-align: left; font-size: 10px; font-weight: 700; color: var(--text-primary);">#</th>
                                     <th style="padding: 8px; text-align: left; font-size: 10px; font-weight: 700; color: var(--text-primary);">Account</th>
+                                    <th style="padding: 8px; text-align: right; font-size: 10px; font-weight: 700; color: var(--text-primary);">Audits</th>
                                     <th style="padding: 8px; text-align: right; font-size: 10px; font-weight: 700; color: var(--text-primary);">Accuracy</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                ${lowestPerformers.map((acc, index) => `
+                                ${needsAttention.map((acc, index) => `
                                     <tr style="border-bottom: 1px solid var(--border); transition: background 0.2s;" 
                                         onmouseover="this.style.background='var(--bg-hover)'" 
                                         onmouseout="this.style.background='transparent'">
@@ -3327,7 +3373,17 @@
                                         <td style="padding: 8px; font-size: 11px; color: var(--text-primary); font-weight: 500;">${acc.name}</td>
                                         <td style="padding: 8px; text-align: right;">
                                             <span style="
-                                                background: ${acc.accuracy < 70 ? '#ef4444' : acc.accuracy < 80 ? '#f59e0b' : '#f04616'}; 
+                                                background: #6b7280; 
+                                                color: white; 
+                                                padding: 3px 8px; 
+                                                border-radius: 10px; 
+                                                font-size: 10px; 
+                                                font-weight: 700;
+                                            ">${acc.auditCount}</span>
+                                        </td>
+                                        <td style="padding: 8px; text-align: right;">
+                                            <span style="
+                                                background: ${acc.accuracy < 50 ? '#dc2626' : acc.accuracy < 70 ? '#f59e0b' : '#f04616'}; 
                                                 color: white; 
                                                 padding: 3px 8px; 
                                                 border-radius: 10px; 
@@ -3341,10 +3397,10 @@
                         </table>
                     `;
                 } else {
-                    bottomAccountsContainer.innerHTML = '<p style="padding: 20px; text-align: center; color: var(--text-muted);">No data available</p>';
+                    bottomAccountsContainer.innerHTML = '<div class="empty-state" style="padding: 20px; text-align: center; color: var(--text-muted);">No accounts need attention</div>';
                 }
 
-                console.log('✅ Insights rendered:', lowestPerformers.length, 'accounts needing attention');
+                console.log('✅ Insights rendered:', needsAttention.length, 'accounts needing attention (<70% accuracy, >=5 audits)');
             } catch (error) {
                 handleError(error, 'renderInsights');
             }
