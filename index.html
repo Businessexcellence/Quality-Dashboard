@@ -6430,6 +6430,11 @@ Total Population: ${totalPop}
                         indexAxis: 'y',
                         responsive: true,
                         maintainAspectRatio: false,
+                        layout: {
+                            padding: {
+                                right: 40  // Add 40px padding on the right for labels
+                            }
+                        },
                         plugins: {
                             legend: {
                                 display: false
@@ -6453,7 +6458,8 @@ Total Population: ${totalPop}
                                 formatter: function(value) {
                                     return value + '%';
                                 },
-                                clamp: true  // Keep labels within chart bounds
+                                offset: 4,  // 4px offset from bar end
+                                clamp: false  // Don't clamp - let layout padding handle it
                             }
                         },
                         scales: {
