@@ -1691,10 +1691,11 @@
                             </div>
                             <div>
                                 <div style="color: #64748b; font-size: 8px; font-weight: 700; text-transform: uppercase;">Status</div>
-                                <div id="rcaStatusBreakdown" style="color: #1e293b; font-size: 8px; font-weight: 600; margin-top: 2px;">
-                                    <!-- Status breakdown -->
-                                </div>
+                                <div id="rcaStatusCount" style="color: #1e293b; font-size: 18px; font-weight: 800;">0</div>
                             </div>
+                        </div>
+                        <div id="rcaStatusBreakdown" style="max-height: 70px; overflow-y: auto; font-size: 7px;">
+                            <!-- Status breakdown -->
                         </div>
                     </div>
                 </div>
@@ -8545,24 +8546,29 @@ Total Population: ${totalPop}
                     statusCounts[status] = (statusCounts[status] || 0) + 1;
                 });
                 
+                // Set the count of unique statuses (matching other cards)
+                safeSetText('rcaStatusCount', Object.keys(statusCounts).length);
+                
                 const statusHTML = Object.entries(statusCounts)
                     .sort((a, b) => b[1] - a[1])
+                    .slice(0, 5)  // Show top 5 statuses
                     .map(([status, count]) => {
+                        const percentage = rcaCapaItems.length > 0 ? Math.round((count / rcaCapaItems.length) * 100) : 0;
                         const statusUpper = String(status).toUpperCase();
                         let color = '#64748b';
                         if (statusUpper === 'CLOSED' || statusUpper.includes('COMPLETE')) color = '#f04616';
                         else if (statusUpper === 'OPEN' || statusUpper.includes('PROGRESS')) color = '#ef4444';
                         
                         return `
-                            <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 2px;">
-                                <div style="width: 6px; height: 6px; background: ${color}; border-radius: 50%;"></div>
-                                <span style="color: #1e293b; font-size: 8px; font-weight: 600;">${status}:</span>
-                                <span style="color: #64748b; font-size: 8px;">${count}</span>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 3px 0; border-bottom: 1px solid #fee2e2;">
+                                <span style="color: #1e293b; font-weight: 600; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${status}">${status}</span>
+                                <span style="color: #64748b; margin: 0 4px;">${percentage}%</span>
+                                <span style="background: ${color}; color: white; padding: 1px 4px; border-radius: 4px; font-weight: 700; font-size: 6px;">${count}</span>
                             </div>
                         `;
                     }).join('');
                 
-                safeSetHTML('rcaStatusBreakdown', statusHTML || '<div style="color: #94a3b8;">No data</div>');
+                safeSetHTML('rcaStatusBreakdown', statusHTML || '<div style="color: #94a3b8; text-align: center; padding: 8px;">No data</div>');
                 
                 console.log('✅ RCA KPIs generated');
             } catch (error) {
