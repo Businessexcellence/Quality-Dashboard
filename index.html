@@ -8631,7 +8631,8 @@ Total Population: ${totalPop}
                                 formatter: function(value) {
                                     return value;
                                 },
-                                offset: 4
+                                offset: 4,
+                                clamp: true  // Keep labels within chart area
                             },
                             tooltip: {
                                 callbacks: {
@@ -8644,6 +8645,7 @@ Total Population: ${totalPop}
                         scales: {
                             y: {
                                 beginAtZero: true,
+                                grace: '10%',  // Add 10% padding above highest value
                                 ticks: {
                                     font: { size: 10 },
                                     stepSize: 1
