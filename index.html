@@ -6423,7 +6423,7 @@ Total Population: ${totalPop}
                             backgroundColor: colors,
                             borderColor: colors.map(c => c.replace('0.8', '1')),
                             borderWidth: 2,
-                            barThickness: 15  // Reduced to 15px for better label visibility
+                            barThickness: 20  // Keep normal bar width
                         }]
                     },
                     options: {
@@ -6460,7 +6460,7 @@ Total Population: ${totalPop}
                             x: {
                                 beginAtZero: true,
                                 max: 100,
-                                grace: '5%',  // Add 5% padding to the right for labels
+                                grace: '15%',  // Add 15% padding to the right for labels (makes bars shorter)
                                 ticks: {
                                     font: { size: 10 },
                                     callback: function(value) {
