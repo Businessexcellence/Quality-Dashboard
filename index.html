@@ -3352,34 +3352,27 @@
                 
                 console.log('📊 Top Performers (excluded from Needs Attention):', Array.from(topPerformerNames));
 
-                // Needs Attention: Show accounts that need improvement
-                // EXCLUDE top performers to avoid duplication
-                // Show accounts with low accuracy, prioritizing those with more audits
+                // Needs Attention: Show MINIMUM ACCURACY accounts
+                // Simple logic: Lowest accuracy accounts (excluding top performers)
+                // Sort by: 1) Accuracy ascending (lowest first), 2) Audit count descending (more audits = more concern)
                 const needsAttention = accounts
                     .filter(acc => !topPerformerNames.has(acc.name)) // EXCLUDE top performers
-                    .filter(acc => acc.accuracy < 80) // Focus on accounts needing improvement (below 80%)
-                    .map(acc => {
-                        // Calculate priority score
-                        // Strategy: (100 - accuracy) × sqrt(auditCount) 
-                        // This gives more weight to low accuracy accounts with many audits
-                        const accuracyGap = 100 - acc.accuracy; // Gap from perfect
-                        const auditWeight = Math.sqrt(acc.auditCount); // Square root scaling (more aggressive than log)
-                        const priorityScore = accuracyGap * auditWeight;
-                        
-                        console.log(`Account: ${acc.name}, Accuracy: ${acc.accuracy.toFixed(1)}%, Audits: ${acc.auditCount}, Gap: ${accuracyGap.toFixed(1)}, Weight: ${auditWeight.toFixed(2)}, Priority: ${priorityScore.toFixed(2)}`);
-                        
-                        return {
-                            ...acc,
-                            priorityScore,
-                            accuracyGap,
-                            auditWeight
-                        };
+                    .sort((a, b) => {
+                        // Primary sort: Lowest accuracy first
+                        if (Math.abs(a.accuracy - b.accuracy) > 0.1) {
+                            return a.accuracy - b.accuracy; // Ascending (lowest first)
+                        }
+                        // Secondary sort: Higher audit count first (more data = more reliable)
+                        return b.auditCount - a.auditCount;
                     })
-                    .sort((a, b) => b.priorityScore - a.priorityScore) // Highest priority first
-                    .slice(0, 5); // Top 5 accounts needing attention
+                    .slice(0, 5); // Top 5 lowest accuracy accounts
+                
+                console.log('📊 Needs Attention (5 lowest accuracy accounts):');
+                needsAttention.forEach((acc, idx) => {
+                    console.log(`  ${idx + 1}. ${acc.name}: ${acc.accuracy.toFixed(1)}% accuracy, ${acc.auditCount} audits`);
+                });
 
-                console.log('📊 Filtered accounts needing attention:', needsAttention.length);
-                console.log('📊 Top 3 priority:', needsAttention.slice(0, 3).map(a => `${a.name}: ${a.accuracy.toFixed(1)}% (${a.auditCount} audits, score: ${a.priorityScore.toFixed(2)})`));
+                console.log('📊 Total accounts needing attention:', needsAttention.length);
 
                 if (needsAttention.length > 0) {
                     bottomAccountsContainer.innerHTML = `
@@ -3428,7 +3421,7 @@
                     bottomAccountsContainer.innerHTML = '<div class="empty-state" style="padding: 20px; text-align: center; color: var(--text-muted);">No accounts need attention (all accounts performing well)</div>';
                 }
 
-                console.log('✅ Needs Attention rendered:', needsAttention.length, 'accounts (scored by accuracy gap × audit weight)');
+                console.log('✅ Needs Attention rendered:', needsAttention.length, 'accounts (lowest accuracy, excluding top performers)');
             } catch (error) {
                 handleError(error, 'renderInsights');
             }
