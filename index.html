@@ -6361,16 +6361,32 @@ Total Population: ${totalPop}
                     const denominator = stats.opportunityCount - stats.opportunityNA;
                     // If denominator is 0 (Opportunity Count = Opportunity NA), accuracy is null (NA)
                     const accuracy = denominator > 0 ? (stats.opportunityPass / denominator * 100) : null;
-                    return { parameter: param, accuracy: accuracy, auditCount: stats.opportunityCount };
-                }).filter(p => p.auditCount > 0 && p.accuracy !== null); // Exclude NA values from chart
+                    return { 
+                        parameter: param, 
+                        accuracy: accuracy, 
+                        auditCount: stats.opportunityCount,
+                        denominator: denominator
+                    };
+                })
+                .filter(p => p.auditCount > 0 && p.accuracy !== null && p.accuracy > 0) // Exclude 0% and NA values
+                .filter(p => p.denominator >= 5); // Only include parameters with at least 5 valid audits
                 
-                // Sort by accuracy
-                paramData.sort((a, b) => b.accuracy - a.accuracy);
+                // Sort by accuracy descending
+                paramData.sort((a, b) => {
+                    // Primary sort: accuracy
+                    if (b.accuracy !== a.accuracy) {
+                        return b.accuracy - a.accuracy;
+                    }
+                    // Secondary sort: audit count (more audits = more reliable)
+                    return b.auditCount - a.auditCount;
+                });
+                
+                console.log('📊 Filtered parameters:', paramData.length, 'with min 5 audits and >0% accuracy');
                 
                 // Get top 5 and bottom 5 WITHOUT duplicates
                 let displayData = [];
                 if (paramData.length <= 10) {
-                    // If 10 or fewer parameters, show all (no duplicates)
+                    // If 10 or fewer parameters, show all
                     displayData = paramData;
                 } else {
                     // If more than 10 parameters, show top 5 and bottom 5
@@ -6378,6 +6394,7 @@ Total Population: ${totalPop}
                     const bottom5 = paramData.slice(-5).reverse();
                     displayData = [...top5, ...bottom5];
                 }
+                
                 const labels = displayData.map(d => d.parameter.length > 25 ? d.parameter.substring(0, 25) + '...' : d.parameter);
                 const accuracyData = displayData.map(d => d.accuracy.toFixed(1));
                 
@@ -6405,7 +6422,8 @@ Total Population: ${totalPop}
                             data: accuracyData,
                             backgroundColor: colors,
                             borderColor: colors.map(c => c.replace('0.8', '1')),
-                            borderWidth: 2
+                            borderWidth: 2,
+                            barThickness: 20  // Fixed bar thickness for thinner bars
                         }]
                     },
                     options: {
@@ -6434,13 +6452,15 @@ Total Population: ${totalPop}
                                 },
                                 formatter: function(value) {
                                     return value + '%';
-                                }
+                                },
+                                clamp: true  // Keep labels within chart bounds
                             }
                         },
                         scales: {
                             x: {
                                 beginAtZero: true,
                                 max: 100,
+                                grace: '5%',  // Add 5% padding to the right for labels
                                 ticks: {
                                     font: { size: 10 },
                                     callback: function(value) {
