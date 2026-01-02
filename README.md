@@ -10,7 +10,7 @@
 
 A comprehensive business excellence dashboard for quality management, audit tracking, and account performance monitoring. Built with pure HTML/CSS/JavaScript, powered by SheetJS for Excel integration.
 
-**Live URL:** https://3000-i4yzi7jtrlb3tg2lrav6w-cbeee0f9.sandbox.novita.ai
+**Live URL:** https://3000-iiqzlm50w1twpgggr1553-82b888ba.sandbox.novita.ai
 
 ---
 
@@ -40,7 +40,7 @@ A comprehensive business excellence dashboard for quality management, audit trac
 - ✅ **Account Details Table** - 9 columns, 100 accounts, row numbers, badges, filtering
 - ✅ All elements are clickable and interactive
 
-### 4. **RCA & CAPA Tab** ⭐ REDESIGNED (2025-12-25)
+### 4. **RCA & CAPA Tab** ⭐ REDESIGNED (2026-01-02)
 - ✅ **4 Smart Filters** - Practice Head (E), Financial Year (H), Region (J), Status (I) with intelligent column detection
 - ✅ **4 KPI Cards** - Error Type breakdown, Impact levels, Total count, Status distribution (all with counts and percentages)
 - ✅ **Region-wise Bar Chart** - Colorful bar chart showing RCA & CAPA count by region
@@ -125,7 +125,7 @@ All formulas are implemented and available in the codebase.
 
 ### For Users: Upload and View Data
 
-1. **Open Dashboard:** https://3000-i4yzi7jtrlb3tg2lrav6w-cbeee0f9.sandbox.novita.ai
+1. **Open Dashboard:** https://3000-iiqzlm50w1twpgggr1553-82b888ba.sandbox.novita.ai
 2. **Hard Refresh:** Ctrl+Shift+R (Windows) or Cmd+Shift+R (Mac)
 3. **Upload Excel:**
    - Click orange "Upload Excel" button (top right)
@@ -389,7 +389,7 @@ location.reload()
 
 ## 📞 Support & Contact
 
-**Dashboard URL:** https://3000-i4yzi7jtrlb3tg2lrav6w-cbeee0f9.sandbox.novita.ai
+**Dashboard URL:** https://3000-iiqzlm50w1twpgggr1553-82b888ba.sandbox.novita.ai
 
 **For Issues:**
 1. Check browser console (F12)
@@ -412,7 +412,7 @@ location.reload()
 - ✅ All interactive features working
 - ✅ 100% user requirements met
 
-**v1.1.0** (2025-12-25) ⭐ NEW
+**v1.1.0** (2026-01-02) ⭐ NEW
 - ✅ **FIXED: RCA & CAPA "no numbers showing" issue**
 - ✅ Created 6 comprehensive helper functions for column detection
   - `window.getRcaCapaStatus()` - Column I
@@ -435,7 +435,7 @@ location.reload()
 
 ---
 
-**Last Updated:** 2025-12-25  
+**Last Updated:** 2026-01-02  
 **Status:** ✅ PRODUCTION READY (RCA & CAPA FIXED)  
 **Theme:** Taggd Orange (100% brand consistency)  
-**Live URL:** https://3000-i4yzi7jtrlb3tg2lrav6w-cbeee0f9.sandbox.novita.ai
+**Live URL:** https://3000-iiqzlm50w1twpgggr1553-82b888ba.sandbox.novita.ai
