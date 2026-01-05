@@ -2,8 +2,8 @@
 
 **Created:** 2024-12-24  
 **Updated:** 2026-01-05  
-**Status:** ✅ **PRODUCTION READY - NEW DARK THEME & GLOBAL FILTERS**  
-**Theme:** Modern Dark Theme with Glassmorphism (Dark Gray/Orange Accent)
+**Status:** ✅ **PRODUCTION READY - LIGHT THEME WITH GLOBAL FILTERS**  
+**Theme:** Standard Light Theme (White/Gray) with Orange Accent
 
 ---
 
@@ -60,15 +60,15 @@ A comprehensive business excellence dashboard for quality management, audit trac
 - ✅ **Real-time Filtering** - Filters apply across all tabs
 - ✅ **Persistent State** - Filter selections maintained during navigation
 
-### 6. **Modern Dark Theme & Design** ⭐ NEW (2026-01-05)
-- ✅ **Dark Backgrounds**: #0a0a0a (primary), #111111 (secondary), #161616 (cards)
-- ✅ **Orange Accent**: #ff6b35 (primary), #ff8c5a (light)
-- ✅ **Glassmorphism Effects**: Frosted glass cards with blur effects
-- ✅ **Enhanced Animations**: Slide-up, fade-in, scale-in, pulse-glow effects
-- ✅ **Modern Typography**: Inter font family
-- ✅ **Smooth Transitions**: Cubic-bezier easing functions
+### 6. **Standard Light Theme & Design**
+- ✅ **Light Backgrounds**: #f5f5f5 (primary), #ffffff (cards)
+- ✅ **Orange Accent**: #f04616 (Taggd orange)
+- ✅ **Black Header**: Professional dark header with branding
+- ✅ **White Content Area**: Clean, high-contrast design
+- ✅ **Enhanced Animations**: Slide-up, fade-in, scale-in effects
+- ✅ **Professional Typography**: Plus Jakarta Sans font family
+- ✅ **Smooth Transitions**: All interactions are smooth
 - ✅ **Hover Effects**: Transform and shadow animations
-- ✅ **Gradient Backgrounds**: Subtle radial gradients for depth
 
 ---
 
@@ -208,23 +208,23 @@ webapp/
 
 ## 🎨 Theme Specifications
 
-### Color Palette (Updated 2026-01-05)
+### Color Palette (Light Theme - Restored 2026-01-05)
 
 | Purpose | Color | Hex Code | Usage |
 |---------|-------|----------|-------|
-| Primary Background | Very Dark | #0a0a0a | Main background |
-| Secondary Background | Dark | #111111 | Header, filter bar |
-| Card Background | Dark Gray | #161616 | Cards, panels |
-| Card Hover | Medium Gray | #1c1c1c | Interactive elements |
-| Primary Accent | Orange | #ff6b35 | Buttons, highlights |
-| Accent Light | Light Orange | #ff8c5a | Hover states, gradients |
-| Text Primary | White | #ffffff | Main text |
-| Text Secondary | Gray | #888888 | Secondary text |
-| Text Muted | Dark Gray | #666666 | Subtle text |
-| Success | Green | #10b981 | Success states |
+| Primary Background | Light Gray | #f5f5f5 | Main background |
+| Header Background | Black | #000000 | Header bar |
+| Card Background | White | #ffffff | Cards, panels, filter bar |
+| Card Hover | Light Gray | #f8f9fa | Interactive elements |
+| Primary Accent | Taggd Orange | #f04616 | Buttons, highlights |
+| Accent Light | Light Orange | #ff6347 | Hover states |
+| Text Primary | Black | #000000 | Main text |
+| Text Secondary | Dark Gray | #1a1a1a | Secondary text |
+| Text Muted | Gray | #6b7280 | Subtle text |
+| Success | Orange | #f04616 | Success states |
 | Warning | Amber | #f59e0b | Warning states |
-| Danger | Red | #ef4444 | Error states |
-| Glass Border | Translucent | rgba(255,255,255,0.08) | Glass effects |
+| Danger | Red | #dc2626 | Error states |
+| Border | Light Gray | #e5e7eb | Card borders |
 
 ### Typography
 - **Font Family:** Plus Jakarta Sans (Google Fonts)
@@ -445,28 +445,28 @@ location.reload()
 - ✅ Comprehensive documentation (RCA_CAPA_FIX_SUMMARY.md, TESTING_GUIDE.md)
 - ✅ Commit: 4d21de3 "Fix RCA & CAPA column detection with comprehensive helper functions"
 
-**v1.2.0** (2026-01-05) ⭐ LATEST - THEME & FILTERS UPDATE
-- ✅ **NEW DARK THEME**: Complete visual redesign with modern aesthetics
-  - Dark backgrounds (#0a0a0a, #111111, #161616)
-  - Orange accent color (#ff6b35, #ff8c5a)
-  - Glassmorphism card effects with backdrop blur
-  - Enhanced animations (slideUp, fadeIn, scaleIn, pulseGlow)
-  - Improved hover states and transitions
-  - Inter font family for modern typography
+**v1.2.0** (2026-01-05) ⭐ LATEST - GLOBAL FILTERS UPDATE
 - ✅ **GLOBAL FILTERS BAR**: Universal filtering across all tabs
   - Multi-select dropdowns: Financial Year, Month, Client, Region, Stage
-  - Active filter tags with remove buttons
+  - Active filter tags with remove buttons (orange gradient badges)
   - Reset all filters functionality
   - Real-time filtering with visual feedback
   - Filter state persists across tab navigation
+  - Clean white filter bar matching light theme
+- ✅ **STANDARD LIGHT THEME**: Professional light theme maintained
+  - Light gray background (#f5f5f5)
+  - White cards and filter bar (#ffffff)
+  - Black header with Taggd branding (#000000)
+  - Taggd orange accent (#f04616)
+  - High contrast for readability
+  - Clean, professional design
 - ✅ **IMPROVED UI/UX**:
-  - Card hover effects with transform animations
-  - Gradient backgrounds for depth
-  - Better contrast and readability
+  - Enhanced filter interactions
+  - Smooth animations for filter tags
+  - Better visual hierarchy
   - Consistent spacing and alignment
-  - Professional color scheme
 - ✅ Commits: 
-  - ad5cdd9 "Apply new dark theme with modern glassmorphism effects and animations"
+  - 1aa940c "Revert to standard light theme while keeping global filters functionality"
   - 148db44 "Add multi-select global filters with modern styling and active filter tags"
 
 ---
