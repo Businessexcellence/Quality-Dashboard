@@ -42,10 +42,10 @@
                     tabs[i].classList.remove('active');
                 }
                 
-                // Remove active from all nav items
-                var navItems = document.querySelectorAll('.nav-item');
-                for (var i = 0; i < navItems.length; i++) {
-                    navItems[i].classList.remove('active');
+                // Remove active from all menu items (sidebar navigation)
+                var menuItems = document.querySelectorAll('.menu-item');
+                for (var i = 0; i < menuItems.length; i++) {
+                    menuItems[i].classList.remove('active');
                 }
                 
                 // Show selected tab
@@ -57,7 +57,7 @@
                     console.error('❌ Tab not found:', tabId);
                 }
                 
-                // Activate nav item
+                // Activate menu item
                 if (clickedElement) {
                     clickedElement.classList.add('active');
                 }
@@ -2591,8 +2591,8 @@
                     tab.classList.remove('active');
                 });
 
-                // Remove active class from all nav items
-                document.querySelectorAll('.nav-item').forEach(item => {
+                // Remove active class from all menu items (sidebar navigation)
+                document.querySelectorAll('.menu-item').forEach(item => {
                     item.classList.remove('active');
                 });
 
