@@ -1,8 +1,9 @@
 # Business Excellence Dashboard - Complete Implementation
 
 **Created:** 2024-12-24  
-**Status:** ✅ **PRODUCTION READY (RCA & CAPA FIXED)**  
-**Theme:** Taggd Orange (Pure Orange-Black-White-Gray)
+**Updated:** 2026-01-05  
+**Status:** ✅ **PRODUCTION READY - NEW DARK THEME & GLOBAL FILTERS**  
+**Theme:** Modern Dark Theme with Glassmorphism (Dark Gray/Orange Accent)
 
 ---
 
@@ -52,15 +53,22 @@ A comprehensive business excellence dashboard for quality management, audit trac
 - ✅ **Debug Panel** - Visible yellow panel showing data status and helper function tests
 - ✅ **Issue Fixed**: "No numbers showing" resolved with comprehensive column detection system and header priority
 
-### 5. **Theme & Design**
-- ✅ **Pure Black Backgrounds**: #0d0d0d, #1a1a1a, #2a2a2a
-- ✅ **Taggd Orange**: #ff6600 (primary), #ff8533 (secondary)
-- ✅ **White Text**: #f8fafc
-- ✅ **Gray Shades**: #cbd5e1, #94a3b8, #333333
-- ✅ **NO Blue or Purple** - 100% brand consistency
-- ✅ Responsive layout
-- ✅ Hover effects with orange accents
-- ✅ Smooth transitions
+### 5. **NEW: Global Filters Bar** ⭐ (2026-01-05)
+- ✅ **Multi-Select Dropdowns** - Financial Year, Month, Client, Region, Stage
+- ✅ **Active Filter Tags** - Visual display of applied filters with remove option
+- ✅ **Reset Button** - Clear all filters instantly
+- ✅ **Real-time Filtering** - Filters apply across all tabs
+- ✅ **Persistent State** - Filter selections maintained during navigation
+
+### 6. **Modern Dark Theme & Design** ⭐ NEW (2026-01-05)
+- ✅ **Dark Backgrounds**: #0a0a0a (primary), #111111 (secondary), #161616 (cards)
+- ✅ **Orange Accent**: #ff6b35 (primary), #ff8c5a (light)
+- ✅ **Glassmorphism Effects**: Frosted glass cards with blur effects
+- ✅ **Enhanced Animations**: Slide-up, fade-in, scale-in, pulse-glow effects
+- ✅ **Modern Typography**: Inter font family
+- ✅ **Smooth Transitions**: Cubic-bezier easing functions
+- ✅ **Hover Effects**: Transform and shadow animations
+- ✅ **Gradient Backgrounds**: Subtle radial gradients for depth
 
 ---
 
@@ -200,19 +208,23 @@ webapp/
 
 ## 🎨 Theme Specifications
 
-### Color Palette
+### Color Palette (Updated 2026-01-05)
 
 | Purpose | Color | Hex Code | Usage |
 |---------|-------|----------|-------|
-| Primary Background | Pure Black | #0d0d0d | Main background |
-| Secondary Background | Dark Gray | #1a1a1a | Cards, panels |
-| Hover Background | Medium Gray | #2a2a2a | Interactive elements |
-| Primary Accent | Taggd Orange | #ff6600 | Buttons, highlights |
-| Secondary Accent | Light Orange | #ff8533 | Hover states |
-| Text Primary | Off-White | #f8fafc | Main text |
-| Text Secondary | Light Gray | #cbd5e1 | Secondary text |
-| Text Muted | Gray | #94a3b8 | Subtle text |
-| Border | Dark Gray | #333333 | Borders, dividers |
+| Primary Background | Very Dark | #0a0a0a | Main background |
+| Secondary Background | Dark | #111111 | Header, filter bar |
+| Card Background | Dark Gray | #161616 | Cards, panels |
+| Card Hover | Medium Gray | #1c1c1c | Interactive elements |
+| Primary Accent | Orange | #ff6b35 | Buttons, highlights |
+| Accent Light | Light Orange | #ff8c5a | Hover states, gradients |
+| Text Primary | White | #ffffff | Main text |
+| Text Secondary | Gray | #888888 | Secondary text |
+| Text Muted | Dark Gray | #666666 | Subtle text |
+| Success | Green | #10b981 | Success states |
+| Warning | Amber | #f59e0b | Warning states |
+| Danger | Red | #ef4444 | Error states |
+| Glass Border | Translucent | rgba(255,255,255,0.08) | Glass effects |
 
 ### Typography
 - **Font Family:** Plus Jakarta Sans (Google Fonts)
@@ -432,6 +444,30 @@ location.reload()
 - ✅ All data access points updated to use helper functions consistently
 - ✅ Comprehensive documentation (RCA_CAPA_FIX_SUMMARY.md, TESTING_GUIDE.md)
 - ✅ Commit: 4d21de3 "Fix RCA & CAPA column detection with comprehensive helper functions"
+
+**v1.2.0** (2026-01-05) ⭐ LATEST - THEME & FILTERS UPDATE
+- ✅ **NEW DARK THEME**: Complete visual redesign with modern aesthetics
+  - Dark backgrounds (#0a0a0a, #111111, #161616)
+  - Orange accent color (#ff6b35, #ff8c5a)
+  - Glassmorphism card effects with backdrop blur
+  - Enhanced animations (slideUp, fadeIn, scaleIn, pulseGlow)
+  - Improved hover states and transitions
+  - Inter font family for modern typography
+- ✅ **GLOBAL FILTERS BAR**: Universal filtering across all tabs
+  - Multi-select dropdowns: Financial Year, Month, Client, Region, Stage
+  - Active filter tags with remove buttons
+  - Reset all filters functionality
+  - Real-time filtering with visual feedback
+  - Filter state persists across tab navigation
+- ✅ **IMPROVED UI/UX**:
+  - Card hover effects with transform animations
+  - Gradient backgrounds for depth
+  - Better contrast and readability
+  - Consistent spacing and alignment
+  - Professional color scheme
+- ✅ Commits: 
+  - ad5cdd9 "Apply new dark theme with modern glassmorphism effects and animations"
+  - 148db44 "Add multi-select global filters with modern styling and active filter tags"
 
 ---
 
