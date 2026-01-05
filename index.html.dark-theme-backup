@@ -127,39 +127,38 @@
         }
 
         :root {
-            /* Taggd Brand Colors - From PowerPoint Theme */
-            --primary: #f04616;           /* Taggd Orange (primary) */
-            --primary-dark: #ee4415;      /* Darker Orange */
-            --primary-light: #ff6347;     /* Light Orange for highlights */
-            --secondary: #ff7f50;         /* Coral Orange */
-            --accent: #ffa07a;            /* Light Salmon Accent */
-            --success: #f04616;           /* Taggd Orange for success */
-            --warning: #f59e0b;           /* Amber for warnings */
-            --error: #dc2626;             /* Red for errors */
+            /* Dark Theme - Modern Dashboard */
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #111111;
+            --bg-card: #161616;
+            --bg-card-hover: #1c1c1c;
+            --accent-orange: #ff6b35;
+            --accent-orange-light: #ff8c5a;
+            --text-primary: #ffffff;
+            --text-secondary: #888888;
+            --text-muted: #666666;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --ai-blue: #3b82f6;
+            --ai-purple: #8b5cf6;
+            --glass-bg: rgba(22, 22, 22, 0.8);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --border-color: rgba(255, 255, 255, 0.06);
+            --border-hover: rgba(255, 255, 255, 0.12);
+            --grid-color: transparent;
+            --axis-color: #6b7280;
+            --chart-text: #9ca3af;
             
-            /* Backgrounds - High Contrast */
-            --bg-primary: #000000;        /* Pure Black */
-            --bg-secondary: #0a0a0a;      /* Very Dark Gray */
-            --bg-card: #ffffff;           /* White Cards for content */
-            --bg-hover: #f8f9fa;          /* Light Gray Hover */
-            --bg-card-hover: #f8f9fa;     /* Light Gray Hover */
-            
-            /* Text - Black for Readability */
-            --text-primary: #000000;      /* Black Text */
-            --text-secondary: #1a1a1a;    /* Dark Gray */
-            --text-muted: #6b7280;        /* Medium Gray */
-            --text-on-dark: #ffffff;      /* White text on dark backgrounds */
-            
-            /* Borders & Shadows */
-            --border: #e5e7eb;            /* Light Gray Border */
-            --border-dark: #1a1a1a;       /* Dark Border */
-            --border-color: #e5e7eb;      /* Light Gray Border */
-            --border-hover: #d1d5db;      /* Darker Gray on Hover */
-            --shadow: rgba(0, 0, 0, 0.1); /* Subtle Shadow */
-            
-            /* Compatibility with new filters */
-            --accent-orange: #f04616;
-            --accent-orange-light: #ff6347;
+            /* Legacy compatibility */
+            --primary: #ff6b35;
+            --primary-dark: #ff5a1f;
+            --primary-light: #ff8c5a;
+            --error: #ef4444;
+            --text-on-dark: #ffffff;
+            --border: rgba(255, 255, 255, 0.06);
+            --border-dark: rgba(255, 255, 255, 0.12);
+            --shadow: rgba(0, 0, 0, 0.3);
             
             /* Spacing */
             --nav-width: 60px;
@@ -167,21 +166,19 @@
             --header-height: 80px;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        * { 
+            font-family: 'Inter', sans-serif; 
+            box-sizing: border-box; 
         }
-
-        body {
-            font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
-            background: #f5f5f5;
-            color: var(--text-primary);
-            font-size: 13px;
+        
+        body { 
+            background: var(--bg-primary); 
+            color: var(--text-primary); 
             overflow-x: hidden;
+            transition: background 0.3s ease, color 0.3s ease;
+            font-size: 13px;
         }
-
-        /* Background Gradient Effect - Subtle */
+        
         body::before {
             content: '';
             position: fixed;
@@ -189,7 +186,9 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+            background-image: 
+                radial-gradient(ellipse at top, rgba(255, 107, 53, 0.03) 0%, transparent 50%),
+                radial-gradient(ellipse at bottom right, rgba(139, 92, 246, 0.03) 0%, transparent 50%);
             pointer-events: none;
             z-index: -1;
         }
@@ -248,11 +247,11 @@
         
         /* ==================== MODERN FILTERS ==================== */
         .filter-select {
-            background: #ffffff;
-            border: 2px solid #e5e7eb;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
             border-radius: 8px;
             padding: 6px 12px;
-            color: #000000;
+            color: var(--text-primary);
             cursor: pointer;
             transition: all 0.3s ease;
             min-width: 120px;
@@ -260,22 +259,22 @@
             font-weight: 500;
         }
         .filter-select:hover { 
-            border-color: #f04616; 
-            background: #fef2f2;
+            border-color: var(--accent-orange); 
+            background: var(--bg-card-hover);
         }
         .filter-select:focus { 
             outline: none; 
-            border-color: #f04616; 
-            box-shadow: 0 0 0 3px rgba(240, 70, 22, 0.15); 
+            border-color: var(--accent-orange); 
+            box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.15); 
         }
         .filter-select option { 
-            background: #ffffff; 
-            color: #000000; 
+            background: var(--bg-card); 
+            color: var(--text-primary); 
             padding: 8px; 
         }
         
         .filter-tag {
-            background: linear-gradient(135deg, #f04616, #ff6347);
+            background: linear-gradient(135deg, var(--accent-orange), var(--accent-orange-light));
             color: white;
             padding: 4px 10px;
             border-radius: 16px;
@@ -284,17 +283,19 @@
             align-items: center;
             gap: 6px;
             animation: scaleIn 0.2s ease-out;
-            font-weight: 600;
-            box-shadow: 0 2px 4px rgba(240, 70, 22, 0.2);
+            font-weight: 500;
         }
         .filter-tag .remove-tag { 
             cursor: pointer; 
-            opacity: 0.9; 
+            opacity: 0.8; 
             transition: opacity 0.2s; 
-            font-weight: bold;
         }
         .filter-tag .remove-tag:hover { 
             opacity: 1; 
+        }
+        
+        .filters-bar {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
         /* ==========================================
@@ -307,8 +308,8 @@
             left: 0;
             right: 0;
             height: var(--header-height);
-            background: #000000;
-            border-bottom: 2px solid #1a1a1a;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -465,7 +466,7 @@
             margin-top: calc(var(--header-height) + 60px);
             padding: 24px;
             min-height: calc(100vh - var(--header-height) - 60px);
-            background: #ffffff;
+            background: var(--bg-primary);
         }
 
         .tab-content {
@@ -567,17 +568,17 @@
 
         .widget-card {
             background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
             padding: 20px;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
         }
 
         .widget-card:hover {
-            border-color: var(--primary);
-            transform: translateY(-4px);
-            box-shadow: 0 12px 24px var(--shadow);
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 16px 40px rgba(0,0,0,0.3);
         }
 
         .widget-card h3 {
@@ -622,22 +623,24 @@
 
         .filter-card {
             background: var(--bg-card);
-            border: 2px solid var(--border);
-            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
             padding: 16px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .filter-card:hover {
-            border-color: var(--primary);
-            background: rgba(240, 70, 22, 0.05);
+            border-color: var(--accent-orange);
+            background: rgba(255, 107, 53, 0.05);
+            transform: translateY(-2px);
         }
 
         .filter-card.active {
-            border-color: var(--primary);
-            background: rgba(240, 70, 22, 0.1);
+            border-color: var(--accent-orange);
+            background: rgba(255, 107, 53, 0.1);
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.2);
         }
 
         .filter-card h4 {
@@ -658,19 +661,34 @@
            ========================================== */
         
         .kpi-card {
-            background: var(--bg-card);
-            border: 2px solid var(--border);
-            border-radius: 12px;
+            background: linear-gradient(145deg, var(--bg-card) 0%, var(--bg-secondary) 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
             padding: 20px;
             text-align: center;
-            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-orange), var(--accent-orange-light));
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
         .kpi-card:hover {
-            border-color: var(--primary);
-            background: rgba(240, 70, 22, 0.05);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(240, 70, 22, 0.3);
+            border-color: rgba(255, 107, 53, 0.2);
+            transform: translateY(-4px);
+            box-shadow: 0 16px 48px rgba(255, 107, 53, 0.12);
+        }
+        
+        .kpi-card:hover::before {
+            opacity: 1;
         }
 
         .kpi-icon {
@@ -904,8 +922,8 @@
     </div>
     
     <!-- GLOBAL FILTERS BAR -->
-    <div class="filters-bar" id="filtersBar" style="position: fixed; top: var(--header-height); left: 0; right: 0; background: #ffffff; border-bottom: 2px solid #e5e7eb; padding: 12px 24px; z-index: 999; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);">
-        <span style="font-size: 11px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px;">Filters:</span>
+    <div class="filters-bar" id="filtersBar" style="position: fixed; top: var(--header-height); left: 0; right: 0; background: var(--bg-secondary); border-bottom: 1px solid var(--border-color); padding: 12px 24px; z-index: 999; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+        <span style="font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Filters:</span>
         
         <select id="globalFilterYear" class="filter-select" multiple size="1" onchange="applyGlobalFilters()">
             <option value="">All Years</option>
@@ -929,7 +947,7 @@
         
         <div id="activeGlobalFilters" class="flex items-center gap-1 flex-wrap"></div>
         
-        <button type="button" onclick="resetGlobalFilters()" class="ml-auto" style="background: #ffffff; border: 2px solid #e5e7eb; color: #6b7280; padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 6px;">
+        <button type="button" onclick="resetGlobalFilters()" class="ml-auto" style="background: transparent; border: 1px solid var(--border-color); color: var(--text-secondary); padding: 6px 12px; border-radius: 8px; font-size: 11px; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 6px;">
             <i class="fas fa-sync-alt"></i> Reset
         </button>
     </div>
