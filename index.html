@@ -1102,6 +1102,30 @@
                             <option value="">All Months</option>
                         </select>
                     </div>
+                    
+                    <!-- Stage -->
+                    <div>
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: #1f2937; margin-bottom: 8px;">
+                            <i class="fas fa-layer-group" style="color: #6b7280;"></i>
+                            Stage:
+                        </label>
+                        <select id="globalFilterStage" class="filter-select-advanced" onchange="applyGlobalFilters()">
+                            <option value="">All Stages</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Critical/Non Critical -->
+                    <div>
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: #1f2937; margin-bottom: 8px;">
+                            <i class="fas fa-exclamation-triangle" style="color: #6b7280;"></i>
+                            Critical/Non Critical:
+                        </label>
+                        <select id="globalFilterCritical" class="filter-select-advanced" onchange="applyGlobalFilters()">
+                            <option value="">All</option>
+                            <option value="Critical">Critical</option>
+                            <option value="Non Critical">Non Critical</option>
+                        </select>
+                    </div>
                 </div>
                 
                 <!-- Action Buttons -->
@@ -2286,7 +2310,9 @@
             client: [],
             region: [],
             regionAlt: [],
-            practice: []
+            practice: [],
+            stage: [],
+            critical: []
         };
         
         function populateGlobalFilters() {
@@ -2343,6 +2369,16 @@
                         practiceHeads.map(p => `<option value="${p}">${p}</option>`).join('');
                 }
                 
+                // Populate Stage filter from Parameter_Audit_Count data
+                if (window.dashboardData && window.dashboardData.parameterAuditCount) {
+                    const stages = [...new Set(window.dashboardData.parameterAuditCount.map(r => r['Stage']).filter(Boolean))].sort();
+                    const stageSelect = document.getElementById('globalFilterStage');
+                    if (stageSelect && stages.length > 0) {
+                        stageSelect.innerHTML = '<option value="">All Stages</option>' + 
+                            stages.map(s => `<option value="${s}">${s}</option>`).join('');
+                    }
+                }
+                
                 console.log('✅ Global filters populated');
             } catch (error) {
                 console.error('❌ Error populating global filters:', error);
@@ -2358,6 +2394,8 @@
                 const regionSelect = document.getElementById('globalFilterRegion');
                 const regionAltSelect = document.getElementById('globalFilterRegionAlt');
                 const practiceSelect = document.getElementById('globalFilterPractice');
+                const stageSelect = document.getElementById('globalFilterStage');
+                const criticalSelect = document.getElementById('globalFilterCritical');
                 
                 globalFilters.year = yearSelect && yearSelect.value ? [yearSelect.value] : [];
                 globalFilters.month = monthSelect && monthSelect.value ? [monthSelect.value] : [];
@@ -2365,6 +2403,8 @@
                 globalFilters.region = regionSelect && regionSelect.value ? [regionSelect.value] : [];
                 globalFilters.regionAlt = regionAltSelect && regionAltSelect.value ? [regionAltSelect.value] : [];
                 globalFilters.practice = practiceSelect && practiceSelect.value ? [practiceSelect.value] : [];
+                globalFilters.stage = stageSelect && stageSelect.value ? [stageSelect.value] : [];
+                globalFilters.critical = criticalSelect && criticalSelect.value ? [criticalSelect.value] : [];
                 
                 // Update active filter tags
                 updateActiveFilterTags();
@@ -2423,6 +2463,16 @@
                     tags.push(`<span class="filter-tag">Practice Head: ${p} <span class="remove-tag" onclick="removeGlobalFilter('practice', '${p}')">×</span></span>`);
                 });
             }
+            if (globalFilters.stage.length > 0) {
+                globalFilters.stage.forEach(s => {
+                    tags.push(`<span class="filter-tag">Stage: ${s} <span class="remove-tag" onclick="removeGlobalFilter('stage', '${s}')">×</span></span>`);
+                });
+            }
+            if (globalFilters.critical.length > 0) {
+                globalFilters.critical.forEach(c => {
+                    tags.push(`<span class="filter-tag">${c} <span class="remove-tag" onclick="removeGlobalFilter('critical', '${c}')">×</span></span>`);
+                });
+            }
             
             container.innerHTML = tags.join('');
         }
@@ -2436,6 +2486,10 @@
                 selectId = 'globalFilterRegionAlt';
             } else if (type === 'practice') {
                 selectId = 'globalFilterPractice';
+            } else if (type === 'stage') {
+                selectId = 'globalFilterStage';
+            } else if (type === 'critical') {
+                selectId = 'globalFilterCritical';
             }
             const select = document.getElementById(selectId);
             if (select) {
@@ -2452,11 +2506,13 @@
                 client: [],
                 region: [],
                 regionAlt: [],
-                practice: []
+                practice: [],
+                stage: [],
+                critical: []
             };
             
             // Reset all select elements
-            ['globalFilterYear', 'globalFilterMonth', 'globalFilterClient', 'globalFilterRegion', 'globalFilterRegionAlt', 'globalFilterPractice'].forEach(id => {
+            ['globalFilterYear', 'globalFilterMonth', 'globalFilterClient', 'globalFilterRegion', 'globalFilterRegionAlt', 'globalFilterPractice', 'globalFilterStage', 'globalFilterCritical'].forEach(id => {
                 const select = document.getElementById(id);
                 if (select) {
                     select.selectedIndex = 0;
@@ -6736,19 +6792,6 @@ Total Population: ${totalPop}
                                     (${worstParam.auditCount.toLocaleString()} audits) requires improvement.
                                 </p>
                                 ` : ''}
-                                <p style="margin: 0 0 8px 0;">
-                                    <span style="font-weight: 700; color: var(--text-primary);">Performance Distribution:</span> 
-                                    <span style="color: #f04616; font-weight: 600;">${highPerformers}</span> high (≥90%), 
-                                    <span style="color: #f59e0b; font-weight: 600;">${mediumPerformers}</span> medium (70-89%), 
-                                    <span style="color: #ef4444; font-weight: 600;">${lowPerformers}</span> low (<70%).
-                                </p>
-                                <p style="margin: 0;">
-                                    <span style="font-weight: 700; color: var(--text-primary);">Recommendation:</span> 
-                                    ${lowPerformers > 0 
-                                        ? `Focus on improving <strong>${lowPerformers}</strong> low-performing parameter(s) to enhance overall quality.`
-                                        : `Maintain current quality standards and monitor parameter consistency.`
-                                    }
-                                </p>
                             </div>
                         </div>
                     </div>
