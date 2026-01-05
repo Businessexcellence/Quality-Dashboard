@@ -64,12 +64,14 @@ A comprehensive business excellence dashboard for quality management, audit trac
 
 ### 6. **NEW: Advanced Filters Section** ⭐ (2026-01-05)
 - ✅ **Professional Layout** - 3-column grid with labeled dropdowns
-- ✅ **6 Filter Options** - Fiscal Year, Regional Head, Region, Practice Head, Account, Month
+- ✅ **8 Filter Options** - Fiscal Year, Regional Head, Region, Practice Head, Account, Month, Stage, Critical/Non Critical
 - ✅ **Icon-Enhanced Labels** - Each filter has a descriptive icon
 - ✅ **Action Buttons** - "Apply Filters" and "Clear All Filters" in maroon theme
 - ✅ **Active Filter Tags** - Visual badges showing applied filters with remove buttons
 - ✅ **Real-time Filtering** - Filters apply across all tabs
 - ✅ **Card Design** - White card with rounded corners and shadow
+- ✅ **Stage Filter** - Filter data by stage (from Parameter_Audit_Count)
+- ✅ **Critical/Non Critical Filter** - Filter by criticality level
 
 ### 7. **Modern Design System**
 - ✅ **Light Backgrounds**: #f5f5f5 (body), #ffffff (cards)
