@@ -2,8 +2,8 @@
 
 **Created:** 2024-12-24  
 **Updated:** 2026-01-05  
-**Status:** ✅ **PRODUCTION READY - ADVANCED FILTERS & NEW LOGO**  
-**Theme:** Standard Light Theme (White/Gray) with Maroon Accent
+**Status:** ✅ **PRODUCTION READY - NEW SIDEBAR LAYOUT**  
+**Theme:** Standard Light Theme with Orange Gradient Header
 
 ---
 
@@ -53,24 +53,33 @@ A comprehensive business excellence dashboard for quality management, audit trac
 - ✅ **Debug Panel** - Visible yellow panel showing data status and helper function tests
 - ✅ **Issue Fixed**: "No numbers showing" resolved with comprehensive column detection system and header priority
 
-### 5. **NEW: Advanced Filters Section** ⭐ (2026-01-05)
+### 5. **NEW: Left Sidebar Layout** ⭐ (2026-01-05)
+- ✅ **280px Fixed Sidebar** - Full-height navigation on the left
+- ✅ **Black Header with Logo** - Taggd logo in black background
+- ✅ **Dashboard Views Section** - All navigation items with icons
+- ✅ **Smooth Hover Effects** - Transform and glow animations
+- ✅ **Active State Indicators** - Orange accent with pulse dot
+- ✅ **Icon Integration** - Font Awesome icons for all menu items
+- ✅ **Responsive Design** - Clean, modern sidebar layout
+
+### 6. **NEW: Advanced Filters Section** ⭐ (2026-01-05)
 - ✅ **Professional Layout** - 3-column grid with labeled dropdowns
 - ✅ **6 Filter Options** - Fiscal Year, Regional Head, Region, Practice Head, Account, Month
 - ✅ **Icon-Enhanced Labels** - Each filter has a descriptive icon
 - ✅ **Action Buttons** - "Apply Filters" and "Clear All Filters" in maroon theme
 - ✅ **Active Filter Tags** - Visual badges showing applied filters with remove buttons
 - ✅ **Real-time Filtering** - Filters apply across all tabs
-- ✅ **Expanded Section** - More space for better user experience
+- ✅ **Card Design** - White card with rounded corners and shadow
 
-### 6. **Standard Light Theme & Design**
-- ✅ **Light Backgrounds**: #f5f5f5 (primary), #ffffff (cards)
-- ✅ **Orange Accent**: #f04616 (Taggd orange)
-- ✅ **Black Header**: Professional dark header with branding
-- ✅ **White Content Area**: Clean, high-contrast design
+### 7. **Modern Design System**
+- ✅ **Light Backgrounds**: #f5f5f5 (body), #ffffff (cards)
+- ✅ **Orange Gradient Header**: #3c3530 → #ff6b35 (brown to orange)
+- ✅ **Taggd Orange Accent**: #f04616 (primary actions)
+- ✅ **White Sidebar**: Clean professional sidebar design
 - ✅ **Enhanced Animations**: Slide-up, fade-in, scale-in effects
 - ✅ **Professional Typography**: Plus Jakarta Sans font family
 - ✅ **Smooth Transitions**: All interactions are smooth
-- ✅ **Hover Effects**: Transform and shadow animations
+- ✅ **Hover Effects**: Transform and shadow animations on menu items
 
 ---
 
@@ -210,23 +219,26 @@ webapp/
 
 ## 🎨 Theme Specifications
 
-### Color Palette (Light Theme - Restored 2026-01-05)
+### Color Palette (Modern Layout - Updated 2026-01-05)
 
 | Purpose | Color | Hex Code | Usage |
 |---------|-------|----------|-------|
-| Primary Background | Light Gray | #f5f5f5 | Main background |
-| Header Background | Black | #000000 | Header bar |
+| Primary Background | Light Gray | #f5f5f5 | Main content background |
+| Sidebar Background | White | #ffffff | Left sidebar |
+| Sidebar Header | Black | #000000 | Logo area |
+| Header Gradient Start | Dark Brown | #3c3530 | Gradient header start |
+| Header Gradient End | Orange | #ff6b35 | Gradient header end |
 | Card Background | White | #ffffff | Cards, panels, filter bar |
-| Card Hover | Light Gray | #f8f9fa | Interactive elements |
-| Primary Accent | Taggd Orange | #f04616 | Buttons, highlights |
+| Sidebar Hover | Light Gray | #f5f5f5 | Menu item hover |
+| Primary Accent | Taggd Orange | #f04616 | Active states, highlights |
 | Accent Light | Light Orange | #ff6347 | Hover states |
-| Text Primary | Black | #000000 | Main text |
-| Text Secondary | Dark Gray | #1a1a1a | Secondary text |
+| Text Primary | Black | #1a1a1a | Main text |
+| Text Secondary | Gray | #374151 | Secondary text |
 | Text Muted | Gray | #6b7280 | Subtle text |
 | Success | Orange | #f04616 | Success states |
 | Warning | Amber | #f59e0b | Warning states |
 | Danger | Red | #dc2626 | Error states |
-| Border | Light Gray | #e5e7eb | Card borders |
+| Border | Light Gray | #e5e7eb | Card borders, sidebar border |
 
 ### Typography
 - **Font Family:** Plus Jakarta Sans (Google Fonts)
@@ -235,7 +247,14 @@ webapp/
 - **Body Text:** 14px
 - **Small Text:** 11-12px
 
+### Layout Structure
+- **Sidebar:** 280px fixed width, full height, white background with black header
+- **Main Content:** margin-left: 280px, flexible width, #f5f5f5 background
+- **Header:** Gradient background (#3c3530 → #ff6b35), rounded corners, centered title
+- **Filters Section:** White card, 3-column grid, rounded corners with shadow
+
 ### Components
+- **Menu Items:** Left-aligned icons, hover transform, active pulse indicator
 - **Filter Cards:** Grid layout, hover effects, click actions
 - **KPI Cards:** Large numbers, icons, clickable
 - **Widget Cards:** Consistent padding, border-radius, shadows
@@ -447,25 +466,33 @@ location.reload()
 - ✅ Comprehensive documentation (RCA_CAPA_FIX_SUMMARY.md, TESTING_GUIDE.md)
 - ✅ Commit: 4d21de3 "Fix RCA & CAPA column detection with comprehensive helper functions"
 
-**v1.2.0** (2026-01-05) ⭐ LATEST - GLOBAL FILTERS UPDATE
-- ✅ **GLOBAL FILTERS BAR**: Universal filtering across all tabs
-  - Multi-select dropdowns: Financial Year, Month, Client, Region, Stage
-  - Active filter tags with remove buttons (orange gradient badges)
-  - Reset all filters functionality
-  - Real-time filtering with visual feedback
-  - Filter state persists across tab navigation
-  - Clean white filter bar matching light theme
-- ✅ **STANDARD LIGHT THEME**: Professional light theme maintained
-  - Light gray background (#f5f5f5)
-  - White cards and filter bar (#ffffff)
-  - Black header with Taggd branding (#000000)
-  - Taggd orange accent (#f04616)
-  - High contrast for readability
-  - Clean, professional design
-- ✅ **IMPROVED UI/UX**:
-  - Enhanced filter interactions
-  - Smooth animations for filter tags
-  - Better visual hierarchy
+**v1.2.0** (2026-01-05) ⭐ LATEST - SIDEBAR LAYOUT TRANSFORMATION
+- ✅ **NEW LAYOUT**: Complete UI transformation matching reference design
+  - 280px fixed left sidebar (full height)
+  - Black header with centered Taggd logo
+  - White sidebar with gradient hover effects
+  - Main content area with gradient header card
+  - Upload Excel button in header
+  - All navigation moved to sidebar
+- ✅ **ADVANCED FILTERS**: Professional 3-column grid layout
+  - 6 filter options: Fiscal Year, Regional Head, Region, Practice Head, Account, Month
+  - Icon-enhanced labels for each filter
+  - Maroon action buttons (Apply/Clear All)
+  - Active filter tags with remove functionality
+  - White card design with shadow
+  - Real-time filtering across all tabs
+- ✅ **MODERN DESIGN SYSTEM**:
+  - Orange gradient header (#3c3530 → #ff6b35)
+  - Light gray body background (#f5f5f5)
+  - White sidebar and cards (#ffffff)
+  - Taggd orange accents (#f04616)
+  - Smooth menu item animations with pulse indicators
+  - Professional typography and spacing
+- ✅ **IMPROVED NAVIGATION**:
+  - All menu items with Font Awesome icons
+  - Active state with orange highlight
+  - Transform and glow hover effects
+  - Clean, organized sidebar sections
   - Consistent spacing and alignment
 - ✅ Commits: 
   - 1aa940c "Revert to standard light theme while keeping global filters functionality"
