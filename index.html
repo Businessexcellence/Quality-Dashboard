@@ -244,6 +244,59 @@
         .animate-pulse-glow { animation: pulseGlow 2s infinite; }
         .animate-float { animation: float 3s ease-in-out infinite; }
         .pulse-dot { animation: pulse 2s infinite; }
+        
+        /* ==================== MODERN FILTERS ==================== */
+        .filter-select {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 6px 12px;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 120px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .filter-select:hover { 
+            border-color: var(--accent-orange); 
+            background: var(--bg-card-hover);
+        }
+        .filter-select:focus { 
+            outline: none; 
+            border-color: var(--accent-orange); 
+            box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.15); 
+        }
+        .filter-select option { 
+            background: var(--bg-card); 
+            color: var(--text-primary); 
+            padding: 8px; 
+        }
+        
+        .filter-tag {
+            background: linear-gradient(135deg, var(--accent-orange), var(--accent-orange-light));
+            color: white;
+            padding: 4px 10px;
+            border-radius: 16px;
+            font-size: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            animation: scaleIn 0.2s ease-out;
+            font-weight: 500;
+        }
+        .filter-tag .remove-tag { 
+            cursor: pointer; 
+            opacity: 0.8; 
+            transition: opacity 0.2s; 
+        }
+        .filter-tag .remove-tag:hover { 
+            opacity: 1; 
+        }
+        
+        .filters-bar {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
 
         /* ==========================================
            HEADER
@@ -410,10 +463,10 @@
         
         .main-content {
             margin-left: var(--nav-width);
-            margin-top: var(--header-height);
+            margin-top: calc(var(--header-height) + 60px);
             padding: 24px;
-            min-height: calc(100vh - var(--header-height));
-            background: #ffffff;
+            min-height: calc(100vh - var(--header-height) - 60px);
+            background: var(--bg-primary);
         }
 
         .tab-content {
@@ -865,6 +918,37 @@
         <button class="upload-btn" onclick="openUploadModal()">
             <i class="fas fa-upload"></i>
             Upload Excel
+        </button>
+    </div>
+    
+    <!-- GLOBAL FILTERS BAR -->
+    <div class="filters-bar" id="filtersBar" style="position: fixed; top: var(--header-height); left: 0; right: 0; background: var(--bg-secondary); border-bottom: 1px solid var(--border-color); padding: 12px 24px; z-index: 999; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+        <span style="font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Filters:</span>
+        
+        <select id="globalFilterYear" class="filter-select" multiple size="1" onchange="applyGlobalFilters()">
+            <option value="">All Years</option>
+        </select>
+        
+        <select id="globalFilterMonth" class="filter-select" multiple size="1" onchange="applyGlobalFilters()">
+            <option value="">All Months</option>
+        </select>
+        
+        <select id="globalFilterClient" class="filter-select" multiple size="1" onchange="applyGlobalFilters()">
+            <option value="">All Clients</option>
+        </select>
+        
+        <select id="globalFilterRegion" class="filter-select" multiple size="1" onchange="applyGlobalFilters()">
+            <option value="">All Regions</option>
+        </select>
+        
+        <select id="globalFilterStage" class="filter-select" multiple size="1" onchange="applyGlobalFilters()">
+            <option value="">All Stages</option>
+        </select>
+        
+        <div id="activeGlobalFilters" class="flex items-center gap-1 flex-wrap"></div>
+        
+        <button type="button" onclick="resetGlobalFilters()" class="ml-auto" style="background: transparent; border: 1px solid var(--border-color); color: var(--text-secondary); padding: 6px 12px; border-radius: 8px; font-size: 11px; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 6px;">
+            <i class="fas fa-sync-alt"></i> Reset
         </button>
     </div>
 
@@ -2064,6 +2148,235 @@
         }
 
         console.log('✅ Safe DOM utilities loaded');
+
+        // ==========================================
+        // GLOBAL FILTERS
+        // ==========================================
+        
+        let globalFilters = {
+            year: [],
+            month: [],
+            client: [],
+            region: [],
+            stage: []
+        };
+        
+        function populateGlobalFilters() {
+            try {
+                if (!window.dashboardData || !window.dashboardData.accountSummary) return;
+                
+                const data = window.dashboardData.accountSummary;
+                
+                // Populate Year filter
+                const years = [...new Set(data.map(r => r['Financial Year'] || r['Finanical Year']).filter(Boolean))].sort((a, b) => b - a);
+                const yearSelect = document.getElementById('globalFilterYear');
+                if (yearSelect && years.length > 0) {
+                    yearSelect.innerHTML = '<option value="">All Years</option>' + 
+                        years.map(y => `<option value="${y}">FY ${y}</option>`).join('');
+                }
+                
+                // Populate Month filter
+                const months = [...new Set(data.map(r => r['Month']).filter(Boolean))];
+                const monthSelect = document.getElementById('globalFilterMonth');
+                if (monthSelect && months.length > 0) {
+                    monthSelect.innerHTML = '<option value="">All Months</option>' + 
+                        months.map(m => `<option value="${m}">${m}</option>`).join('');
+                }
+                
+                // Populate Client filter
+                const clients = [...new Set(data.map(r => r['Account'] || r['Client'] || r['Account Name']).filter(Boolean))].sort();
+                const clientSelect = document.getElementById('globalFilterClient');
+                if (clientSelect && clients.length > 0) {
+                    clientSelect.innerHTML = '<option value="">All Clients</option>' + 
+                        clients.map(c => `<option value="${c}">${c}</option>`).join('');
+                }
+                
+                // Populate Region filter
+                const regions = [...new Set(data.map(r => r['Regional Head'] || r['Region']).filter(Boolean))].sort();
+                const regionSelect = document.getElementById('globalFilterRegion');
+                if (regionSelect && regions.length > 0) {
+                    regionSelect.innerHTML = '<option value="">All Regions</option>' + 
+                        regions.map(r => `<option value="${r}">${r}</option>`).join('');
+                }
+                
+                // Populate Stage filter (from Parameter data if available)
+                if (window.dashboardData.parameterAuditCount && window.dashboardData.parameterAuditCount.length > 0) {
+                    const stages = [...new Set(window.dashboardData.parameterAuditCount.map(r => r['Stage']).filter(Boolean))].sort();
+                    const stageSelect = document.getElementById('globalFilterStage');
+                    if (stageSelect && stages.length > 0) {
+                        stageSelect.innerHTML = '<option value="">All Stages</option>' + 
+                            stages.map(s => `<option value="${s}">${s}</option>`).join('');
+                    }
+                }
+                
+                console.log('✅ Global filters populated');
+            } catch (error) {
+                console.error('❌ Error populating global filters:', error);
+            }
+        }
+        
+        function applyGlobalFilters() {
+            try {
+                // Get selected values from multi-select dropdowns
+                const yearSelect = document.getElementById('globalFilterYear');
+                const monthSelect = document.getElementById('globalFilterMonth');
+                const clientSelect = document.getElementById('globalFilterClient');
+                const regionSelect = document.getElementById('globalFilterRegion');
+                const stageSelect = document.getElementById('globalFilterStage');
+                
+                globalFilters.year = yearSelect ? Array.from(yearSelect.selectedOptions).map(o => o.value).filter(v => v) : [];
+                globalFilters.month = monthSelect ? Array.from(monthSelect.selectedOptions).map(o => o.value).filter(v => v) : [];
+                globalFilters.client = clientSelect ? Array.from(clientSelect.selectedOptions).map(o => o.value).filter(v => v) : [];
+                globalFilters.region = regionSelect ? Array.from(regionSelect.selectedOptions).map(o => o.value).filter(v => v) : [];
+                globalFilters.stage = stageSelect ? Array.from(stageSelect.selectedOptions).map(o => o.value).filter(v => v) : [];
+                
+                // Update active filter tags
+                updateActiveFilterTags();
+                
+                // Refresh all active tabs with filtered data
+                const activeTab = document.querySelector('.tab-content.active');
+                if (activeTab) {
+                    const tabId = activeTab.id;
+                    if (tabId === 'account-summary' && typeof window.refreshAccountSummaryTab === 'function') {
+                        window.refreshAccountSummaryTab();
+                    } else if (tabId === 'rca-capa' && typeof window.refreshRcaCapaTab === 'function') {
+                        window.refreshRcaCapaTab();
+                    }
+                    // Add more tab refresh calls as needed
+                }
+                
+                console.log('✅ Global filters applied:', globalFilters);
+            } catch (error) {
+                console.error('❌ Error applying global filters:', error);
+            }
+        }
+        
+        function updateActiveFilterTags() {
+            const container = document.getElementById('activeGlobalFilters');
+            if (!container) return;
+            
+            let tags = [];
+            
+            if (globalFilters.year.length > 0) {
+                globalFilters.year.forEach(y => {
+                    tags.push(`<span class="filter-tag">FY ${y} <span class="remove-tag" onclick="removeGlobalFilter('year', '${y}')">×</span></span>`);
+                });
+            }
+            if (globalFilters.month.length > 0) {
+                globalFilters.month.forEach(m => {
+                    tags.push(`<span class="filter-tag">${m} <span class="remove-tag" onclick="removeGlobalFilter('month', '${m}')">×</span></span>`);
+                });
+            }
+            if (globalFilters.client.length > 0) {
+                globalFilters.client.forEach(c => {
+                    tags.push(`<span class="filter-tag">${c} <span class="remove-tag" onclick="removeGlobalFilter('client', '${c}')">×</span></span>`);
+                });
+            }
+            if (globalFilters.region.length > 0) {
+                globalFilters.region.forEach(r => {
+                    tags.push(`<span class="filter-tag">${r} <span class="remove-tag" onclick="removeGlobalFilter('region', '${r}')">×</span></span>`);
+                });
+            }
+            if (globalFilters.stage.length > 0) {
+                globalFilters.stage.forEach(s => {
+                    tags.push(`<span class="filter-tag">${s} <span class="remove-tag" onclick="removeGlobalFilter('stage', '${s}')">×</span></span>`);
+                });
+            }
+            
+            container.innerHTML = tags.join('');
+        }
+        
+        function removeGlobalFilter(type, value) {
+            globalFilters[type] = globalFilters[type].filter(v => v !== value);
+            
+            // Update select element
+            const selectId = 'globalFilter' + type.charAt(0).toUpperCase() + type.slice(1);
+            const select = document.getElementById(selectId);
+            if (select) {
+                Array.from(select.options).forEach(option => {
+                    if (option.value === value) {
+                        option.selected = false;
+                    }
+                });
+            }
+            
+            applyGlobalFilters();
+        }
+        
+        function resetGlobalFilters() {
+            globalFilters = {
+                year: [],
+                month: [],
+                client: [],
+                region: [],
+                stage: []
+            };
+            
+            // Reset all select elements
+            ['globalFilterYear', 'globalFilterMonth', 'globalFilterClient', 'globalFilterRegion', 'globalFilterStage'].forEach(id => {
+                const select = document.getElementById(id);
+                if (select) {
+                    Array.from(select.options).forEach(option => option.selected = false);
+                    select.selectedIndex = 0;
+                }
+            });
+            
+            updateActiveFilterTags();
+            applyGlobalFilters();
+            
+            console.log('✅ Global filters reset');
+        }
+        
+        // Helper function to filter data based on global filters
+        function applyGlobalFiltersToData(data, dataType = 'account') {
+            if (!data || data.length === 0) return data;
+            
+            let filtered = data;
+            
+            // Apply year filter
+            if (globalFilters.year.length > 0) {
+                filtered = filtered.filter(row => {
+                    const year = row['Financial Year'] || row['Finanical Year'];
+                    return globalFilters.year.includes(String(year));
+                });
+            }
+            
+            // Apply month filter
+            if (globalFilters.month.length > 0) {
+                filtered = filtered.filter(row => {
+                    const month = row['Month'];
+                    return globalFilters.month.includes(month);
+                });
+            }
+            
+            // Apply client filter
+            if (globalFilters.client.length > 0) {
+                filtered = filtered.filter(row => {
+                    const client = row['Account'] || row['Client'] || row['Account Name'];
+                    return globalFilters.client.includes(client);
+                });
+            }
+            
+            // Apply region filter
+            if (globalFilters.region.length > 0) {
+                filtered = filtered.filter(row => {
+                    const region = row['Regional Head'] || row['Region'];
+                    return globalFilters.region.includes(region);
+                });
+            }
+            
+            // Apply stage filter (for parameter data)
+            if (globalFilters.stage.length > 0 && dataType === 'parameter') {
+                filtered = filtered.filter(row => {
+                    const stage = row['Stage'];
+                    return globalFilters.stage.includes(stage);
+                });
+            }
+            
+            return filtered;
+        }
+        
+        console.log('✅ Global filter functions loaded');
 
         // ==========================================
         // Upload functions already defined in HEAD section - no duplicates needed
@@ -10417,6 +10730,10 @@ Total Population: ${totalPop}
         // This function is kept for backward compatibility (initial data load)
         function refreshAllTabs() {
             console.log('🔄 Initial data load: Refreshing all tabs');
+            
+            // Populate global filters first
+            populateGlobalFilters();
+            
             refreshHomeTab();
             refreshAccountSummaryTab();
             refreshTransactionalTab();
