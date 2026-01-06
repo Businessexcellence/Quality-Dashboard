@@ -49,15 +49,23 @@ A comprehensive business excellence dashboard for quality management, audit trac
 - ✅ **One-View Client Summary** - Comprehensive performance overview for all clients
 - ✅ **Client Filter** - Select specific client or view all clients at once
 - ✅ **4 Summary KPI Cards** - Total Clients, Average Accuracy, Total Transactions, Total RCA/CAPA
-- ✅ **Client Performance Cards** - Individual cards for each client showing:
+- ✅ **7 Parameter KPI Cards per Client** - Horizontal row showing:
+  1. **Total Parameters** - Count of all parameters audited
+  2. **Accuracy %** - Overall accuracy percentage
+  3. **% Sample** - Sample coverage percentage
+  4. **Error %** - Error rate percentage
+  5. **Total Audits** - Total number of audits performed
+  6. **Critical Params** - Count of critical parameters
+  7. **Non-Critical Params** - Count of non-critical parameters
+- ✅ **Client Performance Cards** - Individual full-width cards for each client showing:
+  - **7 KPI Cards** - White cards with black text, icons, and subtle shadows (matching reference design)
   - **Transactional Overview** - Total transactions and accuracy
-  - **Parameter Performance** - Total parameters and accuracy with distribution bar
+  - **Parameter Performance** - Total parameters with high/medium/low breakdown
   - **RCA & CAPA** - Total issues with open/closed breakdown
   - **Customer Satisfaction** - CSAT score and response count
-- ✅ **Parameter Distribution Visualization** - Color-coded bar showing high/medium/low performance
-- ✅ **Interactive Cards** - Hover effects with border highlight
-- ✅ **Smart Data Integration** - Pulls data from all sheets (Account_Summary, Parameter_Audit_Count, Transactional_Overview, RCA_CAPA, CSAT)
-- ✅ **Responsive Grid Layout** - Auto-fill grid adapts to screen size
+- ✅ **Interactive Cards** - Hover effects with orange border highlight
+- ✅ **Smart Data Integration** - Pulls data from Parameter_Audit_Count (including Stage field for Critical/Non-Critical)
+- ✅ **Full-Width Layout** - Cards span full width to accommodate 7 KPI cards
 
 ### 5. **RCA & CAPA Tab** ⭐ REDESIGNED (2026-01-02)
 - ✅ **4 Smart Filters** - Practice Head (E), Financial Year (H), Region (J), Status (I) with intelligent column detection
