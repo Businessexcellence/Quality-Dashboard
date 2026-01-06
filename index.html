@@ -4213,28 +4213,49 @@
                 csat: { score: 0, responses: 0 }
             };
             
-            // Transactional Overview
-            if (window.dashboardData.transactionalOverview) {
+            // Transactional Overview - with flexible matching
+            if (window.dashboardData.transactionalOverview && window.dashboardData.transactionalOverview.length > 0) {
                 const trans = window.dashboardData.transactionalOverview.filter(row => {
-                    const c = (row['Account'] || row['Client'] || '').toString().trim();
-                    return c === client;
+                    const c = (row['Account'] || row['Client'] || row['Account Name'] || '').toString().trim();
+                    // Try exact match first
+                    if (c === client) return true;
+                    // Try case-insensitive match
+                    if (c.toLowerCase() === client.toLowerCase()) return true;
+                    // Try partial match (client name contains or is contained)
+                    if (c.toLowerCase().includes(client.toLowerCase()) || client.toLowerCase().includes(c.toLowerCase())) return true;
+                    return false;
                 });
                 
+                console.log(`📊 Transactional data for "${client}":`, trans.length, 'rows found');
+                
                 trans.forEach(row => {
-                    data.transactional.total += parseFloat(row['Total Transactions'] || row['Total'] || 0);
-                    data.transactional.accuracy += parseFloat(row['Accuracy'] || 0);
+                    const totalTrans = parseFloat(row['Total Transactions'] || row['Total'] || row['Transactions'] || 0);
+                    const acc = parseFloat(row['Accuracy'] || row['Accuracy %'] || row['Accuracy_Percentage'] || 0);
+                    data.transactional.total += totalTrans;
+                    data.transactional.accuracy += acc;
+                    console.log(`  - Row: Total=${totalTrans}, Accuracy=${acc}`);
                 });
                 
                 if (trans.length > 0) {
                     data.transactional.accuracy = (data.transactional.accuracy / trans.length).toFixed(1);
                 }
+                
+                console.log(`  ✅ Final: Total=${data.transactional.total}, Avg Accuracy=${data.transactional.accuracy}%`);
+            } else {
+                console.warn('⚠️ No Transactional Overview data available');
             }
             
-            // Parameter Performance with detailed metrics
+            // Parameter Performance with detailed metrics - with flexible matching
             if (window.dashboardData.parameterAuditCount) {
                 const params = window.dashboardData.parameterAuditCount.filter(row => {
-                    const c = (row['Account'] || row['Client'] || '').toString().trim();
-                    return c === client;
+                    const c = (row['Account'] || row['Client'] || row['Account Name'] || '').toString().trim();
+                    // Try exact match first
+                    if (c === client) return true;
+                    // Try case-insensitive match
+                    if (c.toLowerCase() === client.toLowerCase()) return true;
+                    // Try partial match
+                    if (c.toLowerCase().includes(client.toLowerCase()) || client.toLowerCase().includes(c.toLowerCase())) return true;
+                    return false;
                 });
                 
                 data.parameters.total = params.length;
@@ -4275,11 +4296,17 @@
                 }
             }
             
-            // RCA & CAPA
+            // RCA & CAPA - with flexible matching
             if (window.dashboardData.rcaCapa) {
                 const rca = window.dashboardData.rcaCapa.filter(row => {
-                    const c = (row['Account'] || row['Client'] || '').toString().trim();
-                    return c === client;
+                    const c = (row['Account'] || row['Client'] || row['Account Name'] || '').toString().trim();
+                    // Try exact match first
+                    if (c === client) return true;
+                    // Try case-insensitive match
+                    if (c.toLowerCase() === client.toLowerCase()) return true;
+                    // Try partial match
+                    if (c.toLowerCase().includes(client.toLowerCase()) || client.toLowerCase().includes(c.toLowerCase())) return true;
+                    return false;
                 });
                 
                 data.rcaCapa.total = rca.length;
@@ -4293,11 +4320,17 @@
                 }).length;
             }
             
-            // Customer Satisfaction
+            // Customer Satisfaction - with flexible matching
             if (window.dashboardData.csat) {
                 const csat = window.dashboardData.csat.filter(row => {
-                    const c = (row['Account'] || row['Client'] || '').toString().trim();
-                    return c === client;
+                    const c = (row['Account'] || row['Client'] || row['Account Name'] || '').toString().trim();
+                    // Try exact match first
+                    if (c === client) return true;
+                    // Try case-insensitive match
+                    if (c.toLowerCase() === client.toLowerCase()) return true;
+                    // Try partial match
+                    if (c.toLowerCase().includes(client.toLowerCase()) || client.toLowerCase().includes(c.toLowerCase())) return true;
+                    return false;
                 });
                 
                 data.csat.responses = csat.length;
