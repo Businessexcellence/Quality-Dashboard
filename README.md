@@ -36,7 +36,11 @@ A comprehensive business excellence dashboard for quality management, audit trac
 ### 3. **Account Summary Tab** (COMPLETE)
 - ✅ **Filter Cards** - Client Interaction, Practice Head, Audit Status, Audit Frequency (with counts)
 - ✅ **4 KPI Cards** - Active Accounts, Regional Heads, Client Interactions, Audit Status (all clickable)
-- ✅ **BE SPOC Boxes** - Audit and SLAs/KPIs distribution (top 5 SPOCs each)
+- ✅ **BE SPOC Boxes** - Audit and SLAs/KPIs distribution (top 10 SPOCs each) ⭐ **CLICKABLE FILTERING**
+  - Click any BE SPOC name to filter Account Details table instantly
+  - Visual active filter indicator with clear button
+  - Smooth scroll to filtered results
+  - Separate filters for Audit and SLAs/KPIs SPOCs
 - ✅ **India Map Visualization** - Region-wise account distribution (North, South, East, West, Central)
 - ✅ **Account Details Table** - 9 columns, 100 accounts, row numbers, badges, filtering
 - ✅ All elements are clickable and interactive
