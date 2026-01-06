@@ -528,7 +528,36 @@ location.reload()
 
 ---
 
-**Last Updated:** 2026-01-02  
-**Status:** ✅ PRODUCTION READY (RCA & CAPA FIXED)  
+**v1.3.0** (2026-01-06) ⭐ LATEST - DRILL-DOWN FILTERS
+- ✅ **DRILL-DOWN FILTER REDESIGN**: Unified filter appearance across all pages
+  - White filter boxes with light gray borders (#d0d0d0)
+  - Collapsible sections with dropdown arrows
+  - Orange count badges (#ff6b35) with white text
+  - Selected items highlighted in orange
+  - Clean typography (10px uppercase labels)
+  - Smooth transitions and hover effects
+- ✅ **IMPLEMENTED ON**:
+  - Account Summary: 6 filters (CLIENT, PRACTICE HEAD, AUDIT STATUS, AUDIT FREQUENCY, REGION, REGIONAL HEAD)
+  - Transactional Overview: 6 filters (CLIENT, PRACTICE HEAD, FINANCIAL YEAR, MONTH, WEEK, REGION)
+  - Parameter Performance: 7 filters (in progress)
+  - Recruiter Insights: pending
+  - Strategic Overview: pending
+  - Project Summary: pending
+  - RCA & CAPA: pending
+- ✅ **FEATURES**:
+  - Multi-select within each filter (multiple values)
+  - Collapsible sections to save screen space
+  - Real-time count updates based on active filters
+  - Clear All button with red background
+  - Visual feedback with orange selection
+- ✅ Commits:
+  - 83da059 "Implement drill-down filter design for Account Summary"
+  - 2dd01a3 "Add Transactional_Overview sheet loading and improve data sync"
+  - c4dabcf "Apply drill-down filter design to Transactional Overview"
+
+---
+
+**Last Updated:** 2026-01-06  
+**Status:** ✅ PRODUCTION READY (Drill-Down Filters In Progress)  
 **Theme:** Taggd Orange (100% brand consistency)  
 **Live URL:** https://3000-iiqzlm50w1twpgggr1553-82b888ba.sandbox.novita.ai
