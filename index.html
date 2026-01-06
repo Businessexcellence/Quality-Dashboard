@@ -1072,6 +1072,16 @@
                     <div id="accountFilters" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px;">
                         <!-- 6 Filters generated dynamically -->
                     </div>
+                    <!-- Active BE SPOC Filter Indicator -->
+                    <div id="activeBESPOCFilter" style="margin-top: 8px; display: none;">
+                        <div style="display: inline-flex; align-items: center; background: rgba(240, 70, 22, 0.1); border: 1px solid var(--primary); border-radius: 4px; padding: 4px 8px; font-size: 9px;">
+                            <i class="fas fa-filter" style="color: var(--primary); font-size: 8px; margin-right: 4px;"></i>
+                            <span id="beSPOCFilterText" style="color: #1a1a1a; font-weight: 600;"></span>
+                            <button onclick="clearBESPOCFilter()" style="background: none; border: none; color: var(--error); cursor: pointer; margin-left: 6px; padding: 0; font-size: 10px;">
+                                <i class="fas fa-times-circle"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 
                 <!-- KPI Card (Right) - Extra Small Account Count -->
@@ -4099,6 +4109,12 @@
                 // Clear all active filters
                 window.activeAccountFilters = {};
                 
+                // Hide BE SPOC filter indicator
+                const filterIndicator = document.getElementById('activeBESPOCFilter');
+                if (filterIndicator) {
+                    filterIndicator.style.display = 'none';
+                }
+                
                 // Get full data
                 const fullData = window.dashboardData.accountSummary || [];
                 console.log('📊 Full data:', fullData.length, 'accounts');
@@ -4126,6 +4142,32 @@
             } catch (error) {
                 console.error('❌ Error clearing account filters:', error);
                 handleError(error, 'clearAccountFilter');
+            }
+        }
+
+        function clearBESPOCFilter() {
+            try {
+                console.log('🔄 Clearing BE SPOC filter...');
+                
+                // Remove BE SPOC filters from active filters
+                if (window.activeAccountFilters) {
+                    delete window.activeAccountFilters['BE SPOC - Audit'];
+                    delete window.activeAccountFilters['BE SPOC - SLAs/KPIs'];
+                }
+                
+                // Hide the filter indicator
+                const filterIndicator = document.getElementById('activeBESPOCFilter');
+                if (filterIndicator) {
+                    filterIndicator.style.display = 'none';
+                }
+                
+                // Re-render the table
+                renderAccountTable();
+                
+                console.log('✅ BE SPOC filter cleared successfully');
+            } catch (error) {
+                console.error('❌ Error clearing BE SPOC filter:', error);
+                handleError(error, 'clearBESPOCFilter');
             }
         }
 
@@ -4502,7 +4544,7 @@
                 console.warn('⚠️ No SPOC Audit data after processing');
             } else {
                 const html = sortedSPOCAudit.slice(0, 10).map(([spoc, accounts]) => `
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; margin-bottom: 4px; background: rgba(240, 70, 22, 0.05); border-radius: 4px; border-left: 3px solid var(--primary);">
+                    <div onclick="filterAccountsByBESPOC('${spoc.replace(/'/g, "\\'")}', 'audit')" style="display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; margin-bottom: 4px; background: rgba(240, 70, 22, 0.05); border-radius: 4px; border-left: 3px solid var(--primary); cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.background='rgba(240, 70, 22, 0.15)'; this.style.transform='translateX(4px)';" onmouseout="this.style.background='rgba(240, 70, 22, 0.05)'; this.style.transform='translateX(0)';">
                         <span style="font-size: 10px; color: #1a1a1a; font-weight: 600;">${spoc}</span>
                         <span style="font-size: 11px; font-weight: 700; color: var(--primary); background: rgba(240, 70, 22, 0.2); padding: 2px 8px; border-radius: 3px;">${accounts.length}</span>
                     </div>
@@ -4543,7 +4585,7 @@
                 console.warn('⚠️ No SPOC SLA data after processing');
             } else {
                 const html = sortedSPOCSLA.slice(0, 10).map(([spoc, accounts]) => `
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; margin-bottom: 4px; background: rgba(240, 70, 22, 0.05); border-radius: 4px; border-left: 3px solid var(--primary);">
+                    <div onclick="filterAccountsByBESPOC('${spoc.replace(/'/g, "\\'")}', 'sla')" style="display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; margin-bottom: 4px; background: rgba(240, 70, 22, 0.05); border-radius: 4px; border-left: 3px solid var(--primary); cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.background='rgba(240, 70, 22, 0.15)'; this.style.transform='translateX(4px)';" onmouseout="this.style.background='rgba(240, 70, 22, 0.05)'; this.style.transform='translateX(0)';">
                         <span style="font-size: 10px; color: #1a1a1a; font-weight: 600;">${spoc}</span>
                         <span style="font-size: 11px; font-weight: 700; color: var(--primary); background: rgba(240, 70, 22, 0.2); padding: 2px 8px; border-radius: 3px;">${accounts.length}</span>
                     </div>
@@ -4720,6 +4762,41 @@
             // Scroll to Account Details table
             document.getElementById('accountTable').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
+
+        // Filter accounts by BE SPOC (Audit or SLA)
+        window.filterAccountsByBESPOC = function(spocName, type) {
+            console.log(`🔍 Filtering by BE SPOC: ${spocName} (${type})`);
+            
+            if (!window.activeAccountFilters) {
+                window.activeAccountFilters = {};
+            }
+            
+            // Determine which column to filter by
+            const filterColumn = type === 'audit' ? 'BE SPOC - Audit' : 'BE SPOC - SLAs/KPIs';
+            
+            // Set the filter
+            window.activeAccountFilters[filterColumn] = [spocName];
+            
+            // Show active filter indicator
+            const filterIndicator = document.getElementById('activeBESPOCFilter');
+            const filterText = document.getElementById('beSPOCFilterText');
+            if (filterIndicator && filterText) {
+                const filterLabel = type === 'audit' ? 'BE SPOC - Audit' : 'BE SPOC - SLAs/KPIs';
+                filterText.textContent = `${filterLabel}: ${spocName}`;
+                filterIndicator.style.display = 'block';
+            }
+            
+            // Re-render the table
+            renderAccountTable();
+            
+            // Scroll to the table
+            const tableElement = document.getElementById('accountTable');
+            if (tableElement) {
+                tableElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+            
+            console.log(`✅ Filtered accounts by ${filterColumn}: ${spocName}`);
+        };
 
         function renderAccountTable() {
             const tbody = document.querySelector('#accountTable tbody');
