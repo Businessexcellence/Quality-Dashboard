@@ -4052,140 +4052,405 @@
         };
         
         function renderJourneyKPIs() {
-            // Placeholder KPI calculations - you can update these with real data
-            document.getElementById('journeyStageAccuracy').textContent = '96.2';
-            document.getElementById('journeyCriticalParams').innerHTML = '2.32 <span style="font-size: 14px; color: #ef4444;">↓</span>';
-            document.getElementById('journeyAvgAudit').textContent = '15,160';
-            document.getElementById('journeyClientPercent').textContent = '28.9';
+            try {
+                const selectedClient = document.getElementById('journeyClientFilter')?.value || '';
+                
+                if (!window.dashboardData.parameterAuditCount || window.dashboardData.parameterAuditCount.length === 0) {
+                    console.warn('⚠️ No Parameter Audit Count data for Journey KPIs');
+                    return;
+                }
+                
+                // Filter data by selected client (if any) and by Audit Status = YES accounts
+                let data = window.dashboardData.parameterAuditCount;
+                
+                if (selectedClient) {
+                    data = data.filter(row => {
+                        const client = (row['Account'] || row['Client'] || row['Account Name'] || '').toString().trim();
+                        return client.toLowerCase() === selectedClient.toLowerCase() ||
+                               client.toLowerCase().includes(selectedClient.toLowerCase()) ||
+                               selectedClient.toLowerCase().includes(client.toLowerCase());
+                    });
+                }
+                
+                // Calculate Stage-wise Accuracy
+                let totalAccuracy = 0;
+                let totalValidOpp = 0;
+                
+                data.forEach(row => {
+                    const oppPass = parseFloat(row['Opportunity Pass']) || 0;
+                    const oppCount = parseFloat(row['Opportunity Count']) || 0;
+                    const oppNA = parseFloat(row['Opportunity NA']) || 0;
+                    const validOpp = oppCount - oppNA;
+                    
+                    if (validOpp > 0) {
+                        totalAccuracy += (oppPass / validOpp) * 100;
+                        totalValidOpp++;
+                    }
+                });
+                
+                const avgAccuracy = totalValidOpp > 0 ? (totalAccuracy / totalValidOpp).toFixed(1) : '0.0';
+                
+                // Calculate Critical Params count
+                const criticalParams = data.filter(row => {
+                    const stage = (row['Stage'] || '').toString().toUpperCase();
+                    return stage === 'CRITICAL';
+                }).length;
+                
+                // Calculate Average Audit (total opportunity count)
+                const totalAudits = data.reduce((sum, row) => {
+                    return sum + (parseFloat(row['Opportunity Count']) || 0);
+                }, 0);
+                
+                // Calculate Client % (percentage of audited vs total)
+                const totalParams = data.length;
+                const auditedParams = data.filter(row => (parseFloat(row['Opportunity Count']) || 0) > 0).length;
+                const clientPercent = totalParams > 0 ? ((auditedParams / totalParams) * 100).toFixed(1) : '0.0';
+                
+                // Update UI
+                document.getElementById('journeyStageAccuracy').textContent = avgAccuracy;
+                document.getElementById('journeyCriticalParams').innerHTML = criticalParams + ' <span style="font-size: 14px; color: #ef4444;"></span>';
+                document.getElementById('journeyAvgAudit').textContent = totalAudits.toLocaleString();
+                document.getElementById('journeyClientPercent').textContent = clientPercent;
+                
+                console.log(`✅ Journey KPIs updated: Accuracy=${avgAccuracy}%, Critical=${criticalParams}, Audits=${totalAudits}, Client%=${clientPercent}%`);
+            } catch (error) {
+                console.error('❌ Error rendering Journey KPIs:', error);
+            }
         }
         
         function renderJourneyCharts() {
-            // Stage-wise Accuracy Chart
-            const stageCtx = document.getElementById('stageAccuracyChart');
-            if (stageCtx && typeof Chart !== 'undefined') {
-                new Chart(stageCtx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['Pre Selection', 'Post Selection'],
-                        datasets: [{
-                            label: 'Accuracy %',
-                            data: [96.5, 98.2],
-                            backgroundColor: '#ff6b35',
-                            borderRadius: 4
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
-                        scales: {
-                            y: { beginAtZero: true, max: 100 }
-                        }
+            try {
+                const selectedClient = document.getElementById('journeyClientFilter')?.value || '';
+                
+                if (!window.dashboardData.parameterAuditCount || window.dashboardData.parameterAuditCount.length === 0) {
+                    console.warn('⚠️ No Parameter Audit Count data for Journey Charts');
+                    return;
+                }
+                
+                // Filter data by selected client
+                let data = window.dashboardData.parameterAuditCount;
+                
+                if (selectedClient) {
+                    data = data.filter(row => {
+                        const client = (row['Account'] || row['Client'] || row['Account Name'] || '').toString().trim();
+                        return client.toLowerCase() === selectedClient.toLowerCase() ||
+                               client.toLowerCase().includes(selectedClient.toLowerCase()) ||
+                               selectedClient.toLowerCase().includes(client.toLowerCase());
+                    });
+                }
+                
+                // Stage-wise Accuracy Chart
+                const stageCtx = document.getElementById('stageAccuracyChart');
+                if (stageCtx && typeof Chart !== 'undefined') {
+                    // Destroy existing chart if it exists
+                    if (window.stageChart) {
+                        window.stageChart.destroy();
                     }
-                });
-            }
-            
-            // Monthly Trend Chart
-            const trendCtx = document.getElementById('monthlyTrendChart');
-            if (trendCtx && typeof Chart !== 'undefined') {
-                new Chart(trendCtx, {
-                    type: 'line',
-                    data: {
-                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                        datasets: [{
-                            label: 'Accuracy',
-                            data: [92, 94, 93, 95, 96, 95, 97, 96, 98, 97, 98, 97],
-                            borderColor: '#10b981',
-                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                            fill: true,
-                            tension: 0.4
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
-                        scales: {
-                            y: { beginAtZero: false, min: 90, max: 100 }
+                    
+                    // Calculate accuracy by stage
+                    const stages = {};
+                    data.forEach(row => {
+                        const stage = (row['Stage'] || 'Unknown').toString().trim();
+                        const oppPass = parseFloat(row['Opportunity Pass']) || 0;
+                        const oppCount = parseFloat(row['Opportunity Count']) || 0;
+                        const oppNA = parseFloat(row['Opportunity NA']) || 0;
+                        const validOpp = oppCount - oppNA;
+                        
+                        if (!stages[stage]) {
+                            stages[stage] = { totalPass: 0, totalValid: 0 };
                         }
+                        
+                        stages[stage].totalPass += oppPass;
+                        stages[stage].totalValid += validOpp;
+                    });
+                    
+                    const stageLabels = Object.keys(stages);
+                    const stageAccuracies = stageLabels.map(stage => {
+                        const { totalPass, totalValid } = stages[stage];
+                        return totalValid > 0 ? ((totalPass / totalValid) * 100).toFixed(1) : 0;
+                    });
+                    
+                    window.stageChart = new Chart(stageCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: stageLabels,
+                            datasets: [{
+                                label: 'Accuracy %',
+                                data: stageAccuracies,
+                                backgroundColor: '#ff6b35',
+                                borderRadius: 4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { display: false } },
+                            scales: {
+                                y: { beginAtZero: true, max: 100 }
+                            }
+                        }
+                    });
+                    
+                    console.log(`✅ Stage-wise chart rendered with ${stageLabels.length} stages`);
+                }
+                
+                // Monthly Trend Chart
+                const trendCtx = document.getElementById('monthlyTrendChart');
+                if (trendCtx && typeof Chart !== 'undefined') {
+                    // Destroy existing chart if it exists
+                    if (window.trendChart) {
+                        window.trendChart.destroy();
                     }
-                });
+                    
+                    // Calculate accuracy by month
+                    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                    const monthlyData = {};
+                    
+                    months.forEach(m => {
+                        monthlyData[m] = { totalPass: 0, totalValid: 0 };
+                    });
+                    
+                    data.forEach(row => {
+                        const month = (row['Month'] || '').toString().trim();
+                        const oppPass = parseFloat(row['Opportunity Pass']) || 0;
+                        const oppCount = parseFloat(row['Opportunity Count']) || 0;
+                        const oppNA = parseFloat(row['Opportunity NA']) || 0;
+                        const validOpp = oppCount - oppNA;
+                        
+                        if (monthlyData[month]) {
+                            monthlyData[month].totalPass += oppPass;
+                            monthlyData[month].totalValid += validOpp;
+                        }
+                    });
+                    
+                    const monthlyAccuracies = months.map(month => {
+                        const { totalPass, totalValid } = monthlyData[month];
+                        return totalValid > 0 ? ((totalPass / totalValid) * 100).toFixed(1) : null;
+                    });
+                    
+                    window.trendChart = new Chart(trendCtx, {
+                        type: 'line',
+                        data: {
+                            labels: months,
+                            datasets: [{
+                                label: 'Accuracy %',
+                                data: monthlyAccuracies,
+                                borderColor: '#10b981',
+                                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                                fill: true,
+                                tension: 0.4,
+                                spanGaps: true
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { display: false } },
+                            scales: {
+                                y: { beginAtZero: false, min: 70, max: 100 }
+                            }
+                        }
+                    });
+                    
+                    console.log('✅ Monthly trend chart rendered');
+                }
+            } catch (error) {
+                console.error('❌ Error rendering Journey charts:', error);
             }
         }
         
         function renderClientRCAs() {
-            const container = document.getElementById('clientRCAsList');
-            if (!container) return;
-            
-            // Sample RCA data
-            const rcas = [
-                { status: 'CLOSED', title: 'Offers released without BVR ratings', id: 'RCA-001' },
-                { status: 'CLOSED', title: 'Offer acceptance FFF not filed', id: 'RCA-002' },
-                { status: 'ACTIVE', title: 'Target form not', id: 'RCA-003' }
-            ];
-            
-            container.innerHTML = rcas.map(rca => `
-                <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px; background: #f9fafb; border-radius: 4px; border: 1px solid #e5e7eb;">
-                    <div>
-                        <span style="background: ${rca.status === 'CLOSED' ? '#10b981' : '#3b82f6'}; color: white; padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 700;">${rca.status}</span>
-                        <div style="font-size: 12px; color: #374151; margin-top: 6px;">${rca.title}</div>
-                        <div style="font-size: 10px; color: #9ca3af; margin-top: 2px;">${rca.id}</div>
-                    </div>
-                </div>
-            `).join('');
+            try {
+                const container = document.getElementById('clientRCAsList');
+                if (!container) return;
+                
+                const selectedClient = document.getElementById('journeyClientFilter')?.value || '';
+                
+                if (!window.dashboardData.rcaCapa || window.dashboardData.rcaCapa.length === 0) {
+                    container.innerHTML = '<div style="padding: 20px; text-align: center; color: #9ca3af; font-size: 12px;">No RCA/CAPA data available</div>';
+                    return;
+                }
+                
+                // Filter RCAs by selected client
+                let rcas = window.dashboardData.rcaCapa;
+                
+                if (selectedClient) {
+                    rcas = rcas.filter(row => {
+                        const client = (row['Account'] || row['Client'] || row['Account Name'] || '').toString().trim();
+                        return client.toLowerCase() === selectedClient.toLowerCase() ||
+                               client.toLowerCase().includes(selectedClient.toLowerCase()) ||
+                               selectedClient.toLowerCase().includes(client.toLowerCase());
+                    });
+                }
+                
+                // Limit to first 5 RCAs
+                rcas = rcas.slice(0, 5);
+                
+                if (rcas.length === 0) {
+                    container.innerHTML = '<div style="padding: 20px; text-align: center; color: #9ca3af; font-size: 12px;">No RCA/CAPA found for selected client</div>';
+                    return;
+                }
+                
+                container.innerHTML = rcas.map((rca, idx) => {
+                    const status = (rca['Status'] || window.getRcaCapaStatus(rca) || 'OPEN').toString().toUpperCase();
+                    const isClosed = status === 'CLOSED' || status === 'COMPLETED' || status === 'RESOLVED';
+                    const problemStatement = (rca['Problem Statement'] || rca['Problem'] || 'No description').toString().trim();
+                    const truncated = problemStatement.length > 50 ? problemStatement.substring(0, 50) + '...' : problemStatement;
+                    
+                    return `
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px; background: #f9fafb; border-radius: 4px; border: 1px solid #e5e7eb;">
+                            <div>
+                                <span style="background: ${isClosed ? '#10b981' : '#f59e0b'}; color: white; padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 700;">${status}</span>
+                                <div style="font-size: 12px; color: #374151; margin-top: 6px;">${truncated}</div>
+                                <div style="font-size: 10px; color: #9ca3af; margin-top: 2px;">RCA-${String(idx + 1).padStart(3, '0')}</div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                console.log(`✅ Rendered ${rcas.length} RCAs`);
+            } catch (error) {
+                console.error('❌ Error rendering Client RCAs:', error);
+            }
         }
         
         function renderClientProjects() {
-            const container = document.getElementById('clientProjectsList');
-            if (!container) return;
-            
-            // Sample project data
-            const projects = [
-                { status: 'ACTIVE', title: 'M&M Hx Offer Documents Audit', code: 'T-001' },
-                { status: 'ACTIVE', title: 'M&M Hx Offer Audit Automation', code: 'T-002' }
-            ];
-            
-            container.innerHTML = projects.map(proj => `
-                <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px; background: #f9fafb; border-radius: 4px; border: 1px solid #e5e7eb;">
-                    <div>
-                        <span style="background: #3b82f6; color: white; padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 700;">${proj.status}</span>
-                        <div style="font-size: 12px; color: #374151; margin-top: 6px;">${proj.title}</div>
-                        <div style="font-size: 10px; color: #9ca3af; margin-top: 2px;">${proj.code}</div>
-                    </div>
-                </div>
-            `).join('');
+            try {
+                const container = document.getElementById('clientProjectsList');
+                if (!container) return;
+                
+                const selectedClient = document.getElementById('journeyClientFilter')?.value || '';
+                
+                if (!window.dashboardData.projects || window.dashboardData.projects.length === 0) {
+                    container.innerHTML = '<div style="padding: 20px; text-align: center; color: #9ca3af; font-size: 12px;">No project data available</div>';
+                    return;
+                }
+                
+                // Filter projects by selected client
+                let projects = window.dashboardData.projects;
+                
+                if (selectedClient) {
+                    projects = projects.filter(row => {
+                        const client = (row['Account'] || row['Client'] || row['Account Name'] || row['Project Client'] || '').toString().trim();
+                        return client.toLowerCase() === selectedClient.toLowerCase() ||
+                               client.toLowerCase().includes(selectedClient.toLowerCase()) ||
+                               selectedClient.toLowerCase().includes(client.toLowerCase());
+                    });
+                }
+                
+                // Limit to first 5 projects
+                projects = projects.slice(0, 5);
+                
+                if (projects.length === 0) {
+                    container.innerHTML = '<div style="padding: 20px; text-align: center; color: #9ca3af; font-size: 12px;">No projects found for selected client</div>';
+                    return;
+                }
+                
+                container.innerHTML = projects.map((proj, idx) => {
+                    const status = (proj['Status'] || proj['Project Status'] || 'ACTIVE').toString().toUpperCase();
+                    const title = (proj['Project Name'] || proj['Name'] || proj['Title'] || 'Untitled Project').toString().trim();
+                    const code = proj['Project Code'] || proj['Code'] || `PRJ-${String(idx + 1).padStart(3, '0')}`;
+                    
+                    return `
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px; background: #f9fafb; border-radius: 4px; border: 1px solid #e5e7eb;">
+                            <div>
+                                <span style="background: #3b82f6; color: white; padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 700;">${status}</span>
+                                <div style="font-size: 12px; color: #374151; margin-top: 6px;">${title}</div>
+                                <div style="font-size: 10px; color: #9ca3af; margin-top: 2px;">${code}</div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                console.log(`✅ Rendered ${projects.length} projects`);
+            } catch (error) {
+                console.error('❌ Error rendering Client Projects:', error);
+            }
         }
         
         function renderParameterPerformanceTable() {
-            const tbody = document.getElementById('parameterTableBody');
-            if (!tbody) return;
-            
-            // Sample table data
-            const rows = [
-                { stage: 'Pre Selection', param: 'Initiate Assessment', accuracy: '82.7%', sample: '93.35%', trend: 540, version: '17.41%', pass: 340, fail: 131, status: 'CRITICAL' },
-                { stage: 'Pre Selection', param: 'Be-Hire Form Adherence', accuracy: '86.5%', sample: '99.35%', trend: 0, version: '0%', pass: 0, fail: 1, status: 'CRITICAL' },
-                { stage: 'Pre Selection', param: 'Initiate Meeting form Completeness & Correctness', accuracy: '88.8%', sample: '17.41%', trend: 540, version: '17.41%', pass: 340, fail: 133, status: 'CRITICAL' },
-                { stage: 'Pre Selection', param: 'Initiate Meeting form issues with mail', accuracy: '93.1%', sample: '8.83%', trend: 56, version: '8.83%', pass: 56, fail: 0, status: 'CRITICAL' },
-                { stage: 'Pre Selection', param: 'Completeness & Correctness of CES', accuracy: '86.6%', sample: '19.80%', trend: 350, version: '19.80%', pass: 350, fail: 44, status: 'CRITICAL' },
-                { stage: 'Post Selection', param: 'Joining Bonus Notice Period Approval', accuracy: '94.8%', sample: '1.71%', trend: 78, version: '1.71%', pass: 78, fail: 2, status: 'CRITICAL' },
-                { stage: 'Pre Selection', param: 'Initiate meeting form issues with mail', accuracy: '94.8%', sample: '9.49%', trend: 527, version: '9.49%', pass: 527, fail: 31, status: 'CRITICAL' }
-            ];
-            
-            tbody.innerHTML = rows.map((row, idx) => `
-                <tr style="border-bottom: 1px solid #e5e7eb; ${idx % 2 === 0 ? 'background: #f9fafb;' : ''}">
-                    <td style="padding: 10px; font-size: 11px; color: #374151; font-weight: 600;">${row.stage}</td>
-                    <td style="padding: 10px; font-size: 11px; color: #111827;">${row.param}</td>
-                    <td style="padding: 10px; font-size: 11px; color: #111827; font-weight: 600;">${row.accuracy}</td>
-                    <td style="padding: 10px; font-size: 11px; color: #111827;">${row.sample}</td>
-                    <td style="padding: 10px; font-size: 11px; color: #111827;">${row.trend}</td>
-                    <td style="padding: 10px; font-size: 11px; color: #111827;">${row.version}</td>
-                    <td style="padding: 10px; font-size: 11px; color: #111827;">${row.pass}</td>
-                    <td style="padding: 10px; font-size: 11px; color: #111827;">${row.fail}</td>
-                    <td style="padding: 10px;">
-                        <span style="background: #fce7f3; color: #be123c; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 700;">${row.status}</span>
-                    </td>
-                </tr>
-            `).join('');
+            try {
+                const tbody = document.getElementById('parameterTableBody');
+                if (!tbody) return;
+                
+                const selectedClient = document.getElementById('journeyClientFilter')?.value || '';
+                
+                if (!window.dashboardData.parameterAuditCount || window.dashboardData.parameterAuditCount.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="9" style="padding: 20px; text-align: center; color: #9ca3af; font-size: 12px;">No parameter data available</td></tr>';
+                    return;
+                }
+                
+                // Filter data by selected client
+                let data = window.dashboardData.parameterAuditCount;
+                
+                if (selectedClient) {
+                    data = data.filter(row => {
+                        const client = (row['Account'] || row['Client'] || row['Account Name'] || '').toString().trim();
+                        return client.toLowerCase() === selectedClient.toLowerCase() ||
+                               client.toLowerCase().includes(selectedClient.toLowerCase()) ||
+                               selectedClient.toLowerCase().includes(client.toLowerCase());
+                    });
+                }
+                
+                // Limit to first 20 rows for performance
+                data = data.slice(0, 20);
+                
+                if (data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="9" style="padding: 20px; text-align: center; color: #9ca3af; font-size: 12px;">No parameters found for selected client</td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = data.map((row, idx) => {
+                    const stage = (row['Stage'] || 'N/A').toString().trim();
+                    const param = (row['Parameter'] || row['Parameter Name'] || 'Unknown').toString().trim();
+                    
+                    const oppPass = parseFloat(row['Opportunity Pass']) || 0;
+                    const oppCount = parseFloat(row['Opportunity Count']) || 0;
+                    const oppNA = parseFloat(row['Opportunity NA']) || 0;
+                    const oppFail = parseFloat(row['Opportunity Fail']) || 0;
+                    const validOpp = oppCount - oppNA;
+                    
+                    const accuracy = validOpp > 0 ? ((oppPass / validOpp) * 100).toFixed(1) : '0.0';
+                    const sample = oppCount > 0 ? ((validOpp / oppCount) * 100).toFixed(1) : '0.0';
+                    const version = sample; // Using sample as version for now
+                    
+                    // Determine status based on stage or accuracy
+                    let status = 'NORMAL';
+                    const stageUpper = stage.toUpperCase();
+                    if (stageUpper === 'CRITICAL' || parseFloat(accuracy) < 85) {
+                        status = 'CRITICAL';
+                    } else if (parseFloat(accuracy) < 95) {
+                        status = 'WARNING';
+                    }
+                    
+                    const statusColors = {
+                        'CRITICAL': { bg: '#fce7f3', text: '#be123c' },
+                        'WARNING': { bg: '#fef3c7', text: '#d97706' },
+                        'NORMAL': { bg: '#d1fae5', text: '#065f46' }
+                    };
+                    const colors = statusColors[status];
+                    
+                    return `
+                        <tr style="border-bottom: 1px solid #e5e7eb; ${idx % 2 === 0 ? 'background: #f9fafb;' : ''}">
+                            <td style="padding: 10px; font-size: 11px; color: #374151; font-weight: 600;">${stage}</td>
+                            <td style="padding: 10px; font-size: 11px; color: #111827;">${param}</td>
+                            <td style="padding: 10px; font-size: 11px; color: #111827; font-weight: 600;">${accuracy}%</td>
+                            <td style="padding: 10px; font-size: 11px; color: #111827;">${sample}%</td>
+                            <td style="padding: 10px; font-size: 11px; color: #111827;">${validOpp}</td>
+                            <td style="padding: 10px; font-size: 11px; color: #111827;">${version}%</td>
+                            <td style="padding: 10px; font-size: 11px; color: #111827;">${oppPass}</td>
+                            <td style="padding: 10px; font-size: 11px; color: #111827;">${oppFail}</td>
+                            <td style="padding: 10px;">
+                                <span style="background: ${colors.bg}; color: ${colors.text}; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 700;">${status}</span>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+                
+                console.log(`✅ Rendered ${data.length} parameter rows in table`);
+            } catch (error) {
+                console.error('❌ Error rendering Parameter Performance Table:', error);
+            }
         }
 
         function populateJourneyClientFilter() {
@@ -4239,9 +4504,14 @@
 
         function filterJourneyByClient() {
             const selectedClient = document.getElementById('journeyClientFilter').value;
-            console.log('🔍 Filtering by client:', selectedClient || 'All Clients');
-            renderJourneyCards(selectedClient);
-            updateJourneySummaryStats(selectedClient);
+            console.log('🔍 Filtering Journey at Glance by client:', selectedClient || 'All Clients');
+            
+            // Refresh all Journey components
+            renderJourneyKPIs();
+            renderJourneyCharts();
+            renderClientRCAs();
+            renderClientProjects();
+            renderParameterPerformanceTable();
         }
 
         function resetJourneyFilter() {
