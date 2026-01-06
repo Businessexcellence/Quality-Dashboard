@@ -2134,13 +2134,14 @@
         // ==========================================
         
         // Initialize global window.dashboardData
-        window.window.dashboardData = {
+        window.dashboardData = {
             parameterAuditCount: [],
             recruiterAuditCount: [],
             accountSummary: [],
             rcaCapa: [],
             projects: [],
-            csat: []
+            csat: [],
+            transactionalOverview: []
         };
 
         // ==========================================
@@ -3986,20 +3987,45 @@
         };
 
         function populateJourneyClientFilter() {
-            const select = document.getElementById('journeyClientFilter');
-            if (!select) return;
-            
-            const clients = [...new Set(
-                window.dashboardData.accountSummary
-                    .map(row => row['Account'] || row['Client'] || row['Account Name'])
-                    .filter(c => c && c.toString().trim())
-                    .map(c => c.toString().trim())
-            )].sort();
-            
-            select.innerHTML = '<option value="">All Clients</option>' + 
-                clients.map(client => `<option value="${client}">${client}</option>`).join('');
-            
-            console.log(`✅ Populated ${clients.length} clients in filter`);
+            try {
+                const select = document.getElementById('journeyClientFilter');
+                if (!select) {
+                    console.error('❌ Journey client filter select element not found');
+                    return;
+                }
+                
+                if (!window.dashboardData || !window.dashboardData.accountSummary || window.dashboardData.accountSummary.length === 0) {
+                    console.warn('⚠️ No account summary data available for journey filter');
+                    select.innerHTML = '<option value="">All Clients (No Data)</option>';
+                    return;
+                }
+                
+                console.log('📊 Account Summary rows:', window.dashboardData.accountSummary.length);
+                console.log('📋 Sample row:', window.dashboardData.accountSummary[0]);
+                
+                const clients = [...new Set(
+                    window.dashboardData.accountSummary
+                        .map(row => row['Account'] || row['Client'] || row['Account Name'])
+                        .filter(c => c && c.toString().trim())
+                        .map(c => c.toString().trim())
+                )].sort();
+                
+                console.log('📋 Extracted clients:', clients);
+                
+                if (clients.length === 0) {
+                    console.warn('⚠️ No clients found in account summary data');
+                    select.innerHTML = '<option value="">All Clients (No Clients Found)</option>';
+                    return;
+                }
+                
+                select.innerHTML = '<option value="">All Clients</option>' + 
+                    clients.map(client => `<option value="${client}">${client}</option>`).join('');
+                
+                console.log(`✅ Populated ${clients.length} clients in filter dropdown`);
+            } catch (error) {
+                console.error('❌ Error populating journey client filter:', error);
+                handleError(error, 'populateJourneyClientFilter');
+            }
         }
 
         function filterJourneyByClient() {
@@ -11286,6 +11312,12 @@ Total Population: ${totalPop}
             
             refreshHomeTab();
             refreshAccountSummaryTab();
+            
+            // Refresh Journey at Glance tab
+            if (typeof window.refreshJourneyAtGlanceTab === 'function') {
+                window.refreshJourneyAtGlanceTab();
+            }
+            
             refreshTransactionalTab();
             refreshParameterPerformanceTab(); // Parameter Performance Tab
             refreshRecruiterTab(); // Recruiter Insight Tab
