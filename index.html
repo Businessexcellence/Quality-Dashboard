@@ -70,6 +70,8 @@
                         window.refreshHomeTab();
                     } else if (tabId === 'account-summary' && typeof window.refreshAccountSummaryTab === 'function') {
                         window.refreshAccountSummaryTab();
+                    } else if (tabId === 'journey-at-glance' && typeof window.refreshJourneyAtGlanceTab === 'function') {
+                        window.refreshJourneyAtGlanceTab();
                     } else if (tabId === 'transactional' && typeof window.refreshTransactionalTab === 'function') {
                         window.refreshTransactionalTab();
                     } else if (tabId === 'audit-summary' && typeof window.refreshParameterPerformanceTab === 'function') {
@@ -982,6 +984,10 @@
                 <i class="fas fa-building"></i>
                 <span>Account Summary</span>
             </div>
+            <div class="menu-item" onclick="window.switchTab('journey-at-glance', this)">
+                <i class="fas fa-route"></i>
+                <span>Journey at Glance</span>
+            </div>
             <div class="menu-item" onclick="window.switchTab('transactional', this)">
                 <i class="fas fa-exchange-alt"></i>
                 <span>Transactional Overview</span>
@@ -1149,6 +1155,71 @@
                         <tbody style="font-size: 10px;"></tbody>
                     </table>
                 </div>
+            </div>
+        </div>
+
+        <!-- JOURNEY AT GLANCE TAB -->
+        <div id="journey-at-glance" class="tab-content">
+            <!-- Page Header -->
+            <div style="background: linear-gradient(135deg, #3c3530 0%, #ff6b35 100%); border-radius: 8px; padding: 16px 20px; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                <h2 style="font-size: 22px; font-weight: 700; color: #ffffff; margin: 0; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-route" style="font-size: 20px;"></i>
+                    Journey at Glance - Client-Wise Performance Overview
+                </h2>
+                <p style="font-size: 12px; color: rgba(255,255,255,0.9); margin: 6px 0 0 0;">
+                    Comprehensive view of all clients across key performance metrics
+                </p>
+            </div>
+
+            <!-- Client Selection Section -->
+            <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 12px; margin-bottom: 16px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <label style="font-size: 12px; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-filter" style="color: var(--primary);"></i>
+                        Select Client:
+                    </label>
+                    <select id="journeyClientFilter" onchange="filterJourneyByClient()" style="flex: 1; max-width: 400px; padding: 8px 12px; border: 2px solid #d1d5db; border-radius: 6px; font-size: 12px; color: #374151; background: white; cursor: pointer;">
+                        <option value="">All Clients</option>
+                    </select>
+                    <button onclick="resetJourneyFilter()" style="background: #dc2626; border: none; color: white; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 600; display: flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-redo"></i> Reset
+                    </button>
+                </div>
+            </div>
+
+            <!-- Summary Statistics -->
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px;">
+                <div class="kpi-card" style="text-align: center; padding: 16px;">
+                    <i class="fas fa-building" style="font-size: 24px; color: var(--primary); margin-bottom: 8px;"></i>
+                    <div style="font-size: 28px; font-weight: 700; color: var(--primary);" id="journeyTotalClients">0</div>
+                    <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">TOTAL CLIENTS</div>
+                </div>
+                <div class="kpi-card" style="text-align: center; padding: 16px;">
+                    <i class="fas fa-chart-line" style="font-size: 24px; color: #10b981; margin-bottom: 8px;"></i>
+                    <div style="font-size: 28px; font-weight: 700; color: #10b981;" id="journeyAvgAccuracy">0%</div>
+                    <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">AVG ACCURACY</div>
+                </div>
+                <div class="kpi-card" style="text-align: center; padding: 16px;">
+                    <i class="fas fa-tasks" style="font-size: 24px; color: #3b82f6; margin-bottom: 8px;"></i>
+                    <div style="font-size: 28px; font-weight: 700; color: #3b82f6;" id="journeyTotalTransactions">0</div>
+                    <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">TOTAL TRANSACTIONS</div>
+                </div>
+                <div class="kpi-card" style="text-align: center; padding: 16px;">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 24px; color: #f59e0b; margin-bottom: 8px;"></i>
+                    <div style="font-size: 28px; font-weight: 700; color: #f59e0b;" id="journeyTotalRCA">0</div>
+                    <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">TOTAL RCA/CAPA</div>
+                </div>
+            </div>
+
+            <!-- Client Cards Grid -->
+            <div id="journeyClientCards" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(500px, 1fr)); gap: 16px;">
+                <!-- Client cards will be generated here -->
+            </div>
+
+            <!-- Empty State -->
+            <div id="journeyEmptyState" style="display: none; text-align: center; padding: 60px 20px; background: var(--bg-card); border: 2px dashed var(--border); border-radius: 8px;">
+                <i class="fas fa-inbox" style="font-size: 48px; color: var(--text-muted); margin-bottom: 16px;"></i>
+                <p style="font-size: 14px; color: var(--text-muted); margin: 0;">No data available. Please upload Base File.xlsx to view client journey data.</p>
             </div>
         </div>
 
@@ -3891,6 +3962,367 @@
             } catch (error) {
                 handleError(error, 'refreshAccountSummaryTab');
             }
+        }
+
+        // ==================== JOURNEY AT GLANCE TAB ====================
+        window.refreshJourneyAtGlanceTab = function() {
+            try {
+                console.log('🔄 Refreshing Journey at Glance Tab...');
+                
+                if (!window.dashboardData || !window.dashboardData.accountSummary) {
+                    showJourneyEmptyState();
+                    return;
+                }
+                
+                populateJourneyClientFilter();
+                renderJourneyCards();
+                updateJourneySummaryStats();
+                
+                console.log('✅ Journey at Glance Tab refreshed');
+            } catch (error) {
+                console.error('❌ Error refreshing Journey at Glance:', error);
+                handleError(error, 'refreshJourneyAtGlanceTab');
+            }
+        };
+
+        function populateJourneyClientFilter() {
+            const select = document.getElementById('journeyClientFilter');
+            if (!select) return;
+            
+            const clients = [...new Set(
+                window.dashboardData.accountSummary
+                    .map(row => row['Account'] || row['Client'] || row['Account Name'])
+                    .filter(c => c && c.toString().trim())
+                    .map(c => c.toString().trim())
+            )].sort();
+            
+            select.innerHTML = '<option value="">All Clients</option>' + 
+                clients.map(client => `<option value="${client}">${client}</option>`).join('');
+            
+            console.log(`✅ Populated ${clients.length} clients in filter`);
+        }
+
+        function filterJourneyByClient() {
+            const selectedClient = document.getElementById('journeyClientFilter').value;
+            console.log('🔍 Filtering by client:', selectedClient || 'All Clients');
+            renderJourneyCards(selectedClient);
+            updateJourneySummaryStats(selectedClient);
+        }
+
+        function resetJourneyFilter() {
+            document.getElementById('journeyClientFilter').value = '';
+            filterJourneyByClient();
+        }
+
+        function updateJourneySummaryStats(filterClient = '') {
+            let data = window.dashboardData.accountSummary;
+            
+            if (filterClient) {
+                data = data.filter(row => {
+                    const client = (row['Account'] || row['Client'] || row['Account Name'] || '').toString().trim();
+                    return client === filterClient;
+                });
+            }
+            
+            // Get unique clients
+            const clients = [...new Set(
+                data.map(row => row['Account'] || row['Client'] || row['Account Name'])
+                    .filter(c => c && c.toString().trim())
+                    .map(c => c.toString().trim())
+            )];
+            
+            // Calculate average accuracy from Parameter_Audit_Count
+            let totalAccuracy = 0;
+            let accuracyCount = 0;
+            
+            if (window.dashboardData.parameterAuditCount) {
+                clients.forEach(client => {
+                    const paramData = window.dashboardData.parameterAuditCount.filter(p => {
+                        const pClient = (p['Account'] || p['Client'] || '').toString().trim();
+                        return pClient === client;
+                    });
+                    
+                    if (paramData.length > 0) {
+                        let oppPass = 0, oppCount = 0, oppNA = 0;
+                        paramData.forEach(p => {
+                            oppPass += parseFloat(p['Opportunity Pass']) || 0;
+                            oppCount += parseFloat(p['Opportunity Count']) || 0;
+                            oppNA += parseFloat(p['Opportunity NA']) || 0;
+                        });
+                        
+                        const validOpp = oppCount - oppNA;
+                        if (validOpp > 0) {
+                            const accuracy = (oppPass / validOpp) * 100;
+                            totalAccuracy += accuracy;
+                            accuracyCount++;
+                        }
+                    }
+                });
+            }
+            
+            const avgAccuracy = accuracyCount > 0 ? (totalAccuracy / accuracyCount).toFixed(1) : 0;
+            
+            // Count total transactions (from Transactional_Overview if available)
+            let totalTransactions = 0;
+            if (window.dashboardData.transactionalOverview) {
+                const transData = filterClient 
+                    ? window.dashboardData.transactionalOverview.filter(row => {
+                        const client = (row['Account'] || row['Client'] || '').toString().trim();
+                        return client === filterClient;
+                    })
+                    : window.dashboardData.transactionalOverview;
+                
+                transData.forEach(row => {
+                    totalTransactions += parseFloat(row['Total Transactions'] || row['Total'] || 0);
+                });
+            }
+            
+            // Count RCA/CAPA issues
+            let totalRCA = 0;
+            if (window.dashboardData.rcaCapa) {
+                const rcaData = filterClient
+                    ? window.dashboardData.rcaCapa.filter(row => {
+                        const client = (row['Account'] || row['Client'] || '').toString().trim();
+                        return client === filterClient;
+                    })
+                    : window.dashboardData.rcaCapa;
+                
+                totalRCA = rcaData.length;
+            }
+            
+            // Update UI
+            safeSetHTML('journeyTotalClients', clients.length);
+            safeSetHTML('journeyAvgAccuracy', avgAccuracy + '%');
+            safeSetHTML('journeyTotalTransactions', totalTransactions.toLocaleString());
+            safeSetHTML('journeyTotalRCA', totalRCA);
+        }
+
+        function renderJourneyCards(filterClient = '') {
+            const container = document.getElementById('journeyClientCards');
+            const emptyState = document.getElementById('journeyEmptyState');
+            
+            if (!container) return;
+            
+            let data = window.dashboardData.accountSummary;
+            
+            if (filterClient) {
+                data = data.filter(row => {
+                    const client = (row['Account'] || row['Client'] || row['Account Name'] || '').toString().trim();
+                    return client === filterClient;
+                });
+            }
+            
+            // Get unique clients
+            const clients = [...new Set(
+                data.map(row => row['Account'] || row['Client'] || row['Account Name'])
+                    .filter(c => c && c.toString().trim())
+                    .map(c => c.toString().trim())
+            )].sort();
+            
+            if (clients.length === 0) {
+                container.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            container.style.display = 'grid';
+            emptyState.style.display = 'none';
+            
+            // Generate cards for each client
+            const cardsHtml = clients.map(client => {
+                const clientData = getClientJourneyData(client);
+                return generateClientJourneyCard(client, clientData);
+            }).join('');
+            
+            container.innerHTML = cardsHtml;
+            
+            console.log(`✅ Rendered ${clients.length} client journey cards`);
+        }
+
+        function getClientJourneyData(client) {
+            const data = {
+                transactional: { total: 0, accuracy: 0 },
+                parameters: { total: 0, accuracy: 0, high: 0, medium: 0, low: 0 },
+                recruiters: { total: 0, avgTime: 0 },
+                strategic: { revenue: 0, growth: 0 },
+                projects: { total: 0, active: 0 },
+                rcaCapa: { total: 0, open: 0, closed: 0 },
+                csat: { score: 0, responses: 0 }
+            };
+            
+            // Transactional Overview
+            if (window.dashboardData.transactionalOverview) {
+                const trans = window.dashboardData.transactionalOverview.filter(row => {
+                    const c = (row['Account'] || row['Client'] || '').toString().trim();
+                    return c === client;
+                });
+                
+                trans.forEach(row => {
+                    data.transactional.total += parseFloat(row['Total Transactions'] || row['Total'] || 0);
+                    data.transactional.accuracy += parseFloat(row['Accuracy'] || 0);
+                });
+                
+                if (trans.length > 0) {
+                    data.transactional.accuracy = (data.transactional.accuracy / trans.length).toFixed(1);
+                }
+            }
+            
+            // Parameter Performance
+            if (window.dashboardData.parameterAuditCount) {
+                const params = window.dashboardData.parameterAuditCount.filter(row => {
+                    const c = (row['Account'] || row['Client'] || '').toString().trim();
+                    return c === client;
+                });
+                
+                data.parameters.total = params.length;
+                
+                params.forEach(p => {
+                    const oppPass = parseFloat(p['Opportunity Pass']) || 0;
+                    const oppCount = parseFloat(p['Opportunity Count']) || 0;
+                    const oppNA = parseFloat(p['Opportunity NA']) || 0;
+                    const validOpp = oppCount - oppNA;
+                    
+                    if (validOpp > 0) {
+                        const accuracy = (oppPass / validOpp) * 100;
+                        if (accuracy >= 90) data.parameters.high++;
+                        else if (accuracy >= 70) data.parameters.medium++;
+                        else data.parameters.low++;
+                    }
+                });
+                
+                // Calculate overall parameter accuracy
+                let totalPass = 0, totalValid = 0;
+                params.forEach(p => {
+                    totalPass += parseFloat(p['Opportunity Pass']) || 0;
+                    const oppCount = parseFloat(p['Opportunity Count']) || 0;
+                    const oppNA = parseFloat(p['Opportunity NA']) || 0;
+                    totalValid += (oppCount - oppNA);
+                });
+                
+                if (totalValid > 0) {
+                    data.parameters.accuracy = ((totalPass / totalValid) * 100).toFixed(1);
+                }
+            }
+            
+            // RCA & CAPA
+            if (window.dashboardData.rcaCapa) {
+                const rca = window.dashboardData.rcaCapa.filter(row => {
+                    const c = (row['Account'] || row['Client'] || '').toString().trim();
+                    return c === client;
+                });
+                
+                data.rcaCapa.total = rca.length;
+                data.rcaCapa.open = rca.filter(r => {
+                    const status = (r['Status'] || '').toString().toUpperCase();
+                    return status === 'OPEN' || status === 'IN PROGRESS' || status === 'PENDING';
+                }).length;
+                data.rcaCapa.closed = rca.filter(r => {
+                    const status = (r['Status'] || '').toString().toUpperCase();
+                    return status === 'CLOSED' || status === 'COMPLETED' || status === 'RESOLVED';
+                }).length;
+            }
+            
+            // Customer Satisfaction
+            if (window.dashboardData.csat) {
+                const csat = window.dashboardData.csat.filter(row => {
+                    const c = (row['Account'] || row['Client'] || '').toString().trim();
+                    return c === client;
+                });
+                
+                data.csat.responses = csat.length;
+                if (csat.length > 0) {
+                    const totalScore = csat.reduce((sum, row) => sum + (parseFloat(row['CSAT Score'] || row['Score'] || 0)), 0);
+                    data.csat.score = (totalScore / csat.length).toFixed(1);
+                }
+            }
+            
+            return data;
+        }
+
+        function generateClientJourneyCard(client, data) {
+            return `
+                <div style="background: var(--bg-card); border: 2px solid var(--border); border-radius: 8px; padding: 16px; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.05);" 
+                     onmouseover="this.style.borderColor='var(--primary)'; this.style.boxShadow='0 4px 12px rgba(240,70,22,0.15)';" 
+                     onmouseout="this.style.borderColor='var(--border)'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.05)';">
+                    
+                    <!-- Client Header -->
+                    <div style="border-bottom: 2px solid var(--primary); padding-bottom: 12px; margin-bottom: 16px;">
+                        <h3 style="font-size: 16px; font-weight: 700; color: var(--text-primary); margin: 0; display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-building" style="color: var(--primary);"></i>
+                            ${client}
+                        </h3>
+                    </div>
+                    
+                    <!-- Metrics Grid -->
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                        
+                        <!-- Transactional Overview -->
+                        <div style="background: #f0f9ff; border-left: 3px solid #3b82f6; padding: 10px; border-radius: 4px;">
+                            <div style="font-size: 10px; color: #1e40af; font-weight: 600; margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
+                                <i class="fas fa-exchange-alt"></i> TRANSACTIONAL
+                            </div>
+                            <div style="font-size: 18px; font-weight: 700; color: #1e40af;">${data.transactional.total.toLocaleString()}</div>
+                            <div style="font-size: 9px; color: #64748b;">Accuracy: ${data.transactional.accuracy}%</div>
+                        </div>
+                        
+                        <!-- Parameter Performance -->
+                        <div style="background: #f0fdf4; border-left: 3px solid #10b981; padding: 10px; border-radius: 4px;">
+                            <div style="font-size: 10px; color: #065f46; font-weight: 600; margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
+                                <i class="fas fa-clipboard-check"></i> PARAMETERS
+                            </div>
+                            <div style="font-size: 18px; font-weight: 700; color: #065f46;">${data.parameters.total}</div>
+                            <div style="font-size: 9px; color: #64748b;">Accuracy: ${data.parameters.accuracy}%</div>
+                        </div>
+                        
+                        <!-- RCA & CAPA -->
+                        <div style="background: #fef3c7; border-left: 3px solid #f59e0b; padding: 10px; border-radius: 4px;">
+                            <div style="font-size: 10px; color: #92400e; font-weight: 600; margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
+                                <i class="fas fa-tools"></i> RCA & CAPA
+                            </div>
+                            <div style="font-size: 18px; font-weight: 700; color: #92400e;">${data.rcaCapa.total}</div>
+                            <div style="font-size: 9px; color: #64748b;">Open: ${data.rcaCapa.open} | Closed: ${data.rcaCapa.closed}</div>
+                        </div>
+                        
+                        <!-- Customer Satisfaction -->
+                        <div style="background: #fef2f2; border-left: 3px solid #ef4444; padding: 10px; border-radius: 4px;">
+                            <div style="font-size: 10px; color: #991b1b; font-weight: 600; margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
+                                <i class="fas fa-smile"></i> CSAT
+                            </div>
+                            <div style="font-size: 18px; font-weight: 700; color: #991b1b;">${data.csat.score || 'N/A'}</div>
+                            <div style="font-size: 9px; color: #64748b;">Responses: ${data.csat.responses}</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <!-- Parameter Distribution Bar -->
+                    <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border);">
+                        <div style="font-size: 9px; color: var(--text-muted); margin-bottom: 4px; font-weight: 600;">Parameter Distribution:</div>
+                        <div style="display: flex; gap: 4px; height: 6px; border-radius: 3px; overflow: hidden; background: #e5e7eb;">
+                            ${data.parameters.high > 0 ? `<div style="flex: ${data.parameters.high}; background: #10b981;" title="High: ${data.parameters.high}"></div>` : ''}
+                            ${data.parameters.medium > 0 ? `<div style="flex: ${data.parameters.medium}; background: #f59e0b;" title="Medium: ${data.parameters.medium}"></div>` : ''}
+                            ${data.parameters.low > 0 ? `<div style="flex: ${data.parameters.low}; background: #ef4444;" title="Low: ${data.parameters.low}"></div>` : ''}
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 8px; color: var(--text-muted); margin-top: 4px;">
+                            <span><i class="fas fa-circle" style="color: #10b981; font-size: 6px;"></i> High: ${data.parameters.high}</span>
+                            <span><i class="fas fa-circle" style="color: #f59e0b; font-size: 6px;"></i> Medium: ${data.parameters.medium}</span>
+                            <span><i class="fas fa-circle" style="color: #ef4444; font-size: 6px;"></i> Low: ${data.parameters.low}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showJourneyEmptyState() {
+            const container = document.getElementById('journeyClientCards');
+            const emptyState = document.getElementById('journeyEmptyState');
+            
+            if (container) container.style.display = 'none';
+            if (emptyState) emptyState.style.display = 'block';
+            
+            safeSetHTML('journeyTotalClients', '0');
+            safeSetHTML('journeyAvgAccuracy', '0%');
+            safeSetHTML('journeyTotalTransactions', '0');
+            safeSetHTML('journeyTotalRCA', '0');
         }
 
         function renderAccountFilters() {
