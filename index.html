@@ -4013,12 +4013,19 @@
                 console.log('📊 Account Summary rows:', window.dashboardData.accountSummary.length);
                 console.log('📋 Sample row:', window.dashboardData.accountSummary[0]);
                 
+                // Filter only clients with Audit Status = YES
                 const clients = [...new Set(
                     window.dashboardData.accountSummary
+                        .filter(row => {
+                            const auditStatus = (row['Audit Status'] || row['Audit_Status'] || row['AuditStatus'] || '').toString().trim().toUpperCase();
+                            return auditStatus === 'YES';
+                        })
                         .map(row => row['Account'] || row['Client'] || row['Account Name'])
                         .filter(c => c && c.toString().trim())
                         .map(c => c.toString().trim())
                 )].sort();
+                
+                console.log('📋 Clients with Audit Status = YES:', clients.length);
                 
                 console.log('📋 Extracted clients:', clients);
                 
@@ -4051,7 +4058,11 @@
         }
 
         function updateJourneySummaryStats(filterClient = '') {
-            let data = window.dashboardData.accountSummary;
+            // Filter only accounts with Audit Status = YES
+            let data = window.dashboardData.accountSummary.filter(row => {
+                const auditStatus = (row['Audit Status'] || row['Audit_Status'] || row['AuditStatus'] || '').toString().trim().toUpperCase();
+                return auditStatus === 'YES';
+            });
             
             if (filterClient) {
                 data = data.filter(row => {
@@ -4139,7 +4150,11 @@
             
             if (!container) return;
             
-            let data = window.dashboardData.accountSummary;
+            // Filter only accounts with Audit Status = YES
+            let data = window.dashboardData.accountSummary.filter(row => {
+                const auditStatus = (row['Audit Status'] || row['Audit_Status'] || row['AuditStatus'] || '').toString().trim().toUpperCase();
+                return auditStatus === 'YES';
+            });
             
             if (filterClient) {
                 data = data.filter(row => {
