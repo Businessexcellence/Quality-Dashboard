@@ -980,13 +980,13 @@
                 <i class="fas fa-home"></i>
                 <span>Home</span>
             </div>
-            <div class="menu-item" onclick="window.switchTab('account-summary', this)">
-                <i class="fas fa-building"></i>
-                <span>Account Summary</span>
-            </div>
             <div class="menu-item" onclick="window.switchTab('journey-at-glance', this)">
                 <i class="fas fa-route"></i>
                 <span>Journey at Glance</span>
+            </div>
+            <div class="menu-item" onclick="window.switchTab('account-summary', this)">
+                <i class="fas fa-building"></i>
+                <span>Account Summary</span>
             </div>
             <div class="menu-item" onclick="window.switchTab('transactional', this)">
                 <i class="fas fa-exchange-alt"></i>
@@ -1226,18 +1226,19 @@
 
         <!-- OTHER TABS (Placeholders) -->
         <div id="transactional" class="tab-content">
-            <!-- Filters Section - Account Summary Style -->
-            <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 10px; margin-bottom: 10px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                    <h2 style="font-size: 11px; color: var(--text-primary); margin: 0; font-weight: 700;">
-                        <i class="fas fa-filter" style="font-size: 9px;"></i> FILTERS
+            <!-- Drill-Down Filters Section -->
+            <div style="background: #f5f5f5; border: 1px solid #e0e0e0; border-radius: 6px; padding: 12px; margin-bottom: 10px; position: relative;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <h2 style="font-size: 12px; color: #000000; margin: 0; font-weight: 700; display: flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-sort-down" style="font-size: 14px; transform: rotate(0deg);"></i>
+                        FILTERS
                     </h2>
-                    <button onclick="clearTransactionalFilters()" style="background: var(--error); border: none; color: white; padding: 3px 8px; border-radius: 3px; cursor: pointer; font-size: 9px; font-weight: 600;">
+                    <button onclick="clearTransactionalFilters()" style="background: #dc2626; border: none; color: white; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 600; display: flex; align-items: center; gap: 4px;">
                         <i class="fas fa-times"></i> Clear
                     </button>
                 </div>
-                <div id="transactionalFilters" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px;">
-                    <!-- 6 Filters generated dynamically with counts -->
+                <div id="transactionalFilters" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px;">
+                    <!-- 6 Drill-down Filters generated dynamically -->
                 </div>
             </div>
 
@@ -1376,29 +1377,19 @@
         </div>
 
         <div id="audit-summary" class="tab-content">
-            <!-- Filters Section - Scrollable Button Style like Account Summary -->
-            <div style="background: white; border: 1px solid var(--border); border-radius: 6px; padding: 12px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                    <div style="display: flex; align-items: center;">
-                        <i class="fas fa-filter" style="color: var(--primary); font-size: 11px; margin-right: 6px;"></i>
-                        <span style="font-size: 10px; font-weight: 700; color: var(--text-primary); text-transform: uppercase;">FILTERS</span>
-                    </div>
-                    <button onclick="clearParameterFilters()" style="
-                        background: #dc2626;
-                        color: white;
-                        border: none;
-                        padding: 4px 8px;
-                        border-radius: 4px;
-                        font-size: 8px;
-                        font-weight: 600;
-                        cursor: pointer;
-                        transition: all 0.2s;
-                    ">
-                        Clear
+            <!-- Drill-Down Filters Section -->
+            <div style="background: #f5f5f5; border: 1px solid #e0e0e0; border-radius: 6px; padding: 12px; margin-bottom: 12px; position: relative;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <h2 style="font-size: 12px; color: #000000; margin: 0; font-weight: 700; display: flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-sort-down" style="font-size: 14px; transform: rotate(0deg);"></i>
+                        FILTERS
+                    </h2>
+                    <button onclick="clearParameterFilters()" style="background: #dc2626; border: none; color: white; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+                        <i class="fas fa-times"></i> Clear
                     </button>
                 </div>
                 <div id="parameterFilters" style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; width: 100%;">
-                    <!-- Filters will be populated here dynamically -->
+                    <!-- 7 Drill-down Filters generated dynamically -->
                 </div>
             </div>
 
@@ -1852,39 +1843,39 @@
         </div>
 
         <div id="rca-capa" class="tab-content">
-            <!-- WINDOW-FITTED LAYOUT: Filters (compact, no scrolling needed) -->
-            <div style="background: white; border: 1px solid var(--border); border-radius: 6px; padding: 6px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                    <div style="display: flex; align-items: center;">
-                        <i class="fas fa-filter" style="color: var(--primary); font-size: 11px; margin-right: 6px;"></i>
-                        <span style="font-size: 10px; font-weight: 700; color: var(--text-primary); text-transform: uppercase;">RCA & CAPA FILTERS</span>
-                    </div>
-                    <div style="display: flex; gap: 6px; align-items: center;">
+            <!-- Drill-Down Filters Section -->
+            <div style="background: #f5f5f5; border: 1px solid #e0e0e0; border-radius: 6px; padding: 12px; margin-bottom: 12px; position: relative;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <h2 style="font-size: 12px; color: #000000; margin: 0; font-weight: 700; display: flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-sort-down" style="font-size: 14px; transform: rotate(0deg);"></i>
+                        RCA & CAPA FILTERS
+                    </h2>
+                    <div style="display: flex; gap: 8px; align-items: center;">
                         <!-- Universal Search Input -->
                         <input 
                             type="text" 
                             id="rcaCapaUniversalSearch" 
                             placeholder="🔍 Search all filters..."
                             style="
-                                padding: 4px 8px 4px 24px;
-                                border: 1px solid var(--border);
+                                padding: 6px 10px 6px 28px;
+                                border: 1px solid #d0d0d0;
                                 border-radius: 4px;
-                                font-size: 9px;
-                                width: 180px;
-                                background: white url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2216%22 height=%2216%22 viewBox=%220 0 16 16%22><path fill=%22%23f04616%22 d=%22M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z%22/></svg>') no-repeat 6px center;
-                                background-size: 12px 12px;
-                                color: #1e293b;
+                                font-size: 10px;
+                                width: 200px;
+                                background: white url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2216%22 height=%2216%22 viewBox=%220 0 16 16%22><path fill=%22%23f04616%22 d=%22M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z%22/></svg>') no-repeat 8px center;
+                                background-size: 14px 14px;
+                                color: #333333;
                                 outline: none;
                             "
                             oninput="filterRcaCapaOptions(this.value)"
                         />
-                        <button onclick="clearRcaCapaFilters()" style="background: #dc2626; border: none; color: white; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 8px; font-weight: 600;">
+                        <button onclick="clearRcaCapaFilters()" style="background: #dc2626; border: none; color: white; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 600; display: flex; align-items: center; gap: 4px;">
                             <i class="fas fa-times"></i> Clear All
                         </button>
                     </div>
                 </div>
-                <div id="rcaCapaFilters" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px;">
-                    <!-- 5 Filters generated dynamically with counts -->
+                <div id="rcaCapaFilters" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;">
+                    <!-- 5 Drill-down Filters generated dynamically -->
                 </div>
             </div>
 
