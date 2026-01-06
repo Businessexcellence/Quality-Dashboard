@@ -4451,7 +4451,7 @@
             const icon = document.getElementById(`dropdown-icon-${field}`);
             
             if (content && icon) {
-                if (content.style.display === 'none') {
+                if (content.style.display === 'none' || content.style.display === '') {
                     content.style.display = 'flex';
                     icon.style.transform = 'rotate(0deg)';
                 } else {
@@ -4459,6 +4459,133 @@
                     icon.style.transform = 'rotate(-90deg)';
                 }
             }
+        }
+
+        /**
+         * Universal drill-down filter renderer for all tabs
+         * @param {string} containerId - ID of the container element
+         * @param {Array} dataSource - Array of data objects to filter
+         * @param {Array} filterConfig - Array of filter configurations {label, field, icon}
+         * @param {Function} applyFilterCallback - Function to call when filter is applied
+         * @param {Object} activeFilters - Currently active filters object
+         */
+        function renderDrillDownFilters(containerId, dataSource, filterConfig, applyFilterCallback, activeFilters) {
+            const container = document.getElementById(containerId);
+            
+            if (!container || !dataSource || dataSource.length === 0) {
+                console.warn(`Cannot render filters for ${containerId}: no data or container`);
+                return;
+            }
+
+            container.innerHTML = filterConfig.map(filter => {
+                // Get unique values for this filter
+                const allValues = [...new Set(dataSource
+                    .map(row => {
+                        const value = row[filter.field];
+                        return typeof value === 'string' ? value.trim() : value;
+                    })
+                    .filter(Boolean))];
+
+                if (allValues.length === 0) return '';
+
+                // Calculate counts for each value
+                const valueCounts = allValues.map(value => {
+                    // Create temporary filters excluding current field
+                    const tempFilters = {...activeFilters};
+                    delete tempFilters[filter.field];
+                    
+                    // Filter data based on other filters only
+                    let dataForCount = dataSource;
+                    if (Object.keys(tempFilters).length > 0) {
+                        dataForCount = dataSource.filter(row => {
+                            return Object.entries(tempFilters).every(([field, values]) => {
+                                if (!values || values.length === 0) return true;
+                                const rowValue = row[field];
+                                const cleanRowValue = typeof rowValue === 'string' ? rowValue.trim() : rowValue;
+                                return values.some(v => {
+                                    const cleanFilterValue = typeof v === 'string' ? v.trim() : v;
+                                    return cleanRowValue === cleanFilterValue;
+                                });
+                            });
+                        });
+                    }
+                    
+                    // Count how many rows match this specific value
+                    const count = dataForCount.filter(r => {
+                        const rowValue = r[filter.field];
+                        const cleanRowValue = typeof rowValue === 'string' ? rowValue.trim() : rowValue;
+                        return cleanRowValue === value;
+                    }).length;
+                    return { value, count };
+                }).sort((a, b) => b.count - a.count); // Sort by count descending
+
+                // Create drill-down filter matching Account Summary design
+                const fieldId = filter.field.replace(/[^a-zA-Z0-9]/g, '_');
+                return `
+                    <div style="
+                        background: white; 
+                        border: 1px solid #d0d0d0; 
+                        border-radius: 4px; 
+                        padding: 8px; 
+                        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+                    ">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; cursor: pointer;" onclick="toggleFilterDropdown('${fieldId}')">
+                            <div style="display: flex; align-items: center; gap: 4px;">
+                                <i class="fas fa-caret-down" id="dropdown-icon-${fieldId}" style="color: #000000; font-size: 12px; transition: transform 0.2s;"></i>
+                                <h3 style="font-size: 10px; font-weight: 700; color: #000000; margin: 0; text-transform: uppercase;">${filter.label}</h3>
+                            </div>
+                        </div>
+                        <div id="filter-content-${fieldId}" style="
+                            display: flex; 
+                            flex-direction: column; 
+                            gap: 3px; 
+                            max-height: 120px; 
+                            overflow-y: auto;
+                            padding-right: 4px;
+                        ">
+                            ${valueCounts.map(({ value, count }) => `
+                                <button 
+                                    onclick="${applyFilterCallback}('${filter.field}', '${String(value).replace(/'/g, "\\'")}')"
+                                    data-field="${filter.field}"
+                                    data-value="${String(value).replace(/"/g, '&quot;')}"
+                                    class="filter-btn-${containerId}"
+                                    style="
+                                        display: flex;
+                                        justify-content: space-between;
+                                        align-items: center;
+                                        padding: 5px 8px;
+                                        background: white;
+                                        border: 1px solid #e5e5e5;
+                                        border-radius: 3px;
+                                        cursor: pointer;
+                                        transition: all 0.2s;
+                                        text-align: left;
+                                        width: 100%;
+                                    "
+                                    onmouseover="if(!this.classList.contains('active')){this.style.background='#f8f8f8'; this.style.borderColor='#d0d0d0';}"
+                                    onmouseout="if(!this.classList.contains('active')){this.style.background='white'; this.style.borderColor='#e5e5e5';}"
+                                >
+                                    <span style="color: #333333; font-size: 10px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;">${value}</span>
+                                    <span style="
+                                        background: #ff6b35;
+                                        color: white;
+                                        padding: 2px 6px;
+                                        border-radius: 10px;
+                                        font-size: 9px;
+                                        font-weight: 700;
+                                        min-width: 28px;
+                                        text-align: center;
+                                        flex-shrink: 0;
+                                        margin-left: 6px;
+                                    ">${count}</span>
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            console.log(`✅ Drill-down filters rendered for ${containerId}`);
         }
 
         function renderAccountFilters() {
@@ -5597,12 +5724,14 @@ Total Population: ${totalPop}
 
         function populateTransactionalFilters() {
             try {
-                const container = document.getElementById('transactionalFilters');
                 const data = window.dashboardData.parameterAuditCount;
                 const accountData = window.dashboardData.accountSummary;
                 
                 if (!data || data.length === 0) {
-                    container.innerHTML = '<div style="padding: 20px; text-align: center; color: #94a3b8; grid-column: 1 / -1;">No data available</div>';
+                    const container = document.getElementById('transactionalFilters');
+                    if (container) {
+                        container.innerHTML = '<div style="padding: 20px; text-align: center; color: #94a3b8; grid-column: 1 / -1;">No data available</div>';
+                    }
                     return;
                 }
                 
@@ -5634,56 +5763,61 @@ Total Population: ${totalPop}
                     });
                 }
                 
-                // Define 6 filters with icons
-                const filters = [
-                    { label: 'Client', field: 'Client', icon: 'building' },
-                    { label: 'Practice Head', field: 'Practice Head', icon: 'user-tie' },
-                    { label: 'Financial Year', field: 'Financial Year', icon: 'calendar-alt', fieldAlt: 'Finanical Year' },
-                    { label: 'Month', field: 'Month', icon: 'calendar' },
-                    { label: 'Week', field: 'Week', icon: 'clock' },
-                    { label: 'Region', field: 'Region', icon: 'map-marker-alt' }
+                // Enrich data with Practice Head from mapping
+                const enrichedData = data.map(row => {
+                    const client = String(row['Client'] || '').trim();
+                    const mapping = window.clientToAccountMapping[client];
+                    return {
+                        ...row,
+                        'Practice Head': mapping ? mapping.practiceHead : (row['Practice Head'] || '')
+                    };
+                });
+                
+                // Define 6 filters matching Account Summary design
+                const filterConfig = [
+                    { label: 'CLIENT', field: 'Client' },
+                    { label: 'PRACTICE HEAD', field: 'Practice Head' },
+                    { label: 'FINANCIAL YEAR', field: 'Financial Year', fieldAlt: 'Finanical Year' },
+                    { label: 'MONTH', field: 'Month' },
+                    { label: 'WEEK', field: 'Week' },
+                    { label: 'REGION', field: 'Region' }
                 ];
 
-                container.innerHTML = filters.map(filter => {
-                    let values;
-                    
-                    // Handle Practice Head from mapping
+                // Initialize active filters
+                if (!window.activeTransactionalFilters) {
+                    window.activeTransactionalFilters = {};
+                }
+
+                container.innerHTML = filterConfig.map(filter => {
+                    // Get unique values - handle Practice Head specially
+                    let allValues;
                     if (filter.field === 'Practice Head') {
-                        values = [...new Set(Object.values(window.clientToAccountMapping).map(m => m.practiceHead).filter(p => p))];
+                        allValues = [...new Set(enrichedData.map(row => {
+                            const value = row['Practice Head'];
+                            return typeof value === 'string' ? value.trim() : value;
+                        }).filter(Boolean))];
                     } else {
-                        // Get unique values for this filter
-                        values = [...new Set(data
-                            .map(row => {
-                                const value = row[filter.field] || (filter.fieldAlt ? row[filter.fieldAlt] : null);
-                                return typeof value === 'string' ? value.trim() : value;
-                            })
-                            .filter(Boolean))];
+                        allValues = [...new Set(enrichedData.map(row => {
+                            const value = row[filter.field] || (filter.fieldAlt ? row[filter.fieldAlt] : null);
+                            return typeof value === 'string' ? value.trim() : value;
+                        }).filter(Boolean))];
                     }
 
-                    if (values.length === 0) return '';
+                    if (allValues.length === 0) return '';
 
-                    // Calculate counts for each value based on OTHER active filters (exclude current field)
-                    const valueCounts = values.map(value => {
+                    // Calculate counts for each value
+                    const valueCounts = allValues.map(value => {
                         // Create temporary filters excluding current field
                         const tempFilters = {...window.activeTransactionalFilters};
                         delete tempFilters[filter.field];
                         
                         // Filter data based on other filters only
-                        let dataForCount = data;
+                        let dataForCount = enrichedData;
                         if (Object.keys(tempFilters).length > 0) {
-                            dataForCount = data.filter(row => {
+                            dataForCount = enrichedData.filter(row => {
                                 return Object.entries(tempFilters).every(([field, values]) => {
                                     if (!values || values.length === 0) return true;
-                                    
-                                    // Special handling for Practice Head
-                                    if (field === 'Practice Head') {
-                                        const client = String(row['Client'] || '').trim();
-                                        const mapping = window.clientToAccountMapping[client];
-                                        if (!mapping) return false;
-                                        return values.some(v => mapping.practiceHead === v);
-                                    }
-                                    
-                                    const rowValue = row[field] || row[filters.find(f => f.field === field)?.fieldAlt];
+                                    const rowValue = row[field] || row[filterConfig.find(f => f.field === field)?.fieldAlt];
                                     const cleanRowValue = typeof rowValue === 'string' ? rowValue.trim() : rowValue;
                                     return values.some(v => {
                                         const cleanFilterValue = typeof v === 'string' ? v.trim() : v;
@@ -5693,104 +5827,74 @@ Total Population: ${totalPop}
                             });
                         }
                         
-                        // Calculate sum of Opportunity Count for this value
-                        let count;
-                        if (filter.field === 'Practice Head') {
-                            // Sum opportunity count for clients associated with this practice head
-                            count = dataForCount.reduce((sum, row) => {
-                                const client = String(row['Client'] || '').trim();
-                                const mapping = window.clientToAccountMapping[client];
-                                if (mapping && mapping.practiceHead === value) {
-                                    const oppCount = parseInt(row['Opportunity Count']) || 0;
-                                    return sum + oppCount;
-                                }
-                                return sum;
-                            }, 0);
-                        } else {
-                            // Sum opportunity count for rows matching this value
-                            count = dataForCount.reduce((sum, r) => {
-                                const rowValue = r[filter.field] || (filter.fieldAlt ? r[filter.fieldAlt] : null);
-                                const cleanRowValue = typeof rowValue === 'string' ? rowValue.trim() : rowValue;
-                                if (cleanRowValue === value) {
-                                    const oppCount = parseInt(r['Opportunity Count']) || 0;
-                                    return sum + oppCount;
-                                }
-                                return sum;
-                            }, 0);
-                        }
+                        // Count rows matching this specific value
+                        const count = dataForCount.filter(r => {
+                            const rowValue = r[filter.field] || (filter.fieldAlt ? r[filter.fieldAlt] : null);
+                            const cleanRowValue = typeof rowValue === 'string' ? rowValue.trim() : rowValue;
+                            return cleanRowValue === value;
+                        }).length;
+                        
                         return { value, count };
-                    }).sort((a, b) => b.count - a.count);
+                    }).sort((a, b) => b.count - a.count); // Sort by count descending
 
-                    // Special sorting for months
-                    if (filter.field === 'Month') {
-                        const monthOrder = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-                        valueCounts.sort((a, b) => monthOrder.indexOf(a.value) - monthOrder.indexOf(b.value));
-                    }
-                    
-                    // Special sorting for weeks (Week 1, Week 2, etc.)
-                    if (filter.field === 'Week') {
-                        valueCounts.sort((a, b) => {
-                            const weekNumA = parseInt(String(a.value).replace(/\D/g, '')) || 0;
-                            const weekNumB = parseInt(String(b.value).replace(/\D/g, '')) || 0;
-                            return weekNumA - weekNumB;
-                        });
-                    }
-
+                    // Create drill-down filter matching Account Summary design
+                    const fieldId = filter.field.replace(/[^a-zA-Z0-9]/g, '_');
                     return `
                         <div style="
-                            background: transparent; 
-                            border: 1px solid var(--border); 
+                            background: white; 
+                            border: 1px solid #d0d0d0; 
                             border-radius: 4px; 
-                            padding: 3px;
-                            width: 100%;
-                            box-sizing: border-box;
+                            padding: 8px; 
+                            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
                         ">
-                            <div style="display: flex; align-items: center; gap: 3px; margin-bottom: 4px;">
-                                <i class="fas fa-${filter.icon}" style="color: var(--primary); font-size: 8px;"></i>
-                                <h3 style="font-size: 9px; font-weight: 700; color: var(--text-primary); margin: 0; text-transform: uppercase;">${filter.label}</h3>
+                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; cursor: pointer;" onclick="toggleFilterDropdown('trans_${fieldId}')">
+                                <div style="display: flex; align-items: center; gap: 4px;">
+                                    <i class="fas fa-caret-down" id="dropdown-icon-trans_${fieldId}" style="color: #000000; font-size: 12px; transition: transform 0.2s;"></i>
+                                    <h3 style="font-size: 10px; font-weight: 700; color: #000000; margin: 0; text-transform: uppercase;">${filter.label}</h3>
+                                </div>
                             </div>
-                            <div style="
+                            <div id="filter-content-trans_${fieldId}" style="
                                 display: flex; 
                                 flex-direction: column; 
-                                gap: 2px; 
-                                max-height: 85px; 
+                                gap: 3px; 
+                                max-height: 120px; 
                                 overflow-y: auto;
-                                padding-right: 2px;
+                                padding-right: 4px;
                             ">
                                 ${valueCounts.map(({ value, count }) => `
                                     <button 
                                         onclick="applyTransactionalFilter('${filter.field}', '${String(value).replace(/'/g, "\\'")}')"
                                         data-field="${filter.field}"
                                         data-value="${String(value).replace(/"/g, '&quot;')}"
-                                        class="transactional-filter-btn"
+                                        class="trans-filter-btn"
                                         style="
                                             display: flex;
                                             justify-content: space-between;
                                             align-items: center;
-                                            padding: 3px 5px;
-                                            background: #f9fafb;
-                                            border: 1px solid var(--border);
+                                            padding: 5px 8px;
+                                            background: white;
+                                            border: 1px solid #e5e5e5;
                                             border-radius: 3px;
                                             cursor: pointer;
                                             transition: all 0.2s;
                                             text-align: left;
                                             width: 100%;
                                         "
-                                        onmouseover="if(!this.classList.contains('active')){this.style.background='#f0f1f3'; this.style.borderColor='var(--primary)';}"
-                                        onmouseout="if(!this.classList.contains('active')){this.style.background='#f9fafb'; this.style.borderColor='var(--border)';}"
+                                        onmouseover="if(!this.classList.contains('active')){this.style.background='#f8f8f8'; this.style.borderColor='#d0d0d0';}"
+                                        onmouseout="if(!this.classList.contains('active')){this.style.background='white'; this.style.borderColor='#e5e5e5';}"
                                     >
-                                        <span style="color: var(--text-primary); font-size: 8px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;">${filter.field === 'Week' ? 'Week ' + value : value}</span>
+                                        <span style="color: #333333; font-size: 10px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;">${value}</span>
                                         <span style="
-                                            background: var(--primary);
+                                            background: #ff6b35;
                                             color: white;
-                                            padding: 1px 4px;
-                                            border-radius: 4px;
-                                            font-size: 8px;
+                                            padding: 2px 6px;
+                                            border-radius: 10px;
+                                            font-size: 9px;
                                             font-weight: 700;
-                                            min-width: 16px;
+                                            min-width: 28px;
                                             text-align: center;
                                             flex-shrink: 0;
-                                            margin-left: 3px;
+                                            margin-left: 6px;
                                         ">${count}</span>
                                     </button>
                                 `).join('')}
@@ -5833,6 +5937,26 @@ Total Population: ${totalPop}
                     // Add the value
                     window.activeTransactionalFilters[field].push(value);
                 }
+                
+                // Update button states
+                const buttons = document.querySelectorAll('.trans-filter-btn');
+                buttons.forEach(button => {
+                    const btnField = button.getAttribute('data-field');
+                    const btnValue = button.getAttribute('data-value');
+                    
+                    if (window.activeTransactionalFilters[btnField] && 
+                        window.activeTransactionalFilters[btnField].includes(btnValue)) {
+                        button.classList.add('active');
+                        button.style.background = '#ff6b35';
+                        button.style.borderColor = '#ff6b35';
+                        button.querySelector('span:first-child').style.color = 'white';
+                    } else {
+                        button.classList.remove('active');
+                        button.style.background = 'white';
+                        button.style.borderColor = '#e5e5e5';
+                        button.querySelector('span:first-child').style.color = '#333333';
+                    }
+                });
                 
                 // Re-render filters with updated counts
                 populateTransactionalFilters();
