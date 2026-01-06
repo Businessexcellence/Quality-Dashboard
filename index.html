@@ -3414,6 +3414,24 @@
                     // CSAT
                     window.dashboardData.csat = parseSheet(workbook, 'CSAT') || [];
                     console.log('✅ CSAT rows:', window.dashboardData.csat.length);
+                    
+                    // Transactional_Overview
+                    console.log('🔍 Searching for Transactional Overview sheet...');
+                    let transData = parseSheet(workbook, 'Transactional_Overview');
+                    if (!transData || transData.length === 0) {
+                        console.log('🔍 Trying "Transactional Overview" (with space)...');
+                        transData = parseSheet(workbook, 'Transactional Overview');
+                    }
+                    if (!transData || transData.length === 0) {
+                        console.log('🔍 Trying "TransactionalOverview" (no separator)...');
+                        transData = parseSheet(workbook, 'TransactionalOverview');
+                    }
+                    window.dashboardData.transactionalOverview = transData || [];
+                    console.log('✅ Transactional_Overview rows:', window.dashboardData.transactionalOverview.length);
+                    if (window.dashboardData.transactionalOverview.length > 0) {
+                        console.log('📋 Transactional_Overview sample row:', window.dashboardData.transactionalOverview[0]);
+                        console.log('📋 Transactional_Overview columns:', Object.keys(window.dashboardData.transactionalOverview[0]));
+                    }
 
                     // Note: We keep data in memory only (localStorage has size limits)
                     console.log('💾 Data stored in memory (window.dashboardData)');
@@ -3434,6 +3452,7 @@
                             `• Parameter Audits: ${window.dashboardData.parameterAuditCount.length} rows\n` +
                             `• Account Summary: ${window.dashboardData.accountSummary.length} accounts\n` +
                             `• Recruiter Audits: ${window.dashboardData.recruiterAuditCount.length} rows\n` +
+                            `• Transactional Overview: ${window.dashboardData.transactionalOverview.length} rows\n` +
                             `• RCA/CAPA: ${window.dashboardData.rcaCapa.length} rows\n` +
                             `• Projects: ${window.dashboardData.projects.length} rows\n` +
                             `• CSAT: ${window.dashboardData.csat.length} rows\n\n` +
