@@ -1212,8 +1212,8 @@
             </div>
 
             <!-- Client Cards Grid -->
-            <div id="journeyClientCards" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(500px, 1fr)); gap: 16px;">
-                <!-- Client cards will be generated here -->
+            <div id="journeyClientCards" style="display: grid; grid-template-columns: 1fr; gap: 16px;">
+                <!-- Client cards will be generated here (full width for 7 KPI cards) -->
             </div>
 
             <!-- Empty State -->
@@ -4168,7 +4168,19 @@
         function getClientJourneyData(client) {
             const data = {
                 transactional: { total: 0, accuracy: 0 },
-                parameters: { total: 0, accuracy: 0, high: 0, medium: 0, low: 0 },
+                parameters: { 
+                    total: 0, 
+                    accuracy: 0, 
+                    high: 0, 
+                    medium: 0, 
+                    low: 0,
+                    totalOpp: 0,
+                    validOpp: 0,
+                    oppPass: 0,
+                    oppFail: 0,
+                    critical: 0,
+                    nonCritical: 0
+                },
                 recruiters: { total: 0, avgTime: 0 },
                 strategic: { revenue: 0, growth: 0 },
                 projects: { total: 0, active: 0 },
@@ -4193,7 +4205,7 @@
                 }
             }
             
-            // Parameter Performance
+            // Parameter Performance with detailed metrics
             if (window.dashboardData.parameterAuditCount) {
                 const params = window.dashboardData.parameterAuditCount.filter(row => {
                     const c = (row['Account'] || row['Client'] || '').toString().trim();
@@ -4206,8 +4218,24 @@
                     const oppPass = parseFloat(p['Opportunity Pass']) || 0;
                     const oppCount = parseFloat(p['Opportunity Count']) || 0;
                     const oppNA = parseFloat(p['Opportunity NA']) || 0;
+                    const oppFail = parseFloat(p['Opportunity Fail']) || 0;
                     const validOpp = oppCount - oppNA;
                     
+                    // Accumulate totals
+                    data.parameters.totalOpp += oppCount;
+                    data.parameters.validOpp += validOpp;
+                    data.parameters.oppPass += oppPass;
+                    data.parameters.oppFail += oppFail;
+                    
+                    // Count critical/non-critical
+                    const stage = (p['Stage'] || '').toString().toUpperCase();
+                    if (stage === 'CRITICAL') {
+                        data.parameters.critical++;
+                    } else if (stage === 'NON CRITICAL' || stage === 'NON-CRITICAL') {
+                        data.parameters.nonCritical++;
+                    }
+                    
+                    // Categorize by accuracy
                     if (validOpp > 0) {
                         const accuracy = (oppPass / validOpp) * 100;
                         if (accuracy >= 90) data.parameters.high++;
@@ -4217,16 +4245,8 @@
                 });
                 
                 // Calculate overall parameter accuracy
-                let totalPass = 0, totalValid = 0;
-                params.forEach(p => {
-                    totalPass += parseFloat(p['Opportunity Pass']) || 0;
-                    const oppCount = parseFloat(p['Opportunity Count']) || 0;
-                    const oppNA = parseFloat(p['Opportunity NA']) || 0;
-                    totalValid += (oppCount - oppNA);
-                });
-                
-                if (totalValid > 0) {
-                    data.parameters.accuracy = ((totalPass / totalValid) * 100).toFixed(1);
+                if (data.parameters.validOpp > 0) {
+                    data.parameters.accuracy = ((data.parameters.oppPass / data.parameters.validOpp) * 100).toFixed(1);
                 }
             }
             
@@ -4266,6 +4286,16 @@
         }
 
         function generateClientJourneyCard(client, data) {
+            // Calculate sample percentage
+            const samplePercent = data.parameters.totalOpp > 0 
+                ? ((data.parameters.validOpp / data.parameters.totalOpp) * 100).toFixed(1)
+                : '0.0';
+            
+            // Calculate error percentage
+            const errorPercent = data.parameters.validOpp > 0
+                ? ((data.parameters.oppFail / data.parameters.validOpp) * 100).toFixed(1)
+                : '0.0';
+            
             return `
                 <div style="background: var(--bg-card); border: 2px solid var(--border); border-radius: 8px; padding: 16px; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.05);" 
                      onmouseover="this.style.borderColor='var(--primary)'; this.style.boxShadow='0 4px 12px rgba(240,70,22,0.15)';" 
@@ -4279,25 +4309,94 @@
                         </h3>
                     </div>
                     
-                    <!-- Metrics Grid -->
+                    <!-- 7 KPI Cards in Horizontal Row -->
+                    <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-bottom: 16px;">
+                        
+                        <!-- Total Parameters -->
+                        <div style="background: white; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 4px; margin-bottom: 4px;">
+                                <i class="fas fa-clipboard-list" style="font-size: 10px; color: #000000;"></i>
+                                <div style="font-size: 9px; color: #000000; font-weight: 600;">TOTAL PARAMETERS</div>
+                            </div>
+                            <div style="font-size: 20px; font-weight: 700; color: #000000;">${data.parameters.total}</div>
+                        </div>
+                        
+                        <!-- Accuracy % -->
+                        <div style="background: white; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 4px; margin-bottom: 4px;">
+                                <i class="fas fa-percentage" style="font-size: 10px; color: #000000;"></i>
+                                <div style="font-size: 9px; color: #000000; font-weight: 600;">ACCURACY %</div>
+                            </div>
+                            <div style="font-size: 20px; font-weight: 700; color: #000000;">${data.parameters.accuracy}%</div>
+                        </div>
+                        
+                        <!-- % Sample -->
+                        <div style="background: white; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 4px; margin-bottom: 4px;">
+                                <i class="fas fa-chart-pie" style="font-size: 10px; color: #000000;"></i>
+                                <div style="font-size: 9px; color: #000000; font-weight: 600;">% SAMPLE</div>
+                            </div>
+                            <div style="font-size: 20px; font-weight: 700; color: #000000;">${samplePercent}%</div>
+                        </div>
+                        
+                        <!-- Error % -->
+                        <div style="background: white; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 4px; margin-bottom: 4px;">
+                                <i class="fas fa-exclamation-circle" style="font-size: 10px; color: #000000;"></i>
+                                <div style="font-size: 9px; color: #000000; font-weight: 600;">ERROR %</div>
+                            </div>
+                            <div style="font-size: 20px; font-weight: 700; color: #000000;">${errorPercent}%</div>
+                        </div>
+                        
+                        <!-- Total Audits -->
+                        <div style="background: white; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 4px; margin-bottom: 4px;">
+                                <i class="fas fa-check-double" style="font-size: 10px; color: #000000;"></i>
+                                <div style="font-size: 9px; color: #000000; font-weight: 600;">TOTAL AUDITS</div>
+                            </div>
+                            <div style="font-size: 20px; font-weight: 700; color: #000000;">${data.parameters.validOpp}</div>
+                        </div>
+                        
+                        <!-- Critical Params -->
+                        <div style="background: white; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 4px; margin-bottom: 4px;">
+                                <i class="fas fa-exclamation-triangle" style="font-size: 10px; color: #000000;"></i>
+                                <div style="font-size: 9px; color: #000000; font-weight: 600;">CRITICAL PARAMS</div>
+                            </div>
+                            <div style="font-size: 20px; font-weight: 700; color: #000000;">${data.parameters.critical}</div>
+                        </div>
+                        
+                        <!-- Non-Critical Params -->
+                        <div style="background: white; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 4px; margin-bottom: 4px;">
+                                <i class="fas fa-info-circle" style="font-size: 10px; color: #000000;"></i>
+                                <div style="font-size: 9px; color: #000000; font-weight: 600;">NON-CRITICAL PARAMS</div>
+                            </div>
+                            <div style="font-size: 20px; font-weight: 700; color: #000000;">${data.parameters.nonCritical}</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <!-- Section Headers and Detailed Metrics -->
                     <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
                         
                         <!-- Transactional Overview -->
                         <div style="background: #f0f9ff; border-left: 3px solid #3b82f6; padding: 10px; border-radius: 4px;">
                             <div style="font-size: 10px; color: #1e40af; font-weight: 600; margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
-                                <i class="fas fa-exchange-alt"></i> TRANSACTIONAL
+                                <i class="fas fa-exchange-alt"></i> TRANSACTIONAL OVERVIEW
                             </div>
                             <div style="font-size: 18px; font-weight: 700; color: #1e40af;">${data.transactional.total.toLocaleString()}</div>
+                            <div style="font-size: 9px; color: #64748b;">Total Transactions</div>
                             <div style="font-size: 9px; color: #64748b;">Accuracy: ${data.transactional.accuracy}%</div>
                         </div>
                         
                         <!-- Parameter Performance -->
                         <div style="background: #f0fdf4; border-left: 3px solid #10b981; padding: 10px; border-radius: 4px;">
                             <div style="font-size: 10px; color: #065f46; font-weight: 600; margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
-                                <i class="fas fa-clipboard-check"></i> PARAMETERS
+                                <i class="fas fa-clipboard-check"></i> PARAMETER PERFORMANCE
                             </div>
                             <div style="font-size: 18px; font-weight: 700; color: #065f46;">${data.parameters.total}</div>
-                            <div style="font-size: 9px; color: #64748b;">Accuracy: ${data.parameters.accuracy}%</div>
+                            <div style="font-size: 9px; color: #64748b;">High: ${data.parameters.high} | Med: ${data.parameters.medium} | Low: ${data.parameters.low}</div>
                         </div>
                         
                         <!-- RCA & CAPA -->
@@ -4312,27 +4411,12 @@
                         <!-- Customer Satisfaction -->
                         <div style="background: #fef2f2; border-left: 3px solid #ef4444; padding: 10px; border-radius: 4px;">
                             <div style="font-size: 10px; color: #991b1b; font-weight: 600; margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
-                                <i class="fas fa-smile"></i> CSAT
+                                <i class="fas fa-smile"></i> CUSTOMER SATISFACTION
                             </div>
                             <div style="font-size: 18px; font-weight: 700; color: #991b1b;">${data.csat.score || 'N/A'}</div>
                             <div style="font-size: 9px; color: #64748b;">Responses: ${data.csat.responses}</div>
                         </div>
                         
-                    </div>
-                    
-                    <!-- Parameter Distribution Bar -->
-                    <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border);">
-                        <div style="font-size: 9px; color: var(--text-muted); margin-bottom: 4px; font-weight: 600;">Parameter Distribution:</div>
-                        <div style="display: flex; gap: 4px; height: 6px; border-radius: 3px; overflow: hidden; background: #e5e7eb;">
-                            ${data.parameters.high > 0 ? `<div style="flex: ${data.parameters.high}; background: #10b981;" title="High: ${data.parameters.high}"></div>` : ''}
-                            ${data.parameters.medium > 0 ? `<div style="flex: ${data.parameters.medium}; background: #f59e0b;" title="Medium: ${data.parameters.medium}"></div>` : ''}
-                            ${data.parameters.low > 0 ? `<div style="flex: ${data.parameters.low}; background: #ef4444;" title="Low: ${data.parameters.low}"></div>` : ''}
-                        </div>
-                        <div style="display: flex; justify-content: space-between; font-size: 8px; color: var(--text-muted); margin-top: 4px;">
-                            <span><i class="fas fa-circle" style="color: #10b981; font-size: 6px;"></i> High: ${data.parameters.high}</span>
-                            <span><i class="fas fa-circle" style="color: #f59e0b; font-size: 6px;"></i> Medium: ${data.parameters.medium}</span>
-                            <span><i class="fas fa-circle" style="color: #ef4444; font-size: 6px;"></i> Low: ${data.parameters.low}</span>
-                        </div>
                     </div>
                 </div>
             `;
