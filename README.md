@@ -46,8 +46,9 @@ A comprehensive business excellence dashboard for quality management, audit trac
 - ✅ All elements are clickable and interactive
 
 ### 4. **Journey at Glance Tab** ⭐ NEW (2026-01-06)
-- ✅ **One-View Client Summary** - Comprehensive performance overview for all clients
-- ✅ **Client Filter** - Select specific client or view all clients at once
+- ✅ **One-View Client Summary** - Comprehensive performance overview for all clients **with Audit Status = YES**
+- ✅ **Client Filter** - Select specific client or view all audited clients at once
+- ✅ **Audit Status Filter** - Shows only clients with Audit Status = YES (automatically applied)
 - ✅ **4 Summary KPI Cards** - Total Clients, Average Accuracy, Total Transactions, Total RCA/CAPA
 - ✅ **7 Parameter KPI Cards per Client** - Horizontal row showing:
   1. **Total Parameters** - Count of all parameters audited
