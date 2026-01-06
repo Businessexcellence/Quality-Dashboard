@@ -1160,66 +1160,142 @@
 
         <!-- JOURNEY AT GLANCE TAB -->
         <div id="journey-at-glance" class="tab-content">
-            <!-- Page Header -->
-            <div style="background: linear-gradient(135deg, #3c3530 0%, #ff6b35 100%); border-radius: 8px; padding: 16px 20px; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-                <h2 style="font-size: 22px; font-weight: 700; color: #ffffff; margin: 0; display: flex; align-items: center; gap: 10px;">
-                    <i class="fas fa-route" style="font-size: 20px;"></i>
-                    Journey at Glance - Client-Wise Performance Overview
-                </h2>
-                <p style="font-size: 12px; color: rgba(255,255,255,0.9); margin: 6px 0 0 0;">
-                    Comprehensive view of all clients across key performance metrics
-                </p>
+            <!-- Filter Bar (matching layout from PDF) -->
+            <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                <i class="fas fa-filter" style="color: #6b7280; font-size: 14px;"></i>
+                <select style="padding: 6px 10px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 12px; background: white;">
+                    <option>FY 2025</option>
+                </select>
+                <select style="padding: 6px 10px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 12px; background: white;">
+                    <option>6 selected</option>
+                </select>
+                <select style="padding: 6px 10px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 12px; background: white;">
+                    <option>1 selected</option>
+                </select>
+                <select style="padding: 6px 10px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 12px; background: white;">
+                    <option>3 selected</option>
+                </select>
+                <select style="padding: 6px 10px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 12px; background: white;">
+                    <option>0 selected</option>
+                </select>
+                <select style="padding: 6px 10px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 12px; background: white;">
+                    <option>0 selected</option>
+                </select>
+                <button style="background: #ff6b35; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer;">Remove All</button>
+                <button style="background: transparent; color: #6b7280; border: 1px solid #d1d5db; padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; margin-left: auto; display: flex; align-items: center; gap: 6px;">
+                    <i class="fas fa-redo" style="font-size: 10px;"></i> Reset
+                </button>
             </div>
 
-            <!-- Client Selection Section -->
-            <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 12px; margin-bottom: 16px;">
-                <div style="display: flex; align-items: center; gap: 12px;">
-                    <label style="font-size: 12px; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 6px;">
-                        <i class="fas fa-filter" style="color: var(--primary);"></i>
-                        Select Client:
-                    </label>
-                    <select id="journeyClientFilter" onchange="filterJourneyByClient()" style="flex: 1; max-width: 400px; padding: 8px 12px; border: 2px solid #d1d5db; border-radius: 6px; font-size: 12px; color: #374151; background: white; cursor: pointer;">
-                        <option value="">All Clients</option>
-                    </select>
-                    <button onclick="resetJourneyFilter()" style="background: #dc2626; border: none; color: white; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 600; display: flex; align-items: center; gap: 6px;">
-                        <i class="fas fa-redo"></i> Reset
-                    </button>
+            <!-- Select Client Dropdown -->
+            <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; margin-bottom: 12px;">
+                <label style="font-size: 11px; color: #6b7280; font-weight: 600; margin-bottom: 6px; display: block;">Select Client</label>
+                <select id="journeyClientFilter" onchange="filterJourneyByClient()" style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 13px; background: white; cursor: pointer;">
+                    <option value="">M&M</option>
+                </select>
+            </div>
+
+            <!-- 4 KPI Cards Row (Light Gray Background) -->
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 12px;">
+                <div style="background: #f3f4f6; border-radius: 6px; padding: 16px;">
+                    <div style="font-size: 11px; color: #6b7280; font-weight: 600; margin-bottom: 4px;">STAGE-WISE ACCURACY</div>
+                    <div style="font-size: 32px; font-weight: 700; color: #111827;" id="journeyStageAccuracy">96.2</div>
+                </div>
+                <div style="background: #f3f4f6; border-radius: 6px; padding: 16px;">
+                    <div style="font-size: 11px; color: #6b7280; font-weight: 600; margin-bottom: 4px;">CRITICAL PARAMS</div>
+                    <div style="font-size: 32px; font-weight: 700; color: #111827; display: flex; align-items: center; gap: 8px;" id="journeyCriticalParams">
+                        2.32 <span style="font-size: 14px; color: #ef4444;">↓</span>
+                    </div>
+                    <div style="font-size: 11px; color: #ef4444; font-weight: 600;">-0.36%</div>
+                </div>
+                <div style="background: #f3f4f6; border-radius: 6px; padding: 16px;">
+                    <div style="font-size: 11px; color: #6b7280; font-weight: 600; margin-bottom: 4px;">AVERAGE AUDIT</div>
+                    <div style="font-size: 32px; font-weight: 700; color: #111827;" id="journeyAvgAudit">15,160</div>
+                </div>
+                <div style="background: #f3f4f6; border-radius: 6px; padding: 16px;">
+                    <div style="font-size: 11px; color: #6b7280; font-weight: 600; margin-bottom: 4px;">CLIENT %</div>
+                    <div style="font-size: 32px; font-weight: 700; color: #111827;" id="journeyClientPercent">28.9</div>
                 </div>
             </div>
 
-            <!-- Summary Statistics -->
-            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px;">
-                <div class="kpi-card" style="text-align: center; padding: 16px;">
-                    <i class="fas fa-building" style="font-size: 24px; color: var(--primary); margin-bottom: 8px;"></i>
-                    <div style="font-size: 28px; font-weight: 700; color: var(--primary);" id="journeyTotalClients">0</div>
-                    <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">TOTAL CLIENTS</div>
+            <!-- Charts Row -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                <!-- Stage-wise Accuracy Chart -->
+                <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 16px;">
+                    <h3 style="font-size: 13px; font-weight: 700; color: #111827; margin: 0 0 12px 0; display: flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-chart-bar" style="color: #ff6b35;"></i>
+                        Stage-wise Accuracy
+                    </h3>
+                    <canvas id="stageAccuracyChart" style="max-height: 200px;"></canvas>
                 </div>
-                <div class="kpi-card" style="text-align: center; padding: 16px;">
-                    <i class="fas fa-chart-line" style="font-size: 24px; color: #10b981; margin-bottom: 8px;"></i>
-                    <div style="font-size: 28px; font-weight: 700; color: #10b981;" id="journeyAvgAccuracy">0%</div>
-                    <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">AVG ACCURACY</div>
-                </div>
-                <div class="kpi-card" style="text-align: center; padding: 16px;">
-                    <i class="fas fa-tasks" style="font-size: 24px; color: #3b82f6; margin-bottom: 8px;"></i>
-                    <div style="font-size: 28px; font-weight: 700; color: #3b82f6;" id="journeyTotalTransactions">0</div>
-                    <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">TOTAL TRANSACTIONS</div>
-                </div>
-                <div class="kpi-card" style="text-align: center; padding: 16px;">
-                    <i class="fas fa-exclamation-triangle" style="font-size: 24px; color: #f59e0b; margin-bottom: 8px;"></i>
-                    <div style="font-size: 28px; font-weight: 700; color: #f59e0b;" id="journeyTotalRCA">0</div>
-                    <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">TOTAL RCA/CAPA</div>
+
+                <!-- Monthly Trend Chart -->
+                <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 16px;">
+                    <h3 style="font-size: 13px; font-weight: 700; color: #111827; margin: 0 0 12px 0; display: flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-chart-line" style="color: #10b981;"></i>
+                        Monthly Trend
+                    </h3>
+                    <canvas id="monthlyTrendChart" style="max-height: 200px;"></canvas>
                 </div>
             </div>
 
-            <!-- Client Cards Grid -->
-            <div id="journeyClientCards" style="display: grid; grid-template-columns: 1fr; gap: 16px;">
-                <!-- Client cards will be generated here (full width for 7 KPI cards) -->
+            <!-- Client RCAs and Projects Row -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                <!-- Client RCAs -->
+                <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 16px;">
+                    <h3 style="font-size: 13px; font-weight: 700; color: #111827; margin: 0 0 12px 0; display: flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-tools" style="color: #10b981;"></i>
+                        Client RCAs
+                    </h3>
+                    <div id="clientRCAsList" style="display: flex; flex-direction: column; gap: 8px;">
+                        <!-- RCAs will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Client Projects -->
+                <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 16px;">
+                    <h3 style="font-size: 13px; font-weight: 700; color: #111827; margin: 0 0 12px 0; display: flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-project-diagram" style="color: #3b82f6;"></i>
+                        Client Projects
+                    </h3>
+                    <div id="clientProjectsList" style="display: flex; flex-direction: column; gap: 8px;">
+                        <!-- Projects will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Parameter Performance Table -->
+            <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 16px; margin-bottom: 12px;">
+                <h3 style="font-size: 13px; font-weight: 700; color: #111827; margin: 0 0 12px 0; display: flex; align-items: center; gap: 6px;">
+                    <i class="fas fa-table" style="color: #6366f1;"></i>
+                    Parameter Performance
+                </h3>
+                <div style="overflow-x: auto;">
+                    <table id="parameterPerformanceTable" style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                        <thead>
+                            <tr style="background: #f9fafb; border-bottom: 2px solid #e5e7eb;">
+                                <th style="padding: 10px; text-align: left; font-weight: 700; color: #374151;">STAGE</th>
+                                <th style="padding: 10px; text-align: left; font-weight: 700; color: #374151;">PARAMETER</th>
+                                <th style="padding: 10px; text-align: left; font-weight: 700; color: #374151;">ACCURACY %</th>
+                                <th style="padding: 10px; text-align: left; font-weight: 700; color: #374151;">SAMPLE %</th>
+                                <th style="padding: 10px; text-align: left; font-weight: 700; color: #374151;">TREND</th>
+                                <th style="padding: 10px; text-align: left; font-weight: 700; color: #374151;">VERSION %</th>
+                                <th style="padding: 10px; text-align: left; font-weight: 700; color: #374151;">PASS</th>
+                                <th style="padding: 10px; text-align: left; font-weight: 700; color: #374151;">FAIL</th>
+                                <th style="padding: 10px; text-align: left; font-weight: 700; color: #374151;">STATUS</th>
+                            </tr>
+                        </thead>
+                        <tbody id="parameterTableBody">
+                            <!-- Table rows will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             <!-- Empty State -->
-            <div id="journeyEmptyState" style="display: none; text-align: center; padding: 60px 20px; background: var(--bg-card); border: 2px dashed var(--border); border-radius: 8px;">
-                <i class="fas fa-inbox" style="font-size: 48px; color: var(--text-muted); margin-bottom: 16px;"></i>
-                <p style="font-size: 14px; color: var(--text-muted); margin: 0;">No data available. Please upload Base File.xlsx to view client journey data.</p>
+            <div id="journeyEmptyState" style="display: none; text-align: center; padding: 60px 20px; background: #f9fafb; border: 2px dashed #d1d5db; border-radius: 8px;">
+                <i class="fas fa-inbox" style="font-size: 48px; color: #9ca3af; margin-bottom: 16px;"></i>
+                <p style="font-size: 14px; color: #6b7280; margin: 0;">No data available. Please upload Base File.xlsx to view journey data.</p>
             </div>
         </div>
 
@@ -3985,9 +4061,13 @@
                     return;
                 }
                 
+                // Populate all sections with new layout
                 populateJourneyClientFilter();
-                renderJourneyCards();
-                updateJourneySummaryStats();
+                renderJourneyKPIs();
+                renderJourneyCharts();
+                renderClientRCAs();
+                renderClientProjects();
+                renderParameterPerformanceTable();
                 
                 console.log('✅ Journey at Glance Tab refreshed');
             } catch (error) {
@@ -3995,6 +4075,143 @@
                 handleError(error, 'refreshJourneyAtGlanceTab');
             }
         };
+        
+        function renderJourneyKPIs() {
+            // Placeholder KPI calculations - you can update these with real data
+            document.getElementById('journeyStageAccuracy').textContent = '96.2';
+            document.getElementById('journeyCriticalParams').innerHTML = '2.32 <span style="font-size: 14px; color: #ef4444;">↓</span>';
+            document.getElementById('journeyAvgAudit').textContent = '15,160';
+            document.getElementById('journeyClientPercent').textContent = '28.9';
+        }
+        
+        function renderJourneyCharts() {
+            // Stage-wise Accuracy Chart
+            const stageCtx = document.getElementById('stageAccuracyChart');
+            if (stageCtx && typeof Chart !== 'undefined') {
+                new Chart(stageCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Pre Selection', 'Post Selection'],
+                        datasets: [{
+                            label: 'Accuracy %',
+                            data: [96.5, 98.2],
+                            backgroundColor: '#ff6b35',
+                            borderRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { beginAtZero: true, max: 100 }
+                        }
+                    }
+                });
+            }
+            
+            // Monthly Trend Chart
+            const trendCtx = document.getElementById('monthlyTrendChart');
+            if (trendCtx && typeof Chart !== 'undefined') {
+                new Chart(trendCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                        datasets: [{
+                            label: 'Accuracy',
+                            data: [92, 94, 93, 95, 96, 95, 97, 96, 98, 97, 98, 97],
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { beginAtZero: false, min: 90, max: 100 }
+                        }
+                    }
+                });
+            }
+        }
+        
+        function renderClientRCAs() {
+            const container = document.getElementById('clientRCAsList');
+            if (!container) return;
+            
+            // Sample RCA data
+            const rcas = [
+                { status: 'CLOSED', title: 'Offers released without BVR ratings', id: 'RCA-001' },
+                { status: 'CLOSED', title: 'Offer acceptance FFF not filed', id: 'RCA-002' },
+                { status: 'ACTIVE', title: 'Target form not', id: 'RCA-003' }
+            ];
+            
+            container.innerHTML = rcas.map(rca => `
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px; background: #f9fafb; border-radius: 4px; border: 1px solid #e5e7eb;">
+                    <div>
+                        <span style="background: ${rca.status === 'CLOSED' ? '#10b981' : '#3b82f6'}; color: white; padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 700;">${rca.status}</span>
+                        <div style="font-size: 12px; color: #374151; margin-top: 6px;">${rca.title}</div>
+                        <div style="font-size: 10px; color: #9ca3af; margin-top: 2px;">${rca.id}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function renderClientProjects() {
+            const container = document.getElementById('clientProjectsList');
+            if (!container) return;
+            
+            // Sample project data
+            const projects = [
+                { status: 'ACTIVE', title: 'M&M Hx Offer Documents Audit', code: 'T-001' },
+                { status: 'ACTIVE', title: 'M&M Hx Offer Audit Automation', code: 'T-002' }
+            ];
+            
+            container.innerHTML = projects.map(proj => `
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px; background: #f9fafb; border-radius: 4px; border: 1px solid #e5e7eb;">
+                    <div>
+                        <span style="background: #3b82f6; color: white; padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 700;">${proj.status}</span>
+                        <div style="font-size: 12px; color: #374151; margin-top: 6px;">${proj.title}</div>
+                        <div style="font-size: 10px; color: #9ca3af; margin-top: 2px;">${proj.code}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function renderParameterPerformanceTable() {
+            const tbody = document.getElementById('parameterTableBody');
+            if (!tbody) return;
+            
+            // Sample table data
+            const rows = [
+                { stage: 'Pre Selection', param: 'Initiate Assessment', accuracy: '82.7%', sample: '93.35%', trend: 540, version: '17.41%', pass: 340, fail: 131, status: 'CRITICAL' },
+                { stage: 'Pre Selection', param: 'Be-Hire Form Adherence', accuracy: '86.5%', sample: '99.35%', trend: 0, version: '0%', pass: 0, fail: 1, status: 'CRITICAL' },
+                { stage: 'Pre Selection', param: 'Initiate Meeting form Completeness & Correctness', accuracy: '88.8%', sample: '17.41%', trend: 540, version: '17.41%', pass: 340, fail: 133, status: 'CRITICAL' },
+                { stage: 'Pre Selection', param: 'Initiate Meeting form issues with mail', accuracy: '93.1%', sample: '8.83%', trend: 56, version: '8.83%', pass: 56, fail: 0, status: 'CRITICAL' },
+                { stage: 'Pre Selection', param: 'Completeness & Correctness of CES', accuracy: '86.6%', sample: '19.80%', trend: 350, version: '19.80%', pass: 350, fail: 44, status: 'CRITICAL' },
+                { stage: 'Post Selection', param: 'Joining Bonus Notice Period Approval', accuracy: '94.8%', sample: '1.71%', trend: 78, version: '1.71%', pass: 78, fail: 2, status: 'CRITICAL' },
+                { stage: 'Pre Selection', param: 'Initiate meeting form issues with mail', accuracy: '94.8%', sample: '9.49%', trend: 527, version: '9.49%', pass: 527, fail: 31, status: 'CRITICAL' }
+            ];
+            
+            tbody.innerHTML = rows.map((row, idx) => `
+                <tr style="border-bottom: 1px solid #e5e7eb; ${idx % 2 === 0 ? 'background: #f9fafb;' : ''}">
+                    <td style="padding: 10px; font-size: 11px; color: #374151; font-weight: 600;">${row.stage}</td>
+                    <td style="padding: 10px; font-size: 11px; color: #111827;">${row.param}</td>
+                    <td style="padding: 10px; font-size: 11px; color: #111827; font-weight: 600;">${row.accuracy}</td>
+                    <td style="padding: 10px; font-size: 11px; color: #111827;">${row.sample}</td>
+                    <td style="padding: 10px; font-size: 11px; color: #111827;">${row.trend}</td>
+                    <td style="padding: 10px; font-size: 11px; color: #111827;">${row.version}</td>
+                    <td style="padding: 10px; font-size: 11px; color: #111827;">${row.pass}</td>
+                    <td style="padding: 10px; font-size: 11px; color: #111827;">${row.fail}</td>
+                    <td style="padding: 10px;">
+                        <span style="background: #fce7f3; color: #be123c; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 700;">${row.status}</span>
+                    </td>
+                </tr>
+            `).join('');
+        }
 
         function populateJourneyClientFilter() {
             try {
