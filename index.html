@@ -114,6 +114,22 @@
                 if (progressContainer) progressContainer.style.display = 'none';
             }
         };
+        
+        window.openUserManual = function() {
+            const modal = document.getElementById('userManualModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                modal.classList.add('active');
+            }
+        };
+        
+        window.closeUserManual = function() {
+            const modal = document.getElementById('userManualModal');
+            if (modal) {
+                modal.style.display = 'none';
+                modal.classList.remove('active');
+            }
+        };
     </script>
     
     <style>
@@ -418,6 +434,10 @@
 
         .sidebar-menu {
             padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 100px);
+            overflow-y: auto;
         }
 
         .menu-section-title {
@@ -1016,6 +1036,21 @@
                 <i class="fas fa-smile"></i>
                 <span>Customer Satisfaction</span>
             </div>
+            
+            <!-- Spacer to push bottom items down -->
+            <div style="flex: 1;"></div>
+            
+            <!-- Upload Excel Button -->
+            <div class="menu-item" onclick="openUploadModal()" style="background: linear-gradient(135deg, #ff6b35 0%, #f04616 100%); color: white; margin: 10px 15px; border-radius: 8px; font-weight: 600; box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);">
+                <i class="fas fa-upload"></i>
+                <span>Upload Excel</span>
+            </div>
+            
+            <!-- User Manual Button -->
+            <div class="menu-item" onclick="openUserManual()" style="margin: 5px 15px 15px 15px; border: 1px solid #e5e7eb; background: #f9fafb;">
+                <i class="fas fa-book"></i>
+                <span>User Manual</span>
+            </div>
         </div>
     </div>
 
@@ -1027,10 +1062,6 @@
                 <i class="fas fa-chart-bar"></i> Business Excellence Dashboard
             </h1>
             <p style="margin: 8px 0 0 0; font-size: 0.9em; opacity: 0.9;">Comprehensive Quality Analytics & Performance Tracking</p>
-            <button class="upload-btn" onclick="openUploadModal()" style="position: absolute; top: 30px; right: 30px; background: rgba(255,255,255,0.2); color: white; border: 2px solid white; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.3s ease; backdrop-filter: blur(10px);">
-                <i class="fas fa-upload"></i>
-                Upload Excel
-            </button>
         </div>
         
         <!-- HOME TAB -->
@@ -2175,6 +2206,125 @@
                 </div>
                 <div style="text-align: center; margin-top: 10px;">
                     <span id="progressPercent" style="font-size: 14px; font-weight: 600; color: var(--primary);">0%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Manual Modal -->
+    <div id="userManualModal" class="modal" onclick="if(event.target.id==='userManualModal') closeUserManual()">
+        <div class="modal-content" style="max-width: 900px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: white; z-index: 10; border-bottom: 2px solid #e5e7eb;">
+                <span style="display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-book" style="color: #ff6b35;"></i>
+                    User Manual - Calculation Methodology
+                </span>
+                <button onclick="closeUserManual()" style="background: none; border: none; color: var(--text-primary); font-size: 24px; cursor: pointer; padding: 0; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">&times;</button>
+            </div>
+            
+            <div style="padding: 30px 20px;">
+                <h2 style="color: #ff6b35; margin-bottom: 20px; font-size: 24px;">📊 How Calculations Are Done</h2>
+                
+                <!-- Journey at Glance -->
+                <div style="background: #f9fafb; border-left: 4px solid #ff6b35; padding: 20px; margin-bottom: 20px; border-radius: 6px;">
+                    <h3 style="color: #374151; margin-bottom: 15px; font-size: 18px;">
+                        <i class="fas fa-route" style="color: #ff6b35;"></i> Journey at Glance
+                    </h3>
+                    <div style="line-height: 1.8; color: #6b7280;">
+                        <p><strong>Accuracy %:</strong> (Total Opportunity Pass / Valid Opportunities) × 100</p>
+                        <p><strong>Sample %:</strong> (Valid Opportunities / Total Opportunities) × 100</p>
+                        <p><strong>Error %:</strong> (Total Opportunity Fail / Valid Opportunities) × 100</p>
+                        <p><strong>Audit Count:</strong> Sum of all "Opportunity Count" values from Parameter_Audit_Count</p>
+                        <p><em>Valid Opportunities = Total Opportunities - Opportunity NA</em></p>
+                    </div>
+                </div>
+                
+                <!-- Account Summary -->
+                <div style="background: #f9fafb; border-left: 4px solid #10b981; padding: 20px; margin-bottom: 20px; border-radius: 6px;">
+                    <h3 style="color: #374151; margin-bottom: 15px; font-size: 18px;">
+                        <i class="fas fa-building" style="color: #10b981;"></i> Account Summary
+                    </h3>
+                    <div style="line-height: 1.8; color: #6b7280;">
+                        <p><strong>Overall Accuracy:</strong> (Sum of Opportunity Pass / Sum of Valid Opportunities) × 100</p>
+                        <p><strong>Overall Sample:</strong> (Sum of Valid Opportunities / Sum of Total Opportunities) × 100</p>
+                        <p><strong>Overall Error:</strong> (Sum of Opportunity Fail / Sum of Valid Opportunities) × 100</p>
+                        <p><strong>Total Accounts:</strong> Count of unique accounts with Audit Status = "YES"</p>
+                    </div>
+                </div>
+                
+                <!-- Transactional Overview -->
+                <div style="background: #f9fafb; border-left: 4px solid #3b82f6; padding: 20px; margin-bottom: 20px; border-radius: 6px;">
+                    <h3 style="color: #374151; margin-bottom: 15px; font-size: 18px;">
+                        <i class="fas fa-exchange-alt" style="color: #3b82f6;"></i> Transactional Overview
+                    </h3>
+                    <div style="line-height: 1.8; color: #6b7280;">
+                        <p><strong>Accuracy:</strong> Average accuracy across all transactions for selected filters</p>
+                        <p><strong>Sample %:</strong> Valid samples as percentage of total transactions</p>
+                        <p><strong>Error %:</strong> Error rate across all transactions</p>
+                        <p><strong>Critical/Non-Critical:</strong> Count based on "Stage" field classification</p>
+                    </div>
+                </div>
+                
+                <!-- Parameter Performance -->
+                <div style="background: #f9fafb; border-left: 4px solid #8b5cf6; padding: 20px; margin-bottom: 20px; border-radius: 6px;">
+                    <h3 style="color: #374151; margin-bottom: 15px; font-size: 18px;">
+                        <i class="fas fa-clipboard-check" style="color: #8b5cf6;"></i> Parameter Performance
+                    </h3>
+                    <div style="line-height: 1.8; color: #6b7280;">
+                        <p><strong>Parameter Accuracy:</strong> (Opportunity Pass / Valid Opportunities) × 100 for each parameter</p>
+                        <p><strong>Sample %:</strong> (Valid Opportunities / Total Opportunities) × 100</p>
+                        <p><strong>Error %:</strong> (Opportunity Fail / Valid Opportunities) × 100</p>
+                        <p><strong>Critical Parameters:</strong> Parameters where Stage = "CRITICAL"</p>
+                        <p><strong>Non-Critical Parameters:</strong> Parameters where Stage = "NON CRITICAL"</p>
+                    </div>
+                </div>
+                
+                <!-- RCA & CAPA -->
+                <div style="background: #f9fafb; border-left: 4px solid #f59e0b; padding: 20px; margin-bottom: 20px; border-radius: 6px;">
+                    <h3 style="color: #374151; margin-bottom: 15px; font-size: 18px;">
+                        <i class="fas fa-tools" style="color: #f59e0b;"></i> RCA & CAPA
+                    </h3>
+                    <div style="line-height: 1.8; color: #6b7280;">
+                        <p><strong>Total RCAs:</strong> Count of all RCA/CAPA records</p>
+                        <p><strong>Open Status:</strong> Status = "OPEN", "IN PROGRESS", or "PENDING"</p>
+                        <p><strong>Closed Status:</strong> Status = "CLOSED", "COMPLETED", or "RESOLVED"</p>
+                        <p><strong>Error Type Distribution:</strong> Grouped by "Error Type" column</p>
+                        <p><strong>Impact Levels:</strong> Classified by "Impact" column</p>
+                    </div>
+                </div>
+                
+                <!-- Data Sources -->
+                <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 20px; margin-bottom: 20px; border-radius: 6px;">
+                    <h3 style="color: #92400e; margin-bottom: 15px; font-size: 18px;">
+                        <i class="fas fa-database" style="color: #f59e0b;"></i> Data Sources
+                    </h3>
+                    <div style="line-height: 1.8; color: #78350f;">
+                        <p><strong>Required Sheets in Base File.xlsx:</strong></p>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li><strong>Account_Summary:</strong> Client information with Audit Status</li>
+                            <li><strong>Parameter_Audit_Count:</strong> Parameter-level audit data with Opportunity fields</li>
+                            <li><strong>Transactional_Overview:</strong> Transaction-level data</li>
+                            <li><strong>RCA_CAPA:</strong> Root Cause Analysis and Corrective Actions</li>
+                            <li><strong>Projects:</strong> Project tracking data (optional)</li>
+                            <li><strong>CSAT:</strong> Customer Satisfaction data (optional)</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Key Notes -->
+                <div style="background: #dbeafe; border-left: 4px solid #3b82f6; padding: 20px; border-radius: 6px;">
+                    <h3 style="color: #1e40af; margin-bottom: 15px; font-size: 18px;">
+                        <i class="fas fa-info-circle" style="color: #3b82f6;"></i> Important Notes
+                    </h3>
+                    <div style="line-height: 1.8; color: #1e3a8a;">
+                        <ul style="margin-left: 20px;">
+                            <li>All percentage calculations exclude "Opportunity NA" values</li>
+                            <li>Journey at Glance only shows clients with Audit Status = "YES"</li>
+                            <li>Filters apply real-time calculations across all metrics</li>
+                            <li>Chart years are extracted from "Financial Year" column in data</li>
+                            <li>Missing data fields are treated as 0 in calculations</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
