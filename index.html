@@ -1271,34 +1271,36 @@
 
             <!-- Client RCAs and Projects Row - UPDATED TO DROPDOWN BUTTONS -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
-                <!-- Client RCAs Dropdown -->
+                <!-- Client RCAs -->
                 <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 16px;">
-                    <button onclick="toggleJourneyRCAs()" style="width: 100%; background: #10b981; color: white; border: none; padding: 12px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; display: flex; justify-content: space-between; align-items: center;">
-                        <span style="display: flex; align-items: center; gap: 8px;">
-                            <i class="fas fa-tools"></i>
-                            Client RCAs
-                        </span>
-                        <span style="display: flex; align-items: center; gap: 8px;">
-                            <span id="rcaTotalCount" style="background: white; color: #10b981; padding: 4px 10px; border-radius: 12px; font-size: 13px; font-weight: 700;">0</span>
-                            <i id="rcaDropdownIcon" class="fas fa-chevron-down" style="transition: transform 0.3s;"></i>
-                        </span>
+                    <div style="text-align: center; margin-bottom: 12px;">
+                        <div style="font-size: 11px; color: #6b7280; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                            <i class="fas fa-tools" style="color: #10b981;"></i>
+                            CLIENT RCAs
+                        </div>
+                        <div id="rcaTotalCount" style="font-size: 48px; font-weight: 700; color: #10b981;">0</div>
+                    </div>
+                    <button onclick="toggleJourneyRCAs()" style="width: 100%; background: #10b981; color: white; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; display: flex; justify-content: center; align-items: center; gap: 8px; transition: all 0.3s;">
+                        <span>View Details</span>
+                        <i id="rcaDropdownIcon" class="fas fa-chevron-down" style="transition: transform 0.3s;"></i>
                     </button>
                     <div id="clientRCAsList" style="display: none; margin-top: 12px; max-height: 300px; overflow-y: auto;">
                         <!-- RCAs will be populated here -->
                     </div>
                 </div>
 
-                <!-- Client Projects Dropdown -->
+                <!-- Client Projects -->
                 <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 16px;">
-                    <button onclick="toggleJourneyProjects()" style="width: 100%; background: #3b82f6; color: white; border: none; padding: 12px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; display: flex; justify-content: space-between; align-items: center;">
-                        <span style="display: flex; align-items: center; gap: 8px;">
-                            <i class="fas fa-project-diagram"></i>
-                            Client Projects
-                        </span>
-                        <span style="display: flex; align-items: center; gap: 8px;">
-                            <span id="projectTotalCount" style="background: white; color: #3b82f6; padding: 4px 10px; border-radius: 12px; font-size: 13px; font-weight: 700;">0</span>
-                            <i id="projectDropdownIcon" class="fas fa-chevron-down" style="transition: transform 0.3s;"></i>
-                        </span>
+                    <div style="text-align: center; margin-bottom: 12px;">
+                        <div style="font-size: 11px; color: #6b7280; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                            <i class="fas fa-project-diagram" style="color: #3b82f6;"></i>
+                            CLIENT PROJECTS
+                        </div>
+                        <div id="projectTotalCount" style="font-size: 48px; font-weight: 700; color: #3b82f6;">0</div>
+                    </div>
+                    <button onclick="toggleJourneyProjects()" style="width: 100%; background: #3b82f6; color: white; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; display: flex; justify-content: center; align-items: center; gap: 8px; transition: all 0.3s;">
+                        <span>View Details</span>
+                        <i id="projectDropdownIcon" class="fas fa-chevron-down" style="transition: transform 0.3s;"></i>
                     </button>
                     <div id="clientProjectsList" style="display: none; margin-top: 12px; max-height: 300px; overflow-y: auto;">
                         <!-- Projects will be populated here -->
