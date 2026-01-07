@@ -1162,6 +1162,36 @@
         <div id="journey-at-glance" class="tab-content">
 
 
+            <!-- Filters Row (Weekly, Monthly, Yearly, Region, Critical, Non-Critical) -->
+            <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; margin-bottom: 12px;">
+                <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px;">
+                    <div>
+                        <label style="font-size: 11px; color: #6b7280; font-weight: 600; margin-bottom: 4px; display: block;">TIME PERIOD</label>
+                        <select id="journeyTimePeriod" onchange="filterJourneyByClient()" style="width: 100%; padding: 6px 10px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 12px; background: white; cursor: pointer;">
+                            <option value="all">All</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="monthly" selected>Monthly</option>
+                            <option value="yearly">Yearly</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size: 11px; color: #6b7280; font-weight: 600; margin-bottom: 4px; display: block;">REGION</label>
+                        <select id="journeyRegion" onchange="filterJourneyByClient()" style="width: 100%; padding: 6px 10px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 12px; background: white; cursor: pointer;">
+                            <option value="">All Regions</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size: 11px; color: #6b7280; font-weight: 600; margin-bottom: 4px; display: block;">PARAM TYPE</label>
+                        <select id="journeyParamType" onchange="filterJourneyByClient()" style="width: 100%; padding: 6px 10px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 12px; background: white; cursor: pointer;">
+                            <option value="">All</option>
+                            <option value="CRITICAL">Critical</option>
+                            <option value="NON CRITICAL">Non-Critical</option>
+                        </select>
+                    </div>
+                    <div style="grid-column: span 3;"></div>
+                </div>
+            </div>
+
             <!-- Select Client Dropdown -->
             <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; margin-bottom: 12px;">
                 <label style="font-size: 11px; color: #6b7280; font-weight: 600; margin-bottom: 6px; display: block;">Select Client</label>
@@ -1170,26 +1200,31 @@
                 </select>
             </div>
 
-            <!-- 4 KPI Cards Row (Light Gray Background) -->
-            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 12px;">
+            <!-- 6 KPI Cards Row (Light Gray Background) - UPDATED -->
+            <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-bottom: 12px;">
                 <div style="background: #f3f4f6; border-radius: 6px; padding: 16px;">
-                    <div style="font-size: 11px; color: #6b7280; font-weight: 600; margin-bottom: 4px;">STAGE-WISE ACCURACY</div>
-                    <div style="font-size: 32px; font-weight: 700; color: #111827;" id="journeyStageAccuracy">96.2</div>
+                    <div style="font-size: 11px; color: #6b7280; font-weight: 600; margin-bottom: 4px;">ACCURACY %</div>
+                    <div style="font-size: 32px; font-weight: 700; color: #111827;" id="journeyAccuracy">0%</div>
                 </div>
                 <div style="background: #f3f4f6; border-radius: 6px; padding: 16px;">
-                    <div style="font-size: 11px; color: #6b7280; font-weight: 600; margin-bottom: 4px;">CRITICAL PARAMS</div>
-                    <div style="font-size: 32px; font-weight: 700; color: #111827; display: flex; align-items: center; gap: 8px;" id="journeyCriticalParams">
-                        2.32 <span style="font-size: 14px; color: #ef4444;">↓</span>
-                    </div>
-                    <div style="font-size: 11px; color: #ef4444; font-weight: 600;">-0.36%</div>
+                    <div style="font-size: 11px; color: #6b7280; font-weight: 600; margin-bottom: 4px;">SAMPLE %</div>
+                    <div style="font-size: 32px; font-weight: 700; color: #111827;" id="journeySample">0%</div>
                 </div>
                 <div style="background: #f3f4f6; border-radius: 6px; padding: 16px;">
-                    <div style="font-size: 11px; color: #6b7280; font-weight: 600; margin-bottom: 4px;">AVERAGE AUDIT</div>
-                    <div style="font-size: 32px; font-weight: 700; color: #111827;" id="journeyAvgAudit">15,160</div>
+                    <div style="font-size: 11px; color: #6b7280; font-weight: 600; margin-bottom: 4px;">ERROR %</div>
+                    <div style="font-size: 32px; font-weight: 700; color: #111827;" id="journeyError">0%</div>
                 </div>
                 <div style="background: #f3f4f6; border-radius: 6px; padding: 16px;">
-                    <div style="font-size: 11px; color: #6b7280; font-weight: 600; margin-bottom: 4px;">CLIENT %</div>
-                    <div style="font-size: 32px; font-weight: 700; color: #111827;" id="journeyClientPercent">28.9</div>
+                    <div style="font-size: 11px; color: #6b7280; font-weight: 600; margin-bottom: 4px;">AUDIT COUNT</div>
+                    <div style="font-size: 32px; font-weight: 700; color: #111827;" id="journeyAuditCount">0</div>
+                </div>
+                <div style="background: #f3f4f6; border-radius: 6px; padding: 16px;">
+                    <div style="font-size: 11px; color: #6b7280; font-weight: 600; margin-bottom: 4px;">CRITICAL</div>
+                    <div style="font-size: 32px; font-weight: 700; color: #111827;" id="journeyCritical">0</div>
+                </div>
+                <div style="background: #f3f4f6; border-radius: 6px; padding: 16px;">
+                    <div style="font-size: 11px; color: #6b7280; font-weight: 600; margin-bottom: 4px;">NON-CRITICAL</div>
+                    <div style="font-size: 32px; font-weight: 700; color: #111827;" id="journeyNonCritical">0</div>
                 </div>
             </div>
 
@@ -1214,58 +1249,44 @@
                 </div>
             </div>
 
-            <!-- Client RCAs and Projects Row -->
+            <!-- Client RCAs and Projects Row - UPDATED TO DROPDOWN BUTTONS -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
-                <!-- Client RCAs -->
+                <!-- Client RCAs Dropdown -->
                 <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 16px;">
-                    <h3 style="font-size: 13px; font-weight: 700; color: #111827; margin: 0 0 12px 0; display: flex; align-items: center; gap: 6px;">
-                        <i class="fas fa-tools" style="color: #10b981;"></i>
-                        Client RCAs
-                    </h3>
-                    <div id="clientRCAsList" style="display: flex; flex-direction: column; gap: 8px;">
+                    <button onclick="toggleJourneyRCAs()" style="width: 100%; background: #10b981; color: white; border: none; padding: 12px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-tools"></i>
+                            Client RCAs
+                        </span>
+                        <span style="display: flex; align-items: center; gap: 8px;">
+                            <span id="rcaTotalCount" style="background: white; color: #10b981; padding: 4px 10px; border-radius: 12px; font-size: 13px; font-weight: 700;">0</span>
+                            <i id="rcaDropdownIcon" class="fas fa-chevron-down" style="transition: transform 0.3s;"></i>
+                        </span>
+                    </button>
+                    <div id="clientRCAsList" style="display: none; margin-top: 12px; max-height: 300px; overflow-y: auto;">
                         <!-- RCAs will be populated here -->
                     </div>
                 </div>
 
-                <!-- Client Projects -->
+                <!-- Client Projects Dropdown -->
                 <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 16px;">
-                    <h3 style="font-size: 13px; font-weight: 700; color: #111827; margin: 0 0 12px 0; display: flex; align-items: center; gap: 6px;">
-                        <i class="fas fa-project-diagram" style="color: #3b82f6;"></i>
-                        Client Projects
-                    </h3>
-                    <div id="clientProjectsList" style="display: flex; flex-direction: column; gap: 8px;">
+                    <button onclick="toggleJourneyProjects()" style="width: 100%; background: #3b82f6; color: white; border: none; padding: 12px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-project-diagram"></i>
+                            Client Projects
+                        </span>
+                        <span style="display: flex; align-items: center; gap: 8px;">
+                            <span id="projectTotalCount" style="background: white; color: #3b82f6; padding: 4px 10px; border-radius: 12px; font-size: 13px; font-weight: 700;">0</span>
+                            <i id="projectDropdownIcon" class="fas fa-chevron-down" style="transition: transform 0.3s;"></i>
+                        </span>
+                    </button>
+                    <div id="clientProjectsList" style="display: none; margin-top: 12px; max-height: 300px; overflow-y: auto;">
                         <!-- Projects will be populated here -->
                     </div>
                 </div>
             </div>
 
-            <!-- Parameter Performance Table -->
-            <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 16px; margin-bottom: 12px;">
-                <h3 style="font-size: 13px; font-weight: 700; color: #111827; margin: 0 0 12px 0; display: flex; align-items: center; gap: 6px;">
-                    <i class="fas fa-table" style="color: #6366f1;"></i>
-                    Parameter Performance
-                </h3>
-                <div style="overflow-x: auto;">
-                    <table id="parameterPerformanceTable" style="width: 100%; border-collapse: collapse; font-size: 12px;">
-                        <thead>
-                            <tr style="background: #f9fafb; border-bottom: 2px solid #e5e7eb;">
-                                <th style="padding: 10px; text-align: left; font-weight: 700; color: #374151;">STAGE</th>
-                                <th style="padding: 10px; text-align: left; font-weight: 700; color: #374151;">PARAMETER</th>
-                                <th style="padding: 10px; text-align: left; font-weight: 700; color: #374151;">ACCURACY %</th>
-                                <th style="padding: 10px; text-align: left; font-weight: 700; color: #374151;">SAMPLE %</th>
-                                <th style="padding: 10px; text-align: left; font-weight: 700; color: #374151;">TREND</th>
-                                <th style="padding: 10px; text-align: left; font-weight: 700; color: #374151;">VERSION %</th>
-                                <th style="padding: 10px; text-align: left; font-weight: 700; color: #374151;">PASS</th>
-                                <th style="padding: 10px; text-align: left; font-weight: 700; color: #374151;">FAIL</th>
-                                <th style="padding: 10px; text-align: left; font-weight: 700; color: #374151;">STATUS</th>
-                            </tr>
-                        </thead>
-                        <tbody id="parameterTableBody">
-                            <!-- Table rows will be populated here -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+
 
             <!-- Empty State -->
             <div id="journeyEmptyState" style="display: none; text-align: center; padding: 60px 20px; background: #f9fafb; border: 2px dashed #d1d5db; border-radius: 8px;">
@@ -4072,47 +4093,50 @@
                     });
                 }
                 
-                // Calculate Stage-wise Accuracy
-                let totalAccuracy = 0;
-                let totalValidOpp = 0;
+                // Calculate totals
+                let totalOppPass = 0;
+                let totalOppCount = 0;
+                let totalOppNA = 0;
+                let totalOppFail = 0;
+                let criticalCount = 0;
+                let nonCriticalCount = 0;
                 
                 data.forEach(row => {
                     const oppPass = parseFloat(row['Opportunity Pass']) || 0;
                     const oppCount = parseFloat(row['Opportunity Count']) || 0;
                     const oppNA = parseFloat(row['Opportunity NA']) || 0;
-                    const validOpp = oppCount - oppNA;
+                    const oppFail = parseFloat(row['Opportunity Fail']) || 0;
+                    const stage = (row['Stage'] || '').toString().toUpperCase();
                     
-                    if (validOpp > 0) {
-                        totalAccuracy += (oppPass / validOpp) * 100;
-                        totalValidOpp++;
+                    totalOppPass += oppPass;
+                    totalOppCount += oppCount;
+                    totalOppNA += oppNA;
+                    totalOppFail += oppFail;
+                    
+                    if (stage === 'CRITICAL') {
+                        criticalCount++;
+                    } else if (stage === 'NON CRITICAL' || stage === 'NON-CRITICAL') {
+                        nonCriticalCount++;
                     }
                 });
                 
-                const avgAccuracy = totalValidOpp > 0 ? (totalAccuracy / totalValidOpp).toFixed(1) : '0.0';
+                const totalValidOpp = totalOppCount - totalOppNA;
                 
-                // Calculate Critical Params count
-                const criticalParams = data.filter(row => {
-                    const stage = (row['Stage'] || '').toString().toUpperCase();
-                    return stage === 'CRITICAL';
-                }).length;
+                // Calculate percentages
+                const accuracy = totalValidOpp > 0 ? ((totalOppPass / totalValidOpp) * 100).toFixed(1) : '0.0';
+                const sample = totalOppCount > 0 ? ((totalValidOpp / totalOppCount) * 100).toFixed(1) : '0.0';
+                const error = totalValidOpp > 0 ? ((totalOppFail / totalValidOpp) * 100).toFixed(1) : '0.0';
+                const auditCount = data.length;
                 
-                // Calculate Average Audit (total opportunity count)
-                const totalAudits = data.reduce((sum, row) => {
-                    return sum + (parseFloat(row['Opportunity Count']) || 0);
-                }, 0);
+                // Update UI with % sign for percentage values
+                document.getElementById('journeyAccuracy').textContent = accuracy + '%';
+                document.getElementById('journeySample').textContent = sample + '%';
+                document.getElementById('journeyError').textContent = error + '%';
+                document.getElementById('journeyAuditCount').textContent = auditCount.toLocaleString();
+                document.getElementById('journeyCritical').textContent = criticalCount;
+                document.getElementById('journeyNonCritical').textContent = nonCriticalCount;
                 
-                // Calculate Client % (percentage of audited vs total)
-                const totalParams = data.length;
-                const auditedParams = data.filter(row => (parseFloat(row['Opportunity Count']) || 0) > 0).length;
-                const clientPercent = totalParams > 0 ? ((auditedParams / totalParams) * 100).toFixed(1) : '0.0';
-                
-                // Update UI
-                document.getElementById('journeyStageAccuracy').textContent = avgAccuracy;
-                document.getElementById('journeyCriticalParams').innerHTML = criticalParams + ' <span style="font-size: 14px; color: #ef4444;"></span>';
-                document.getElementById('journeyAvgAudit').textContent = totalAudits.toLocaleString();
-                document.getElementById('journeyClientPercent').textContent = clientPercent;
-                
-                console.log(`✅ Journey KPIs updated: Accuracy=${avgAccuracy}%, Critical=${criticalParams}, Audits=${totalAudits}, Client%=${clientPercent}%`);
+                console.log(`✅ Journey KPIs updated: Accuracy=${accuracy}%, Sample=${sample}%, Error=${error}%, Audits=${auditCount}, Critical=${criticalCount}, Non-Critical=${nonCriticalCount}`);
             } catch (error) {
                 console.error('❌ Error rendering Journey KPIs:', error);
             }
@@ -4186,7 +4210,15 @@
                             maintainAspectRatio: false,
                             plugins: { legend: { display: false } },
                             scales: {
-                                y: { beginAtZero: true, max: 100 }
+                                y: { 
+                                    beginAtZero: true, 
+                                    max: 100,
+                                    ticks: {
+                                        callback: function(value) {
+                                            return value + '%';
+                                        }
+                                    }
+                                }
                             }
                         }
                     });
@@ -4202,8 +4234,10 @@
                         window.trendChart.destroy();
                     }
                     
-                    // Calculate accuracy by month
+                    // Calculate accuracy by month with year
+                    const currentYear = new Date().getFullYear();
                     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                    const monthLabelsWithYear = months.map(m => `${m} ${currentYear}`);
                     const monthlyData = {};
                     
                     months.forEach(m => {
@@ -4231,7 +4265,7 @@
                     window.trendChart = new Chart(trendCtx, {
                         type: 'line',
                         data: {
-                            labels: months,
+                            labels: monthLabelsWithYear,
                             datasets: [{
                                 label: 'Accuracy %',
                                 data: monthlyAccuracies,
@@ -4247,7 +4281,16 @@
                             maintainAspectRatio: false,
                             plugins: { legend: { display: false } },
                             scales: {
-                                y: { beginAtZero: false, min: 70, max: 100 }
+                                y: { 
+                                    beginAtZero: false, 
+                                    min: 70, 
+                                    max: 100,
+                                    ticks: {
+                                        callback: function(value) {
+                                            return value + '%';
+                                        }
+                                    }
+                                }
                             }
                         }
                     });
@@ -4262,12 +4305,14 @@
         function renderClientRCAs() {
             try {
                 const container = document.getElementById('clientRCAsList');
+                const countBadge = document.getElementById('rcaTotalCount');
                 if (!container) return;
                 
                 const selectedClient = document.getElementById('journeyClientFilter')?.value || '';
                 
                 if (!window.dashboardData.rcaCapa || window.dashboardData.rcaCapa.length === 0) {
                     container.innerHTML = '<div style="padding: 20px; text-align: center; color: #9ca3af; font-size: 12px;">No RCA/CAPA data available</div>';
+                    if (countBadge) countBadge.textContent = '0';
                     return;
                 }
                 
@@ -4283,9 +4328,10 @@
                     });
                 }
                 
-                // Limit to first 5 RCAs
-                rcas = rcas.slice(0, 5);
+                // Update count badge with total
+                if (countBadge) countBadge.textContent = rcas.length;
                 
+                // Show all RCAs (not limited to 5)
                 if (rcas.length === 0) {
                     container.innerHTML = '<div style="padding: 20px; text-align: center; color: #9ca3af; font-size: 12px;">No RCA/CAPA found for selected client</div>';
                     return;
@@ -4298,7 +4344,7 @@
                     const truncated = problemStatement.length > 50 ? problemStatement.substring(0, 50) + '...' : problemStatement;
                     
                     return `
-                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px; background: #f9fafb; border-radius: 4px; border: 1px solid #e5e7eb;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px; background: #f9fafb; border-radius: 4px; border: 1px solid #e5e7eb; margin-bottom: 6px;">
                             <div>
                                 <span style="background: ${isClosed ? '#10b981' : '#f59e0b'}; color: white; padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 700;">${status}</span>
                                 <div style="font-size: 12px; color: #374151; margin-top: 6px;">${truncated}</div>
@@ -4314,15 +4360,27 @@
             }
         }
         
+        function toggleJourneyRCAs() {
+            const list = document.getElementById('clientRCAsList');
+            const icon = document.getElementById('rcaDropdownIcon');
+            if (list && icon) {
+                const isHidden = list.style.display === 'none';
+                list.style.display = isHidden ? 'block' : 'none';
+                icon.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+            }
+        }
+        
         function renderClientProjects() {
             try {
                 const container = document.getElementById('clientProjectsList');
+                const countBadge = document.getElementById('projectTotalCount');
                 if (!container) return;
                 
                 const selectedClient = document.getElementById('journeyClientFilter')?.value || '';
                 
                 if (!window.dashboardData.projects || window.dashboardData.projects.length === 0) {
                     container.innerHTML = '<div style="padding: 20px; text-align: center; color: #9ca3af; font-size: 12px;">No project data available</div>';
+                    if (countBadge) countBadge.textContent = '0';
                     return;
                 }
                 
@@ -4338,9 +4396,10 @@
                     });
                 }
                 
-                // Limit to first 5 projects
-                projects = projects.slice(0, 5);
+                // Update count badge with total
+                if (countBadge) countBadge.textContent = projects.length;
                 
+                // Show all projects (not limited to 5)
                 if (projects.length === 0) {
                     container.innerHTML = '<div style="padding: 20px; text-align: center; color: #9ca3af; font-size: 12px;">No projects found for selected client</div>';
                     return;
@@ -4352,7 +4411,7 @@
                     const code = proj['Project Code'] || proj['Code'] || `PRJ-${String(idx + 1).padStart(3, '0')}`;
                     
                     return `
-                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px; background: #f9fafb; border-radius: 4px; border: 1px solid #e5e7eb;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px; background: #f9fafb; border-radius: 4px; border: 1px solid #e5e7eb; margin-bottom: 6px;">
                             <div>
                                 <span style="background: #3b82f6; color: white; padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 700;">${status}</span>
                                 <div style="font-size: 12px; color: #374151; margin-top: 6px;">${title}</div>
@@ -4365,6 +4424,16 @@
                 console.log(`✅ Rendered ${projects.length} projects`);
             } catch (error) {
                 console.error('❌ Error rendering Client Projects:', error);
+            }
+        }
+        
+        function toggleJourneyProjects() {
+            const list = document.getElementById('clientProjectsList');
+            const icon = document.getElementById('projectDropdownIcon');
+            if (list && icon) {
+                const isHidden = list.style.display === 'none';
+                list.style.display = isHidden ? 'block' : 'none';
+                icon.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
             }
         }
         
@@ -4456,6 +4525,8 @@
         function populateJourneyClientFilter() {
             try {
                 const select = document.getElementById('journeyClientFilter');
+                const regionSelect = document.getElementById('journeyRegion');
+                
                 if (!select) {
                     console.error('❌ Journey client filter select element not found');
                     return;
@@ -4484,8 +4555,6 @@
                 
                 console.log('📋 Clients with Audit Status = YES:', clients.length);
                 
-                console.log('📋 Extracted clients:', clients);
-                
                 if (clients.length === 0) {
                     console.warn('⚠️ No clients found in account summary data');
                     select.innerHTML = '<option value="">All Clients (No Clients Found)</option>';
@@ -4494,6 +4563,18 @@
                 
                 select.innerHTML = '<option value="">All Clients</option>' + 
                     clients.map(client => `<option value="${client}">${client}</option>`).join('');
+                
+                // Populate regions from Parameter Audit Count
+                if (regionSelect && window.dashboardData.parameterAuditCount) {
+                    const regions = [...new Set(
+                        window.dashboardData.parameterAuditCount
+                            .map(row => (row['Region'] || '').toString().trim())
+                            .filter(r => r)
+                    )].sort();
+                    
+                    regionSelect.innerHTML = '<option value="">All Regions</option>' + 
+                        regions.map(region => `<option value="${region}">${region}</option>`).join('');
+                }
                 
                 console.log(`✅ Populated ${clients.length} clients in filter dropdown`);
             } catch (error) {
@@ -4511,7 +4592,6 @@
             renderJourneyCharts();
             renderClientRCAs();
             renderClientProjects();
-            renderParameterPerformanceTable();
         }
 
         function resetJourneyFilter() {
