@@ -1224,13 +1224,13 @@
                         </select>
                     </div>
                     <div style="flex: 1; min-width: 150px;">
-                        <label style="font-size: 12px; color: #4a5568; font-weight: 600; margin-bottom: 6px; display: block;">📈 Health</label>
+                        <label style="font-size: 12px; color: #4a5568; font-weight: 600; margin-bottom: 6px; display: block;">📈 Accuracy</label>
                         <select id="journeyHealthFilter" style="width: 100%; padding: 8px 12px; border: 2px solid #e2e8f0; border-radius: 6px; font-size: 13px; cursor: pointer;" onchange="applyJourneyFilters()">
                             <option value="all">All</option>
-                            <option value="excellent">Excellent (80+)</option>
-                            <option value="good">Good (60-79)</option>
-                            <option value="moderate">Moderate (40-59)</option>
-                            <option value="poor">Poor (<40)</option>
+                            <option value="excellent">Excellent (95+%)</option>
+                            <option value="good">Good (85-94%)</option>
+                            <option value="fair">Fair (75-84%)</option>
+                            <option value="poor">Poor (<75%)</option>
                         </select>
                     </div>
                 </div>
@@ -4335,11 +4335,13 @@
                     if (statusFilter !== 'all' && account.status !== statusFilter) return false;
                     if (auditFilter !== 'all' && account.audit_status !== auditFilter) return false;
                     
+                    // Filter by accuracy score instead of health score
                     if (healthFilter !== 'all') {
-                        if (healthFilter === 'excellent' && account.health_score < 80) return false;
-                        if (healthFilter === 'good' && (account.health_score < 60 || account.health_score >= 80)) return false;
-                        if (healthFilter === 'moderate' && (account.health_score < 40 || account.health_score >= 60)) return false;
-                        if (healthFilter === 'poor' && account.health_score >= 40) return false;
+                        const accuracy = account.avg_accuracy || 0;
+                        if (healthFilter === 'excellent' && accuracy < 95) return false;
+                        if (healthFilter === 'good' && (accuracy < 85 || accuracy >= 95)) return false;
+                        if (healthFilter === 'fair' && (accuracy < 75 || accuracy >= 85)) return false;
+                        if (healthFilter === 'poor' && accuracy >= 75) return false;
                     }
                     
                     return true;
@@ -4408,10 +4410,10 @@
             }
         }
         
-        function getHealthLabel(score) {
-            if (score >= 80) return 'Excellent';
-            if (score >= 60) return 'Good';
-            if (score >= 40) return 'Moderate';
+        function getAccuracyLabel(score) {
+            if (score >= 95) return 'Excellent';
+            if (score >= 85) return 'Good';
+            if (score >= 75) return 'Fair';
             return 'Needs Attention';
         }
         
@@ -4430,8 +4432,16 @@
                 
                 if (emptyState) emptyState.style.display = 'none';
                 
-                grid.innerHTML = data.map(account => {
-                    const healthLabel = getHealthLabel(account.health_score);
+                // Sort accounts by accuracy (best performing first)
+                const sortedData = [...data].sort((a, b) => {
+                    const accA = a.avg_accuracy || 0;
+                    const accB = b.avg_accuracy || 0;
+                    return accB - accA; // Descending order (highest first)
+                });
+                
+                grid.innerHTML = sortedData.map(account => {
+                    const accuracyScore = account.avg_accuracy ? account.avg_accuracy.toFixed(1) : '0.0';
+                    const accuracyLabel = getAccuracyLabel(parseFloat(accuracyScore));
                     
                     // Projects HTML
                     let projectsHTML = '<p style="text-align: center; padding: 20px; color: #9ca3af; font-style: italic;">No projects</p>';
@@ -4525,8 +4535,8 @@
                                     </div>
                                 </div>
                                 <div style="text-align: center; min-width: 100px;">
-                                    <div style="width: 90px; height: 90px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; font-size: 28px; font-weight: bold; color: #2d3748; background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">${account.health_score}</div>
-                                    <div style="font-size: 12px; font-weight: 600; opacity: 0.95;">${healthLabel}</div>
+                                    <div style="width: 90px; height: 90px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; font-size: 24px; font-weight: bold; color: #2d3748; background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">${accuracyScore}%</div>
+                                    <div style="font-size: 12px; font-weight: 600; opacity: 0.95;">${accuracyLabel}</div>
                                 </div>
                             </div>
                             
