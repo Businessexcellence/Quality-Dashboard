@@ -1162,9 +1162,15 @@
         <div id="journey-at-glance" class="tab-content">
 
 
-            <!-- Filters Row (Weekly, Monthly, Yearly, Region, Critical, Non-Critical) -->
+            <!-- Merged Filters Row (Client, Time Period, Region, Param Type) -->
             <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; margin-bottom: 12px;">
-                <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px;">
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+                    <div>
+                        <label style="font-size: 11px; color: #6b7280; font-weight: 600; margin-bottom: 4px; display: block;">SELECT CLIENT</label>
+                        <select id="journeyClientFilter" onchange="filterJourneyByClient()" style="width: 100%; padding: 6px 10px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 12px; background: white; cursor: pointer;">
+                            <option value="">All Clients</option>
+                        </select>
+                    </div>
                     <div>
                         <label style="font-size: 11px; color: #6b7280; font-weight: 600; margin-bottom: 4px; display: block;">TIME PERIOD</label>
                         <select id="journeyTimePeriod" onchange="filterJourneyByClient()" style="width: 100%; padding: 6px 10px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 12px; background: white; cursor: pointer;">
@@ -1188,20 +1194,11 @@
                             <option value="NON CRITICAL">Non-Critical</option>
                         </select>
                     </div>
-                    <div style="grid-column: span 3;"></div>
                 </div>
             </div>
 
-            <!-- Select Client Dropdown -->
-            <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; margin-bottom: 12px;">
-                <label style="font-size: 11px; color: #6b7280; font-weight: 600; margin-bottom: 6px; display: block;">Select Client</label>
-                <select id="journeyClientFilter" onchange="filterJourneyByClient()" style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 13px; background: white; cursor: pointer;">
-                    <option value="">M&M</option>
-                </select>
-            </div>
-
-            <!-- 6 KPI Cards Row (Light Gray Background) - UPDATED -->
-            <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-bottom: 12px;">
+            <!-- 4 KPI Cards Row (Light Gray Background) - REMOVED CRITICAL/NON-CRITICAL -->
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 12px;">
                 <div style="background: #f3f4f6; border-radius: 6px; padding: 16px;">
                     <div style="font-size: 11px; color: #6b7280; font-weight: 600; margin-bottom: 4px;">ACCURACY %</div>
                     <div style="font-size: 32px; font-weight: 700; color: #111827;" id="journeyAccuracy">0%</div>
@@ -1217,14 +1214,6 @@
                 <div style="background: #f3f4f6; border-radius: 6px; padding: 16px;">
                     <div style="font-size: 11px; color: #6b7280; font-weight: 600; margin-bottom: 4px;">AUDIT COUNT</div>
                     <div style="font-size: 32px; font-weight: 700; color: #111827;" id="journeyAuditCount">0</div>
-                </div>
-                <div style="background: #f3f4f6; border-radius: 6px; padding: 16px;">
-                    <div style="font-size: 11px; color: #6b7280; font-weight: 600; margin-bottom: 4px;">CRITICAL</div>
-                    <div style="font-size: 32px; font-weight: 700; color: #111827;" id="journeyCritical">0</div>
-                </div>
-                <div style="background: #f3f4f6; border-radius: 6px; padding: 16px;">
-                    <div style="font-size: 11px; color: #6b7280; font-weight: 600; margin-bottom: 4px;">NON-CRITICAL</div>
-                    <div style="font-size: 32px; font-weight: 700; color: #111827;" id="journeyNonCritical">0</div>
                 </div>
             </div>
 
@@ -4208,7 +4197,21 @@
                         options: {
                             responsive: true,
                             maintainAspectRatio: false,
-                            plugins: { legend: { display: false } },
+                            plugins: { 
+                                legend: { display: false },
+                                datalabels: {
+                                    anchor: 'end',
+                                    align: 'top',
+                                    formatter: function(value) {
+                                        return value + '%';
+                                    },
+                                    color: '#374151',
+                                    font: {
+                                        weight: 'bold',
+                                        size: 12
+                                    }
+                                }
+                            },
                             scales: {
                                 y: { 
                                     beginAtZero: true, 
@@ -4279,7 +4282,20 @@
                         options: {
                             responsive: true,
                             maintainAspectRatio: false,
-                            plugins: { legend: { display: false } },
+                            plugins: { 
+                                legend: { display: false },
+                                datalabels: {
+                                    align: 'top',
+                                    formatter: function(value) {
+                                        return value !== null ? value + '%' : '';
+                                    },
+                                    color: '#374151',
+                                    font: {
+                                        weight: 'bold',
+                                        size: 11
+                                    }
+                                }
+                            },
                             scales: {
                                 y: { 
                                     beginAtZero: false, 
