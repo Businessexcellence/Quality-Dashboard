@@ -1191,124 +1191,60 @@
 
         <!-- JOURNEY AT GLANCE TAB -->
         <div id="journey-at-glance" class="tab-content">
-
-
-            <!-- Merged Filters Row (Client, Time Period, Region, Param Type) -->
-            <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; margin-bottom: 12px;">
-                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
-                    <div>
-                        <label style="font-size: 11px; color: #6b7280; font-weight: 600; margin-bottom: 4px; display: block;">SELECT CLIENT</label>
-                        <select id="journeyClientFilter" onchange="filterJourneyByClient()" style="width: 100%; padding: 6px 10px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 12px; background: white; cursor: pointer;">
-                            <option value="">All Clients</option>
+            <!-- Journey at Glance: Account Cards View -->
+            
+            <!-- Filters Section -->
+            <div style="background: white; border-radius: 12px; padding: 16px; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
+                    <div style="flex: 1; min-width: 200px;">
+                        <label style="font-size: 12px; color: #4a5568; font-weight: 600; margin-bottom: 6px; display: block;">🔍 Search Accounts</label>
+                        <input type="text" id="journeySearchInput" placeholder="Search accounts..." style="width: 100%; padding: 8px 12px; border: 2px solid #e2e8f0; border-radius: 6px; font-size: 13px; outline: none; transition: all 0.3s;" oninput="applyJourneyFilters()">
+                    </div>
+                    <div style="flex: 1; min-width: 150px;">
+                        <label style="font-size: 12px; color: #4a5568; font-weight: 600; margin-bottom: 6px; display: block;">🌍 Region</label>
+                        <select id="journeyRegionFilter" style="width: 100%; padding: 8px 12px; border: 2px solid #e2e8f0; border-radius: 6px; font-size: 13px; cursor: pointer;" onchange="applyJourneyFilters()">
+                            <option value="all">All Regions</option>
                         </select>
                     </div>
-                    <div>
-                        <label style="font-size: 11px; color: #6b7280; font-weight: 600; margin-bottom: 4px; display: block;">TIME PERIOD</label>
-                        <select id="journeyTimePeriod" onchange="filterJourneyByClient()" style="width: 100%; padding: 6px 10px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 12px; background: white; cursor: pointer;">
+                    <div style="flex: 1; min-width: 150px;">
+                        <label style="font-size: 12px; color: #4a5568; font-weight: 600; margin-bottom: 6px; display: block;">📊 Status</label>
+                        <select id="journeyStatusFilter" style="width: 100%; padding: 8px 12px; border: 2px solid #e2e8f0; border-radius: 6px; font-size: 13px; cursor: pointer;" onchange="applyJourneyFilters()">
+                            <option value="all">All Status</option>
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                        </select>
+                    </div>
+                    <div style="flex: 1; min-width: 150px;">
+                        <label style="font-size: 12px; color: #4a5568; font-weight: 600; margin-bottom: 6px; display: block;">✅ Audit</label>
+                        <select id="journeyAuditFilter" style="width: 100%; padding: 8px 12px; border: 2px solid #e2e8f0; border-radius: 6px; font-size: 13px; cursor: pointer;" onchange="applyJourneyFilters()">
                             <option value="all">All</option>
-                            <option value="weekly">Weekly</option>
-                            <option value="monthly" selected>Monthly</option>
-                            <option value="yearly">Yearly</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                            <option value="On Hold">On Hold</option>
                         </select>
                     </div>
-                    <div>
-                        <label style="font-size: 11px; color: #6b7280; font-weight: 600; margin-bottom: 4px; display: block;">REGION</label>
-                        <select id="journeyRegion" onchange="filterJourneyByClient()" style="width: 100%; padding: 6px 10px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 12px; background: white; cursor: pointer;">
-                            <option value="">All Regions</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label style="font-size: 11px; color: #6b7280; font-weight: 600; margin-bottom: 4px; display: block;">PARAM TYPE</label>
-                        <select id="journeyParamType" onchange="filterJourneyByClient()" style="width: 100%; padding: 6px 10px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 12px; background: white; cursor: pointer;">
-                            <option value="">All</option>
-                            <option value="CRITICAL">Critical</option>
-                            <option value="NON CRITICAL">Non-Critical</option>
+                    <div style="flex: 1; min-width: 150px;">
+                        <label style="font-size: 12px; color: #4a5568; font-weight: 600; margin-bottom: 6px; display: block;">📈 Health</label>
+                        <select id="journeyHealthFilter" style="width: 100%; padding: 8px 12px; border: 2px solid #e2e8f0; border-radius: 6px; font-size: 13px; cursor: pointer;" onchange="applyJourneyFilters()">
+                            <option value="all">All</option>
+                            <option value="excellent">Excellent (80+)</option>
+                            <option value="good">Good (60-79)</option>
+                            <option value="moderate">Moderate (40-59)</option>
+                            <option value="poor">Poor (<40)</option>
                         </select>
                     </div>
                 </div>
             </div>
 
-            <!-- 4 KPI Cards Row (Light Gray Background) - REMOVED CRITICAL/NON-CRITICAL -->
-            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 12px;">
-                <div style="background: #f3f4f6; border-radius: 6px; padding: 16px;">
-                    <div style="font-size: 11px; color: #6b7280; font-weight: 600; margin-bottom: 4px;">ACCURACY %</div>
-                    <div style="font-size: 32px; font-weight: 700; color: #111827;" id="journeyAccuracy">0%</div>
-                </div>
-                <div style="background: #f3f4f6; border-radius: 6px; padding: 16px;">
-                    <div style="font-size: 11px; color: #6b7280; font-weight: 600; margin-bottom: 4px;">SAMPLE %</div>
-                    <div style="font-size: 32px; font-weight: 700; color: #111827;" id="journeySample">0%</div>
-                </div>
-                <div style="background: #f3f4f6; border-radius: 6px; padding: 16px;">
-                    <div style="font-size: 11px; color: #6b7280; font-weight: 600; margin-bottom: 4px;">ERROR %</div>
-                    <div style="font-size: 32px; font-weight: 700; color: #111827;" id="journeyError">0%</div>
-                </div>
-                <div style="background: #f3f4f6; border-radius: 6px; padding: 16px;">
-                    <div style="font-size: 11px; color: #6b7280; font-weight: 600; margin-bottom: 4px;">AUDIT COUNT</div>
-                    <div style="font-size: 32px; font-weight: 700; color: #111827;" id="journeyAuditCount">0</div>
-                </div>
+            <!-- Stats Grid -->
+            <div id="journeyStatsGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 16px;">
+                <!-- Dynamic stats will be inserted here -->
             </div>
 
-            <!-- Charts Row -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
-                <!-- Stage-wise Accuracy Chart -->
-                <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 16px;">
-                    <h3 style="font-size: 13px; font-weight: 700; color: #111827; margin: 0 0 12px 0; display: flex; align-items: center; gap: 6px;">
-                        <i class="fas fa-chart-bar" style="color: #ff6b35;"></i>
-                        Stage-wise Accuracy
-                    </h3>
-                    <canvas id="stageAccuracyChart" style="max-height: 200px;"></canvas>
-                </div>
-
-                <!-- Monthly Trend Chart -->
-                <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 16px;">
-                    <h3 id="monthlyTrendTitle" style="font-size: 13px; font-weight: 700; color: #111827; margin: 0 0 12px 0; display: flex; align-items: center; gap: 6px;">
-                        <i class="fas fa-chart-line" style="color: #10b981;"></i>
-                        Monthly Trend
-                    </h3>
-                    <canvas id="monthlyTrendChart" style="max-height: 200px;"></canvas>
-                </div>
+            <!-- Accounts Grid -->
+            <div id="journeyAccountsGrid" style="display: grid; gap: 16px;">
+                <!-- Account cards will be inserted here -->
             </div>
-
-            <!-- Client RCAs and Projects Row - UPDATED TO DROPDOWN BUTTONS -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
-                <!-- Client RCAs -->
-                <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 16px;">
-                    <div style="text-align: center; margin-bottom: 12px;">
-                        <div style="font-size: 11px; color: #6b7280; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 6px;">
-                            <i class="fas fa-tools" style="color: #10b981;"></i>
-                            CLIENT RCAs
-                        </div>
-                        <div id="rcaTotalCount" style="font-size: 48px; font-weight: 700; color: #10b981;">0</div>
-                    </div>
-                    <button onclick="toggleJourneyRCAs()" style="width: 100%; background: #10b981; color: white; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; display: flex; justify-content: center; align-items: center; gap: 8px; transition: all 0.3s;">
-                        <span>View Details</span>
-                        <i id="rcaDropdownIcon" class="fas fa-chevron-down" style="transition: transform 0.3s;"></i>
-                    </button>
-                    <div id="clientRCAsList" style="display: none; margin-top: 12px; max-height: 300px; overflow-y: auto;">
-                        <!-- RCAs will be populated here -->
-                    </div>
-                </div>
-
-                <!-- Client Projects -->
-                <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 16px;">
-                    <div style="text-align: center; margin-bottom: 12px;">
-                        <div style="font-size: 11px; color: #6b7280; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 6px;">
-                            <i class="fas fa-project-diagram" style="color: #3b82f6;"></i>
-                            CLIENT PROJECTS
-                        </div>
-                        <div id="projectTotalCount" style="font-size: 48px; font-weight: 700; color: #3b82f6;">0</div>
-                    </div>
-                    <button onclick="toggleJourneyProjects()" style="width: 100%; background: #3b82f6; color: white; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; display: flex; justify-content: center; align-items: center; gap: 8px; transition: all 0.3s;">
-                        <span>View Details</span>
-                        <i id="projectDropdownIcon" class="fas fa-chevron-down" style="transition: transform 0.3s;"></i>
-                    </button>
-                    <div id="clientProjectsList" style="display: none; margin-top: 12px; max-height: 300px; overflow-y: auto;">
-                        <!-- Projects will be populated here -->
-                    </div>
-                </div>
-            </div>
-
-
 
             <!-- Empty State -->
             <div id="journeyEmptyState" style="display: none; text-align: center; padding: 60px 20px; background: #f9fafb; border: 2px dashed #d1d5db; border-radius: 8px;">
@@ -4189,6 +4125,9 @@
         }
 
         // ==================== JOURNEY AT GLANCE TAB ====================
+        // Global variable to store account journey data
+        window.journeyAccountsData = [];
+        
         window.refreshJourneyAtGlanceTab = function() {
             try {
                 console.log('🔄 Refreshing Journey at Glance Tab...');
@@ -4198,13 +4137,12 @@
                     return;
                 }
                 
-                // Populate all sections with new layout
-                populateJourneyClientFilter();
-                renderJourneyKPIs();
-                renderJourneyCharts();
-                renderClientRCAs();
-                renderClientProjects();
-                renderParameterPerformanceTable();
+                // Build account-level data structure from dashboard data
+                buildJourneyAccountsData();
+                
+                // Initialize filters and render
+                initializeJourneyFilters();
+                applyJourneyFilters();
                 
                 console.log('✅ Journey at Glance Tab refreshed');
             } catch (error) {
@@ -4213,74 +4151,506 @@
             }
         };
         
-        function renderJourneyKPIs() {
+        function buildJourneyAccountsData() {
             try {
-                const selectedClient = document.getElementById('journeyClientFilter')?.value || '';
+                const accountsMap = new Map();
                 
-                if (!window.dashboardData.parameterAuditCount || window.dashboardData.parameterAuditCount.length === 0) {
-                    console.warn('⚠️ No Parameter Audit Count data for Journey KPIs');
-                    return;
-                }
+                // Get all accounts from Account Summary
+                const accountSummary = window.dashboardData.accountSummary || [];
+                const parameterData = window.dashboardData.parameterAuditCount || [];
+                const recruiterData = window.dashboardData.recruiterAuditCount || [];
+                const rcaData = window.dashboardData.rcaCapa || [];
+                const projectsData = window.dashboardData.projects || [];
+                const slaData = window.dashboardData.sla || [];
                 
-                // Filter data by selected client (if any) and by Audit Status = YES accounts
-                let data = window.dashboardData.parameterAuditCount;
-                
-                if (selectedClient) {
-                    data = data.filter(row => {
+                // Process each account from Account Summary
+                accountSummary.forEach(acc => {
+                    const accountName = (acc['Account'] || acc['Client'] || acc['Account Name'] || '').toString().trim();
+                    if (!accountName || accountName === '') return;
+                    
+                    const region = (acc['Region'] || 'Unknown').toString().trim();
+                    const status = (acc['Status'] || 'Active').toString().trim();
+                    const auditStatus = (acc['Audit Status'] || 'No').toString().trim();
+                    const practiceHead = (acc['Practice Head'] || 'N/A').toString().trim();
+                    const regionalHead = (acc['Regional Head'] || 'N/A').toString().trim();
+                    const beSpocSla = (acc['BE SPOC - SLAs/KPIs'] || 'N/A').toString().trim();
+                    const beSpocAudit = (acc['BE SPOC - Audit'] || 'N/A').toString().trim();
+                    const auditFrequency = (acc['Audit Frequency'] || 'Not Set').toString().trim();
+                    
+                    // Calculate metrics from Parameter Audit Count
+                    const accountParams = parameterData.filter(row => {
                         const client = (row['Account'] || row['Client'] || row['Account Name'] || '').toString().trim();
-                        return client.toLowerCase() === selectedClient.toLowerCase() ||
-                               client.toLowerCase().includes(selectedClient.toLowerCase()) ||
-                               selectedClient.toLowerCase().includes(client.toLowerCase());
+                        return client.toLowerCase() === accountName.toLowerCase();
+                    });
+                    
+                    let totalOppPass = 0, totalOppCount = 0, totalOppNA = 0, totalOppFail = 0;
+                    let criticalCount = 0, nonCriticalCount = 0;
+                    
+                    accountParams.forEach(row => {
+                        totalOppPass += parseFloat(row['Opportunity Pass']) || 0;
+                        totalOppCount += parseFloat(row['Opportunity Count']) || 0;
+                        totalOppNA += parseFloat(row['Opportunity NA']) || 0;
+                        totalOppFail += parseFloat(row['Opportunity Fail']) || 0;
+                        
+                        const stage = (row['Stage'] || '').toString().toUpperCase();
+                        if (stage === 'CRITICAL') criticalCount++;
+                        else if (stage === 'NON CRITICAL' || stage === 'NON-CRITICAL') nonCriticalCount++;
+                    });
+                    
+                    const validOpp = totalOppCount - totalOppNA;
+                    const avgAccuracy = validOpp > 0 ? ((totalOppPass / validOpp) * 100) : 0;
+                    const avgError = validOpp > 0 ? ((totalOppFail / validOpp) * 100) : 0;
+                    
+                    // Get recruiter data
+                    const accountRecruiters = recruiterData.filter(row => {
+                        const client = (row['Account'] || row['Client'] || row['Account Name'] || '').toString().trim();
+                        return client.toLowerCase() === accountName.toLowerCase();
+                    });
+                    
+                    const uniqueRecruiters = new Set(accountRecruiters.map(r => r['Recruiter'] || r['Recruiter Name'] || '')).size;
+                    const recruiterAudits = accountRecruiters.reduce((sum, r) => sum + (parseFloat(r['Opportunity Count']) || 0), 0);
+                    
+                    // Get projects
+                    const accountProjects = projectsData.filter(row => {
+                        const client = (row['Account'] || row['Client'] || row['Account Name'] || '').toString().trim();
+                        return client.toLowerCase() === accountName.toLowerCase();
+                    });
+                    
+                    const totalProjects = accountProjects.length;
+                    const closedProjects = accountProjects.filter(p => (p['Status'] || '').toString().toUpperCase() === 'CLOSED').length;
+                    const ongoingProjects = totalProjects - closedProjects;
+                    
+                    // Get RCAs
+                    const accountRCAs = rcaData.filter(row => {
+                        const client = (row['Account'] || row['Client'] || row['Account Name'] || '').toString().trim();
+                        return client.toLowerCase() === accountName.toLowerCase();
+                    });
+                    
+                    const totalRCA = accountRCAs.length;
+                    const closedRCA = accountRCAs.filter(r => {
+                        const status = (r['Status'] || '').toString().toUpperCase();
+                        return status === 'CLOSED' || status === 'COMPLETED' || status === 'RESOLVED';
+                    }).length;
+                    const openRCA = totalRCA - closedRCA;
+                    
+                    // Get SLA data
+                    const accountSLA = slaData.filter(row => {
+                        const client = (row['Account'] || row['Client'] || row['Account Name'] || '').toString().trim();
+                        return client.toLowerCase() === accountName.toLowerCase();
+                    });
+                    
+                    let slaCompliance = 0, slaMet = 0, slaNotMet = 0;
+                    if (accountSLA.length > 0) {
+                        slaMet = accountSLA.filter(s => (s['SLA Met'] || '').toString().toUpperCase() === 'YES').length;
+                        slaNotMet = accountSLA.length - slaMet;
+                        slaCompliance = accountSLA.length > 0 ? ((slaMet / accountSLA.length) * 100) : 0;
+                    }
+                    
+                    // Calculate health score (simple algorithm based on accuracy and compliance)
+                    let healthScore = 0;
+                    if (avgAccuracy > 0) {
+                        healthScore = avgAccuracy * 0.6; // 60% weight on accuracy
+                        if (slaCompliance > 0) healthScore += slaCompliance * 0.3; // 30% weight on SLA
+                        if (totalProjects > 0) healthScore += 10; // 10% bonus for having projects
+                    }
+                    healthScore = Math.min(100, Math.max(0, healthScore));
+                    
+                    accountsMap.set(accountName, {
+                        name: accountName,
+                        region: region,
+                        status: status,
+                        audit_status: auditStatus,
+                        audit_frequency: auditFrequency,
+                        practice_head: practiceHead,
+                        regional_head: regionalHead,
+                        be_spoc_sla: beSpocSla,
+                        be_spoc_audit: beSpocAudit,
+                        audit_records: accountParams.length,
+                        avg_accuracy: avgAccuracy,
+                        avg_error: avgError,
+                        critical_audits: criticalCount,
+                        non_critical_audits: nonCriticalCount,
+                        total_opportunities: totalOppCount,
+                        unique_recruiters: uniqueRecruiters,
+                        recruiter_audits: recruiterAudits,
+                        total_projects: totalProjects,
+                        closed_projects: closedProjects,
+                        ongoing_projects: ongoingProjects,
+                        project_list: accountProjects,
+                        total_rca: totalRCA,
+                        closed_rca: closedRCA,
+                        open_rca: openRCA,
+                        rca_list: accountRCAs,
+                        has_audit_data: accountParams.length > 0,
+                        has_projects: totalProjects > 0,
+                        has_rca: totalRCA > 0,
+                        has_sla: accountSLA.length > 0,
+                        sla_compliance: slaCompliance,
+                        sla_met: slaMet,
+                        sla_not_met: slaNotMet,
+                        health_score: parseFloat(healthScore.toFixed(1))
+                    });
+                });
+                
+                window.journeyAccountsData = Array.from(accountsMap.values());
+                console.log(`✅ Built journey data for ${window.journeyAccountsData.length} accounts`);
+            } catch (error) {
+                console.error('❌ Error building journey accounts data:', error);
+                window.journeyAccountsData = [];
+            }
+        }
+        
+        function initializeJourneyFilters() {
+            try {
+                const regions = [...new Set(window.journeyAccountsData.map(a => a.region))].sort();
+                const regionSelect = document.getElementById('journeyRegionFilter');
+                
+                if (regionSelect) {
+                    regionSelect.innerHTML = '<option value="all">All Regions</option>';
+                    regions.forEach(region => {
+                        const option = document.createElement('option');
+                        option.value = region;
+                        option.textContent = region;
+                        regionSelect.appendChild(option);
                     });
                 }
                 
-                // Calculate totals
-                let totalOppPass = 0;
-                let totalOppCount = 0;
-                let totalOppNA = 0;
-                let totalOppFail = 0;
-                let criticalCount = 0;
-                let nonCriticalCount = 0;
+                console.log('✅ Journey filters initialized');
+            } catch (error) {
+                console.error('❌ Error initializing journey filters:', error);
+            }
+        }
+        
+        function applyJourneyFilters() {
+            try {
+                const searchTerm = (document.getElementById('journeySearchInput')?.value || '').toLowerCase();
+                const regionFilter = document.getElementById('journeyRegionFilter')?.value || 'all';
+                const statusFilter = document.getElementById('journeyStatusFilter')?.value || 'all';
+                const auditFilter = document.getElementById('journeyAuditFilter')?.value || 'all';
+                const healthFilter = document.getElementById('journeyHealthFilter')?.value || 'all';
                 
-                data.forEach(row => {
-                    const oppPass = parseFloat(row['Opportunity Pass']) || 0;
-                    const oppCount = parseFloat(row['Opportunity Count']) || 0;
-                    const oppNA = parseFloat(row['Opportunity NA']) || 0;
-                    const oppFail = parseFloat(row['Opportunity Fail']) || 0;
-                    const stage = (row['Stage'] || '').toString().toUpperCase();
+                let filtered = window.journeyAccountsData.filter(account => {
+                    if (searchTerm && !account.name.toLowerCase().includes(searchTerm)) return false;
+                    if (regionFilter !== 'all' && account.region !== regionFilter) return false;
+                    if (statusFilter !== 'all' && account.status !== statusFilter) return false;
+                    if (auditFilter !== 'all' && account.audit_status !== auditFilter) return false;
                     
-                    totalOppPass += oppPass;
-                    totalOppCount += oppCount;
-                    totalOppNA += oppNA;
-                    totalOppFail += oppFail;
-                    
-                    if (stage === 'CRITICAL') {
-                        criticalCount++;
-                    } else if (stage === 'NON CRITICAL' || stage === 'NON-CRITICAL') {
-                        nonCriticalCount++;
+                    if (healthFilter !== 'all') {
+                        if (healthFilter === 'excellent' && account.health_score < 80) return false;
+                        if (healthFilter === 'good' && (account.health_score < 60 || account.health_score >= 80)) return false;
+                        if (healthFilter === 'moderate' && (account.health_score < 40 || account.health_score >= 60)) return false;
+                        if (healthFilter === 'poor' && account.health_score >= 40) return false;
                     }
+                    
+                    return true;
                 });
                 
-                const totalValidOpp = totalOppCount - totalOppNA;
+                renderJourneyStats(filtered);
+                renderJourneyAccounts(filtered);
                 
-                // Calculate percentages
-                const accuracy = totalValidOpp > 0 ? ((totalOppPass / totalValidOpp) * 100).toFixed(1) : '0.0';
-                const sample = totalOppCount > 0 ? ((totalValidOpp / totalOppCount) * 100).toFixed(1) : '0.0';
-                const error = totalValidOpp > 0 ? ((totalOppFail / totalValidOpp) * 100).toFixed(1) : '0.0';
-                const auditCount = totalOppCount; // Total Opportunity Count from base file
-                
-                // Update UI with % sign for percentage values
-                document.getElementById('journeyAccuracy').textContent = accuracy + '%';
-                document.getElementById('journeySample').textContent = sample + '%';
-                document.getElementById('journeyError').textContent = error + '%';
-                document.getElementById('journeyAuditCount').textContent = auditCount.toLocaleString();
-                document.getElementById('journeyCritical').textContent = criticalCount;
-                document.getElementById('journeyNonCritical').textContent = nonCriticalCount;
-                
-                console.log(`✅ Journey KPIs updated: Accuracy=${accuracy}%, Sample=${sample}%, Error=${error}%, Audits=${auditCount}, Critical=${criticalCount}, Non-Critical=${nonCriticalCount}`);
+                console.log(`✅ Filtered to ${filtered.length} accounts`);
             } catch (error) {
-                console.error('❌ Error rendering Journey KPIs:', error);
+                console.error('❌ Error applying journey filters:', error);
             }
+        }
+        
+        function renderJourneyStats(filteredData) {
+            try {
+                const total = filteredData.length;
+                const active = filteredData.filter(a => a.status === 'Active').length;
+                const withAuditData = filteredData.filter(a => a.has_audit_data).length;
+                const withProjects = filteredData.filter(a => a.has_projects).length;
+                const withRCA = filteredData.filter(a => a.has_rca).length;
+                const withSLA = filteredData.filter(a => a.has_sla).length;
+                const avgHealth = total > 0 ? (filteredData.reduce((sum, a) => sum + a.health_score, 0) / total).toFixed(1) : 0;
+                const avgAccuracy = filteredData.filter(a => a.avg_accuracy).length > 0 
+                    ? (filteredData.filter(a => a.avg_accuracy).reduce((sum, a) => sum + a.avg_accuracy, 0) / filteredData.filter(a => a.avg_accuracy).length).toFixed(1) 
+                    : 'N/A';
+                
+                const statsHTML = `
+                    <div style="background: white; border-radius: 10px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: center;">
+                        <div style="font-size: 28px; font-weight: bold; color: #667eea; margin-bottom: 4px;">${total}</div>
+                        <div style="font-size: 12px; color: #718096; font-weight: 500;">Total Accounts</div>
+                    </div>
+                    <div style="background: white; border-radius: 10px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: center;">
+                        <div style="font-size: 28px; font-weight: bold; color: #667eea; margin-bottom: 4px;">${active}</div>
+                        <div style="font-size: 12px; color: #718096; font-weight: 500;">Active Accounts</div>
+                    </div>
+                    <div style="background: white; border-radius: 10px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: center;">
+                        <div style="font-size: 28px; font-weight: bold; color: #667eea; margin-bottom: 4px;">${avgHealth}</div>
+                        <div style="font-size: 12px; color: #718096; font-weight: 500;">Avg Health Score</div>
+                    </div>
+                    <div style="background: white; border-radius: 10px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: center;">
+                        <div style="font-size: 28px; font-weight: bold; color: #667eea; margin-bottom: 4px;">${avgAccuracy}${avgAccuracy !== 'N/A' ? '%' : ''}</div>
+                        <div style="font-size: 12px; color: #718096; font-weight: 500;">Avg Accuracy</div>
+                    </div>
+                    <div style="background: white; border-radius: 10px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: center;">
+                        <div style="font-size: 28px; font-weight: bold; color: #667eea; margin-bottom: 4px;">${withAuditData}</div>
+                        <div style="font-size: 12px; color: #718096; font-weight: 500;">With Audits</div>
+                    </div>
+                    <div style="background: white; border-radius: 10px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: center;">
+                        <div style="font-size: 28px; font-weight: bold; color: #667eea; margin-bottom: 4px;">${withSLA}</div>
+                        <div style="font-size: 12px; color: #718096; font-weight: 500;">With SLA</div>
+                    </div>
+                    <div style="background: white; border-radius: 10px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: center;">
+                        <div style="font-size: 28px; font-weight: bold; color: #667eea; margin-bottom: 4px;">${withProjects}</div>
+                        <div style="font-size: 12px; color: #718096; font-weight: 500;">With Projects</div>
+                    </div>
+                    <div style="background: white; border-radius: 10px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: center;">
+                        <div style="font-size: 28px; font-weight: bold; color: #667eea; margin-bottom: 4px;">${withRCA}</div>
+                        <div style="font-size: 12px; color: #718096; font-weight: 500;">With RCA Cases</div>
+                    </div>
+                `;
+                
+                document.getElementById('journeyStatsGrid').innerHTML = statsHTML;
+            } catch (error) {
+                console.error('❌ Error rendering journey stats:', error);
+            }
+        }
+        
+        function getHealthLabel(score) {
+            if (score >= 80) return 'Excellent';
+            if (score >= 60) return 'Good';
+            if (score >= 40) return 'Moderate';
+            return 'Needs Attention';
+        }
+        
+        function renderJourneyAccounts(data) {
+            try {
+                const grid = document.getElementById('journeyAccountsGrid');
+                const emptyState = document.getElementById('journeyEmptyState');
+                
+                if (!grid) return;
+                
+                if (data.length === 0) {
+                    grid.innerHTML = '';
+                    if (emptyState) emptyState.style.display = 'block';
+                    return;
+                }
+                
+                if (emptyState) emptyState.style.display = 'none';
+                
+                grid.innerHTML = data.map(account => {
+                    const healthLabel = getHealthLabel(account.health_score);
+                    
+                    // Projects HTML
+                    let projectsHTML = '<p style="text-align: center; padding: 20px; color: #9ca3af; font-style: italic;">No projects</p>';
+                    if (account.project_list && account.project_list.length > 0) {
+                        projectsHTML = '<div style="background: #f7fafc; border-radius: 8px; padding: 12px; max-height: 220px; overflow-y: auto;">';
+                        account.project_list.forEach(p => {
+                            const projStatus = (p['Status'] || p['Status '] || 'Active').toString().trim();
+                            const projTitle = (p['Opportunity Statement'] || p['Project Name'] || 'Untitled').toString().trim();
+                            const projType = (p['Project Type'] || 'General').toString().trim();
+                            projectsHTML += `
+                                <div style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; font-size: 13px;">
+                                    <div style="font-weight: 600; color: #2d3748; margin-bottom: 4px;">${projTitle}</div>
+                                    <div style="color: #718096; font-size: 12px;">Type: ${projType} | Status: ${projStatus}</div>
+                                </div>
+                            `;
+                        });
+                        projectsHTML += '</div>';
+                    }
+                    
+                    // RCA HTML
+                    let rcaHTML = '<p style="text-align: center; padding: 20px; color: #9ca3af; font-style: italic;">No RCA/CAPA cases</p>';
+                    if (account.rca_list && account.rca_list.length > 0) {
+                        rcaHTML = '<div style="background: #f7fafc; border-radius: 8px; padding: 12px; max-height: 220px; overflow-y: auto;">';
+                        account.rca_list.forEach(r => {
+                            const errorType = (r['Error Type'] || 'System').toString().trim();
+                            const impact = (r['Impact'] || 'Quality').toString().trim();
+                            const rcaStatus = (r['Status'] || 'Open').toString().trim();
+                            const problem = (r['Problem Statement'] || 'No description').toString().trim();
+                            
+                            const errorColors = {
+                                'People': { bg: '#fed7d7', color: '#742a2a' },
+                                'Process': { bg: '#feebc8', color: '#7c2d12' },
+                                'System': { bg: '#bee3f8', color: '#2c5282' },
+                                'Technology': { bg: '#e9d8fd', color: '#44337a' }
+                            };
+                            const impactColors = {
+                                'Compliance': { bg: '#fecaca', color: '#991b1b' },
+                                'Customer': { bg: '#fde68a', color: '#92400e' },
+                                'Productivity': { bg: '#a7f3d0', color: '#065f46' },
+                                'Quality': { bg: '#bfdbfe', color: '#1e40af' }
+                            };
+                            
+                            const errColor = errorColors[errorType] || errorColors['System'];
+                            const impColor = impactColors[impact] || impactColors['Quality'];
+                            
+                            rcaHTML += `
+                                <div style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; font-size: 13px;">
+                                    <div style="font-weight: 600; color: #2d3748; margin-bottom: 4px;">${problem}</div>
+                                    <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+                                        <span style="display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; background: ${errColor.bg}; color: ${errColor.color};">${errorType}</span>
+                                        <span style="display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; background: ${impColor.bg}; color: ${impColor.color};">${impact}</span>
+                                        <span style="color: #718096; font-size: 12px;">Status: ${rcaStatus}</span>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        rcaHTML += '</div>';
+                    }
+                    
+                    // SLA HTML
+                    let slaHTML = '';
+                    if (account.has_sla) {
+                        const slaClass = account.sla_compliance >= 90 ? '' : account.sla_compliance >= 70 ? 'medium' : 'low';
+                        const slaGradient = account.sla_compliance >= 90 ? 'linear-gradient(90deg, #43e97b 0%, #38f9d7 100%)' : 
+                                          account.sla_compliance >= 70 ? 'linear-gradient(90deg, #f093fb 0%, #f5576c 100%)' : 
+                                          'linear-gradient(90deg, #fa709a 0%, #fee140 100%)';
+                        slaHTML = `
+                            <div style="background: #f7fafc; border-radius: 10px; padding: 15px; border-left: 4px solid #667eea;">
+                                <h4 style="color: #4a5568; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">SLA Compliance</h4>
+                                <div style="font-size: 24px; font-weight: bold; color: #2d3748; margin-bottom: 5px;">${account.sla_compliance.toFixed(1)}%</div>
+                                <div style="width: 100%; height: 20px; background: #e2e8f0; border-radius: 10px; overflow: hidden; margin-top: 5px;">
+                                    <div style="height: 100%; background: ${slaGradient}; display: flex; align-items: center; justify-content: center; color: white; font-size: 11px; font-weight: bold; transition: width 0.5s ease; width: ${account.sla_compliance}%;">
+                                        ${account.sla_compliance.toFixed(1)}%
+                                    </div>
+                                </div>
+                                <div style="font-size: 12px; color: #718096; margin-top: 3px;">Met: ${account.sla_met} | Not Met: ${account.sla_not_met}</div>
+                            </div>
+                        `;
+                    }
+                    
+                    return `
+                        <div style="background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.1); transition: transform 0.3s, box-shadow 0.3s;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 15px 50px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 10px 40px rgba(0,0,0,0.1)'">
+                            <!-- Account Header -->
+                            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; display: flex; justify-content: space-between; align-items: start;">
+                                <div style="flex: 1;">
+                                    <h2 style="color: white; font-size: 26px; margin-bottom: 10px; text-shadow: 0 2px 4px rgba(0,0,0,0.1);">${account.name}</h2>
+                                    <div style="display: flex; gap: 15px; flex-wrap: wrap; font-size: 13px; opacity: 0.95;">
+                                        <div style="display: flex; align-items: center; gap: 5px;">📍 <span style="font-weight: 600;">${account.region}</span></div>
+                                        <div style="display: flex; align-items: center; gap: 5px;">👤 <span style="font-weight: 600;">${account.practice_head}</span></div>
+                                        <div style="display: flex; align-items: center; gap: 5px;">🌐 <span style="font-weight: 600;">${account.regional_head}</span></div>
+                                    </div>
+                                </div>
+                                <div style="text-align: center; min-width: 100px;">
+                                    <div style="width: 90px; height: 90px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; font-size: 28px; font-weight: bold; color: #2d3748; background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">${account.health_score}</div>
+                                    <div style="font-size: 12px; font-weight: 600; opacity: 0.95;">${healthLabel}</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Account Body -->
+                            <div style="padding: 25px;">
+                                <!-- Status Badges -->
+                                <div style="display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap;">
+                                    <span style="padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; background: ${account.status === 'Active' ? '#c6f6d5' : '#fed7d7'}; color: ${account.status === 'Active' ? '#22543d' : '#742a2a'};">${account.status}</span>
+                                    <span style="padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; background: ${account.audit_status === 'Yes' ? '#bee3f8' : account.audit_status === 'On Hold' ? '#fefcbf' : '#feebc8'}; color: ${account.audit_status === 'Yes' ? '#2c5282' : account.audit_status === 'On Hold' ? '#744210' : '#7c2d12'};">Audit: ${account.audit_status}</span>
+                                    ${account.audit_frequency !== 'Not Set' ? `<span style="padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; background: #bee3f8; color: #2c5282;">${account.audit_frequency}</span>` : ''}
+                                </div>
+                                
+                                <!-- KPIs Section -->
+                                <div style="margin-bottom: 20px;">
+                                    <div style="font-size: 16px; font-weight: 700; color: #2d3748; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                                        <div style="width: 4px; height: 20px; background: #667eea; border-radius: 2px;"></div>
+                                        📊 Key Performance Indicators
+                                    </div>
+                                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                                        <div style="background: #f7fafc; border-radius: 10px; padding: 15px; border-left: 4px solid #667eea;">
+                                            <h4 style="color: #4a5568; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Audit Records</h4>
+                                            <div style="font-size: 24px; font-weight: bold; color: #2d3748;">${account.audit_records}</div>
+                                            <div style="font-size: 12px; color: #718096; margin-top: 3px;">${account.critical_audits} Critical | ${account.non_critical_audits} Non-Critical</div>
+                                        </div>
+                                        <div style="background: #f7fafc; border-radius: 10px; padding: 15px; border-left: 4px solid #667eea;">
+                                            <h4 style="color: #4a5568; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Accuracy Score</h4>
+                                            <div style="font-size: 24px; font-weight: bold; color: #2d3748;">${account.avg_accuracy ? account.avg_accuracy.toFixed(1) + '%' : 'N/A'}</div>
+                                            <div style="font-size: 12px; color: #718096; margin-top: 3px;">Error: ${account.avg_error ? account.avg_error.toFixed(2) + '%' : 'N/A'}</div>
+                                        </div>
+                                        <div style="background: #f7fafc; border-radius: 10px; padding: 15px; border-left: 4px solid #667eea;">
+                                            <h4 style="color: #4a5568; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Opportunities</h4>
+                                            <div style="font-size: 24px; font-weight: bold; color: #2d3748;">${account.total_opportunities.toLocaleString()}</div>
+                                            <div style="font-size: 12px; color: #718096; margin-top: 3px;">${account.unique_recruiters} Recruiters</div>
+                                        </div>
+                                        ${slaHTML}
+                                    </div>
+                                </div>
+                                
+                                <!-- Team & Coverage -->
+                                <div style="margin-bottom: 20px;">
+                                    <div style="font-size: 16px; font-weight: 700; color: #2d3748; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                                        <div style="width: 4px; height: 20px; background: #667eea; border-radius: 2px;"></div>
+                                        👥 Team & Coverage
+                                    </div>
+                                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;">
+                                        <div style="font-size: 13px;">
+                                            <div style="color: #718096; font-weight: 500; margin-bottom: 3px;">BE SPOC - SLAs/KPIs</div>
+                                            <div style="color: #2d3748; font-weight: 600;">${account.be_spoc_sla}</div>
+                                        </div>
+                                        <div style="font-size: 13px;">
+                                            <div style="color: #718096; font-weight: 500; margin-bottom: 3px;">BE SPOC - Audit</div>
+                                            <div style="color: #2d3748; font-weight: 600;">${account.be_spoc_audit}</div>
+                                        </div>
+                                        <div style="font-size: 13px;">
+                                            <div style="color: #718096; font-weight: 500; margin-bottom: 3px;">Unique Recruiters</div>
+                                            <div style="color: #2d3748; font-weight: 600;">${account.unique_recruiters}</div>
+                                        </div>
+                                        <div style="font-size: 13px;">
+                                            <div style="color: #718096; font-weight: 500; margin-bottom: 3px;">Recruiter Audits</div>
+                                            <div style="color: #2d3748; font-weight: 600;">${account.recruiter_audits}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Projects -->
+                                <div style="margin-bottom: 20px;">
+                                    <div style="font-size: 16px; font-weight: 700; color: #2d3748; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                                        <div style="width: 4px; height: 20px; background: #667eea; border-radius: 2px;"></div>
+                                        🚀 Projects (${account.total_projects})
+                                    </div>
+                                    ${account.total_projects > 0 ? `
+                                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 15px;">
+                                            <div style="font-size: 13px;">
+                                                <div style="color: #718096; font-weight: 500; margin-bottom: 3px;">Closed Projects</div>
+                                                <div style="color: #2d3748; font-weight: 600;">${account.closed_projects}</div>
+                                            </div>
+                                            <div style="font-size: 13px;">
+                                                <div style="color: #718096; font-weight: 500; margin-bottom: 3px;">Ongoing Projects</div>
+                                                <div style="color: #2d3748; font-weight: 600;">${account.ongoing_projects}</div>
+                                            </div>
+                                        </div>
+                                    ` : ''}
+                                    ${projectsHTML}
+                                </div>
+                                
+                                <!-- RCA/CAPA -->
+                                <div>
+                                    <div style="font-size: 16px; font-weight: 700; color: #2d3748; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                                        <div style="width: 4px; height: 20px; background: #667eea; border-radius: 2px;"></div>
+                                        🔍 RCA/CAPA (${account.total_rca})
+                                    </div>
+                                    ${account.total_rca > 0 ? `
+                                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 15px;">
+                                            <div style="font-size: 13px;">
+                                                <div style="color: #718096; font-weight: 500; margin-bottom: 3px;">Closed Cases</div>
+                                                <div style="color: #2d3748; font-weight: 600;">${account.closed_rca}</div>
+                                            </div>
+                                            <div style="font-size: 13px;">
+                                                <div style="color: #718096; font-weight: 500; margin-bottom: 3px;">Open Cases</div>
+                                                <div style="color: #2d3748; font-weight: 600;">${account.open_rca}</div>
+                                            </div>
+                                        </div>
+                                    ` : ''}
+                                    ${rcaHTML}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                console.log(`✅ Rendered ${data.length} account cards`);
+            } catch (error) {
+                console.error('❌ Error rendering journey accounts:', error);
+            }
+        }
+        
+        function showJourneyEmptyState() {
+            const grid = document.getElementById('journeyAccountsGrid');
+            const statsGrid = document.getElementById('journeyStatsGrid');
+            const emptyState = document.getElementById('journeyEmptyState');
+            
+            if (grid) grid.innerHTML = '';
+            if (statsGrid) statsGrid.innerHTML = '';
+            if (emptyState) emptyState.style.display = 'block';
         }
         
         function renderJourneyCharts() {
