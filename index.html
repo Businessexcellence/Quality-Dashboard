@@ -1230,7 +1230,7 @@
 
                 <!-- Monthly Trend Chart -->
                 <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 16px;">
-                    <h3 style="font-size: 13px; font-weight: 700; color: #111827; margin: 0 0 12px 0; display: flex; align-items: center; gap: 6px;">
+                    <h3 id="monthlyTrendTitle" style="font-size: 13px; font-weight: 700; color: #111827; margin: 0 0 12px 0; display: flex; align-items: center; gap: 6px;">
                         <i class="fas fa-chart-line" style="color: #10b981;"></i>
                         Monthly Trend
                     </h3>
@@ -4237,10 +4237,19 @@
                         window.trendChart.destroy();
                     }
                     
-                    // Calculate accuracy by month with year
-                    const currentYear = new Date().getFullYear();
+                    // Calculate accuracy by month with year from data
+                    // Extract year from Financial Year column (e.g., "FY 2024-25" or "2024" or "FY2024")
+                    let dataYear = new Date().getFullYear(); // Default fallback
+                    if (data.length > 0) {
+                        const fyField = data[0]['Financial Year'] || data[0]['FY'] || data[0]['Year'] || '';
+                        const yearMatch = fyField.toString().match(/\d{4}/);
+                        if (yearMatch) {
+                            dataYear = parseInt(yearMatch[0]);
+                        }
+                    }
+                    
                     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-                    const monthLabelsWithYear = months.map(m => `${m} ${currentYear}`);
+                    const monthLabelsWithYear = months.map(m => `${m} ${dataYear}`);
                     const monthlyData = {};
                     
                     months.forEach(m => {
@@ -4285,7 +4294,7 @@
                             plugins: { 
                                 legend: { display: false },
                                 datalabels: {
-                                    align: 'top',
+                                    align: 'bottom',
                                     formatter: function(value) {
                                         return value !== null ? value + '%' : '';
                                     },
@@ -4311,7 +4320,13 @@
                         }
                     });
                     
-                    console.log('✅ Monthly trend chart rendered');
+                    // Update the chart title with the year from data
+                    const titleElement = document.getElementById('monthlyTrendTitle');
+                    if (titleElement) {
+                        titleElement.innerHTML = `<i class="fas fa-chart-line" style="color: #10b981;"></i> Monthly Trend ${dataYear}`;
+                    }
+                    
+                    console.log(`✅ Monthly trend chart rendered for year ${dataYear}`);
                 }
             } catch (error) {
                 console.error('❌ Error rendering Journey charts:', error);
