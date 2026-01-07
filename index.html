@@ -4115,7 +4115,7 @@
                 const accuracy = totalValidOpp > 0 ? ((totalOppPass / totalValidOpp) * 100).toFixed(1) : '0.0';
                 const sample = totalOppCount > 0 ? ((totalValidOpp / totalOppCount) * 100).toFixed(1) : '0.0';
                 const error = totalValidOpp > 0 ? ((totalOppFail / totalValidOpp) * 100).toFixed(1) : '0.0';
-                const auditCount = data.length;
+                const auditCount = totalOppCount; // Total Opportunity Count from base file
                 
                 // Update UI with % sign for percentage values
                 document.getElementById('journeyAccuracy').textContent = accuracy + '%';
