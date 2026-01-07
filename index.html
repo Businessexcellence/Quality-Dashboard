@@ -1194,38 +1194,38 @@
             <!-- Journey at Glance: Account Cards View -->
             
             <!-- Filters Section -->
-            <div style="background: white; border-radius: 12px; padding: 16px; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
-                <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
-                    <div style="flex: 1; min-width: 200px;">
-                        <label style="font-size: 12px; color: #4a5568; font-weight: 600; margin-bottom: 6px; display: block;">🔍 Search Accounts</label>
-                        <input type="text" id="journeySearchInput" placeholder="Search accounts..." style="width: 100%; padding: 8px 12px; border: 2px solid #e2e8f0; border-radius: 6px; font-size: 13px; outline: none; transition: all 0.3s;" oninput="applyJourneyFilters()">
+            <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 12px; margin-bottom: 12px;">
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                    <div style="flex: 1; min-width: 180px;">
+                        <label style="font-size: 11px; color: #000000; font-weight: 600; margin-bottom: 4px; display: block;">🔍 SEARCH ACCOUNTS</label>
+                        <input type="text" id="journeySearchInput" placeholder="Search accounts..." style="width: 100%; padding: 6px 10px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 12px; outline: none; background: white;" oninput="applyJourneyFilters()">
                     </div>
-                    <div style="flex: 1; min-width: 150px;">
-                        <label style="font-size: 12px; color: #4a5568; font-weight: 600; margin-bottom: 6px; display: block;">🌍 Region</label>
-                        <select id="journeyRegionFilter" style="width: 100%; padding: 8px 12px; border: 2px solid #e2e8f0; border-radius: 6px; font-size: 13px; cursor: pointer;" onchange="applyJourneyFilters()">
+                    <div style="flex: 1; min-width: 140px;">
+                        <label style="font-size: 11px; color: #000000; font-weight: 600; margin-bottom: 4px; display: block;">🌍 REGION</label>
+                        <select id="journeyRegionFilter" style="width: 100%; padding: 6px 10px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 12px; cursor: pointer; background: white;" onchange="applyJourneyFilters()">
                             <option value="all">All Regions</option>
                         </select>
                     </div>
-                    <div style="flex: 1; min-width: 150px;">
-                        <label style="font-size: 12px; color: #4a5568; font-weight: 600; margin-bottom: 6px; display: block;">📊 Status</label>
-                        <select id="journeyStatusFilter" style="width: 100%; padding: 8px 12px; border: 2px solid #e2e8f0; border-radius: 6px; font-size: 13px; cursor: pointer;" onchange="applyJourneyFilters()">
+                    <div style="flex: 1; min-width: 140px;">
+                        <label style="font-size: 11px; color: #000000; font-weight: 600; margin-bottom: 4px; display: block;">📊 STATUS</label>
+                        <select id="journeyStatusFilter" style="width: 100%; padding: 6px 10px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 12px; cursor: pointer; background: white;" onchange="applyJourneyFilters()">
                             <option value="all">All Status</option>
                             <option value="Active">Active</option>
                             <option value="Inactive">Inactive</option>
                         </select>
                     </div>
-                    <div style="flex: 1; min-width: 150px;">
-                        <label style="font-size: 12px; color: #4a5568; font-weight: 600; margin-bottom: 6px; display: block;">✅ Audit</label>
-                        <select id="journeyAuditFilter" style="width: 100%; padding: 8px 12px; border: 2px solid #e2e8f0; border-radius: 6px; font-size: 13px; cursor: pointer;" onchange="applyJourneyFilters()">
+                    <div style="flex: 1; min-width: 140px;">
+                        <label style="font-size: 11px; color: #000000; font-weight: 600; margin-bottom: 4px; display: block;">✅ AUDIT</label>
+                        <select id="journeyAuditFilter" style="width: 100%; padding: 6px 10px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 12px; cursor: pointer; background: white;" onchange="applyJourneyFilters()">
                             <option value="all">All</option>
                             <option value="Yes">Yes</option>
                             <option value="No">No</option>
                             <option value="On Hold">On Hold</option>
                         </select>
                     </div>
-                    <div style="flex: 1; min-width: 150px;">
-                        <label style="font-size: 12px; color: #4a5568; font-weight: 600; margin-bottom: 6px; display: block;">📈 Accuracy</label>
-                        <select id="journeyHealthFilter" style="width: 100%; padding: 8px 12px; border: 2px solid #e2e8f0; border-radius: 6px; font-size: 13px; cursor: pointer;" onchange="applyJourneyFilters()">
+                    <div style="flex: 1; min-width: 140px;">
+                        <label style="font-size: 11px; color: #000000; font-weight: 600; margin-bottom: 4px; display: block;">📈 ACCURACY</label>
+                        <select id="journeyHealthFilter" style="width: 100%; padding: 6px 10px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 12px; cursor: pointer; background: white;" onchange="applyJourneyFilters()">
                             <option value="all">All</option>
                             <option value="excellent">Excellent (95+%)</option>
                             <option value="good">Good (85-94%)</option>
@@ -1237,12 +1237,12 @@
             </div>
 
             <!-- Stats Grid -->
-            <div id="journeyStatsGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 16px;">
+            <div id="journeyStatsGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 12px;">
                 <!-- Dynamic stats will be inserted here -->
             </div>
 
             <!-- Accounts Grid -->
-            <div id="journeyAccountsGrid" style="display: grid; gap: 16px;">
+            <div id="journeyAccountsGrid" style="display: grid; gap: 12px;">
                 <!-- Account cards will be inserted here -->
             </div>
 
@@ -4200,6 +4200,7 @@
                     const validOpp = totalOppCount - totalOppNA;
                     const avgAccuracy = validOpp > 0 ? ((totalOppPass / validOpp) * 100) : 0;
                     const avgError = validOpp > 0 ? ((totalOppFail / validOpp) * 100) : 0;
+                    const samplePercent = totalOppCount > 0 ? ((validOpp / totalOppCount) * 100) : 0;
                     
                     // Get recruiter data
                     const accountRecruiters = recruiterData.filter(row => {
@@ -4268,6 +4269,7 @@
                         audit_records: accountParams.length,
                         avg_accuracy: avgAccuracy,
                         avg_error: avgError,
+                        sample_percent: samplePercent,
                         critical_audits: criticalCount,
                         non_critical_audits: nonCriticalCount,
                         total_opportunities: totalOppCount,
@@ -4370,37 +4372,33 @@
                     : 'N/A';
                 
                 const statsHTML = `
-                    <div style="background: white; border-radius: 10px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: center;">
-                        <div style="font-size: 28px; font-weight: bold; color: #667eea; margin-bottom: 4px;">${total}</div>
-                        <div style="font-size: 12px; color: #718096; font-weight: 500;">Total Accounts</div>
+                    <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 10px; text-align: center;">
+                        <div style="font-size: 9px; color: #000000; margin-bottom: 4px; font-weight: 600;">TOTAL ACCOUNTS</div>
+                        <div style="font-size: 22px; font-weight: 700; color: #000000;">${total}</div>
                     </div>
-                    <div style="background: white; border-radius: 10px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: center;">
-                        <div style="font-size: 28px; font-weight: bold; color: #667eea; margin-bottom: 4px;">${active}</div>
-                        <div style="font-size: 12px; color: #718096; font-weight: 500;">Active Accounts</div>
+                    <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 10px; text-align: center;">
+                        <div style="font-size: 9px; color: #000000; margin-bottom: 4px; font-weight: 600;">ACTIVE</div>
+                        <div style="font-size: 22px; font-weight: 700; color: #000000;">${active}</div>
                     </div>
-                    <div style="background: white; border-radius: 10px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: center;">
-                        <div style="font-size: 28px; font-weight: bold; color: #667eea; margin-bottom: 4px;">${avgHealth}</div>
-                        <div style="font-size: 12px; color: #718096; font-weight: 500;">Avg Health Score</div>
+                    <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 10px; text-align: center;">
+                        <div style="font-size: 9px; color: #000000; margin-bottom: 4px; font-weight: 600;">AVG ACCURACY</div>
+                        <div style="font-size: 22px; font-weight: 700; color: #000000;">${avgAccuracy}${avgAccuracy !== 'N/A' ? '%' : ''}</div>
                     </div>
-                    <div style="background: white; border-radius: 10px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: center;">
-                        <div style="font-size: 28px; font-weight: bold; color: #667eea; margin-bottom: 4px;">${avgAccuracy}${avgAccuracy !== 'N/A' ? '%' : ''}</div>
-                        <div style="font-size: 12px; color: #718096; font-weight: 500;">Avg Accuracy</div>
+                    <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 10px; text-align: center;">
+                        <div style="font-size: 9px; color: #000000; margin-bottom: 4px; font-weight: 600;">WITH AUDITS</div>
+                        <div style="font-size: 22px; font-weight: 700; color: #000000;">${withAuditData}</div>
                     </div>
-                    <div style="background: white; border-radius: 10px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: center;">
-                        <div style="font-size: 28px; font-weight: bold; color: #667eea; margin-bottom: 4px;">${withAuditData}</div>
-                        <div style="font-size: 12px; color: #718096; font-weight: 500;">With Audits</div>
+                    <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 10px; text-align: center;">
+                        <div style="font-size: 9px; color: #000000; margin-bottom: 4px; font-weight: 600;">WITH SLA</div>
+                        <div style="font-size: 22px; font-weight: 700; color: #000000;">${withSLA}</div>
                     </div>
-                    <div style="background: white; border-radius: 10px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: center;">
-                        <div style="font-size: 28px; font-weight: bold; color: #667eea; margin-bottom: 4px;">${withSLA}</div>
-                        <div style="font-size: 12px; color: #718096; font-weight: 500;">With SLA</div>
+                    <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 10px; text-align: center;">
+                        <div style="font-size: 9px; color: #000000; margin-bottom: 4px; font-weight: 600;">WITH PROJECTS</div>
+                        <div style="font-size: 22px; font-weight: 700; color: #000000;">${withProjects}</div>
                     </div>
-                    <div style="background: white; border-radius: 10px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: center;">
-                        <div style="font-size: 28px; font-weight: bold; color: #667eea; margin-bottom: 4px;">${withProjects}</div>
-                        <div style="font-size: 12px; color: #718096; font-weight: 500;">With Projects</div>
-                    </div>
-                    <div style="background: white; border-radius: 10px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: center;">
-                        <div style="font-size: 28px; font-weight: bold; color: #667eea; margin-bottom: 4px;">${withRCA}</div>
-                        <div style="font-size: 12px; color: #718096; font-weight: 500;">With RCA Cases</div>
+                    <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 10px; text-align: center;">
+                        <div style="font-size: 9px; color: #000000; margin-bottom: 4px; font-weight: 600;">WITH RCA</div>
+                        <div style="font-size: 22px; font-weight: 700; color: #000000;">${withRCA}</div>
                     </div>
                 `;
                 
@@ -4509,103 +4507,103 @@
                                           account.sla_compliance >= 70 ? 'linear-gradient(90deg, #f093fb 0%, #f5576c 100%)' : 
                                           'linear-gradient(90deg, #fa709a 0%, #fee140 100%)';
                         slaHTML = `
-                            <div style="background: #f7fafc; border-radius: 10px; padding: 15px; border-left: 4px solid #667eea;">
-                                <h4 style="color: #4a5568; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">SLA Compliance</h4>
-                                <div style="font-size: 24px; font-weight: bold; color: #2d3748; margin-bottom: 5px;">${account.sla_compliance.toFixed(1)}%</div>
-                                <div style="width: 100%; height: 20px; background: #e2e8f0; border-radius: 10px; overflow: hidden; margin-top: 5px;">
-                                    <div style="height: 100%; background: ${slaGradient}; display: flex; align-items: center; justify-content: center; color: white; font-size: 11px; font-weight: bold; transition: width 0.5s ease; width: ${account.sla_compliance}%;">
+                            <div style="background: #f5f5f5; border: 1px solid #d1d5db; border-radius: 6px; padding: 12px;">
+                                <h4 style="color: #000000; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; font-weight: 600;">SLA COMPLIANCE</h4>
+                                <div style="font-size: 20px; font-weight: 700; color: #000000; margin-bottom: 5px;">${account.sla_compliance.toFixed(1)}%</div>
+                                <div style="width: 100%; height: 16px; background: #e2e8f0; border-radius: 8px; overflow: hidden; margin-top: 5px;">
+                                    <div style="height: 100%; background: ${slaGradient}; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: bold; transition: width 0.5s ease; width: ${account.sla_compliance}%;">
                                         ${account.sla_compliance.toFixed(1)}%
                                     </div>
                                 </div>
-                                <div style="font-size: 12px; color: #718096; margin-top: 3px;">Met: ${account.sla_met} | Not Met: ${account.sla_not_met}</div>
+                                <div style="font-size: 11px; color: #6b7280; margin-top: 3px;">Met: ${account.sla_met} | Not Met: ${account.sla_not_met}</div>
                             </div>
                         `;
                     }
                     
                     return `
-                        <div style="background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.1); transition: transform 0.3s, box-shadow 0.3s;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 15px 50px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 10px 40px rgba(0,0,0,0.1)'">
+                        <div style="background: white; border: 1px solid #d1d5db; border-radius: 8px; overflow: hidden; margin-bottom: 10px;">
                             <!-- Account Header -->
-                            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; display: flex; justify-content: space-between; align-items: start;">
+                            <div style="background: #f5f5f5; border-bottom: 1px solid #d1d5db; padding: 16px; display: flex; justify-content: space-between; align-items: start;">
                                 <div style="flex: 1;">
-                                    <h2 style="color: white; font-size: 26px; margin-bottom: 10px; text-shadow: 0 2px 4px rgba(0,0,0,0.1);">${account.name}</h2>
-                                    <div style="display: flex; gap: 15px; flex-wrap: wrap; font-size: 13px; opacity: 0.95;">
-                                        <div style="display: flex; align-items: center; gap: 5px;">📍 <span style="font-weight: 600;">${account.region}</span></div>
-                                        <div style="display: flex; align-items: center; gap: 5px;">👤 <span style="font-weight: 600;">${account.practice_head}</span></div>
-                                        <div style="display: flex; align-items: center; gap: 5px;">🌐 <span style="font-weight: 600;">${account.regional_head}</span></div>
+                                    <h2 style="color: #000000; font-size: 18px; margin-bottom: 8px; font-weight: 700;">${account.name}</h2>
+                                    <div style="display: flex; gap: 12px; flex-wrap: wrap; font-size: 11px; color: #4b5563;">
+                                        <div style="display: flex; align-items: center; gap: 4px;"><i class="fas fa-map-marker-alt"></i> ${account.region}</div>
+                                        <div style="display: flex; align-items: center; gap: 4px;"><i class="fas fa-user"></i> ${account.practice_head}</div>
+                                        <div style="display: flex; align-items: center; gap: 4px;"><i class="fas fa-globe"></i> ${account.regional_head}</div>
                                     </div>
                                 </div>
-                                <div style="text-align: center; min-width: 100px;">
-                                    <div style="width: 90px; height: 90px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; font-size: 24px; font-weight: bold; color: #2d3748; background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">${accuracyScore}%</div>
-                                    <div style="font-size: 12px; font-weight: 600; opacity: 0.95;">${accuracyLabel}</div>
+                                <div style="text-align: center; min-width: 85px;">
+                                    <div style="width: 75px; height: 75px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 6px; font-size: 18px; font-weight: 700; color: #000000; background: white; border: 2px solid #000000;">${accuracyScore}%</div>
+                                    <div style="font-size: 10px; font-weight: 600; color: #4b5563; text-transform: uppercase;">${accuracyLabel}</div>
                                 </div>
                             </div>
                             
                             <!-- Account Body -->
-                            <div style="padding: 25px;">
+                            <div style="padding: 15px;">
                                 <!-- Status Badges -->
-                                <div style="display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap;">
-                                    <span style="padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; background: ${account.status === 'Active' ? '#c6f6d5' : '#fed7d7'}; color: ${account.status === 'Active' ? '#22543d' : '#742a2a'};">${account.status}</span>
-                                    <span style="padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; background: ${account.audit_status === 'Yes' ? '#bee3f8' : account.audit_status === 'On Hold' ? '#fefcbf' : '#feebc8'}; color: ${account.audit_status === 'Yes' ? '#2c5282' : account.audit_status === 'On Hold' ? '#744210' : '#7c2d12'};">Audit: ${account.audit_status}</span>
-                                    ${account.audit_frequency !== 'Not Set' ? `<span style="padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; background: #bee3f8; color: #2c5282;">${account.audit_frequency}</span>` : ''}
+                                <div style="display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap;">
+                                    <span style="padding: 4px 10px; border-radius: 4px; font-size: 10px; font-weight: 600; background: ${account.status === 'Active' ? '#d1fae5' : '#fee2e2'}; color: ${account.status === 'Active' ? '#065f46' : '#991b1b'}; border: 1px solid ${account.status === 'Active' ? '#10b981' : '#dc2626'};">${account.status}</span>
+                                    <span style="padding: 4px 10px; border-radius: 4px; font-size: 10px; font-weight: 600; background: ${account.audit_status === 'Yes' ? '#dbeafe' : account.audit_status === 'On Hold' ? '#fef3c7' : '#fed7aa'}; color: ${account.audit_status === 'Yes' ? '#1e40af' : account.audit_status === 'On Hold' ? '#92400e' : '#9a3412'}; border: 1px solid ${account.audit_status === 'Yes' ? '#3b82f6' : account.audit_status === 'On Hold' ? '#f59e0b' : '#f97316'};">Audit: ${account.audit_status}</span>
+                                    ${account.audit_frequency !== 'Not Set' ? `<span style="padding: 4px 10px; border-radius: 4px; font-size: 10px; font-weight: 600; background: #dbeafe; color: #1e40af; border: 1px solid #3b82f6;">${account.audit_frequency}</span>` : ''}
                                 </div>
                                 
                                 <!-- KPIs Section -->
-                                <div style="margin-bottom: 20px;">
-                                    <div style="font-size: 16px; font-weight: 700; color: #2d3748; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-                                        <div style="width: 4px; height: 20px; background: #667eea; border-radius: 2px;"></div>
-                                        📊 Key Performance Indicators
+                                <div style="margin-bottom: 15px;">
+                                    <div style="font-size: 13px; font-weight: 700; color: #000000; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+                                        <i class="fas fa-chart-line" style="font-size: 11px;"></i>
+                                        Key Performance Indicators
                                     </div>
-                                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-                                        <div style="background: #f7fafc; border-radius: 10px; padding: 15px; border-left: 4px solid #667eea;">
-                                            <h4 style="color: #4a5568; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Audit Records</h4>
-                                            <div style="font-size: 24px; font-weight: bold; color: #2d3748;">${account.audit_records}</div>
-                                            <div style="font-size: 12px; color: #718096; margin-top: 3px;">${account.critical_audits} Critical | ${account.non_critical_audits} Non-Critical</div>
+                                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px;">
+                                        <div style="background: #f5f5f5; border: 1px solid #d1d5db; border-radius: 6px; padding: 12px;">
+                                            <h4 style="color: #000000; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; font-weight: 600;">AUDIT RECORDS</h4>
+                                            <div style="font-size: 20px; font-weight: 700; color: #000000;">${account.total_opportunities.toLocaleString()}</div>
+                                            <div style="font-size: 11px; color: #6b7280; margin-top: 3px;">${account.critical_audits} Critical | ${account.non_critical_audits} Non-Critical</div>
                                         </div>
-                                        <div style="background: #f7fafc; border-radius: 10px; padding: 15px; border-left: 4px solid #667eea;">
-                                            <h4 style="color: #4a5568; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Accuracy Score</h4>
-                                            <div style="font-size: 24px; font-weight: bold; color: #2d3748;">${account.avg_accuracy ? account.avg_accuracy.toFixed(1) + '%' : 'N/A'}</div>
-                                            <div style="font-size: 12px; color: #718096; margin-top: 3px;">Error: ${account.avg_error ? account.avg_error.toFixed(2) + '%' : 'N/A'}</div>
+                                        <div style="background: #f5f5f5; border: 1px solid #d1d5db; border-radius: 6px; padding: 12px;">
+                                            <h4 style="color: #000000; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; font-weight: 600;">ACCURACY</h4>
+                                            <div style="font-size: 20px; font-weight: 700; color: #000000;">${account.avg_accuracy ? account.avg_accuracy.toFixed(1) + '%' : 'N/A'}</div>
+                                            <div style="font-size: 11px; color: #6b7280; margin-top: 3px;">Error: ${account.avg_error ? account.avg_error.toFixed(2) + '%' : 'N/A'}</div>
                                         </div>
-                                        <div style="background: #f7fafc; border-radius: 10px; padding: 15px; border-left: 4px solid #667eea;">
-                                            <h4 style="color: #4a5568; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Opportunities</h4>
-                                            <div style="font-size: 24px; font-weight: bold; color: #2d3748;">${account.total_opportunities.toLocaleString()}</div>
-                                            <div style="font-size: 12px; color: #718096; margin-top: 3px;">${account.unique_recruiters} Recruiters</div>
+                                        <div style="background: #f5f5f5; border: 1px solid #d1d5db; border-radius: 6px; padding: 12px;">
+                                            <h4 style="color: #000000; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; font-weight: 600;">SAMPLE %</h4>
+                                            <div style="font-size: 20px; font-weight: 700; color: #000000;">${account.sample_percent ? account.sample_percent.toFixed(1) + '%' : 'N/A'}</div>
+                                            <div style="font-size: 11px; color: #6b7280; margin-top: 3px;">${account.unique_recruiters} Recruiters</div>
                                         </div>
                                         ${slaHTML}
                                     </div>
                                 </div>
                                 
                                 <!-- Team & Coverage -->
-                                <div style="margin-bottom: 20px;">
-                                    <div style="font-size: 16px; font-weight: 700; color: #2d3748; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-                                        <div style="width: 4px; height: 20px; background: #667eea; border-radius: 2px;"></div>
-                                        👥 Team & Coverage
+                                <div style="margin-bottom: 15px;">
+                                    <div style="font-size: 13px; font-weight: 700; color: #000000; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+                                        <i class="fas fa-users" style="font-size: 11px;"></i>
+                                        Team & Coverage
                                     </div>
-                                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;">
-                                        <div style="font-size: 13px;">
-                                            <div style="color: #718096; font-weight: 500; margin-bottom: 3px;">BE SPOC - SLAs/KPIs</div>
-                                            <div style="color: #2d3748; font-weight: 600;">${account.be_spoc_sla}</div>
+                                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px;">
+                                        <div style="font-size: 12px;">
+                                            <div style="color: #6b7280; font-weight: 500; margin-bottom: 3px; font-size: 10px;">BE SPOC - SLAs/KPIs</div>
+                                            <div style="color: #000000; font-weight: 600;">${account.be_spoc_sla}</div>
                                         </div>
-                                        <div style="font-size: 13px;">
-                                            <div style="color: #718096; font-weight: 500; margin-bottom: 3px;">BE SPOC - Audit</div>
-                                            <div style="color: #2d3748; font-weight: 600;">${account.be_spoc_audit}</div>
+                                        <div style="font-size: 12px;">
+                                            <div style="color: #6b7280; font-weight: 500; margin-bottom: 3px; font-size: 10px;">BE SPOC - Audit</div>
+                                            <div style="color: #000000; font-weight: 600;">${account.be_spoc_audit}</div>
                                         </div>
-                                        <div style="font-size: 13px;">
-                                            <div style="color: #718096; font-weight: 500; margin-bottom: 3px;">Unique Recruiters</div>
-                                            <div style="color: #2d3748; font-weight: 600;">${account.unique_recruiters}</div>
+                                        <div style="font-size: 12px;">
+                                            <div style="color: #6b7280; font-weight: 500; margin-bottom: 3px; font-size: 10px;">Unique Recruiters</div>
+                                            <div style="color: #000000; font-weight: 600;">${account.unique_recruiters}</div>
                                         </div>
-                                        <div style="font-size: 13px;">
-                                            <div style="color: #718096; font-weight: 500; margin-bottom: 3px;">Recruiter Audits</div>
-                                            <div style="color: #2d3748; font-weight: 600;">${account.recruiter_audits}</div>
+                                        <div style="font-size: 12px;">
+                                            <div style="color: #6b7280; font-weight: 500; margin-bottom: 3px; font-size: 10px;">Recruiter Audits</div>
+                                            <div style="color: #000000; font-weight: 600;">${account.recruiter_audits}</div>
                                         </div>
                                     </div>
                                 </div>
                                 
                                 <!-- Projects -->
-                                <div style="margin-bottom: 20px;">
-                                    <div style="font-size: 16px; font-weight: 700; color: #2d3748; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-                                        <div style="width: 4px; height: 20px; background: #667eea; border-radius: 2px;"></div>
-                                        🚀 Projects (${account.total_projects})
+                                <div style="margin-bottom: 15px;">
+                                    <div style="font-size: 13px; font-weight: 700; color: #000000; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+                                        <i class="fas fa-project-diagram" style="font-size: 11px;"></i>
+                                        Projects (${account.total_projects})
                                     </div>
                                     ${account.total_projects > 0 ? `
                                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 15px;">
@@ -4624,9 +4622,9 @@
                                 
                                 <!-- RCA/CAPA -->
                                 <div>
-                                    <div style="font-size: 16px; font-weight: 700; color: #2d3748; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-                                        <div style="width: 4px; height: 20px; background: #667eea; border-radius: 2px;"></div>
-                                        🔍 RCA/CAPA (${account.total_rca})
+                                    <div style="font-size: 13px; font-weight: 700; color: #000000; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+                                        <i class="fas fa-tools" style="font-size: 11px;"></i>
+                                        RCA/CAPA (${account.total_rca})
                                     </div>
                                     ${account.total_rca > 0 ? `
                                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 15px;">
