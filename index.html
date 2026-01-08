@@ -4234,17 +4234,43 @@
                     }).length;
                     const openRCA = totalRCA - closedRCA;
                     
-                    // Get SLA data
+                    // Get SLA data - handle monthly Met/Not_Met columns
                     const accountSLA = slaData.filter(row => {
-                        const client = (row['Account'] || row['Client'] || row['Account Name'] || '').toString().trim();
+                        const client = (row['Project'] || row['Account'] || row['Client'] || row['Account Name'] || '').toString().trim();
                         return client.toLowerCase() === accountName.toLowerCase();
                     });
                     
                     let slaCompliance = 0, slaMet = 0, slaNotMet = 0;
+                    const slaMonthlyData = {};
+                    
                     if (accountSLA.length > 0) {
-                        slaMet = accountSLA.filter(s => (s['SLA Met'] || '').toString().toUpperCase() === 'YES').length;
-                        slaNotMet = accountSLA.length - slaMet;
-                        slaCompliance = accountSLA.length > 0 ? ((slaMet / accountSLA.length) * 100) : 0;
+                        // Calculate total SLA Met% from monthly columns
+                        const months = ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'];
+                        
+                        months.forEach(month => {
+                            const metCol = `${month}_Met`;
+                            const notMetCol = `${month}_Not_Met`;
+                            let monthMet = 0, monthNotMet = 0;
+                            
+                            accountSLA.forEach(row => {
+                                monthMet += parseFloat(row[metCol]) || 0;
+                                monthNotMet += parseFloat(row[notMetCol]) || 0;
+                            });
+                            
+                            const monthTotal = monthMet + monthNotMet;
+                            slaMonthlyData[month] = {
+                                met: monthMet,
+                                notMet: monthNotMet,
+                                total: monthTotal,
+                                percent: monthTotal > 0 ? ((monthMet / monthTotal) * 100) : null
+                            };
+                            
+                            slaMet += monthMet;
+                            slaNotMet += monthNotMet;
+                        });
+                        
+                        const totalSLA = slaMet + slaNotMet;
+                        slaCompliance = totalSLA > 0 ? ((slaMet / totalSLA) * 100) : 0;
                     }
                     
                     // Calculate health score (simple algorithm based on accuracy and compliance)
@@ -4290,6 +4316,7 @@
                         sla_compliance: slaCompliance,
                         sla_met: slaMet,
                         sla_not_met: slaNotMet,
+                        sla_monthly_data: slaMonthlyData,
                         health_score: parseFloat(healthScore.toFixed(1))
                     });
                 });
@@ -4532,10 +4559,43 @@
                                         <div style="display: flex; align-items: center; gap: 4px;"><i class="fas fa-globe"></i> ${account.regional_head}</div>
                                     </div>
                                 </div>
-                                <div style="text-align: center; min-width: 85px;">
-                                    <div style="width: 75px; height: 75px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 6px; font-size: 18px; font-weight: 700; color: #000000; background: white; border: 2px solid #000000;">${accuracyScore}%</div>
-                                    <div style="font-size: 10px; font-weight: 600; color: #4b5563; text-transform: uppercase;">${accuracyLabel}</div>
+                                <div style="display: flex; gap: 15px;">
+                                    <!-- Accuracy Circle -->
+                                    <div style="text-align: center;">
+                                        <div style="font-size: 9px; font-weight: 600; color: #000000; margin-bottom: 4px; text-transform: uppercase;">ACCURACY</div>
+                                        <div style="width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 6px; font-size: 16px; font-weight: 700; color: #000000; background: white; border: 2px solid #10b981; cursor: pointer;" onclick="toggleAccuracyTrend('${account.name}')" title="Click to view monthly trend">${accuracyScore}%</div>
+                                        <div style="font-size: 9px; font-weight: 600; color: #4b5563; text-transform: uppercase;">${accuracyLabel}</div>
+                                    </div>
+                                    <!-- SLA Met% Circle -->
+                                    ${account.has_sla ? `
+                                    <div style="text-align: center;">
+                                        <div style="font-size: 9px; font-weight: 600; color: #000000; margin-bottom: 4px; text-transform: uppercase;">SLA MET%</div>
+                                        <div style="width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 6px; font-size: 16px; font-weight: 700; color: #000000; background: white; border: 2px solid #3b82f6; cursor: pointer;" onclick="toggleSLATrend('${account.name}')" title="Click to view monthly trend">${account.sla_compliance.toFixed(1)}%</div>
+                                        <div style="font-size: 9px; font-weight: 600; color: #4b5563; text-transform: uppercase;">${account.sla_compliance >= 90 ? 'EXCELLENT' : account.sla_compliance >= 75 ? 'GOOD' : 'NEEDS WORK'}</div>
+                                    </div>
+                                    ` : ''}
                                 </div>
+                            </div>
+                            
+                            <!-- Accuracy Monthly Trend (Hidden by default) -->
+                            <div id="accuracyTrend_${account.name.replace(/[^a-zA-Z0-9]/g, '_')}" style="display: none; background: #f9fafb; border-top: 1px solid #d1d5db; padding: 15px;">
+                                <div style="font-size: 12px; font-weight: 700; color: #000000; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+                                    <span><i class="fas fa-chart-line" style="color: #10b981;"></i> Accuracy Monthly Trend</span>
+                                    <button onclick="toggleAccuracyTrend('${account.name}')" style="background: #ef4444; color: white; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 10px; font-weight: 600;">CLOSE</button>
+                                </div>
+                                <canvas id="accuracyTrendChart_${account.name.replace(/[^a-zA-Z0-9]/g, '_')}" style="max-height: 180px;"></canvas>
+                            </div>
+                            
+                            <!-- SLA Monthly Trend (Hidden by default) -->
+                            ${account.has_sla ? `
+                            <div id="slaTrend_${account.name.replace(/[^a-zA-Z0-9]/g, '_')}" style="display: none; background: #f9fafb; border-top: 1px solid #d1d5db; padding: 15px;">
+                                <div style="font-size: 12px; font-weight: 700; color: #000000; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+                                    <span><i class="fas fa-chart-line" style="color: #3b82f6;"></i> SLA Met% Monthly Trend</span>
+                                    <button onclick="toggleSLATrend('${account.name}')" style="background: #ef4444; color: white; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 10px; font-weight: 600;">CLOSE</button>
+                                </div>
+                                <canvas id="slaTrendChart_${account.name.replace(/[^a-zA-Z0-9]/g, '_')}" style="max-height: 180px;"></canvas>
+                            </div>
+                            ` : ''}
                             </div>
                             
                             <!-- Account Body -->
@@ -4650,6 +4710,162 @@
                 console.error('❌ Error rendering journey accounts:', error);
             }
         }
+        
+        // Toggle Accuracy Monthly Trend
+        window.toggleAccuracyTrend = function(accountName) {
+            const safeName = accountName.replace(/[^a-zA-Z0-9]/g, '_');
+            const trendDiv = document.getElementById(`accuracyTrend_${safeName}`);
+            const chartCanvas = document.getElementById(`accuracyTrendChart_${safeName}`);
+            
+            if (!trendDiv) return;
+            
+            const isHidden = trendDiv.style.display === 'none';
+            trendDiv.style.display = isHidden ? 'block' : 'none';
+            
+            // Render chart if opening
+            if (isHidden && chartCanvas && typeof Chart !== 'undefined') {
+                const account = window.journeyAccountsData.find(a => a.name === accountName);
+                if (!account) return;
+                
+                // Get monthly accuracy data from Parameter_Audit_Count
+                const paramData = window.dashboardData.parameterAuditCount || [];
+                const accountParams = paramData.filter(row => {
+                    const client = (row['Account'] || row['Client'] || row['Account Name'] || '').toString().trim();
+                    return client.toLowerCase() === accountName.toLowerCase();
+                });
+                
+                const months = ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'];
+                const monthlyAccuracy = [];
+                
+                months.forEach(month => {
+                    const monthData = accountParams.filter(row => (row['Month'] || '').toString().trim() === month);
+                    if (monthData.length > 0) {
+                        let totalPass = 0, totalCount = 0, totalNA = 0;
+                        monthData.forEach(row => {
+                            totalPass += parseFloat(row['Opportunity Pass']) || 0;
+                            totalCount += parseFloat(row['Opportunity Count']) || 0;
+                            totalNA += parseFloat(row['Opportunity NA']) || 0;
+                        });
+                        const validOpp = totalCount - totalNA;
+                        const accuracy = validOpp > 0 ? ((totalPass / validOpp) * 100) : null;
+                        monthlyAccuracy.push(accuracy);
+                    } else {
+                        monthlyAccuracy.push(null);
+                    }
+                });
+                
+                // Destroy existing chart if any
+                if (window[`accuracyChart_${safeName}`]) {
+                    window[`accuracyChart_${safeName}`].destroy();
+                }
+                
+                // Create chart
+                window[`accuracyChart_${safeName}`] = new Chart(chartCanvas, {
+                    type: 'line',
+                    data: {
+                        labels: months,
+                        datasets: [{
+                            label: 'Accuracy %',
+                            data: monthlyAccuracy,
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                            spanGaps: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            datalabels: {
+                                align: 'top',
+                                formatter: (value) => value !== null ? value.toFixed(1) + '%' : '',
+                                color: '#000000',
+                                font: { weight: 'bold', size: 10 }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: false,
+                                min: 70,
+                                max: 100,
+                                ticks: {
+                                    callback: (value) => value + '%'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        };
+        
+        // Toggle SLA Monthly Trend
+        window.toggleSLATrend = function(accountName) {
+            const safeName = accountName.replace(/[^a-zA-Z0-9]/g, '_');
+            const trendDiv = document.getElementById(`slaTrend_${safeName}`);
+            const chartCanvas = document.getElementById(`slaTrendChart_${safeName}`);
+            
+            if (!trendDiv) return;
+            
+            const isHidden = trendDiv.style.display === 'none';
+            trendDiv.style.display = isHidden ? 'block' : 'none';
+            
+            // Render chart if opening
+            if (isHidden && chartCanvas && typeof Chart !== 'undefined') {
+                const account = window.journeyAccountsData.find(a => a.name === accountName);
+                if (!account || !account.sla_monthly_data) return;
+                
+                const months = ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'];
+                const monthlySLA = months.map(month => account.sla_monthly_data[month]?.percent || null);
+                
+                // Destroy existing chart if any
+                if (window[`slaChart_${safeName}`]) {
+                    window[`slaChart_${safeName}`].destroy();
+                }
+                
+                // Create chart
+                window[`slaChart_${safeName}`] = new Chart(chartCanvas, {
+                    type: 'line',
+                    data: {
+                        labels: months,
+                        datasets: [{
+                            label: 'SLA Met %',
+                            data: monthlySLA,
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                            spanGaps: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            datalabels: {
+                                align: 'top',
+                                formatter: (value) => value !== null ? value.toFixed(1) + '%' : '',
+                                color: '#000000',
+                                font: { weight: 'bold', size: 10 }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: false,
+                                min: 50,
+                                max: 100,
+                                ticks: {
+                                    callback: (value) => value + '%'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        };
         
         function showJourneyEmptyState() {
             const grid = document.getElementById('journeyAccountsGrid');
