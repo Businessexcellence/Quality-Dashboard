@@ -3550,6 +3550,27 @@
                         console.log('📋 Projects columns:', Object.keys(window.dashboardData.projects[0]));
                     }
                     
+                    // SLA
+                    console.log('🔍 Searching for SLA sheet...');
+                    let slaData = parseSheet(workbook, 'SLA');
+                    if (!slaData || slaData.length === 0) {
+                        console.log('🔍 Trying "Sla" (capitalized)...');
+                        slaData = parseSheet(workbook, 'Sla');
+                    }
+                    if (!slaData || slaData.length === 0) {
+                        console.log('🔍 Trying "sla" (lowercase)...');
+                        slaData = parseSheet(workbook, 'sla');
+                    }
+                    window.dashboardData.sla = slaData || [];
+                    console.log('✅ SLA rows:', window.dashboardData.sla.length);
+                    if (window.dashboardData.sla.length > 0) {
+                        console.log('📋 SLA sample row:', window.dashboardData.sla[0]);
+                        console.log('📋 SLA columns:', Object.keys(window.dashboardData.sla[0]));
+                    } else {
+                        console.warn('⚠️ SLA sheet not found or empty');
+                        console.warn('📋 Available sheets:', workbook.SheetNames.join(', '));
+                    }
+                    
                     // CSAT
                     window.dashboardData.csat = parseSheet(workbook, 'CSAT') || [];
                     console.log('✅ CSAT rows:', window.dashboardData.csat.length);
@@ -3594,6 +3615,7 @@
                             `• Transactional Overview: ${window.dashboardData.transactionalOverview.length} rows\n` +
                             `• RCA/CAPA: ${window.dashboardData.rcaCapa.length} rows\n` +
                             `• Projects: ${window.dashboardData.projects.length} rows\n` +
+                            `• SLA: ${window.dashboardData.sla.length} rows\n` +
                             `• CSAT: ${window.dashboardData.csat.length} rows\n\n` +
                             `✨ Dashboard has been refreshed with your data!`;
                         
@@ -4235,10 +4257,12 @@
                     const openRCA = totalRCA - closedRCA;
                     
                     // Get SLA data - handle monthly Met/Not_Met columns
+                    console.log(`🔍 Looking for SLA data for account: ${accountName}, Total SLA rows available: ${slaData.length}`);
                     const accountSLA = slaData.filter(row => {
                         const client = (row['Project'] || row['Account'] || row['Client'] || row['Account Name'] || '').toString().trim();
                         return client.toLowerCase() === accountName.toLowerCase();
                     });
+                    console.log(`✅ Found ${accountSLA.length} SLA row(s) for ${accountName}`);
                     
                     let slaCompliance = 0, slaMet = 0, slaNotMet = 0;
                     const slaMonthlyData = {};
