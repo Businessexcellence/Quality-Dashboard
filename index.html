@@ -123,6 +123,51 @@
             }
         };
         
+        // Theme Toggle Function
+        window.toggleTheme = function() {
+            const body = document.body;
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+            const themeToggle = document.getElementById('themeToggle');
+            
+            body.classList.toggle('dark-mode');
+            
+            const isDarkMode = body.classList.contains('dark-mode');
+            
+            if (isDarkMode) {
+                // Switch to Light Mode
+                themeIcon.className = 'fas fa-sun';
+                themeText.textContent = 'Light Mode';
+                themeToggle.style.background = 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)';
+                themeToggle.style.boxShadow = '0 4px 12px rgba(251, 191, 36, 0.3)';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                // Switch to Dark Mode
+                themeIcon.className = 'fas fa-moon';
+                themeText.textContent = 'Dark Mode';
+                themeToggle.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                themeToggle.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.3)';
+                localStorage.setItem('theme', 'light');
+            }
+        };
+        
+        // Load theme preference on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                const themeIcon = document.getElementById('themeIcon');
+                const themeText = document.getElementById('themeText');
+                const themeToggle = document.getElementById('themeToggle');
+                if (themeIcon) themeIcon.className = 'fas fa-sun';
+                if (themeText) themeText.textContent = 'Light Mode';
+                if (themeToggle) {
+                    themeToggle.style.background = 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)';
+                    themeToggle.style.boxShadow = '0 4px 12px rgba(251, 191, 36, 0.3)';
+                }
+            }
+        });
+        
         window.closeUserManual = function() {
             const modal = document.getElementById('userManualModal');
             if (modal) {
@@ -183,6 +228,42 @@
             --nav-width: 60px;
             --nav-width-expanded: 240px;
             --header-height: 80px;
+        }
+        
+        /* Dark Mode Theme */
+        body.dark-mode {
+            --primary: #ff6b35;           /* Brighter orange for dark mode */
+            --primary-dark: #f04616;
+            --primary-light: #ff8c5a;
+            
+            /* Dark Backgrounds */
+            --bg-primary: #0a0a0a;        /* Very dark background */
+            --bg-secondary: #1a1a1a;      /* Dark gray */
+            --bg-card: #1f1f1f;           /* Dark card background */
+            --bg-hover: #2a2a2a;          /* Hover state */
+            --bg-card-hover: #2a2a2a;
+            
+            /* Dark Mode Text */
+            --text-primary: #f5f5f5;      /* Light gray text */
+            --text-secondary: #d1d5db;    /* Medium gray text */
+            --text-muted: #9ca3af;        /* Muted gray */
+            --text-on-dark: #ffffff;
+            
+            /* Dark Mode Borders & Shadows */
+            --border: #2a2a2a;            /* Dark border */
+            --border-dark: #3a3a3a;
+            --border-color: #2a2a2a;
+            --border-hover: #3a3a3a;
+            --shadow: rgba(0, 0, 0, 0.5); /* Stronger shadow */
+        }
+        
+        body.dark-mode {
+            background: #0a0a0a;
+            color: #f5f5f5;
+        }
+        
+        body.dark-mode::before {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
         }
 
         * {
@@ -1047,9 +1128,15 @@
             </div>
             
             <!-- User Manual Button -->
-            <div class="menu-item" onclick="openUserManual()" style="margin: 5px 15px 15px 15px; border: 1px solid #e5e7eb; background: #f9fafb;">
+            <div class="menu-item" onclick="openUserManual()" style="margin: 5px 15px 10px 15px; border: 1px solid #e5e7eb; background: #f9fafb;">
                 <i class="fas fa-book"></i>
                 <span>User Manual</span>
+            </div>
+            
+            <!-- Theme Switch Button -->
+            <div id="themeToggle" class="menu-item" onclick="toggleTheme()" style="margin: 5px 15px 15px 15px; border: 1px solid #e5e7eb; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; cursor: pointer; font-weight: 600; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3); transition: all 0.3s ease;">
+                <i class="fas fa-moon" id="themeIcon"></i>
+                <span id="themeText">Dark Mode</span>
             </div>
         </div>
     </div>
