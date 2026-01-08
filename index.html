@@ -4553,20 +4553,24 @@
                     // SLA HTML
                     let slaHTML = '';
                     if (account.has_sla) {
-                        const slaClass = account.sla_compliance >= 90 ? '' : account.sla_compliance >= 70 ? 'medium' : 'low';
-                        const slaGradient = account.sla_compliance >= 90 ? 'linear-gradient(90deg, #43e97b 0%, #38f9d7 100%)' : 
-                                          account.sla_compliance >= 70 ? 'linear-gradient(90deg, #f093fb 0%, #f5576c 100%)' : 
-                                          'linear-gradient(90deg, #fa709a 0%, #fee140 100%)';
+                        // Green/Amber/Red color scheme based on SLA thresholds
+                        // Green: 75-100%, Amber: 50-74.99%, Red: 0-49.99%
+                        const slaColor = account.sla_compliance >= 75 ? '#10b981' : account.sla_compliance >= 50 ? '#f59e0b' : '#ef4444';
+                        const slaLabel = account.sla_compliance >= 75 ? 'Excellent' : account.sla_compliance >= 50 ? 'Needs Attention' : 'Critical';
+                        
                         slaHTML = `
                             <div style="background: #f5f5f5; border: 1px solid #d1d5db; border-radius: 6px; padding: 12px;">
                                 <h4 style="color: #000000; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; font-weight: 600;">SLA COMPLIANCE</h4>
-                                <div style="font-size: 20px; font-weight: 700; color: #000000; margin-bottom: 5px;">${account.sla_compliance.toFixed(1)}%</div>
+                                <div style="font-size: 20px; font-weight: 700; color: ${slaColor}; margin-bottom: 5px;">${account.sla_compliance.toFixed(1)}%</div>
                                 <div style="width: 100%; height: 16px; background: #e2e8f0; border-radius: 8px; overflow: hidden; margin-top: 5px;">
-                                    <div style="height: 100%; background: ${slaGradient}; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: bold; transition: width 0.5s ease; width: ${account.sla_compliance}%;">
+                                    <div style="height: 100%; background: ${slaColor}; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: bold; transition: width 0.5s ease; width: ${account.sla_compliance}%;">
                                         ${account.sla_compliance.toFixed(1)}%
                                     </div>
                                 </div>
-                                <div style="font-size: 11px; color: #6b7280; margin-top: 3px;">Met: ${account.sla_met} | Not Met: ${account.sla_not_met}</div>
+                                <div style="font-size: 11px; color: #6b7280; margin-top: 3px;">
+                                    <span style="color: ${slaColor}; font-weight: 600;">${slaLabel}</span> | 
+                                    Met: ${account.sla_met} | Not Met: ${account.sla_not_met}
+                                </div>
                             </div>
                         `;
                     }
@@ -4594,8 +4598,8 @@
                                     ${account.has_sla ? `
                                     <div style="text-align: center;">
                                         <div style="font-size: 9px; font-weight: 600; color: #000000; margin-bottom: 4px; text-transform: uppercase;">SLA MET%</div>
-                                        <div style="width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 6px; font-size: 16px; font-weight: 700; color: #000000; background: white; border: 2px solid #3b82f6; cursor: pointer;" onclick="toggleSLATrend('${account.name}')" title="Click to view monthly trend">${account.sla_compliance.toFixed(1)}%</div>
-                                        <div style="font-size: 9px; font-weight: 600; color: #4b5563; text-transform: uppercase;">${account.sla_compliance >= 90 ? 'EXCELLENT' : account.sla_compliance >= 75 ? 'GOOD' : 'NEEDS WORK'}</div>
+                                        <div style="width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 6px; font-size: 16px; font-weight: 700; color: #000000; background: white; border: 2px solid ${account.sla_compliance >= 75 ? '#10b981' : account.sla_compliance >= 50 ? '#f59e0b' : '#ef4444'}; cursor: pointer;" onclick="toggleSLATrend('${account.name}')" title="Click to view monthly trend">${account.sla_compliance.toFixed(1)}%</div>
+                                        <div style="font-size: 9px; font-weight: 600; color: ${account.sla_compliance >= 75 ? '#10b981' : account.sla_compliance >= 50 ? '#f59e0b' : '#ef4444'}; text-transform: uppercase;">${account.sla_compliance >= 75 ? 'EXCELLENT' : account.sla_compliance >= 50 ? 'NEEDS ATTENTION' : 'CRITICAL'}</div>
                                     </div>
                                     ` : ''}
                                 </div>
