@@ -4411,45 +4411,50 @@
         
         function renderJourneyStats(filteredData) {
             try {
-                const total = filteredData.length;
-                const active = filteredData.filter(a => a.status === 'Active').length;
-                const withAuditData = filteredData.filter(a => a.has_audit_data).length;
-                const withProjects = filteredData.filter(a => a.has_projects).length;
-                const withRCA = filteredData.filter(a => a.has_rca).length;
-                const withSLA = filteredData.filter(a => a.has_sla).length;
-                const avgHealth = total > 0 ? (filteredData.reduce((sum, a) => sum + a.health_score, 0) / total).toFixed(1) : 0;
-                const avgAccuracy = filteredData.filter(a => a.avg_accuracy).length > 0 
-                    ? (filteredData.filter(a => a.avg_accuracy).reduce((sum, a) => sum + a.avg_accuracy, 0) / filteredData.filter(a => a.avg_accuracy).length).toFixed(1) 
-                    : 'N/A';
+                // Calculate Total Accounts
+                const totalAccounts = filteredData.length;
+                
+                // Calculate Average Accuracy %
+                const accountsWithAccuracy = filteredData.filter(a => a.avg_accuracy && a.avg_accuracy > 0);
+                const avgAccuracy = accountsWithAccuracy.length > 0 
+                    ? (accountsWithAccuracy.reduce((sum, a) => sum + a.avg_accuracy, 0) / accountsWithAccuracy.length).toFixed(1) 
+                    : 0;
+                
+                // Calculate Average SLA %
+                const accountsWithSLA = filteredData.filter(a => a.has_sla && a.sla_compliance > 0);
+                const avgSLA = accountsWithSLA.length > 0 
+                    ? (accountsWithSLA.reduce((sum, a) => sum + a.sla_compliance, 0) / accountsWithSLA.length).toFixed(1) 
+                    : 0;
+                
+                // Calculate Average Sample %
+                const accountsWithSample = filteredData.filter(a => a.sample_percent && a.sample_percent > 0);
+                const avgSample = accountsWithSample.length > 0 
+                    ? (accountsWithSample.reduce((sum, a) => sum + a.sample_percent, 0) / accountsWithSample.length).toFixed(1) 
+                    : 0;
+                
+                // Calculate Total Opportunity Count
+                const totalOpportunities = filteredData.reduce((sum, a) => sum + (a.total_opportunities || 0), 0);
                 
                 const statsHTML = `
                     <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 10px; text-align: center;">
                         <div style="font-size: 9px; color: #000000; margin-bottom: 4px; font-weight: 600;">TOTAL ACCOUNTS</div>
-                        <div style="font-size: 22px; font-weight: 700; color: #000000;">${total}</div>
+                        <div style="font-size: 22px; font-weight: 700; color: #000000;">${totalAccounts}</div>
                     </div>
                     <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 10px; text-align: center;">
-                        <div style="font-size: 9px; color: #000000; margin-bottom: 4px; font-weight: 600;">ACTIVE</div>
-                        <div style="font-size: 22px; font-weight: 700; color: #000000;">${active}</div>
+                        <div style="font-size: 9px; color: #000000; margin-bottom: 4px; font-weight: 600;">AVG ACCURACY %</div>
+                        <div style="font-size: 22px; font-weight: 700; color: #10b981;">${avgAccuracy}%</div>
                     </div>
                     <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 10px; text-align: center;">
-                        <div style="font-size: 9px; color: #000000; margin-bottom: 4px; font-weight: 600;">AVG ACCURACY</div>
-                        <div style="font-size: 22px; font-weight: 700; color: #000000;">${avgAccuracy}${avgAccuracy !== 'N/A' ? '%' : ''}</div>
+                        <div style="font-size: 9px; color: #000000; margin-bottom: 4px; font-weight: 600;">AVG SLA %</div>
+                        <div style="font-size: 22px; font-weight: 700; color: ${avgSLA >= 75 ? '#10b981' : avgSLA >= 50 ? '#f59e0b' : '#ef4444'};">${avgSLA}%</div>
                     </div>
                     <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 10px; text-align: center;">
-                        <div style="font-size: 9px; color: #000000; margin-bottom: 4px; font-weight: 600;">WITH AUDITS</div>
-                        <div style="font-size: 22px; font-weight: 700; color: #000000;">${withAuditData}</div>
+                        <div style="font-size: 9px; color: #000000; margin-bottom: 4px; font-weight: 600;">AVG SAMPLE %</div>
+                        <div style="font-size: 22px; font-weight: 700; color: #3b82f6;">${avgSample}%</div>
                     </div>
                     <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 10px; text-align: center;">
-                        <div style="font-size: 9px; color: #000000; margin-bottom: 4px; font-weight: 600;">WITH SLA</div>
-                        <div style="font-size: 22px; font-weight: 700; color: #000000;">${withSLA}</div>
-                    </div>
-                    <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 10px; text-align: center;">
-                        <div style="font-size: 9px; color: #000000; margin-bottom: 4px; font-weight: 600;">WITH PROJECTS</div>
-                        <div style="font-size: 22px; font-weight: 700; color: #000000;">${withProjects}</div>
-                    </div>
-                    <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 10px; text-align: center;">
-                        <div style="font-size: 9px; color: #000000; margin-bottom: 4px; font-weight: 600;">WITH RCA</div>
-                        <div style="font-size: 22px; font-weight: 700; color: #000000;">${withRCA}</div>
+                        <div style="font-size: 9px; color: #000000; margin-bottom: 4px; font-weight: 600;">TOTAL OPPORTUNITIES</div>
+                        <div style="font-size: 22px; font-weight: 700; color: #000000;">${totalOpportunities.toLocaleString()}</div>
                     </div>
                 `;
                 
