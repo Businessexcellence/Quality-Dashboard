@@ -4410,6 +4410,7 @@
                         critical_audits: criticalCount,
                         non_critical_audits: nonCriticalCount,
                         total_opportunities: totalOppCount,
+                        valid_opportunities: validOpp,
                         unique_recruiters: uniqueRecruiters,
                         recruiter_audits: recruiterAudits,
                         total_projects: totalProjects,
@@ -4498,58 +4499,85 @@
         
         function renderJourneyStats(filteredData) {
             try {
-                // Calculate Total Accounts
-                const totalAccounts = filteredData.length;
+                // Access raw Parameter_Audit_Count data for accurate calculations
+                const paramData = window.dashboardData.parameterAuditCount || [];
+                const slaData = window.dashboardData.sla || [];
                 
-                // Calculate Average Accuracy %
-                const accountsWithAccuracy = filteredData.filter(a => a.avg_accuracy && a.avg_accuracy > 0);
-                const avgAccuracy = accountsWithAccuracy.length > 0 
-                    ? (accountsWithAccuracy.reduce((sum, a) => sum + a.avg_accuracy, 0) / accountsWithAccuracy.length).toFixed(1) 
-                    : 0;
+                // Get account names from filtered data
+                const filteredAccountNames = filteredData.map(a => a.name.toLowerCase());
                 
-                // Calculate Average SLA %
-                const accountsWithSLA = filteredData.filter(a => a.has_sla && a.sla_compliance > 0);
-                const avgSLA = accountsWithSLA.length > 0 
-                    ? (accountsWithSLA.reduce((sum, a) => sum + a.sla_compliance, 0) / accountsWithSLA.length).toFixed(1) 
-                    : 0;
+                // Filter paramData to only include filtered accounts
+                const filteredParams = paramData.filter(row => {
+                    const account = (row['Account'] || row['Client'] || row['Account Name'] || '').toString().trim().toLowerCase();
+                    return filteredAccountNames.includes(account);
+                });
                 
-                // Calculate Average Sample %
-                const accountsWithSample = filteredData.filter(a => a.sample_percent && a.sample_percent > 0);
-                const avgSample = accountsWithSample.length > 0 
-                    ? (accountsWithSample.reduce((sum, a) => sum + a.sample_percent, 0) / accountsWithSample.length).toFixed(1) 
-                    : 0;
+                // Calculate totals from Parameter_Audit_Count
+                let totalOppPass = 0, totalOppCount = 0, totalOppNA = 0;
+                filteredParams.forEach(row => {
+                    totalOppPass += parseFloat(row['Opportunity Pass']) || 0;
+                    totalOppCount += parseFloat(row['Opportunity Count']) || 0;
+                    totalOppNA += parseFloat(row['Opportunity NA']) || 0;
+                });
                 
-                // Calculate Total Opportunity Count
-                const totalOpportunities = filteredData.reduce((sum, a) => sum + (a.total_opportunities || 0), 0);
+                const totalValidOpp = totalOppCount - totalOppNA;
+                const totalPopulation = totalOppCount; // Total Population = Total Opportunity Count
+                
+                // Overall Accuracy: (Sum of Opportunity Pass / Sum of Valid Opportunities) × 100
+                const overallAccuracy = totalValidOpp > 0 ? ((totalOppPass / totalValidOpp) * 100).toFixed(1) : 0;
+                
+                // Overall Sample: (Sum of Valid Opportunities / Sum of Total Opportunities) × 100
+                const overallSample = totalOppCount > 0 ? ((totalValidOpp / totalOppCount) * 100).toFixed(1) : 0;
+                
+                // Calculate SLA Compliance from SLA sheet
+                // Filter SLA data for filtered accounts
+                const filteredSLA = slaData.filter(row => {
+                    const account = (row['Project'] || row['Account'] || row['Client'] || row['Account Name'] || '').toString().trim().toLowerCase();
+                    return filteredAccountNames.includes(account);
+                });
+                
+                let totalSlaMet = 0, totalSlaNotMet = 0;
+                const months = ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'];
+                
+                filteredSLA.forEach(row => {
+                    months.forEach(month => {
+                        totalSlaMet += parseFloat(row[`${month}_Met`]) || 0;
+                        totalSlaNotMet += parseFloat(row[`${month}_Not_Met`]) || 0;
+                    });
+                });
+                
+                const totalSlas = totalSlaMet + totalSlaNotMet;
+                // SLA Compliance % = (Total SLAs Met / Total SLAs) × 100
+                const slaCompliance = totalSlas > 0 ? ((totalSlaMet / totalSlas) * 100).toFixed(1) : 0;
                 
                 // Determine status labels
-                const accuracyLabel = avgAccuracy >= 95 ? 'EXCELLENT' : avgAccuracy >= 85 ? 'GOOD' : avgAccuracy >= 75 ? 'FAIR' : 'NEEDS ATTENTION';
-                const slaLabel = avgSLA >= 75 ? 'EXCELLENT' : avgSLA >= 50 ? 'NEEDS ATTENTION' : 'CRITICAL';
-                const sampleLabel = avgSample >= 90 ? 'EXCELLENT' : avgSample >= 75 ? 'GOOD' : 'NEEDS ATTENTION';
+                const accuracyLabel = overallAccuracy >= 95 ? 'EXCELLENT' : overallAccuracy >= 85 ? 'GOOD' : overallAccuracy >= 75 ? 'FAIR' : 'NEEDS ATTENTION';
+                const slaLabel = slaCompliance >= 75 ? 'EXCELLENT' : slaCompliance >= 50 ? 'NEEDS ATTENTION' : 'CRITICAL';
+                const sampleLabel = overallSample >= 90 ? 'EXCELLENT' : overallSample >= 75 ? 'GOOD' : 'NEEDS ATTENTION';
                 
                 const statsHTML = `
                     <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                        <div style="font-size: 10px; color: #6b7280; margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">TOTAL ACCOUNTS</div>
-                        <div style="font-size: 28px; font-weight: 700; color: #000000;">${totalAccounts}</div>
+                        <div style="font-size: 10px; color: #6b7280; margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">TOTAL POPULATION</div>
+                        <div style="font-size: 28px; font-weight: 700; color: #000000;">${totalPopulation.toLocaleString()}</div>
                     </div>
                     <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                        <div style="font-size: 10px; color: #6b7280; margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">ACCURACY</div>
-                        <div style="font-size: 28px; font-weight: 700; color: #10b981; margin-bottom: 4px;">${avgAccuracy}%</div>
+                        <div style="font-size: 10px; color: #6b7280; margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">TOTAL OPPORTUNITY</div>
+                        <div style="font-size: 28px; font-weight: 700; color: #000000;">${totalValidOpp.toLocaleString()}</div>
+                    </div>
+                    <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                        <div style="font-size: 10px; color: #6b7280; margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">ACCURACY %</div>
+                        <div style="font-size: 28px; font-weight: 700; color: #10b981; margin-bottom: 4px;">${overallAccuracy}%</div>
                         <div style="font-size: 9px; color: #10b981; font-weight: 600;">${accuracyLabel}</div>
                     </div>
                     <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                        <div style="font-size: 10px; color: #6b7280; margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">SLA MET%</div>
-                        <div style="font-size: 28px; font-weight: 700; color: ${avgSLA >= 75 ? '#10b981' : avgSLA >= 50 ? '#f59e0b' : '#ef4444'}; margin-bottom: 4px;">${avgSLA}%</div>
-                        <div style="font-size: 9px; color: ${avgSLA >= 75 ? '#10b981' : avgSLA >= 50 ? '#f59e0b' : '#ef4444'}; font-weight: 600;">${slaLabel}</div>
-                    </div>
-                    <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
                         <div style="font-size: 10px; color: #6b7280; margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">SAMPLE %</div>
-                        <div style="font-size: 28px; font-weight: 700; color: #3b82f6; margin-bottom: 4px;">${avgSample}%</div>
+                        <div style="font-size: 28px; font-weight: 700; color: #3b82f6; margin-bottom: 4px;">${overallSample}%</div>
                         <div style="font-size: 9px; color: #3b82f6; font-weight: 600;">${sampleLabel}</div>
                     </div>
                     <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                        <div style="font-size: 10px; color: #6b7280; margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">TOTAL OPPORTUNITIES</div>
-                        <div style="font-size: 28px; font-weight: 700; color: #000000;">${totalOpportunities.toLocaleString()}</div>
+                        <div style="font-size: 10px; color: #6b7280; margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">SLA COMPLIANCE %</div>
+                        <div style="font-size: 28px; font-weight: 700; color: ${slaCompliance >= 75 ? '#10b981' : slaCompliance >= 50 ? '#f59e0b' : '#ef4444'}; margin-bottom: 4px;">${slaCompliance}%</div>
+                        <div style="font-size: 9px; color: ${slaCompliance >= 75 ? '#10b981' : slaCompliance >= 50 ? '#f59e0b' : '#ef4444'}; font-weight: 600;">${slaLabel}</div>
                     </div>
                 `;
                 
@@ -4752,8 +4780,12 @@
                                     </div>
                                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px;">
                                         <div style="background: #f5f5f5; border: 1px solid #d1d5db; border-radius: 6px; padding: 12px;">
-                                            <h4 style="color: #000000; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; font-weight: 600;">AUDIT RECORDS</h4>
+                                            <h4 style="color: #000000; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; font-weight: 600;">TOTAL OPPORTUNITIES</h4>
                                             <div style="font-size: 20px; font-weight: 700; color: #000000;">${account.total_opportunities.toLocaleString()}</div>
+                                        </div>
+                                        <div style="background: #f5f5f5; border: 1px solid #d1d5db; border-radius: 6px; padding: 12px;">
+                                            <h4 style="color: #000000; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; font-weight: 600;">SAMPLE COUNT</h4>
+                                            <div style="font-size: 20px; font-weight: 700; color: #000000;">${account.valid_opportunities ? account.valid_opportunities.toLocaleString() : 'N/A'}</div>
                                         </div>
                                         <div style="background: #f5f5f5; border: 1px solid #d1d5db; border-radius: 6px; padding: 12px;">
                                             <h4 style="color: #000000; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; font-weight: 600;">ACCURACY</h4>
@@ -4762,7 +4794,6 @@
                                         <div style="background: #f5f5f5; border: 1px solid #d1d5db; border-radius: 6px; padding: 12px;">
                                             <h4 style="color: #000000; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; font-weight: 600;">SAMPLE %</h4>
                                             <div style="font-size: 20px; font-weight: 700; color: #000000;">${account.sample_percent ? account.sample_percent.toFixed(1) + '%' : 'N/A'}</div>
-                                            <div style="font-size: 11px; color: #6b7280; margin-top: 3px;">${account.unique_recruiters} Recruiters</div>
                                         </div>
                                         ${slaHTML}
                                     </div>
