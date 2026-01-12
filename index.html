@@ -4897,9 +4897,26 @@
                     return accB - accA; // Descending order (highest first)
                 });
                 
-                grid.innerHTML = sortedData.map(account => {
+                // Pastel color palette for account sections
+                const pastelColors = [
+                    '#FFF4E6', // Pastel Peach
+                    '#E3F2FD', // Pastel Blue
+                    '#F3E5F5', // Pastel Purple
+                    '#E8F5E9', // Pastel Green
+                    '#FFF9C4', // Pastel Yellow
+                    '#FFE0EC', // Pastel Pink
+                    '#E0F2F1', // Pastel Teal
+                    '#FBE9E7', // Pastel Orange
+                    '#F1F8E9', // Pastel Lime
+                    '#EDE7F6'  // Pastel Lavender
+                ];
+                
+                grid.innerHTML = sortedData.map((account, index) => {
                     const accuracyScore = account.avg_accuracy ? account.avg_accuracy.toFixed(1) : '0.0';
                     const accuracyLabel = getAccuracyLabel(parseFloat(accuracyScore));
+                    
+                    // Cycle through pastel colors
+                    const pastelBg = pastelColors[index % pastelColors.length];
                     
                     // Projects HTML
                     let projectsHTML = '<p style="text-align: center; padding: 20px; color: #9ca3af; font-style: italic;">No projects</p>';
@@ -4985,7 +5002,8 @@
                     }
                     
                     return `
-                        <div style="background: white; border: 1px solid #e5e7eb; border-radius: 10px; overflow: hidden; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: box-shadow 0.3s ease;" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.15)'" onmouseout="this.style.boxShadow='0 1px 3px rgba(0,0,0,0.1)'">
+                        <div style="background: ${pastelBg}; border: 2px solid ${pastelBg}; border-radius: 14px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: all 0.3s ease; padding: 4px;" onmouseover="this.style.boxShadow='0 6px 20px rgba(0,0,0,0.12)'; this.style.transform='translateY(-2px)';" onmouseout="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)'; this.style.transform='translateY(0)';">
+                            <div style="background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
                             <!-- Account Header -->
                             <div style="background: white; border-bottom: 1px solid #e5e7eb; padding: 20px; display: flex; justify-content: space-between; align-items: center;">
                                 <div style="flex: 1;">
@@ -5189,6 +5207,7 @@
                                     ` : ''}
                                     ${rcaHTML}
                                 </div>
+                            </div>
                             </div>
                         </div>
                     `;
