@@ -175,6 +175,35 @@
                 modal.classList.remove('active');
             }
         };
+        
+        // Navigation Popup Functions
+        window.openNavPopup = function() {
+            const popup = document.getElementById('navPopup');
+            if (popup) {
+                popup.classList.add('active');
+            }
+        };
+        
+        window.closeNavPopup = function() {
+            const popup = document.getElementById('navPopup');
+            if (popup) {
+                popup.classList.remove('active');
+            }
+        };
+        
+        window.quickNavigate = function(tabId) {
+            closeNavPopup();
+            // Find the menu item element
+            const menuItems = document.querySelectorAll('.menu-item');
+            let targetElement = null;
+            menuItems.forEach(item => {
+                const onclick = item.getAttribute('onclick');
+                if (onclick && onclick.includes(`'${tabId}'`)) {
+                    targetElement = item;
+                }
+            });
+            window.switchTab(tabId, targetElement);
+        };
     </script>
     
     <style>
@@ -996,6 +1025,201 @@
             background: linear-gradient(90deg, var(--primary), var(--secondary));
             width: 0%;
             transition: width 0.3s ease;
+        }
+        
+        /* Navigation Popup Styles */
+        .nav-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 0;
+            max-width: 700px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.3);
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .nav-popup.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        
+        .nav-popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-popup.active ~ .nav-popup-overlay,
+        .nav-popup-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .nav-popup-header {
+            padding: 24px 28px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(135deg, #ff6b35 0%, #f04616 100%);
+            border-radius: 16px 16px 0 0;
+        }
+        
+        .nav-popup-header h2 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .nav-popup-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            color: white;
+            font-size: 18px;
+        }
+        
+        .nav-popup-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+        
+        .nav-popup-body {
+            padding: 24px 28px;
+        }
+        
+        .nav-popup-section {
+            margin-bottom: 28px;
+        }
+        
+        .nav-popup-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .nav-popup-section-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .nav-popup-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+        }
+        
+        .nav-popup-item {
+            background: var(--bg-hover);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .nav-popup-item:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(240, 70, 22, 0.15);
+        }
+        
+        .nav-popup-item-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            background: linear-gradient(135deg, #ff6b35 0%, #f04616 100%);
+            color: white;
+            flex-shrink: 0;
+        }
+        
+        .nav-popup-item-content {
+            flex: 1;
+        }
+        
+        .nav-popup-item-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+        
+        .nav-popup-item-desc {
+            font-size: 10px;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+        
+        /* Quick Access Floating Button */
+        .quick-nav-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff6b35 0%, #f04616 100%);
+            color: white;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(240, 70, 22, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            z-index: 9998;
+            transition: all 0.3s ease;
+        }
+        
+        .quick-nav-btn:hover {
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 12px 32px rgba(240, 70, 22, 0.5);
+        }
+        
+        .quick-nav-btn:active {
+            transform: scale(0.95);
         }
 
         /* ==========================================
@@ -13047,6 +13271,184 @@ Total Population: ${totalPop}
                 closeUploadModal();
             }
         });
+        
+        // Close nav popup on clicking overlay
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('nav-popup-overlay')) {
+                closeNavPopup();
+            }
+        });
     </script>
+    
+    <!-- Quick Navigation Floating Button -->
+    <button class="quick-nav-btn" onclick="openNavPopup()" title="Quick Navigation">
+        <i class="fas fa-compass"></i>
+    </button>
+    
+    <!-- Navigation Popup -->
+    <div id="navPopup" class="nav-popup">
+        <div class="nav-popup-header">
+            <h2><i class="fas fa-map-marked-alt"></i> Quick Navigation</h2>
+            <button class="nav-popup-close" onclick="closeNavPopup()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="nav-popup-body">
+            <!-- Main Dashboards -->
+            <div class="nav-popup-section">
+                <div class="nav-popup-section-title">
+                    <i class="fas fa-chart-pie"></i> Main Dashboards
+                </div>
+                <div class="nav-popup-grid">
+                    <div class="nav-popup-item" onclick="quickNavigate('home')">
+                        <div class="nav-popup-item-icon">
+                            <i class="fas fa-home"></i>
+                        </div>
+                        <div class="nav-popup-item-content">
+                            <div class="nav-popup-item-title">Home</div>
+                            <div class="nav-popup-item-desc">Main dashboard overview</div>
+                        </div>
+                    </div>
+                    <div class="nav-popup-item" onclick="quickNavigate('journey-at-glance')">
+                        <div class="nav-popup-item-icon">
+                            <i class="fas fa-route"></i>
+                        </div>
+                        <div class="nav-popup-item-content">
+                            <div class="nav-popup-item-title">Journey at Glance</div>
+                            <div class="nav-popup-item-desc">Account journey cards</div>
+                        </div>
+                    </div>
+                    <div class="nav-popup-item" onclick="quickNavigate('account-summary')">
+                        <div class="nav-popup-item-icon">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <div class="nav-popup-item-content">
+                            <div class="nav-popup-item-title">Account Summary</div>
+                            <div class="nav-popup-item-desc">Detailed account table</div>
+                        </div>
+                    </div>
+                    <div class="nav-popup-item" onclick="quickNavigate('strategic')">
+                        <div class="nav-popup-item-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="nav-popup-item-content">
+                            <div class="nav-popup-item-title">Strategic Overview</div>
+                            <div class="nav-popup-item-desc">High-level metrics</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Performance & Quality -->
+            <div class="nav-popup-section">
+                <div class="nav-popup-section-title">
+                    <i class="fas fa-trophy"></i> Performance & Quality
+                </div>
+                <div class="nav-popup-grid">
+                    <div class="nav-popup-item" onclick="quickNavigate('transactional')">
+                        <div class="nav-popup-item-icon">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                        <div class="nav-popup-item-content">
+                            <div class="nav-popup-item-title">Transactional Overview</div>
+                            <div class="nav-popup-item-desc">Transaction metrics</div>
+                        </div>
+                    </div>
+                    <div class="nav-popup-item" onclick="quickNavigate('audit-summary')">
+                        <div class="nav-popup-item-icon">
+                            <i class="fas fa-clipboard-check"></i>
+                        </div>
+                        <div class="nav-popup-item-content">
+                            <div class="nav-popup-item-title">Parameter Performance</div>
+                            <div class="nav-popup-item-desc">Audit parameters</div>
+                        </div>
+                    </div>
+                    <div class="nav-popup-item" onclick="quickNavigate('recruiter')">
+                        <div class="nav-popup-item-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="nav-popup-item-content">
+                            <div class="nav-popup-item-title">Recruiter Insights</div>
+                            <div class="nav-popup-item-desc">Recruiter performance</div>
+                        </div>
+                    </div>
+                    <div class="nav-popup-item" onclick="quickNavigate('csat')">
+                        <div class="nav-popup-item-icon">
+                            <i class="fas fa-smile"></i>
+                        </div>
+                        <div class="nav-popup-item-content">
+                            <div class="nav-popup-item-title">Customer Satisfaction</div>
+                            <div class="nav-popup-item-desc">CSAT scores & feedback</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Projects & Improvement -->
+            <div class="nav-popup-section">
+                <div class="nav-popup-section-title">
+                    <i class="fas fa-tasks"></i> Projects & Improvement
+                </div>
+                <div class="nav-popup-grid">
+                    <div class="nav-popup-item" onclick="quickNavigate('projects')">
+                        <div class="nav-popup-item-icon">
+                            <i class="fas fa-project-diagram"></i>
+                        </div>
+                        <div class="nav-popup-item-content">
+                            <div class="nav-popup-item-title">Project Summary</div>
+                            <div class="nav-popup-item-desc">Active & completed projects</div>
+                        </div>
+                    </div>
+                    <div class="nav-popup-item" onclick="quickNavigate('rca-capa')">
+                        <div class="nav-popup-item-icon">
+                            <i class="fas fa-tools"></i>
+                        </div>
+                        <div class="nav-popup-item-content">
+                            <div class="nav-popup-item-title">RCA & CAPA</div>
+                            <div class="nav-popup-item-desc">Root cause analysis</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="nav-popup-section">
+                <div class="nav-popup-section-title">
+                    <i class="fas fa-bolt"></i> Quick Actions
+                </div>
+                <div class="nav-popup-grid">
+                    <div class="nav-popup-item" onclick="closeNavPopup(); openUploadModal();">
+                        <div class="nav-popup-item-icon" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                            <i class="fas fa-upload"></i>
+                        </div>
+                        <div class="nav-popup-item-content">
+                            <div class="nav-popup-item-title">Upload Excel</div>
+                            <div class="nav-popup-item-desc">Load new data</div>
+                        </div>
+                    </div>
+                    <div class="nav-popup-item" onclick="closeNavPopup(); openUserManual();">
+                        <div class="nav-popup-item-icon" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <div class="nav-popup-item-content">
+                            <div class="nav-popup-item-title">User Manual</div>
+                            <div class="nav-popup-item-desc">Help & documentation</div>
+                        </div>
+                    </div>
+                    <div class="nav-popup-item" onclick="closeNavPopup(); toggleTheme();">
+                        <div class="nav-popup-item-icon" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);">
+                            <i class="fas fa-moon"></i>
+                        </div>
+                        <div class="nav-popup-item-content">
+                            <div class="nav-popup-item-title">Toggle Theme</div>
+                            <div class="nav-popup-item-desc">Dark/Light mode</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="nav-popup-overlay" onclick="closeNavPopup()"></div>
+    
 </body>
 </html>
