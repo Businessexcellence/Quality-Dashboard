@@ -1264,8 +1264,11 @@
                                 <th style="padding: 6px 8px; font-size: 9px;">Practice Head</th>
                                 <th style="padding: 6px 8px; font-size: 9px;">Regional Head</th>
                                 <th style="padding: 6px 8px; font-size: 9px;">Audit</th>
-                                <th style="padding: 6px 8px; font-size: 9px;">Client Int.</th>
                                 <th style="padding: 6px 8px; font-size: 9px;">Frequency</th>
+                                <th style="padding: 6px 8px; font-size: 9px;">Start Date</th>
+                                <th style="padding: 6px 8px; font-size: 9px;">End Date</th>
+                                <th style="padding: 6px 8px; font-size: 9px;">Agreed Sample%</th>
+                                <th style="padding: 6px 8px; font-size: 9px;">Client Int.</th>
                                 <th style="padding: 6px 8px; font-size: 9px;">SPOC Audit</th>
                                 <th style="padding: 6px 8px; font-size: 9px;">SPOC SLA</th>
                             </tr>
@@ -4285,6 +4288,9 @@
                     const beSpocSla = (acc['BE SPOC - SLAs/KPIs'] || 'N/A').toString().trim();
                     const beSpocAudit = (acc['BE SPOC - Audit'] || 'N/A').toString().trim();
                     const auditFrequency = (acc['Audit Frequency'] || 'Not Set').toString().trim();
+                    const auditStartDate = acc['Audit Start Date'] || null;
+                    const auditEndDate = acc['Audit End Date'] || null;
+                    const agreedSample = acc['Agreed Sample%'] || null;
                     
                     // Calculate metrics from Parameter Audit Count
                     const accountParams = parameterData.filter(row => {
@@ -4399,6 +4405,9 @@
                         status: status,
                         audit_status: auditStatus,
                         audit_frequency: auditFrequency,
+                        audit_start_date: auditStartDate,
+                        audit_end_date: auditEndDate,
+                        agreed_sample: agreedSample,
                         practice_head: practiceHead,
                         regional_head: regionalHead,
                         be_spoc_sla: beSpocSla,
@@ -4771,6 +4780,36 @@
                                     <span style="padding: 4px 10px; border-radius: 4px; font-size: 10px; font-weight: 600; background: ${account.audit_status === 'Yes' ? '#dbeafe' : account.audit_status === 'On Hold' ? '#fef3c7' : '#fed7aa'}; color: ${account.audit_status === 'Yes' ? '#1e40af' : account.audit_status === 'On Hold' ? '#92400e' : '#9a3412'}; border: 1px solid ${account.audit_status === 'Yes' ? '#3b82f6' : account.audit_status === 'On Hold' ? '#f59e0b' : '#f97316'};">Audit: ${account.audit_status}</span>
                                     ${account.audit_frequency !== 'Not Set' ? `<span style="padding: 4px 10px; border-radius: 4px; font-size: 10px; font-weight: 600; background: #dbeafe; color: #1e40af; border: 1px solid #3b82f6;">${account.audit_frequency}</span>` : ''}
                                 </div>
+                                
+                                <!-- Audit Details Section -->
+                                ${account.audit_start_date || account.audit_end_date || account.agreed_sample ? `
+                                <div style="margin-bottom: 15px;">
+                                    <div style="font-size: 13px; font-weight: 700; color: #000000; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+                                        <i class="fas fa-calendar-alt" style="font-size: 11px;"></i>
+                                        Audit Details
+                                    </div>
+                                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px;">
+                                        ${account.audit_start_date ? `
+                                        <div style="font-size: 12px;">
+                                            <div style="color: #6b7280; font-weight: 500; margin-bottom: 3px; font-size: 10px;">Start Date</div>
+                                            <div style="color: #000000; font-weight: 600;">${new Date(account.audit_start_date).toLocaleDateString('en-GB')}</div>
+                                        </div>
+                                        ` : ''}
+                                        ${account.audit_end_date ? `
+                                        <div style="font-size: 12px;">
+                                            <div style="color: #6b7280; font-weight: 500; margin-bottom: 3px; font-size: 10px;">End Date</div>
+                                            <div style="color: #000000; font-weight: 600;">${new Date(account.audit_end_date).toLocaleDateString('en-GB')}</div>
+                                        </div>
+                                        ` : ''}
+                                        ${account.agreed_sample ? `
+                                        <div style="font-size: 12px;">
+                                            <div style="color: #6b7280; font-weight: 500; margin-bottom: 3px; font-size: 10px;">Agreed Sample %</div>
+                                            <div style="color: #000000; font-weight: 600;">${(parseFloat(account.agreed_sample) * 100).toFixed(1)}%</div>
+                                        </div>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                                ` : ''}
                                 
                                 <!-- KPIs Section -->
                                 <div style="margin-bottom: 15px;">
@@ -6969,6 +7008,11 @@
                     auditStatusColor = '#ef4444'; // red
                 }
                 
+                // Format dates
+                const startDate = row['Audit Start Date'] ? new Date(row['Audit Start Date']).toLocaleDateString('en-GB') : 'N/A';
+                const endDate = row['Audit End Date'] ? new Date(row['Audit End Date']).toLocaleDateString('en-GB') : 'N/A';
+                const agreedSample = row['Agreed Sample%'] ? (parseFloat(row['Agreed Sample%']) * 100).toFixed(1) + '%' : 'N/A';
+                
                 return `
                     <tr onclick="showAccountDetails(${index})" style="cursor: pointer;">
                         <td style="padding: 4px 6px;"><strong style="font-size: 9px;">${index + 1}</strong></td>
@@ -6976,8 +7020,11 @@
                         <td style="padding: 4px 6px; font-size: 9px;">${(row['Practice Head'] || row['Practice'] || 'N/A')}</td>
                         <td style="padding: 4px 6px; font-size: 9px;">${(row['Regional Head'] || row['Region'] || row['Regional'] || 'N/A')}</td>
                         <td style="padding: 4px 6px;"><strong style="color: ${auditStatusColor}; font-size: 9px;">${auditStatus || 'N/A'}</strong></td>
-                        <td style="padding: 4px 6px; font-size: 9px;">${(row['Client Interaction'] || row['Interaction'] || 'N/A')}</td>
                         <td style="padding: 4px 6px; font-size: 9px;">${(row['Audit Frequency'] || row['Frequency'] || 'N/A')}</td>
+                        <td style="padding: 4px 6px; font-size: 9px;">${startDate}</td>
+                        <td style="padding: 4px 6px; font-size: 9px;">${endDate}</td>
+                        <td style="padding: 4px 6px; font-size: 9px; font-weight: 600;">${agreedSample}</td>
+                        <td style="padding: 4px 6px; font-size: 9px;">${(row['Client Interaction'] || row['Interaction'] || 'N/A')}</td>
                         <td style="padding: 4px 6px; font-size: 9px; color: #000000; font-weight: 600;">${(row['BE SPOC - Audit'] || row['BE SPOC Audit'] || 'N/A')}</td>
                         <td style="padding: 4px 6px; font-size: 9px; color: #000000; font-weight: 600;">${(row['BE SPOC - SLAs/KPIs'] || row['BE SPOC SLA'] || 'N/A')}</td>
                     </tr>
