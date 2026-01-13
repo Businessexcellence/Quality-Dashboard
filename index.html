@@ -5094,7 +5094,7 @@
                                         ${account.agreed_sample ? `
                                         <div style="font-size: 12px;">
                                             <div style="color: #6b7280; font-weight: 500; margin-bottom: 3px; font-size: 10px;">Agreed Sample %</div>
-                                            <div style="color: #000000; font-weight: 600;">${(parseFloat(account.agreed_sample) * 100).toFixed(1)}%</div>
+                                            <div style="color: #000000; font-weight: 600;">${(parseFloat(account.agreed_sample)).toFixed(1)}%</div>
                                         </div>
                                         ` : ''}
                                     </div>
@@ -7314,7 +7314,7 @@
                 // Format dates
                 const startDate = row['Audit Start Date'] ? new Date(row['Audit Start Date']).toLocaleDateString('en-GB') : 'N/A';
                 const endDate = row['Audit End Date'] ? new Date(row['Audit End Date']).toLocaleDateString('en-GB') : 'N/A';
-                const agreedSample = row['Agreed Sample%'] ? (parseFloat(row['Agreed Sample%']) * 100).toFixed(1) + '%' : 'N/A';
+                const agreedSample = row['Agreed Sample%'] ? (parseFloat(row['Agreed Sample%'])).toFixed(1) + '%' : 'N/A';
                 
                 return `
                     <tr onclick="showAccountDetails(${index})" style="cursor: pointer;">
