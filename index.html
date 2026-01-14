@@ -140,31 +140,44 @@
                 themeText.textContent = 'Light Mode';
                 themeToggle.style.background = 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)';
                 themeToggle.style.boxShadow = '0 4px 12px rgba(251, 191, 36, 0.3)';
-                localStorage.setItem('theme', 'dark');
+                try {
+                    localStorage.setItem('theme', 'dark');
+                } catch (e) {
+                    console.warn('⚠️ localStorage blocked - theme preference not saved');
+                }
             } else {
                 // Switch to Dark Mode
                 themeIcon.className = 'fas fa-moon';
                 themeText.textContent = 'Dark Mode';
                 themeToggle.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
                 themeToggle.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.3)';
-                localStorage.setItem('theme', 'light');
+                try {
+                    localStorage.setItem('theme', 'light');
+                } catch (e) {
+                    console.warn('⚠️ localStorage blocked - theme preference not saved');
+                }
             }
         };
         
         // Load theme preference on page load
         window.addEventListener('DOMContentLoaded', function() {
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme === 'dark') {
-                document.body.classList.add('dark-mode');
-                const themeIcon = document.getElementById('themeIcon');
-                const themeText = document.getElementById('themeText');
-                const themeToggle = document.getElementById('themeToggle');
-                if (themeIcon) themeIcon.className = 'fas fa-sun';
-                if (themeText) themeText.textContent = 'Light Mode';
-                if (themeToggle) {
-                    themeToggle.style.background = 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)';
-                    themeToggle.style.boxShadow = '0 4px 12px rgba(251, 191, 36, 0.3)';
+            try {
+                const savedTheme = localStorage.getItem('theme');
+                if (savedTheme === 'dark') {
+                    document.body.classList.add('dark-mode');
+                    const themeIcon = document.getElementById('themeIcon');
+                    const themeText = document.getElementById('themeText');
+                    const themeToggle = document.getElementById('themeToggle');
+                    if (themeIcon) themeIcon.className = 'fas fa-sun';
+                    if (themeText) themeText.textContent = 'Light Mode';
+                    if (themeToggle) {
+                        themeToggle.style.background = 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)';
+                        themeToggle.style.boxShadow = '0 4px 12px rgba(251, 191, 36, 0.3)';
+                    }
                 }
+            } catch (e) {
+                console.warn('⚠️ localStorage blocked - using default theme');
+            }
             }
         });
         
