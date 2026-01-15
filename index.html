@@ -4623,8 +4623,13 @@
                     });
                     
                     const totalProjects = accountProjects.length;
-                    const closedProjects = accountProjects.filter(p => (p['Status'] || '').toString().toUpperCase() === 'CLOSED').length;
-                    const ongoingProjects = totalProjects - closedProjects;
+                    // Ongoing Projects = Only WIP status
+                    const ongoingProjects = accountProjects.filter(p => {
+                        const status = (p['Status'] || '').toString().trim().toUpperCase();
+                        return status === 'WIP';
+                    }).length;
+                    // Closed Projects = All other statuses (CLOSED, COMPLETED, etc.)
+                    const closedProjects = totalProjects - ongoingProjects;
                     
                     // Get RCAs
                     const accountRCAs = rcaData.filter(row => {
