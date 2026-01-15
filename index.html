@@ -4560,6 +4560,7 @@
                     const auditStartDate = acc['Audit Start Date'] || null;
                     const auditEndDate = acc['Audit End Date'] || null;
                     const agreedSample = acc['Agreed Sample%'] || null;
+                    const ageing = acc['Ageing'] || null;
                     
                     // Calculate metrics from Parameter Audit Count
                     const accountParams = parameterData.filter(row => {
@@ -4677,6 +4678,7 @@
                         audit_start_date: auditStartDate,
                         audit_end_date: auditEndDate,
                         agreed_sample: agreedSample,
+                        ageing: ageing,
                         practice_head: practiceHead,
                         regional_head: regionalHead,
                         be_spoc_sla: beSpocSla,
@@ -5084,7 +5086,7 @@
                                 </div>
                                 
                                 <!-- Audit Details Section -->
-                                ${account.audit_start_date || account.audit_end_date || account.agreed_sample ? `
+                                ${account.audit_start_date || account.audit_end_date || account.ageing || account.agreed_sample ? `
                                 <div style="margin-bottom: 15px;">
                                     <div style="font-size: 13px; font-weight: 700; color: #000000; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
                                         <i class="fas fa-calendar-alt" style="font-size: 11px;"></i>
@@ -5101,6 +5103,12 @@
                                         <div style="font-size: 12px;">
                                             <div style="color: #6b7280; font-weight: 500; margin-bottom: 3px; font-size: 10px;">End Date</div>
                                             <div style="color: #000000; font-weight: 600;">${new Date(account.audit_end_date).toLocaleDateString('en-GB')}</div>
+                                        </div>
+                                        ` : ''}
+                                        ${account.ageing ? `
+                                        <div style="font-size: 12px;">
+                                            <div style="color: #6b7280; font-weight: 500; margin-bottom: 3px; font-size: 10px;">Ageing</div>
+                                            <div style="color: #000000; font-weight: 600;">${account.ageing} days</div>
                                         </div>
                                         ` : ''}
                                         ${account.agreed_sample ? `
@@ -5168,12 +5176,8 @@
                                             <div style="color: #000000; font-weight: 600;">${account.be_spoc_audit}</div>
                                         </div>
                                         <div style="font-size: 12px;">
-                                            <div style="color: #6b7280; font-weight: 500; margin-bottom: 3px; font-size: 10px;">Unique Recruiters</div>
+                                            <div style="color: #6b7280; font-weight: 500; margin-bottom: 3px; font-size: 10px;">Recruiters</div>
                                             <div style="color: #000000; font-weight: 600;">${account.unique_recruiters}</div>
-                                        </div>
-                                        <div style="font-size: 12px;">
-                                            <div style="color: #6b7280; font-weight: 500; margin-bottom: 3px; font-size: 10px;">Recruiter Audits</div>
-                                            <div style="color: #000000; font-weight: 600;">${account.recruiter_audits}</div>
                                         </div>
                                     </div>
                                 </div>
