@@ -4624,8 +4624,9 @@
                     
                     const totalProjects = accountProjects.length;
                     // Ongoing Projects = Only WIP status
+                    // Note: Column header is "Status " with trailing space in Excel
                     const ongoingProjects = accountProjects.filter(p => {
-                        const status = (p['Status'] || '').toString().trim().toUpperCase();
+                        const status = (p['Status '] || p['Status'] || '').toString().trim().toUpperCase();
                         return status === 'WIP';
                     }).length;
                     // Closed Projects = All other statuses (CLOSED, COMPLETED, etc.)
