@@ -4046,10 +4046,15 @@
             // First, try exact match
             if (workbook.SheetNames.includes(sheetName)) {
                 const worksheet = workbook.Sheets[sheetName];
-                const data = XLSX.utils.sheet_to_json(worksheet);
+                // Parse with raw:false to ensure dates are properly converted
+                const data = XLSX.utils.sheet_to_json(worksheet, { raw: false, dateNF: 'yyyy-mm-dd' });
                 console.log(`✅ Loaded ${data.length} rows from "${sheetName}"`);
                 if (data.length > 0) {
                     console.log(`📋 Columns in "${sheetName}":`, Object.keys(data[0]));
+                    // Log first row to check date format
+                    if (sheetName.includes('Account')) {
+                        console.log(`📅 Sample Account_Summary row:`, data[0]);
+                    }
                 }
                 return data;
             }
@@ -4074,10 +4079,15 @@
                 if (actualLower === sheetName.toLowerCase() || actualNoSpace === targetNoSpace) {
                     console.log(`💡 Found similar sheet: "${actualSheet}" (was looking for "${sheetName}")`);
                     const worksheet = workbook.Sheets[actualSheet];
-                    const data = XLSX.utils.sheet_to_json(worksheet);
+                    // Parse with raw:false to ensure dates are properly converted
+                    const data = XLSX.utils.sheet_to_json(worksheet, { raw: false, dateNF: 'yyyy-mm-dd' });
                     console.log(`✅ Loaded ${data.length} rows from "${actualSheet}"`);
                     if (data.length > 0) {
                         console.log(`📋 Columns in "${actualSheet}":`, Object.keys(data[0]));
+                        // Log first row to check date format
+                        if (actualSheet.toLowerCase().includes('account')) {
+                            console.log(`📅 Sample Account_Summary row:`, data[0]);
+                        }
                     }
                     return data;
                 }
@@ -4557,8 +4567,18 @@
                     const beSpocSla = (acc['BE SPOC - SLAs/KPIs'] || 'N/A').toString().trim();
                     const beSpocAudit = (acc['BE SPOC - Audit'] || 'N/A').toString().trim();
                     const auditFrequency = (acc['Audit Frequency'] || 'Not Set').toString().trim();
-                    const auditStartDate = acc['Audit Start Date'] || null;
-                    const auditEndDate = acc['Audit End Date'] || null;
+                    
+                    // Parse dates properly - handle both Date objects and string formats
+                    const parseDate = (dateValue) => {
+                        if (!dateValue) return null;
+                        if (dateValue instanceof Date) return dateValue;
+                        // Try parsing as string
+                        const parsed = new Date(dateValue);
+                        return isNaN(parsed.getTime()) ? null : parsed;
+                    };
+                    
+                    const auditStartDate = parseDate(acc['Audit Start Date']);
+                    const auditEndDate = parseDate(acc['Audit End Date']);
                     const agreedSample = acc['Agreed Sample%'] || null;
                     const ageing = acc['Ageing'] || null;
                     
@@ -7327,9 +7347,25 @@
                     auditStatusColor = '#ef4444'; // red
                 }
                 
-                // Format dates
-                const startDate = row['Audit Start Date'] ? new Date(row['Audit Start Date']).toLocaleDateString('en-GB') : 'N/A';
-                const endDate = row['Audit End Date'] ? new Date(row['Audit End Date']).toLocaleDateString('en-GB') : 'N/A';
+                // Format dates with proper parsing
+                const formatDate = (dateValue) => {
+                    if (!dateValue) return 'N/A';
+                    try {
+                        let date;
+                        if (dateValue instanceof Date) {
+                            date = dateValue;
+                        } else {
+                            date = new Date(dateValue);
+                        }
+                        if (isNaN(date.getTime())) return 'N/A';
+                        return date.toLocaleDateString('en-GB');
+                    } catch (e) {
+                        return 'N/A';
+                    }
+                };
+                
+                const startDate = formatDate(row['Audit Start Date']);
+                const endDate = formatDate(row['Audit End Date']);
                 const agreedSample = row['Agreed Sample%'] ? (parseFloat(row['Agreed Sample%']) * 100).toFixed(1) + '%' : 'N/A';
                 
                 return `
