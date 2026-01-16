@@ -13397,8 +13397,80 @@ Total Population: ${totalPop}
                 console.log('✅ Upload button event listener attached');
             }
             
-            // Data will be loaded when user uploads Excel file
-            console.log('📊 Ready to load data - please upload your Excel file');
+            // Auto-load BaseFile.xlsx from public/data folder
+            console.log('🔄 Auto-loading BaseFile.xlsx...');
+            fetch('/data/BaseFile.xlsx')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.arrayBuffer();
+                })
+                .then(data => {
+                    console.log('✅ BaseFile.xlsx loaded successfully');
+                    // Create a fake event object to pass to handleFileUpload
+                    const fakeEvent = {
+                        target: {
+                            files: [new File([data], 'BaseFile.xlsx', { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })],
+                            result: data
+                        }
+                    };
+                    
+                    // Process the file using existing upload handler
+                    if (typeof window.handleFileUpload === 'function') {
+                        // Simulate file read completion
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            // Manually trigger the workbook processing
+                            try {
+                                const workbook = XLSX.read(e.target.result, { type: 'array', raw: false, dateNF: 'yyyy-mm-dd' });
+                                console.log('📊 Processing auto-loaded BaseFile.xlsx...');
+                                
+                                // Process sheets (same logic as handleFileUpload)
+                                window.dashboardData.parameterAuditCount = parseSheet(workbook, 'Parameter_Audit_Count') || [];
+                                console.log('✅ Parameter_Audit_Count rows:', window.dashboardData.parameterAuditCount.length);
+                                
+                                window.dashboardData.recruiterAuditCount = parseSheet(workbook, 'Recruiter_Audit_Count') || [];
+                                console.log('✅ Recruiter_Audit_Count rows:', window.dashboardData.recruiterAuditCount.length);
+                                
+                                let accountSummaryData = parseSheet(workbook, 'Account_Summary');
+                                if (!accountSummaryData || accountSummaryData.length === 0) {
+                                    accountSummaryData = parseSheet(workbook, 'Account Summary');
+                                }
+                                window.dashboardData.accountSummary = accountSummaryData || [];
+                                console.log('✅ Account_Summary rows:', window.dashboardData.accountSummary.length);
+                                
+                                window.dashboardData.rcaCapa = parseSheet(workbook, 'RCA_CAPA') || parseSheet(workbook, 'RCA CAPA') || [];
+                                console.log('✅ RCA_CAPA rows:', window.dashboardData.rcaCapa.length);
+                                
+                                window.dashboardData.projects = parseSheet(workbook, 'Projects') || [];
+                                console.log('✅ Projects rows:', window.dashboardData.projects.length);
+                                
+                                window.dashboardData.sla = parseSheet(workbook, 'SLA') || [];
+                                console.log('✅ SLA rows:', window.dashboardData.sla.length);
+                                
+                                window.dashboardData.csat = parseSheet(workbook, 'CSAT') || [];
+                                console.log('✅ CSAT rows:', window.dashboardData.csat.length);
+                                
+                                window.dashboardData.transactionalOverview = parseSheet(workbook, 'Transactional_Overview') || parseSheet(workbook, 'Transactional Overview') || [];
+                                console.log('✅ Transactional_Overview rows:', window.dashboardData.transactionalOverview.length);
+                                
+                                // Initialize all dashboards
+                                console.log('🎨 Rendering dashboards with auto-loaded data...');
+                                initializeDashboards();
+                                
+                                console.log('✅ Auto-load complete! Dashboard ready.');
+                            } catch (error) {
+                                console.error('❌ Error processing auto-loaded file:', error);
+                            }
+                        };
+                        reader.readAsArrayBuffer(new Blob([data]));
+                    }
+                })
+                .catch(error => {
+                    console.warn('⚠️ Could not auto-load BaseFile.xlsx:', error.message);
+                    console.log('📊 Please upload your Excel file manually');
+                });
         });
 
         // Close modal on clicking outside

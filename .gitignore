@@ -27,3 +27,10 @@ Thumbs.db
 *.tmp
 *.backup
 *.bak
+
+# Wrangler
+.wrangler/
+
+# Allow public/data folder for BaseFile
+!public/data/
+!public/data/BaseFile.xlsx
