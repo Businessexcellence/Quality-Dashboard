@@ -1340,7 +1340,7 @@
     <!-- LEFT SIDEBAR -->
     <div class="sidebar">
         <div class="sidebar-header">
-            <img src="/public/taggd-logo-new.png" alt="TAGGD Logo">
+            <img src="/public/taggd-logo.png" alt="TAGGD Logo" style="max-height: 40px;">
         </div>
         
         <div class="sidebar-menu">
@@ -1532,10 +1532,10 @@
                                 <th style="padding: 6px 8px; font-size: 9px;">Account</th>
                                 <th style="padding: 6px 8px; font-size: 9px;">Practice Head</th>
                                 <th style="padding: 6px 8px; font-size: 9px;">Regional Head</th>
-                                <th style="padding: 6px 8px; font-size: 9px;">Audit</th>
+                                <th style="padding: 6px 8px; font-size: 9px;">Audit Status</th>
                                 <th style="padding: 6px 8px; font-size: 9px;">Frequency</th>
-                                <th style="padding: 6px 8px; font-size: 9px;">Start Date</th>
-                                <th style="padding: 6px 8px; font-size: 9px;">End Date</th>
+                                <th style="padding: 6px 8px; font-size: 9px;">Audit Start Date</th>
+                                <th style="padding: 6px 8px; font-size: 9px;">Audit End Date</th>
                                 <th style="padding: 6px 8px; font-size: 9px;">Agreed Sample%</th>
                                 <th style="padding: 6px 8px; font-size: 9px;">Client Int.</th>
                                 <th style="padding: 6px 8px; font-size: 9px;">SPOC Audit</th>
@@ -4827,7 +4827,8 @@
                 });
                 
                 const totalValidOpp = totalOppCount - totalOppNA;
-                const totalPopulation = totalOppCount; // Total Population = Total Opportunity Count
+                // Total Population = SUM of Opportunity Count from Parameter_Audit_Count (Column K)
+                const totalPopulation = totalOppCount;
                 
                 // Overall Accuracy: (Sum of Opportunity Pass / Sum of Valid Opportunities) × 100
                 const overallAccuracy = totalValidOpp > 0 ? ((totalOppPass / totalValidOpp) * 100).toFixed(1) : 0;
@@ -5120,19 +5121,19 @@
                                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px;">
                                         ${account.audit_start_date ? `
                                         <div style="font-size: 12px;">
-                                            <div style="color: #6b7280; font-weight: 500; margin-bottom: 3px; font-size: 10px;">Start Date</div>
+                                            <div style="color: #6b7280; font-weight: 500; margin-bottom: 3px; font-size: 10px;">Audit Start Date</div>
                                             <div style="color: #000000; font-weight: 600;">${new Date(account.audit_start_date).toLocaleDateString('en-GB')}</div>
                                         </div>
                                         ` : ''}
                                         ${account.audit_end_date ? `
                                         <div style="font-size: 12px;">
-                                            <div style="color: #6b7280; font-weight: 500; margin-bottom: 3px; font-size: 10px;">End Date</div>
+                                            <div style="color: #6b7280; font-weight: 500; margin-bottom: 3px; font-size: 10px;">Audit End Date</div>
                                             <div style="color: #000000; font-weight: 600;">${new Date(account.audit_end_date).toLocaleDateString('en-GB')}</div>
                                         </div>
                                         ` : ''}
                                         ${account.ageing ? `
                                         <div style="font-size: 12px;">
-                                            <div style="color: #6b7280; font-weight: 500; margin-bottom: 3px; font-size: 10px;">Ageing</div>
+                                            <div style="color: #6b7280; font-weight: 500; margin-bottom: 3px; font-size: 10px;">Audit Ageing</div>
                                             <div style="color: #000000; font-weight: 600;">${account.ageing}</div>
                                         </div>
                                         ` : ''}
