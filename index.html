@@ -4580,7 +4580,8 @@
                     const auditStartDate = parseDate(acc['Audit Start Date']);
                     const auditEndDate = parseDate(acc['Audit End Date']);
                     const agreedSample = acc['Agreed Sample%'] || null;
-                    const ageing = acc['Ageing'] || null;
+                    // Audit Ageing from Column P, fallback to Column N if P doesn't exist
+                    const ageing = acc['Audit Ageing'] || acc['Ageing'] || null;
                     
                     // Calculate metrics from Parameter Audit Count
                     const accountParams = parameterData.filter(row => {
