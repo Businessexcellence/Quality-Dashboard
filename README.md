@@ -11,7 +11,9 @@
 
 A comprehensive business excellence dashboard for quality management, audit tracking, and account performance monitoring. Built with pure HTML/CSS/JavaScript, powered by SheetJS for Excel integration.
 
-**Live URL:** https://3000-iiqzlm50w1twpgggr1553-82b888ba.sandbox.novita.ai
+**Live URLs:**
+- **GitHub Pages:** https://businessexcellence.github.io/Quality-Dashboard/ (⭐ **Pre-loaded data**, no upload needed)
+- **Sandbox Dev:** https://3000-iiqzlm50w1twpgggr1553-82b888ba.sandbox.novita.ai
 
 ---
 
@@ -170,6 +172,21 @@ All formulas are implemented and available in the codebase.
 ---
 
 ## 🚀 Quick Start Guide
+
+### Option 1: GitHub Pages (Recommended - No Setup Required)
+
+⭐ **Pre-loaded data - Just open and view!**
+
+1. **Open Dashboard:** https://businessexcellence.github.io/Quality-Dashboard/
+2. **Data loads automatically** - No upload needed!
+3. **Explore all tabs** - Account Summary, Journey at Glance, RCA & CAPA, etc.
+4. **Optional: Upload new data** - Click "Upload Excel" to override with your latest file
+
+**Note:** The dashboard auto-loads `Base File 2.xlsx` on page load. All features work immediately without manual upload.
+
+---
+
+### Option 2: Manual Upload (For Latest Data)
 
 ### For Users: Upload and View Data
 
