@@ -2555,7 +2555,8 @@
                         <i class="fas fa-exchange-alt" style="color: #3b82f6;"></i> Transactional Overview
                     </h3>
                     <div style="line-height: 1.8; color: #6b7280;">
-                        <p><strong>Accuracy:</strong> Average accuracy across all transactions for selected filters</p>
+                        <p><strong>Audits Number:</strong> Total Population - Sum of all "Opportunity Count" values (mirrors Journey at Glance Total Population)</p>
+                        <p><strong>Accuracy:</strong> Overall parameter accuracy percentage for the account</p>
                         <p><strong>Sample %:</strong> Valid samples as percentage of total transactions</p>
                         <p><strong>Error %:</strong> Error rate across all transactions</p>
                         <p><strong>Critical/Non-Critical:</strong> Count based on "Stage" field classification</p>
@@ -6068,7 +6069,7 @@
 
         function getClientJourneyData(client) {
             const data = {
-                transactional: { total: 0, accuracy: 0 },
+                transactional: { total: 0, accuracy: 0, auditsNumber: 0 },
                 parameters: { 
                     total: 0, 
                     accuracy: 0, 
@@ -6148,6 +6149,9 @@
                     data.parameters.validOpp += validOpp;
                     data.parameters.oppPass += oppPass;
                     data.parameters.oppFail += oppFail;
+                    
+                    // Add to Audits Number (same as Total Population = sum of Opportunity Count)
+                    data.transactional.auditsNumber += oppCount;
                     
                     // Count critical/non-critical
                     const stage = (p['Stage'] || '').toString().toUpperCase();
@@ -6319,9 +6323,9 @@
                             <div style="font-size: 10px; color: #1e40af; font-weight: 600; margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
                                 <i class="fas fa-exchange-alt"></i> TRANSACTIONAL OVERVIEW
                             </div>
-                            <div style="font-size: 18px; font-weight: 700; color: #1e40af;">${data.transactional.total.toLocaleString()}</div>
-                            <div style="font-size: 9px; color: #64748b;">Total Transactions</div>
-                            <div style="font-size: 9px; color: #64748b;">Accuracy: ${data.transactional.accuracy}%</div>
+                            <div style="font-size: 18px; font-weight: 700; color: #1e40af;">${data.transactional.auditsNumber.toLocaleString()}</div>
+                            <div style="font-size: 9px; color: #64748b;">Audits Number</div>
+                            <div style="font-size: 9px; color: #64748b; margin-top: 2px;">Accuracy: ${data.transactional.accuracy || data.parameters.accuracy}%</div>
                         </div>
                         
                         <!-- Parameter Performance -->
