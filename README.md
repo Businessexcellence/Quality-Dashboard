@@ -62,13 +62,14 @@ A comprehensive business excellence dashboard for quality management, audit trac
   7. **Non-Critical Params** - Count of non-critical parameters
 - ✅ **Client Performance Cards** - Individual full-width cards for each client showing:
   - **7 KPI Cards** - White cards with black text, icons, and subtle shadows (matching reference design)
-  - **Transactional Overview** - Total transactions and accuracy
+  - **Transactional Overview** - ⭐ **NEW: Audits Number** (mirrors Total Population from Journey at Glance) and accuracy
   - **Parameter Performance** - Total parameters with high/medium/low breakdown
   - **RCA & CAPA** - Total issues with open/closed breakdown
   - **Customer Satisfaction** - CSAT score and response count
 - ✅ **Interactive Cards** - Hover effects with orange border highlight
 - ✅ **Smart Data Integration** - Pulls data from Parameter_Audit_Count (including Stage field for Critical/Non-Critical)
 - ✅ **Full-Width Layout** - Cards span full width to accommodate 7 KPI cards
+- ✅ **Audits Number Mirroring** - Transactional Overview now displays Audits Number (sum of Opportunity Count from Column K)
 
 ### 5. **RCA & CAPA Tab** ⭐ REDESIGNED (2026-01-02)
 - ✅ **4 Smart Filters** - Practice Head (E), Financial Year (H), Region (J), Status (I) with intelligent column detection
@@ -512,7 +513,7 @@ location.reload()
 - ✅ Comprehensive documentation (RCA_CAPA_FIX_SUMMARY.md, TESTING_GUIDE.md)
 - ✅ Commit: 4d21de3 "Fix RCA & CAPA column detection with comprehensive helper functions"
 
-**v1.2.0** (2026-01-05) ⭐ LATEST - SIDEBAR LAYOUT TRANSFORMATION
+**v1.2.0** (2026-01-05) ⭐ SIDEBAR LAYOUT TRANSFORMATION
 - ✅ **NEW LAYOUT**: Complete UI transformation matching reference design
   - 280px fixed left sidebar (full height)
   - Black header with centered Taggd logo
@@ -544,9 +545,33 @@ location.reload()
   - 1aa940c "Revert to standard light theme while keeping global filters functionality"
   - 148db44 "Add multi-select global filters with modern styling and active filter tags"
 
+**v1.3.0** (2026-01-16) ⭐ AUDITS NUMBER MIRRORING
+- ✅ **FEATURE: Mirror Total Population as Audits Number in Transactional Overview**
+  - Added "Audits Number" metric to each client's Transactional Overview card
+  - Audits Number = Sum of "Opportunity Count" (Column K) from Parameter_Audit_Count
+  - Mirrors the Total Population calculation from Journey at Glance top-level KPIs
+  - Provides per-client audit volume visibility
+- ✅ **Updated Transactional Overview Display**:
+  - Main metric now shows: "Audits Number" (instead of "Total Transactions")
+  - Preserves accuracy percentage display below
+  - Consistent calculation methodology across dashboard
+- ✅ **Updated Documentation**:
+  - Updated User Guide section to explain Audits Number
+  - Added calculation reference: mirrors Total Population = SUM(Opportunity Count)
+  - Updated README with new feature details
+- ✅ **Example Values** (from Base File.xlsx):
+  - M&M: 15,160 audits
+  - HPE: 8,524 audits
+  - TCPL: 981 audits
+  - Siemens: 654 audits
+  - Total across all accounts: 27,871 audits
+- ✅ Commit: ef175dd "Mirror Total Population as Audits Number in Transactional Overview"
+
 ---
 
-**Last Updated:** 2026-01-02  
-**Status:** ✅ PRODUCTION READY (RCA & CAPA FIXED)  
+**Last Updated:** 2026-01-16  
+**Status:** ✅ PRODUCTION READY (Audits Number Mirroring Added)  
 **Theme:** Taggd Orange (100% brand consistency)  
-**Live URL:** https://3000-iiqzlm50w1twpgggr1553-82b888ba.sandbox.novita.ai
+**Live URLs:**
+- **GitHub Pages:** https://businessexcellence.github.io/Quality-Dashboard/
+- **Sandbox:** https://3000-iiqzlm50w1twpgggr1553-82b888ba.sandbox.novita.ai
