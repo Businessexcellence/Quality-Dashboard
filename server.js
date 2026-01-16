@@ -16,14 +16,16 @@ const mimeTypes = {
     '.jpeg': 'image/jpeg',
     '.gif': 'image/gif',
     '.svg': 'image/svg+xml',
-    '.ico': 'image/x-icon'
+    '.ico': 'image/x-icon',
+    '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    '.xls': 'application/vnd.ms-excel'
 };
 
 const server = http.createServer((req, res) => {
     console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
     
     // Try to serve static files from public folder first
-    if (req.url.match(/\.(jpg|jpeg|png|gif|svg|ico|css|js)$/)) {
+    if (req.url.match(/\.(jpg|jpeg|png|gif|svg|ico|css|js|xlsx|xls)$/)) {
         const publicPath = path.join(__dirname, 'public', req.url);
         
         fs.readFile(publicPath, (err, content) => {

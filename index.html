@@ -13457,9 +13457,10 @@ Total Population: ${totalPop}
                                 
                                 // Initialize all dashboards
                                 console.log('🎨 Rendering dashboards with auto-loaded data...');
-                                initializeDashboards();
+                                refreshAllTabs();
                                 
-                                console.log('✅ Auto-load complete! Dashboard ready.');
+                                console.log('✅ Auto-load complete! Dashboard ready with pre-loaded data.');
+                                console.log(`📊 Loaded ${window.dashboardData.accountSummary.length} accounts, ${window.dashboardData.projects.length} projects`);
                             } catch (error) {
                                 console.error('❌ Error processing auto-loaded file:', error);
                             }
