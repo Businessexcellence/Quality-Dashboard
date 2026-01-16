@@ -4831,6 +4831,12 @@
                 // Total Population = SUM of Opportunity Count from Parameter_Audit_Count (Column K)
                 const totalPopulation = totalOppCount;
                 
+                console.log(`📊 Journey at Glance KPIs:`);
+                console.log(`  Total Opportunity Count (totalPopulation): ${totalPopulation.toLocaleString()}`);
+                console.log(`  Total Valid Opportunities: ${totalValidOpp.toLocaleString()}`);
+                console.log(`  Filtered accounts: ${filteredData.length}`);
+                console.log(`  Filtered params rows: ${filteredParams.length}`);
+                
                 // Overall Accuracy: (Sum of Opportunity Pass / Sum of Valid Opportunities) × 100
                 const overallAccuracy = totalValidOpp > 0 ? ((totalOppPass / totalValidOpp) * 100).toFixed(1) : 0;
                 
