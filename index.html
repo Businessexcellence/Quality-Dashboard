@@ -13399,13 +13399,34 @@ Total Population: ${totalPop}
             
             // Auto-load BaseFile.xlsx from public/data folder
             console.log('🔄 Auto-loading BaseFile.xlsx...');
-            fetch('/data/BaseFile.xlsx')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
+            
+            // Try multiple paths for compatibility with different hosting environments
+            const paths = [
+                '/data/BaseFile.xlsx',           // Local server (server.js)
+                '/public/data/BaseFile.xlsx',    // GitHub Pages
+                'public/data/BaseFile.xlsx',     // Relative path
+                './public/data/BaseFile.xlsx'    // Explicit relative
+            ];
+            
+            // Try each path until one works
+            async function tryFetchFile(paths) {
+                for (let path of paths) {
+                    try {
+                        console.log(`🔍 Trying path: ${path}`);
+                        const response = await fetch(path);
+                        if (response.ok) {
+                            console.log(`✅ Found BaseFile.xlsx at: ${path}`);
+                            return response.arrayBuffer();
+                        }
+                    } catch (err) {
+                        console.log(`⚠️ Path failed: ${path}`);
                     }
-                    return response.arrayBuffer();
-                })
+                }
+                throw new Error('BaseFile.xlsx not found in any known location');
+            }
+            
+            tryFetchFile(paths)
+                .then(data => data)
                 .then(data => {
                     console.log('✅ BaseFile.xlsx loaded successfully');
                     // Create a fake event object to pass to handleFileUpload
