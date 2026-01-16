@@ -218,6 +218,9 @@
         };
     </script>
     
+    <!-- Comprehensive Guided Tour System -->
+    <script src="/tour-implementation.js"></script>
+    
     <style>
         /* ==========================================
            MODERN PROFESSIONAL THEME
@@ -13536,6 +13539,50 @@ Total Population: ${totalPop}
             </button>
         </div>
         <div class="nav-popup-body">
+            <!-- LEARN THIS PAGE Section -->
+            <div style="margin-bottom: 24px; padding: 0 16px;">
+                <div style="background: #FFF8E7; border: 2px solid #F59E0B; border-radius: 12px; padding: 16px;">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                        <i class="fas fa-graduation-cap" style="color: #F59E0B; font-size: 16px;"></i>
+                        <span style="font-size: 13px; font-weight: 700; color: #92400E; text-transform: uppercase; letter-spacing: 0.5px;">LEARN THIS PAGE</span>
+                    </div>
+                    
+                    <!-- Start Guided Tour Button -->
+                    <button onclick="startGuidedTour(); closeNavPopup();" style="
+                        width: 100%;
+                        background: linear-gradient(135deg, #F59E0B 0%, #F97316 100%);
+                        border: none;
+                        border-radius: 8px;
+                        padding: 14px 20px;
+                        cursor: pointer;
+                        transition: all 0.2s ease;
+                        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+                        display: flex;
+                        align-items: center;
+                        gap: 12px;
+                    " 
+                    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 16px rgba(245, 158, 11, 0.4)';"
+                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(245, 158, 11, 0.3)';">
+                        <div style="
+                            background: rgba(255, 255, 255, 0.25);
+                            width: 36px;
+                            height: 36px;
+                            border-radius: 8px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            flex-shrink: 0;
+                        ">
+                            <i class="fas fa-route" style="color: #FFFFFF; font-size: 18px;"></i>
+                        </div>
+                        <div style="text-align: left; flex: 1;">
+                            <div style="font-size: 15px; font-weight: 700; color: #FFFFFF; margin-bottom: 2px;">Start Guided Tour</div>
+                            <div style="font-size: 12px; color: rgba(255, 255, 255, 0.9);">Interactive walkthrough of features on the current page. Perfect for new users!</div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+            
             <!-- Main Dashboards -->
             <div class="nav-popup-section">
                 <div class="nav-popup-section-title">
