@@ -276,7 +276,7 @@ window.startGuidedTour = function() {
     active: true
   };
   
-  showTourStep();
+  window.showTourStep();
 };
 
 // Show current tour step
@@ -286,7 +286,7 @@ window.showTourStep = function() {
   
   const tourSteps = window.tourGuides[tour.tabId];
   if (!tourSteps || tour.step >= tourSteps.length) {
-    endTour();
+    window.endTour();
     return;
   }
   
@@ -309,7 +309,7 @@ window.showTourStep = function() {
         <i class="fas fa-lightbulb" style="color: #F59E0B; margin-right: 8px;"></i>
         ${step.title}
       </div>
-      <button class="tour-tooltip-close" onclick="endTour()">
+      <button class="tour-tooltip-close" onclick="window.endTour()">
         <i class="fas fa-times"></i>
       </button>
     </div>
@@ -319,9 +319,9 @@ window.showTourStep = function() {
     <div class="tour-tooltip-footer">
       <div class="tour-tooltip-progress">Step ${tour.step + 1} of ${tourSteps.length}</div>
       <div class="tour-tooltip-actions">
-        ${tour.step > 0 ? '<button class="tour-btn tour-btn-secondary" onclick="previousTourStep()"><i class="fas fa-arrow-left"></i> Previous</button>' : ''}
-        <button class="tour-btn tour-btn-secondary" onclick="endTour()">Skip Tour</button>
-        ${tour.step < tourSteps.length - 1 ? '<button class="tour-btn tour-btn-primary" onclick="nextTourStep()">Next <i class="fas fa-arrow-right"></i></button>' : '<button class="tour-btn tour-btn-primary" onclick="endTour()"><i class="fas fa-check"></i> Finish</button>'}
+        ${tour.step > 0 ? '<button class="tour-btn tour-btn-secondary" onclick="window.previousTourStep()"><i class="fas fa-arrow-left"></i> Previous</button>' : ''}
+        <button class="tour-btn tour-btn-secondary" onclick="window.endTour()">Skip Tour</button>
+        ${tour.step < tourSteps.length - 1 ? '<button class="tour-btn tour-btn-primary" onclick="window.nextTourStep()">Next <i class="fas fa-arrow-right"></i></button>' : '<button class="tour-btn tour-btn-primary" onclick="window.endTour()"><i class="fas fa-check"></i> Finish</button>'}
       </div>
     </div>
   `;
@@ -343,13 +343,13 @@ window.showTourStep = function() {
 // Navigation functions
 window.nextTourStep = function() {
   window.currentTour.step++;
-  showTourStep();
+  window.showTourStep();
 };
 
 window.previousTourStep = function() {
   if (window.currentTour.step > 0) {
     window.currentTour.step--;
-    showTourStep();
+    window.showTourStep();
   }
 };
 
@@ -363,6 +363,6 @@ window.endTour = function() {
 // Handle escape key to close tour
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape' && window.currentTour.active) {
-    endTour();
+    window.endTour();
   }
 });
