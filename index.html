@@ -5052,9 +5052,9 @@
                 const totalPopulation = totalPopulationSum;
                 
                 console.log(`📊 Journey at Glance KPIs:`);
-                console.log(`  Total Population Sum: ${totalPopulation.toLocaleString()}`);
-                console.log(`  Total Opportunity Count: ${totalOppCount.toLocaleString()}`);
-                console.log(`  Total Valid Opportunities: ${totalValidOpp.toLocaleString()}`);
+                console.log(`  TOTAL POPULATION (SUM Total Population): ${totalPopulation.toLocaleString()}`);
+                console.log(`  TOTAL OPPORTUNITY (SUM Opportunity Count): ${totalOppCount.toLocaleString()}`);
+                console.log(`  Valid Opportunities (Opp Count - Opp NA): ${totalValidOpp.toLocaleString()}`);
                 console.log(`  Filtered accounts: ${filteredData.length}`);
                 console.log(`  Filtered params rows: ${filteredParams.length}`);
                 
@@ -13765,7 +13765,7 @@ Total Population: ${totalPop}
                     </div>
                     
                     <!-- Start Guided Tour Button -->
-                    <button onclick="startGuidedTour(); closeNavPopup();" style="
+                    <button onclick="window.startGuidedTour(); closeNavPopup();" style="
                         width: 100%;
                         background: linear-gradient(135deg, #F59E0B 0%, #F97316 100%);
                         border: none;
