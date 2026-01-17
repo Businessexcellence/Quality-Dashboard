@@ -1336,6 +1336,221 @@
                 font-size: 11px;
             }
         }
+
+        /* ==========================================
+           GUIDED TOUR STYLING
+           ========================================== */
+
+        /* Tour highlight effect on elements */
+        .tour-highlight {
+          position: relative;
+          z-index: 9998;
+          box-shadow: 0 0 0 4px #F59E0B, 0 0 0 8px rgba(245, 158, 11, 0.3);
+          border-radius: 8px;
+          transition: all 0.3s ease;
+          animation: tourPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes tourPulse {
+          0%, 100% {
+            box-shadow: 0 0 0 4px #F59E0B, 0 0 0 8px rgba(245, 158, 11, 0.3);
+          }
+          50% {
+            box-shadow: 0 0 0 4px #F59E0B, 0 0 0 12px rgba(245, 158, 11, 0.2);
+          }
+        }
+
+        /* Tour tooltip container */
+        .tour-tooltip {
+          position: fixed;
+          background: white;
+          border-radius: 12px;
+          padding: 0;
+          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.05);
+          z-index: 9999;
+          max-width: 420px;
+          min-width: 320px;
+          max-height: 90vh;
+          overflow-y: auto;
+          animation: tourFadeIn 0.3s ease;
+        }
+
+        @keyframes tourFadeIn {
+          from { 
+            opacity: 0; 
+            transform: scale(0.95); 
+          }
+          to { 
+            opacity: 1; 
+            transform: scale(1); 
+          }
+        }
+
+        /* Tooltip header */
+        .tour-tooltip-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 20px;
+          border-bottom: 1px solid #E5E7EB;
+          background: linear-gradient(to bottom, #FFFFFF, #F9FAFB);
+        }
+
+        .tour-tooltip-title {
+          font-size: 16px;
+          font-weight: 700;
+          color: #111827;
+          display: flex;
+          align-items: center;
+          flex: 1;
+          line-height: 1.4;
+        }
+
+        .tour-tooltip-close {
+          background: none;
+          border: none;
+          color: #6B7280;
+          font-size: 20px;
+          cursor: pointer;
+          padding: 0;
+          width: 32px;
+          height: 32px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 6px;
+          transition: all 0.2s;
+          flex-shrink: 0;
+          margin-left: 12px;
+        }
+
+        .tour-tooltip-close:hover {
+          background: #F3F4F6;
+          color: #111827;
+        }
+
+        /* Tooltip body */
+        .tour-tooltip-body {
+          padding: 20px;
+          font-size: 14px;
+          line-height: 1.7;
+          color: #374151;
+          max-height: 50vh;
+          overflow-y: auto;
+        }
+
+        .tour-tooltip-body strong {
+          color: #111827;
+          font-weight: 600;
+        }
+
+        .tour-tooltip-body em {
+          font-style: italic;
+        }
+
+        /* Tooltip footer */
+        .tour-tooltip-footer {
+          padding: 16px 20px;
+          border-top: 1px solid #E5E7EB;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          background: #F9FAFB;
+          border-bottom-left-radius: 12px;
+          border-bottom-right-radius: 12px;
+        }
+
+        .tour-tooltip-progress {
+          font-size: 12px;
+          color: #6B7280;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        .tour-tooltip-actions {
+          display: flex;
+          gap: 8px;
+          flex-wrap: wrap;
+          justify-content: flex-end;
+        }
+
+        /* Tour buttons */
+        .tour-btn {
+          padding: 8px 16px;
+          border-radius: 6px;
+          font-size: 13px;
+          font-weight: 600;
+          cursor: pointer;
+          border: none;
+          transition: all 0.2s;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          white-space: nowrap;
+        }
+
+        .tour-btn-primary {
+          background: #1E3A8A;
+          color: white;
+        }
+
+        .tour-btn-primary:hover {
+          background: #1e40af;
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
+        }
+
+        .tour-btn-primary:active {
+          transform: translateY(0);
+        }
+
+        .tour-btn-secondary {
+          background: #F3F4F6;
+          color: #374151;
+          border: 1px solid #E5E7EB;
+        }
+
+        .tour-btn-secondary:hover {
+          background: #E5E7EB;
+          border-color: #D1D5DB;
+        }
+
+        /* Scrollbar styling for tooltip body */
+        .tour-tooltip-body::-webkit-scrollbar {
+          width: 6px;
+        }
+
+        .tour-tooltip-body::-webkit-scrollbar-track {
+          background: #F3F4F6;
+          border-radius: 3px;
+        }
+
+        .tour-tooltip-body::-webkit-scrollbar-thumb {
+          background: #D1D5DB;
+          border-radius: 3px;
+        }
+
+        .tour-tooltip-body::-webkit-scrollbar-thumb:hover {
+          background: #9CA3AF;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+          .tour-tooltip {
+            max-width: calc(100vw - 40px);
+            min-width: 280px;
+          }
+          
+          .tour-tooltip-actions {
+            width: 100%;
+          }
+          
+          .tour-btn {
+            flex: 1;
+            justify-content: center;
+          }
+        }
     </style>
 </head>
 <body>
@@ -4824,19 +5039,21 @@
                 });
                 
                 // Calculate totals from Parameter_Audit_Count
-                let totalOppPass = 0, totalOppCount = 0, totalOppNA = 0;
+                let totalOppPass = 0, totalOppCount = 0, totalOppNA = 0, totalPopulationSum = 0;
                 filteredParams.forEach(row => {
                     totalOppPass += parseFloat(row['Opportunity Pass']) || 0;
                     totalOppCount += parseFloat(row['Opportunity Count']) || 0;
                     totalOppNA += parseFloat(row['Opportunity NA']) || 0;
+                    totalPopulationSum += parseFloat(row['Total Population']) || 0;
                 });
                 
                 const totalValidOpp = totalOppCount - totalOppNA;
-                // Total Population = SUM of Opportunity Count from Parameter_Audit_Count (Column K)
-                const totalPopulation = totalOppCount;
+                // Total Population = SUM of "Total Population" column from Parameter_Audit_Count (Column J)
+                const totalPopulation = totalPopulationSum;
                 
                 console.log(`📊 Journey at Glance KPIs:`);
-                console.log(`  Total Opportunity Count (totalPopulation): ${totalPopulation.toLocaleString()}`);
+                console.log(`  Total Population Sum: ${totalPopulation.toLocaleString()}`);
+                console.log(`  Total Opportunity Count: ${totalOppCount.toLocaleString()}`);
                 console.log(`  Total Valid Opportunities: ${totalValidOpp.toLocaleString()}`);
                 console.log(`  Filtered accounts: ${filteredData.length}`);
                 console.log(`  Filtered params rows: ${filteredParams.length}`);
@@ -4844,8 +5061,8 @@
                 // Overall Accuracy: (Sum of Opportunity Pass / Sum of Valid Opportunities) × 100
                 const overallAccuracy = totalValidOpp > 0 ? ((totalOppPass / totalValidOpp) * 100).toFixed(1) : 0;
                 
-                // Overall Sample: (Sum of Valid Opportunities / Sum of Total Opportunities) × 100
-                const overallSample = totalOppCount > 0 ? ((totalValidOpp / totalOppCount) * 100).toFixed(1) : 0;
+                // Overall Sample: (Sum of Opportunity Count / Sum of Total Population) × 100
+                const overallSample = totalPopulation > 0 ? ((totalOppCount / totalPopulation) * 100).toFixed(1) : 0;
                 
                 // Calculate SLA Compliance from SLA sheet
                 // Filter SLA data for filtered accounts
@@ -4886,7 +5103,7 @@
                             <i class="fas fa-chart-line"></i>
                         </div>
                         <div style="font-size: 11px; color: rgba(255,255,255,0.9); margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">TOTAL OPPORTUNITY</div>
-                        <div style="font-size: 32px; font-weight: 700; color: white;">${totalValidOpp.toLocaleString()}</div>
+                        <div style="font-size: 32px; font-weight: 700; color: white;">${totalOppCount.toLocaleString()}</div>
                     </div>
                     <div style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); border: none; border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0 4px 15px rgba(56, 239, 125, 0.3); position: relative; overflow: hidden;">
                         <div style="position: absolute; top: 10px; right: 10px; font-size: 32px; opacity: 0.2; color: white;">
