@@ -7203,7 +7203,7 @@
                 // Render India map with region overlays using actual image
                 container.innerHTML = `
                     <div style="position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: white;">
-                        <img src="/india-map.jpg" 
+                        <img src="india-map.jpg" 
                              alt="India Map" 
                              style="
                                 max-width: 100%;
@@ -7211,18 +7211,8 @@
                                 object-fit: contain;
                                 opacity: 0.4;
                              "
-                             onerror="console.error('Failed to load India map'); this.style.display='none';"
+                             onerror="console.error('Failed to load India map from:', this.src); this.style.opacity='0.1';"
                         />
-                        <!-- White overlay to cover watermark at bottom -->
-                        <div style="
-                            position: absolute;
-                            bottom: 0;
-                            left: 0;
-                            right: 0;
-                            height: 40px;
-                            background: white;
-                            z-index: 5;
-                        "></div>
                         ${regionLabels}
                     </div>
                 `;
@@ -7600,7 +7590,7 @@
                     overflow: hidden;
                     background: white;
                 ">
-                    <img src="/india-map.jpg" 
+                    <img src="india-map.jpg" 
                          alt="India Map" 
                          style="
                             max-width: 100%;
@@ -7608,18 +7598,8 @@
                             object-fit: contain;
                             opacity: 0.4;
                          "
-                         onerror="console.error('Failed to load India map'); this.style.display='none';"
+                         onerror="console.error('Failed to load India map from:', this.src); this.style.opacity='0.1';"
                     />
-                    <!-- White overlay to cover watermark at bottom -->
-                    <div style="
-                        position: absolute;
-                        bottom: 0;
-                        left: 0;
-                        right: 0;
-                        height: 40px;
-                        background: white;
-                        z-index: 5;
-                    "></div>
                     ${overlayHTML}
                 </div>
             `;
@@ -14117,6 +14097,18 @@ Total Population: ${totalPop}
                         </div>
                         <div class="nav-popup-item-content">
                             <div class="nav-popup-item-title">Toggle Theme</div>
+                            <div class="nav-popup-item-desc">Dark/Light mode</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="nav-popup-overlay" onclick="closeNavPopup()"></div>
+    
+</body>
+</html>
+v class="nav-popup-item-title">Toggle Theme</div>
                             <div class="nav-popup-item-desc">Dark/Light mode</div>
                         </div>
                     </div>
