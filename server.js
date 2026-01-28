@@ -25,17 +25,31 @@ const server = http.createServer((req, res) => {
     console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
     
     // Try to serve static files from public folder first
-    if (req.url.match(/\.(jpg|jpeg|png|gif|svg|ico|css|js|xlsx|xls)$/)) {
-        const publicPath = path.join(__dirname, 'public', req.url);
+    // Match file extensions even with query parameters
+    if (req.url.match(/\.(jpg|jpeg|png|gif|svg|ico|css|js|xlsx|xls)(\?.*)?$/)) {
+        // Remove /public prefix if present in URL
+        let urlPath = req.url;
+        if (urlPath.startsWith('/public/')) {
+            urlPath = urlPath.substring(7); // Remove '/public'
+        }
+        
+        // Strip query parameters for file system lookup
+        const cleanPath = urlPath.split('?')[0];
+        const publicPath = path.join(__dirname, 'public', cleanPath);
         
         fs.readFile(publicPath, (err, content) => {
             if (!err) {
-                const ext = path.extname(req.url);
+                const ext = path.extname(cleanPath);
                 const contentType = mimeTypes[ext] || 'application/octet-stream';
+                
+                // Disable caching for PNG images to allow logo updates
+                const cacheControl = ext === '.png' 
+                    ? 'no-cache, no-store, must-revalidate' 
+                    : 'public, max-age=86400';
                 
                 res.writeHead(200, { 
                     'Content-Type': contentType,
-                    'Cache-Control': 'public, max-age=86400'
+                    'Cache-Control': cacheControl
                 });
                 res.end(content);
                 return;

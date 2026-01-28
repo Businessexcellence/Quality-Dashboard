@@ -7,6 +7,7 @@
     
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -578,7 +579,7 @@
         .sidebar-header {
             background: #000000;
             color: white;
-            padding: 25px 20px;
+            padding: 40px 20px;
             text-align: center;
         }
 
@@ -1558,7 +1559,9 @@
     <!-- LEFT SIDEBAR -->
     <div class="sidebar">
         <div class="sidebar-header">
-            <img src="/public/taggd-logo.png" alt="TAGGD Logo" style="max-height: 40px;">
+            <div style="font-size: 48px; font-weight: 900; letter-spacing: -2px; color: #4a4a4a; font-family: 'Poppins', 'Quicksand', 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; text-transform: lowercase; line-height: 1;">
+                taggd<span style="color: #ff4500;">.</span>
+            </div>
         </div>
         
         <div class="sidebar-menu">
@@ -2017,14 +2020,14 @@
                 <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 8px; color: #000000;">
                     <div style="font-size: 9px; margin-bottom: 3px; color: #000000; display: flex; align-items: center; gap: 4px;">
                         <i class="fas fa-check-circle" style="font-size: 10px; color: #000000; font-weight: 400;"></i>
-                        <span>ACCURACY %</span>
+                        <span>AUDIT ACCURACY %</span>
                     </div>
                     <div style="font-size: 22px; font-weight: 700; color: #000000;" id="paramAvgAccuracy">0%</div>
                 </div>
                 <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 8px; color: #000000;">
                     <div style="font-size: 9px; margin-bottom: 3px; color: #000000; display: flex; align-items: center; gap: 4px;">
                         <i class="fas fa-percentage" style="font-size: 10px; color: #000000; font-weight: 400;"></i>
-                        <span>SAMPLE %</span>
+                        <span>AUDIT SAMPLE %</span>
                     </div>
                     <div style="font-size: 22px; font-weight: 700; color: #000000;" id="paramAvgSample">0%</div>
                 </div>
@@ -4365,8 +4368,15 @@
             const accountOfMonth = getAccountOfMonth();
             const closedProjects = getClosedProjectCount();
             const closedRCA = getClosedRCACount();
+            const accountsAudit = getAccountsUnderAudit();
 
             const cards = [
+                {
+                    title: 'Accounts Under Audit',
+                    value: accountsAudit.display,
+                    label: 'Active Audits',
+                    ribbon: 'Accounts'
+                },
                 {
                     title: 'Account of the Month',
                     value: accountOfMonth.name || 'N/A',
@@ -4499,6 +4509,55 @@
             
             console.log(`📊 Closed RCA/CAPA Count: ${closedCount} out of ${window.dashboardData.rcaCapa.length}`);
             return closedCount;
+        }
+
+        function getAccountsUnderAudit() {
+            console.log('🔍 getAccountsUnderAudit called');
+            console.log('📊 window.dashboardData.accountSummary:', window.dashboardData.accountSummary);
+            console.log('📊 window.dashboardData.parameterAuditCount:', window.dashboardData.parameterAuditCount);
+            
+            if (!window.dashboardData.accountSummary || window.dashboardData.accountSummary.length === 0) {
+                console.warn('⚠️ No Account_Summary data available');
+                return { underAudit: 0, total: 0, display: '0/0' };
+            }
+            
+            // Count accounts with Audit Status = YES
+            const accountsUnderAudit = window.dashboardData.accountSummary.filter(acc => {
+                const auditStatus = (acc['Audit Status'] || acc['Audit_Status'] || acc['AuditStatus'] || '').toString().trim().toUpperCase();
+                return auditStatus === 'YES';
+            }).length;
+            
+            // Total accounts = all unique accounts across Account_Summary
+            // Collect all unique account names from Account_Summary
+            const uniqueAccounts = new Set();
+            window.dashboardData.accountSummary.forEach(acc => {
+                const accountName = acc.Account || acc.Client || acc['Account Name'] || acc['Account/Client'];
+                if (accountName) {
+                    uniqueAccounts.add(accountName.toString().trim());
+                }
+            });
+            
+            // Also add any accounts from Parameter_Audit_Count that might not be in Account_Summary
+            if (window.dashboardData.parameterAuditCount && window.dashboardData.parameterAuditCount.length > 0) {
+                window.dashboardData.parameterAuditCount.forEach(row => {
+                    const accountName = row.Account || row.Client || row['Account Name'];
+                    if (accountName) {
+                        uniqueAccounts.add(accountName.toString().trim());
+                    }
+                });
+            }
+            
+            const totalAccounts = uniqueAccounts.size;
+            
+            console.log(`📊 Accounts Under Audit: ${accountsUnderAudit}`);
+            console.log(`📊 Total Unique Accounts: ${totalAccounts}`);
+            console.log(`📊 Unique account names:`, Array.from(uniqueAccounts).sort());
+            
+            return {
+                underAudit: accountsUnderAudit,
+                total: totalAccounts,
+                display: `${accountsUnderAudit}/${totalAccounts}`
+            };
         }
 
         function renderTopAccounts() {
@@ -4773,6 +4832,7 @@
                 const rcaData = window.dashboardData.rcaCapa || [];
                 const projectsData = window.dashboardData.projects || [];
                 const slaData = window.dashboardData.sla || [];
+                const notReportedSlaData = window.dashboardData.notReportedSla || [];
                 
                 // Process each account from Account Summary
                 accountSummary.forEach(acc => {
@@ -4876,7 +4936,13 @@
                     });
                     console.log(`✅ Found ${accountSLA.length} SLA row(s) for ${accountName}`);
                     
-                    let slaCompliance = 0, slaMet = 0, slaNotMet = 0;
+                    // Get Not Reported SLA data
+                    const accountNotReportedSLA = notReportedSlaData.filter(row => {
+                        const client = (row['Project'] || row['Account'] || row['Client'] || row['Account Name'] || '').toString().trim();
+                        return client.toLowerCase() === accountName.toLowerCase();
+                    });
+                    
+                    let slaCompliance = 0, slaMet = 0, slaNotMet = 0, slaNotReported = 0;
                     const slaMonthlyData = {};
                     
                     if (accountSLA.length > 0) {
@@ -4886,23 +4952,30 @@
                         months.forEach(month => {
                             const metCol = `${month}_Met`;
                             const notMetCol = `${month}_Not_Met`;
-                            let monthMet = 0, monthNotMet = 0;
+                            const notReportedCol = `${month} MET/NOT_MET_NotReported`;
+                            let monthMet = 0, monthNotMet = 0, monthNotReported = 0;
                             
                             accountSLA.forEach(row => {
                                 monthMet += parseFloat(row[metCol]) || 0;
                                 monthNotMet += parseFloat(row[notMetCol]) || 0;
                             });
                             
+                            accountNotReportedSLA.forEach(row => {
+                                monthNotReported += parseFloat(row[notReportedCol]) || 0;
+                            });
+                            
                             const monthTotal = monthMet + monthNotMet;
                             slaMonthlyData[month] = {
                                 met: monthMet,
                                 notMet: monthNotMet,
+                                notReported: monthNotReported,
                                 total: monthTotal,
                                 percent: monthTotal > 0 ? ((monthMet / monthTotal) * 100) : null
                             };
                             
                             slaMet += monthMet;
                             slaNotMet += monthNotMet;
+                            slaNotReported += monthNotReported;
                         });
                         
                         const totalSLA = slaMet + slaNotMet;
@@ -4958,6 +5031,7 @@
                         sla_compliance: slaCompliance,
                         sla_met: slaMet,
                         sla_not_met: slaNotMet,
+                        sla_not_reported: slaNotReported,
                         sla_monthly_data: slaMonthlyData,
                         health_score: parseFloat(healthScore.toFixed(1))
                     });
@@ -5153,18 +5227,33 @@
                 
                 // Calculate SLA Compliance from SLA sheet
                 // Filter SLA data for filtered accounts
+                const notReportedSlaData = window.dashboardData.notReportedSla || [];
+                
                 const filteredSLA = slaData.filter(row => {
                     const account = (row['Project'] || row['Account'] || row['Client'] || row['Account Name'] || '').toString().trim().toLowerCase();
                     return filteredAccountNames.includes(account);
                 });
                 
-                let totalSlaMet = 0, totalSlaNotMet = 0;
+                const filteredNotReportedSLA = notReportedSlaData.filter(row => {
+                    const account = (row['Project'] || row['Account'] || row['Client'] || row['Account Name'] || '').toString().trim().toLowerCase();
+                    return filteredAccountNames.includes(account);
+                });
+                
+                let totalSlaMet = 0, totalSlaNotMet = 0, totalSlaNotReported = 0;
                 const months = ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'];
                 
                 filteredSLA.forEach(row => {
                     months.forEach(month => {
                         totalSlaMet += parseFloat(row[`${month}_Met`]) || 0;
                         totalSlaNotMet += parseFloat(row[`${month}_Not_Met`]) || 0;
+                    });
+                });
+                
+                // Calculate Not Reported count
+                filteredNotReportedSLA.forEach(row => {
+                    months.forEach(month => {
+                        const colName = `${month} MET/NOT_MET_NotReported`;
+                        totalSlaNotReported += parseFloat(row[colName]) || 0;
                     });
                 });
                 
@@ -5196,14 +5285,14 @@
                         <div style="position: absolute; top: 10px; right: 10px; font-size: 32px; opacity: 0.2; color: white;">
                             <i class="fas fa-percentage"></i>
                         </div>
-                        <div style="font-size: 11px; color: rgba(255,255,255,0.9); margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">SAMPLE %</div>
+                        <div style="font-size: 11px; color: rgba(255,255,255,0.9); margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">AUDIT SAMPLE %</div>
                         <div style="font-size: 32px; font-weight: 700; color: white;">${overallSample}%</div>
                     </div>
                     <div style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); border: none; border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0 4px 15px rgba(56, 239, 125, 0.3); position: relative; overflow: hidden;">
                         <div style="position: absolute; top: 10px; right: 10px; font-size: 32px; opacity: 0.2; color: white;">
                             <i class="fas fa-check-circle"></i>
                         </div>
-                        <div style="font-size: 11px; color: rgba(255,255,255,0.9); margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">ACCURACY %</div>
+                        <div style="font-size: 11px; color: rgba(255,255,255,0.9); margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">AUDIT ACCURACY %</div>
                         <div style="font-size: 32px; font-weight: 700; color: white; margin-bottom: 4px;">${overallAccuracy}%</div>
                         <div style="font-size: 10px; color: rgba(255,255,255,0.95); font-weight: 600; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 12px; display: inline-block;">${accuracyLabel}</div>
                     </div>
@@ -5214,6 +5303,9 @@
                         <div style="font-size: 11px; color: rgba(255,255,255,0.9); margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">OVERALL SLA COMPLIANCE %</div>
                         <div style="font-size: 32px; font-weight: 700; color: white; margin-bottom: 4px;">${slaCompliance}%</div>
                         <div style="font-size: 10px; color: rgba(255,255,255,0.95); font-weight: 600; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 12px; display: inline-block;">${slaLabel}</div>
+                        <div style="font-size: 9px; color: rgba(255,255,255,0.85); margin-top: 8px; line-height: 1.3;">
+                            Met: ${totalSlaMet} | Not Met: ${totalSlaNotMet} | Not Reported: ${totalSlaNotReported}
+                        </div>
                     </div>
                 `;
                 
@@ -5349,8 +5441,8 @@
                                 <div style="font-size: 9px; color: rgba(255,255,255,0.95); font-weight: 600; background: rgba(255,255,255,0.2); padding: 3px 8px; border-radius: 10px; display: inline-block; margin-bottom: 6px;">
                                     ${slaLabel}
                                 </div>
-                                <div style="font-size: 10px; color: rgba(255,255,255,0.9); margin-top: 6px;">
-                                    Met: ${account.sla_met} | Not Met: ${account.sla_not_met}
+                                <div style="font-size: 10px; color: rgba(255,255,255,0.9); margin-top: 6px; line-height: 1.3;">
+                                    Met: ${account.sla_met} | Not Met: ${account.sla_not_met} | Not Reported: ${account.sla_not_reported || 0}
                                 </div>
                             </div>
                         `;
@@ -5493,14 +5585,14 @@
                                             <div style="position: absolute; top: 8px; right: 8px; font-size: 24px; opacity: 0.2; color: white;">
                                                 <i class="fas fa-percentage"></i>
                                             </div>
-                                            <h4 style="color: rgba(255,255,255,0.95); font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; font-weight: 600;">SAMPLE %</h4>
+                                            <h4 style="color: rgba(255,255,255,0.95); font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; font-weight: 600;">AUDIT SAMPLE %</h4>
                                             <div style="font-size: 22px; font-weight: 700; color: white;">${account.sample_percent ? account.sample_percent.toFixed(1) + '%' : 'N/A'}</div>
                                         </div>
                                         <div style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); border: none; border-radius: 10px; padding: 14px; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(56, 239, 125, 0.25);">
                                             <div style="position: absolute; top: 8px; right: 8px; font-size: 24px; opacity: 0.2; color: white;">
                                                 <i class="fas fa-check-circle"></i>
                                             </div>
-                                            <h4 style="color: rgba(255,255,255,0.95); font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; font-weight: 600;">ACCURACY</h4>
+                                            <h4 style="color: rgba(255,255,255,0.95); font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; font-weight: 600;">AUDIT ACCURACY</h4>
                                             <div style="font-size: 22px; font-weight: 700; color: white;">${account.avg_accuracy ? account.avg_accuracy.toFixed(1) + '%' : 'N/A'}</div>
                                         </div>
                                         ${slaHTML}
@@ -6572,20 +6664,20 @@
                             <div style="font-size: 20px; font-weight: 700; color: #000000;">${data.parameters.total}</div>
                         </div>
                         
-                        <!-- Accuracy % -->
+                        <!-- Audit Accuracy % -->
                         <div style="background: white; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
                             <div style="display: flex; align-items: center; justify-content: center; gap: 4px; margin-bottom: 4px;">
                                 <i class="fas fa-percentage" style="font-size: 10px; color: #000000;"></i>
-                                <div style="font-size: 9px; color: #000000; font-weight: 600;">ACCURACY %</div>
+                                <div style="font-size: 9px; color: #000000; font-weight: 600;">AUDIT ACCURACY %</div>
                             </div>
                             <div style="font-size: 20px; font-weight: 700; color: #000000;">${data.parameters.accuracy}%</div>
                         </div>
                         
-                        <!-- % Sample -->
+                        <!-- Audit Sample % -->
                         <div style="background: white; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
                             <div style="display: flex; align-items: center; justify-content: center; gap: 4px; margin-bottom: 4px;">
                                 <i class="fas fa-chart-pie" style="font-size: 10px; color: #000000;"></i>
-                                <div style="font-size: 9px; color: #000000; font-weight: 600;">% SAMPLE</div>
+                                <div style="font-size: 9px; color: #000000; font-weight: 600;">AUDIT SAMPLE %</div>
                             </div>
                             <div style="font-size: 20px; font-weight: 700; color: #000000;">${samplePercent}%</div>
                         </div>
@@ -13787,6 +13879,9 @@ Total Population: ${totalPop}
                                 
                                 window.dashboardData.sla = parseSheet(workbook, 'SLA') || [];
                                 console.log('✅ SLA rows:', window.dashboardData.sla.length);
+                                
+                                window.dashboardData.notReportedSla = parseSheet(workbook, 'Not Reported SLA') || [];
+                                console.log('✅ Not Reported SLA rows:', window.dashboardData.notReportedSla.length);
                                 
                                 window.dashboardData.csat = parseSheet(workbook, 'CSAT') || [];
                                 console.log('✅ CSAT rows:', window.dashboardData.csat.length);
