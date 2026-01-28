@@ -4514,7 +4514,6 @@
         function getAccountsUnderAudit() {
             console.log('🔍 getAccountsUnderAudit called');
             console.log('📊 window.dashboardData.accountSummary:', window.dashboardData.accountSummary);
-            console.log('📊 window.dashboardData.parameterAuditCount:', window.dashboardData.parameterAuditCount);
             
             if (!window.dashboardData.accountSummary || window.dashboardData.accountSummary.length === 0) {
                 console.warn('⚠️ No Account_Summary data available');
@@ -4527,31 +4526,11 @@
                 return auditStatus === 'YES';
             }).length;
             
-            // Total accounts = all unique accounts across Account_Summary
-            // Collect all unique account names from Account_Summary
-            const uniqueAccounts = new Set();
-            window.dashboardData.accountSummary.forEach(acc => {
-                const accountName = acc.Account || acc.Client || acc['Account Name'] || acc['Account/Client'];
-                if (accountName) {
-                    uniqueAccounts.add(accountName.toString().trim());
-                }
-            });
-            
-            // Also add any accounts from Parameter_Audit_Count that might not be in Account_Summary
-            if (window.dashboardData.parameterAuditCount && window.dashboardData.parameterAuditCount.length > 0) {
-                window.dashboardData.parameterAuditCount.forEach(row => {
-                    const accountName = row.Account || row.Client || row['Account Name'];
-                    if (accountName) {
-                        uniqueAccounts.add(accountName.toString().trim());
-                    }
-                });
-            }
-            
-            const totalAccounts = uniqueAccounts.size;
+            // Total accounts = total rows in Account_Summary sheet
+            const totalAccounts = window.dashboardData.accountSummary.length;
             
             console.log(`📊 Accounts Under Audit: ${accountsUnderAudit}`);
-            console.log(`📊 Total Unique Accounts: ${totalAccounts}`);
-            console.log(`📊 Unique account names:`, Array.from(uniqueAccounts).sort());
+            console.log(`📊 Total Accounts (from Account_Summary): ${totalAccounts}`);
             
             return {
                 underAudit: accountsUnderAudit,
