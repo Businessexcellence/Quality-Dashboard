@@ -1556,6 +1556,68 @@
 </head>
 <body>
 
+    <!-- PASSWORD PROTECTION MODAL -->
+    <div id="passwordModal" style="display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 99999; justify-content: center; align-items: center; backdrop-filter: blur(10px);">
+        <div style="background: white; border-radius: 20px; padding: 50px 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); max-width: 450px; width: 90%; text-align: center;">
+            <!-- Logo -->
+            <div style="font-size: 56px; font-weight: 900; letter-spacing: -2px; color: #4a4a4a; font-family: 'Poppins', sans-serif; text-transform: lowercase; line-height: 1; margin-bottom: 10px;">
+                taggd<span style="color: #ff4500;">.</span>
+            </div>
+            
+            <!-- Title -->
+            <div style="font-size: 24px; font-weight: 700; color: #2c3e50; margin-bottom: 10px; font-family: 'Plus Jakarta Sans', sans-serif;">
+                Quality Dashboard
+            </div>
+            
+            <!-- Lock Icon -->
+            <div style="margin: 30px 0 20px 0;">
+                <i class="fas fa-lock" style="font-size: 48px; color: #ff4500;"></i>
+            </div>
+            
+            <!-- Instructions -->
+            <p style="color: #6c757d; font-size: 15px; margin-bottom: 25px; font-family: 'Plus Jakarta Sans', sans-serif;">
+                Please enter the password to access the dashboard
+            </p>
+            
+            <!-- Password Input -->
+            <div style="position: relative; margin-bottom: 20px;">
+                <input 
+                    type="password" 
+                    id="dashboardPassword" 
+                    placeholder="Enter password"
+                    style="width: 100%; padding: 16px 45px 16px 16px; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 16px; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.3s; box-sizing: border-box;"
+                    onfocus="this.style.borderColor='#ff4500'; this.style.boxShadow='0 0 0 4px rgba(255,69,0,0.1)';"
+                    onblur="this.style.borderColor='#e0e0e0'; this.style.boxShadow='none';"
+                    onkeypress="if(event.key === 'Enter') { validatePassword(); }"
+                />
+                <i class="fas fa-key" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: #adb5bd; font-size: 18px;"></i>
+            </div>
+            
+            <!-- Error Message -->
+            <div id="passwordError" style="display: none; color: #dc3545; font-size: 14px; margin-bottom: 20px; padding: 12px; background: #ffe5e5; border-radius: 8px; font-family: 'Plus Jakarta Sans', sans-serif;">
+                <i class="fas fa-exclamation-circle"></i> Incorrect password. Please try again.
+            </div>
+            
+            <!-- Submit Button -->
+            <button 
+                onclick="validatePassword()"
+                style="width: 100%; padding: 16px; background: linear-gradient(135deg, #ff4500 0%, #ff6347 100%); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.3s; box-shadow: 0 4px 15px rgba(255,69,0,0.3);"
+                onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(255,69,0,0.4)';"
+                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(255,69,0,0.3)';"
+            >
+                <i class="fas fa-unlock-alt"></i> Access Dashboard
+            </button>
+            
+            <!-- Footer Note -->
+            <p style="color: #adb5bd; font-size: 12px; margin-top: 25px; font-family: 'Plus Jakarta Sans', sans-serif;">
+                <i class="fas fa-shield-alt"></i> Protected by Business Excellence
+            </p>
+        </div>
+    </div>
+
+    <!-- Main Dashboard Content (Hidden until password is entered) -->
+    <div id="dashboardContent" style="display: none;">
+
     <!-- LEFT SIDEBAR -->
     <div class="sidebar">
         <div class="sidebar-header">
@@ -14110,17 +14172,93 @@ Total Population: ${totalPop}
     </div>
     <div class="nav-popup-overlay" onclick="closeNavPopup()"></div>
     
-</body>
-</html>
-v class="nav-popup-item-title">Toggle Theme</div>
-                            <div class="nav-popup-item-desc">Dark/Light mode</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="nav-popup-overlay" onclick="closeNavPopup()"></div>
-    
+    </div> <!-- End of dashboardContent -->
+
+    <!-- Password Validation Script -->
+    <script>
+        // Password protection functionality
+        const CORRECT_PASSWORD = "Excellence@2026";
+        
+        function validatePassword() {
+            const passwordInput = document.getElementById('dashboardPassword');
+            const passwordError = document.getElementById('passwordError');
+            const passwordModal = document.getElementById('passwordModal');
+            const dashboardContent = document.getElementById('dashboardContent');
+            
+            const enteredPassword = passwordInput.value;
+            
+            if (enteredPassword === CORRECT_PASSWORD) {
+                // Correct password - grant access
+                console.log('✅ Password validated successfully');
+                
+                // Hide password modal with fade out animation
+                passwordModal.style.transition = 'opacity 0.3s ease';
+                passwordModal.style.opacity = '0';
+                
+                setTimeout(() => {
+                    passwordModal.style.display = 'none';
+                    dashboardContent.style.display = 'block';
+                    
+                    // Store session to avoid asking password again during the session
+                    sessionStorage.setItem('dashboardAccess', 'granted');
+                    
+                    // Initialize dashboard if needed
+                    if (typeof initializeDashboard === 'function') {
+                        initializeDashboard();
+                    }
+                }, 300);
+                
+            } else {
+                // Incorrect password - show error
+                console.log('❌ Incorrect password');
+                passwordError.style.display = 'block';
+                passwordInput.value = '';
+                passwordInput.focus();
+                
+                // Shake animation for input
+                passwordInput.style.animation = 'shake 0.5s';
+                setTimeout(() => {
+                    passwordInput.style.animation = '';
+                }, 500);
+                
+                // Hide error after 3 seconds
+                setTimeout(() => {
+                    passwordError.style.display = 'none';
+                }, 3000);
+            }
+        }
+        
+        // Check if user already authenticated in this session
+        window.addEventListener('DOMContentLoaded', function() {
+            const passwordModal = document.getElementById('passwordModal');
+            const dashboardContent = document.getElementById('dashboardContent');
+            
+            if (sessionStorage.getItem('dashboardAccess') === 'granted') {
+                // User already authenticated, skip password prompt
+                passwordModal.style.display = 'none';
+                dashboardContent.style.display = 'block';
+            } else {
+                // Show password modal
+                passwordModal.style.display = 'flex';
+                
+                // Focus on password input after a short delay
+                setTimeout(() => {
+                    document.getElementById('dashboardPassword').focus();
+                }, 300);
+            }
+        });
+        
+        // Add shake animation CSS
+        const shakeAnimation = document.createElement('style');
+        shakeAnimation.innerHTML = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+                20%, 40%, 60%, 80% { transform: translateX(10px); }
+            }
+        `;
+        document.head.appendChild(shakeAnimation);
+    </script>
+
 </body>
 </html>
