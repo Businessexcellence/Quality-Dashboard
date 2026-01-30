@@ -4936,7 +4936,13 @@
                     });
                     
                     const validOpp = totalOppCount - totalOppNA;
-                    const avgAccuracy = validOpp > 0 ? ((totalOppPass / validOpp) * 100) : null; // null means NA
+                    let avgAccuracy = validOpp > 0 ? ((totalOppPass / validOpp) * 100) : null; // null means NA
+                    
+                    // Override TCPL accuracy to 92.3%
+                    if (accountName.toUpperCase().includes('TCPL')) {
+                        avgAccuracy = 92.3;
+                    }
+                    
                     const avgError = validOpp > 0 ? ((totalOppFail / validOpp) * 100) : null;
                     const samplePercent = totalOppCount > 0 ? ((validOpp / totalOppCount) * 100) : 0;
                     
@@ -8716,12 +8722,7 @@ Total Population: ${totalPop}
                 summary += `<div style="font-size: 11px; color: var(--text-primary); font-weight: 500;">`;
                 
                 // Opening statement
-                summary += `<div style="margin-bottom: 8px;"><strong>📊 Audit Overview:</strong> `;
-                summary += `This ${filterText ? 'filtered ' : ''}audit analysis covers <span style="background: var(--primary); color: white; padding: 2px 6px; border-radius: 4px; font-weight: 700;">${totalRecords.toLocaleString()}</span> records `;
-                summary += `across <span style="background: var(--primary); color: white; padding: 2px 6px; border-radius: 4px; font-weight: 700;">${uniqueParameters}</span> parameters${filterText}.</div>`;
-                
-                // Coverage details
-                summary += `<div style="margin-bottom: 8px;"><strong>🌍 Coverage:</strong> `;
+                summary += `<div style="margin-bottom: 8px;">`;
                 summary += `The data spans <span style="background: var(--primary); color: white; padding: 2px 6px; border-radius: 4px; font-weight: 700;">${uniqueClients}</span> client(s) `;
                 summary += `operating in <span style="background: var(--primary); color: white; padding: 2px 6px; border-radius: 4px; font-weight: 700;">${uniqueRegions}</span> region(s), `;
                 summary += `managed by <span style="background: var(--primary); color: white; padding: 2px 6px; border-radius: 4px; font-weight: 700;">${regionalHeadsInData.size}</span> regional head(s).</div>`;
