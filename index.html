@@ -11386,7 +11386,7 @@ Total Population: ${totalPop}
                            status === 'COMPLETE' || status.includes('COMPLETE');
                 }).length;
                 
-                const total = wip + closed; // Total is WIP + Closed
+                const total = rcaCapa.length; // Total is all RCA/CAPA items
                 
                 console.log('📊 RCA/CAPA count:', { total, wip, closed, allRcaCapa: rcaCapa.length });
                 
