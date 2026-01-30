@@ -3982,6 +3982,19 @@
                 const benchmarkData = window.dashboardData.benchmark;
                 console.log(`📊 Benchmark data loaded: ${benchmarkData.length} metrics`);
                 
+                // Calculate statistics
+                const stats = {
+                    total: benchmarkData.length,
+                    yes: benchmarkData.filter(m => (m['Adherence Status '] || m['Adherence Status'] || '').trim().toUpperCase() === 'YES').length,
+                    partial: benchmarkData.filter(m => (m['Adherence Status '] || m['Adherence Status'] || '').trim().toUpperCase() === 'PARTIAL').length,
+                    no: benchmarkData.filter(m => (m['Adherence Status '] || m['Adherence Status'] || '').trim().toUpperCase() === 'NO').length,
+                    na: benchmarkData.filter(m => (m['Adherence Status '] || m['Adherence Status'] || '').trim().toUpperCase() === 'NA').length
+                };
+                
+                stats.adoptionRate = ((stats.yes / stats.total) * 100).toFixed(1);
+                stats.partialRate = ((stats.partial / stats.total) * 100).toFixed(1);
+                stats.gapRate = ((stats.no / stats.total) * 100).toFixed(1);
+                
                 // Group by Category
                 const categories = {};
                 benchmarkData.forEach(row => {
@@ -3992,24 +4005,75 @@
                     categories[category].push(row);
                 });
                 
+                // Group by Taggd_Category for insights
+                const taggdCategories = {};
+                benchmarkData.forEach(row => {
+                    const cat = row.Taggd_Category || 'Other';
+                    if (!taggdCategories[cat]) taggdCategories[cat] = [];
+                    taggdCategories[cat].push(row);
+                });
+                
                 // Define category colors and order
                 const categoryConfig = {
-                    'Global RPO': { color: '#10b981', icon: 'globe', label: 'Global RPO (Direct Competitors)' },
-                    'Indian RPO': { color: '#3b82f6', icon: 'flag-checkered', label: 'Indian RPO (Direct Competitors)' },
-                    'Global Service Provider': { color: '#8b5cf6', icon: 'server', label: 'Global Service Providers' },
-                    'Indian Service Provider': { color: '#f59e0b', icon: 'hands-helping', label: 'Indian Service Providers' }
+                    'Global RPO': { color: '#10b981', icon: 'globe', label: 'Global RPO (Direct Competitors)', bgGradient: 'linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%)' },
+                    'Indian RPO': { color: '#3b82f6', icon: 'flag-checkered', label: 'Indian RPO (Direct Competitors)', bgGradient: 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)' },
+                    'Global Service Provider': { color: '#8b5cf6', icon: 'server', label: 'Global Service Providers', bgGradient: 'linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%)' },
+                    'Indian Service Provider': { color: '#f59e0b', icon: 'hands-helping', label: 'Indian Service Providers', bgGradient: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)' }
                 };
                 
                 let html = '';
                 
+                // Overview Statistics Cards
+                html += '<div style="margin-bottom: 24px;">';
+                html += '<h4 style="font-size: 14px; font-weight: 700; color: #1e293b; margin: 0 0 12px 0; display: flex; align-items: center; gap: 8px;"><i class="fas fa-chart-bar" style="color: #3b82f6;"></i>Competitive Intelligence Overview</h4>';
+                html += '<div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px;">';
+                
+                // Stats cards
+                const statsCards = [
+                    { label: 'Total Metrics Tracked', value: stats.total, icon: 'list-check', color: '#6b7280', bgColor: '#f3f4f6' },
+                    { label: 'Industry Adoption', value: `${stats.adoptionRate}%`, subValue: `${stats.yes} metrics`, icon: 'check-circle', color: '#10b981', bgColor: '#d1fae5' },
+                    { label: 'Partial Implementation', value: `${stats.partialRate}%`, subValue: `${stats.partial} metrics`, icon: 'clock', color: '#f59e0b', bgColor: '#fef3c7' },
+                    { label: 'Innovation Gap', value: `${stats.gapRate}%`, subValue: `${stats.no} metrics`, icon: 'exclamation-triangle', color: '#ef4444', bgColor: '#fee2e2' }
+                ];
+                
+                statsCards.forEach(card => {
+                    html += `<div style="padding: 16px; background: ${card.bgColor}; border-radius: 12px; border: 2px solid ${card.color};">`;
+                    html += `<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">`;
+                    html += `<i class="fas fa-${card.icon}" style="font-size: 18px; color: ${card.color};"></i>`;
+                    html += `<span style="font-size: 10px; color: #64748b; font-weight: 600;">${card.label}</span>`;
+                    html += '</div>';
+                    html += `<div style="font-size: 24px; font-weight: 700; color: ${card.color};">${card.value}</div>`;
+                    if (card.subValue) {
+                        html += `<div style="font-size: 9px; color: #64748b; margin-top: 4px;">${card.subValue}</div>`;
+                    }
+                    html += '</div>';
+                });
+                
+                html += '</div></div>';
+                
+                // Key Insights
+                html += '<div style="padding: 16px; background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-left: 4px solid #3b82f6; border-radius: 8px; margin-bottom: 20px;">';
+                html += '<div style="font-size: 11px; font-weight: 700; color: #1e40af; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;"><i class="fas fa-lightbulb"></i>What This Tells Us</div>';
+                html += '<div style="font-size: 10px; color: #1e40af; line-height: 1.6;">';
+                html += `<div style="margin-bottom: 6px;">• <strong>${stats.adoptionRate}% industry adoption rate</strong> - ${stats.yes} out of ${stats.total} metrics are actively used by competitors</div>`;
+                html += `<div style="margin-bottom: 6px;">• <strong>${stats.partialRate}% partial implementation</strong> - Opportunities to learn from competitor approaches</div>`;
+                html += `<div>• <strong>${stats.gapRate}% innovation gap</strong> - Areas where we can lead or where competitors haven't adopted yet</div>`;
+                html += '</div></div>';
+                
                 // Filter bar
-                html += '<div style="margin-bottom: 16px; display: flex; gap: 8px; flex-wrap: wrap;">';
+                html += '<div style="margin-bottom: 16px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">';
+                html += '<span style="font-size: 11px; font-weight: 600; color: #64748b; margin-right: 4px;">Filter by:</span>';
                 Object.keys(categoryConfig).forEach(cat => {
                     const config = categoryConfig[cat];
                     const count = categories[cat] ? categories[cat].length : 0;
-                    html += `<button onclick="filterBenchmarkCategory('${cat}')" style="padding: 6px 12px; border: 2px solid ${config.color}; background: white; color: ${config.color}; border-radius: 6px; cursor: pointer; font-size: 10px; font-weight: 600; display: flex; align-items: center; gap: 6px;" onmouseover="this.style.background='${config.color}'; this.style.color='white';" onmouseout="this.style.background='white'; this.style.color='${config.color}';"><i class="fas fa-${config.icon}"></i>${cat} (${count})</button>`;
+                    const catMetrics = categories[cat] || [];
+                    const yesCount = catMetrics.filter(m => (m['Adherence Status '] || m['Adherence Status'] || '').trim().toUpperCase() === 'YES').length;
+                    html += `<button onclick="filterBenchmarkCategory('${cat}')" class="benchmark-filter-btn" data-category="${cat}" style="padding: 8px 14px; border: 2px solid ${config.color}; background: white; color: ${config.color}; border-radius: 8px; cursor: pointer; font-size: 10px; font-weight: 600; display: flex; align-items: center; gap: 6px; transition: all 0.2s;" onmouseover="this.style.background='${config.color}'; this.style.color='white';" onmouseout="if(!this.classList.contains('active')){this.style.background='white'; this.style.color='${config.color}';}">`;
+                    html += `<i class="fas fa-${config.icon}"></i>${cat.replace(' RPO', '').replace(' Service Provider', '')}`;
+                    html += `<span style="background: rgba(0,0,0,0.1); padding: 2px 6px; border-radius: 10px; font-size: 9px;">${yesCount}/${count}</span>`;
+                    html += `</button>`;
                 });
-                html += '<button onclick="filterBenchmarkCategory(null)" style="padding: 6px 12px; border: 2px solid #6b7280; background: #6b7280; color: white; border-radius: 6px; cursor: pointer; font-size: 10px; font-weight: 600;"><i class="fas fa-list"></i> Show All</button>';
+                html += '<button onclick="filterBenchmarkCategory(null)" class="benchmark-filter-btn active" style="padding: 8px 14px; border: 2px solid #6b7280; background: #6b7280; color: white; border-radius: 8px; cursor: pointer; font-size: 10px; font-weight: 600;"><i class="fas fa-list"></i> View All</button>';
                 html += '</div>';
                 
                 // Render each category
@@ -4035,43 +4099,105 @@
                         companies[company].push(m);
                     });
                     
-                    html += '<div style="padding: 12px;">';
+                    // Calculate company stats
+                    const companyStats = {};
                     Object.keys(companies).sort().forEach(company => {
                         const companyMetrics = companies[company];
-                        html += `<div style="margin-bottom: 12px; background: #f9fafb; border-radius: 6px; padding: 10px;">`;
-                        html += `<div style="font-size: 11px; font-weight: 700; color: #1e293b; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">`;
-                        html += `<i class="fas fa-building" style="color: ${config.color};"></i>${company} <span style="color: #64748b; font-weight: 400;">(${companyMetrics.length} metrics)</span>`;
-                        html += `</div>`;
+                        companyStats[company] = {
+                            total: companyMetrics.length,
+                            yes: companyMetrics.filter(m => (m['Adherence Status '] || m['Adherence Status'] || '').trim().toUpperCase() === 'YES').length,
+                            partial: companyMetrics.filter(m => (m['Adherence Status '] || m['Adherence Status'] || '').trim().toUpperCase() === 'PARTIAL').length,
+                            no: companyMetrics.filter(m => (m['Adherence Status '] || m['Adherence Status'] || '').trim().toUpperCase() === 'NO').length
+                        };
+                        companyStats[company].adoptionRate = ((companyStats[company].yes / companyStats[company].total) * 100).toFixed(0);
+                    });
+                    
+                    html += '<div style="padding: 16px; background: white;">';
+                    
+                    // Companies grid
+                    html += '<div style="display: grid; gap: 16px;">';
+                    Object.keys(companies).sort().forEach(company => {
+                        const companyMetrics = companies[company];
+                        const cStats = companyStats[company];
                         
-                        // Metrics table
-                        html += '<div style="display: grid; gap: 6px;">';
-                        companyMetrics.forEach(metric => {
-                            const adherence = metric['Adherence Status '] || metric['Adherence Status'] || 'NA';
-                            const status = adherence.trim().toUpperCase();
-                            let statusColor = '#6b7280';
-                            let statusBg = '#f3f4f6';
-                            if (status === 'YES') {
-                                statusColor = '#10b981';
-                                statusBg = '#d1fae5';
-                            } else if (status === 'PARTIAL') {
-                                statusColor = '#f59e0b';
-                                statusBg = '#fef3c7';
-                            } else if (status === 'NO') {
-                                statusColor = '#ef4444';
-                                statusBg = '#fee2e2';
-                            }
+                        html += `<div style="background: ${config.bgGradient}; border-radius: 12px; padding: 16px; border: 2px solid ${config.color};">`;
+                        
+                        // Company header with stats
+                        html += '<div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">';
+                        html += '<div>';
+                        html += `<div style="font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">`;
+                        html += `<i class="fas fa-building" style="color: ${config.color};"></i>${company}`;
+                        html += '</div>';
+                        html += `<div style="font-size: 9px; color: #64748b;">${cStats.total} metrics tracked</div>`;
+                        html += '</div>';
+                        
+                        // Adoption badge
+                        const badgeColor = cStats.adoptionRate >= 50 ? '#10b981' : (cStats.adoptionRate >= 25 ? '#f59e0b' : '#6b7280');
+                        html += '<div style="text-align: right;">';
+                        html += `<div style="background: ${badgeColor}; color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; margin-bottom: 4px;">${cStats.adoptionRate}% Adoption</div>`;
+                        html += `<div style="font-size: 8px; color: #64748b;">${cStats.yes} adopted • ${cStats.partial} partial • ${cStats.no} not adopted</div>`;
+                        html += '</div></div>';
+                        
+                        // Metrics grouped by Taggd_Category
+                        const metricsByTaggd = {};
+                        companyMetrics.forEach(m => {
+                            const cat = m.Taggd_Category || 'Other';
+                            if (!metricsByTaggd[cat]) metricsByTaggd[cat] = [];
+                            metricsByTaggd[cat].push(m);
+                        });
+                        
+                        html += '<div style="display: grid; gap: 8px;">';
+                        Object.keys(metricsByTaggd).sort().forEach(taggdCat => {
+                            const taggdMetrics = metricsByTaggd[taggdCat];
                             
-                            html += '<div style="background: white; border-radius: 4px; padding: 8px; border: 1px solid #e5e7eb; display: grid; grid-template-columns: 2fr 1fr auto 1fr; gap: 8px; align-items: center;">';
-                            html += `<div style="font-size: 10px; color: #1e293b; font-weight: 600;">${metric['Metric Name'] || 'N/A'}</div>`;
-                            html += `<div style="font-size: 9px; color: #64748b;">${metric['Taggd_Category'] || 'N/A'}</div>`;
-                            html += `<div style="background: ${statusBg}; color: ${statusColor}; padding: 3px 8px; border-radius: 4px; font-size: 8px; font-weight: 700; text-align: center; min-width: 60px;">${adherence}</div>`;
-                            html += `<div style="font-size: 8px; color: #9ca3af; text-align: right;" title="${metric['Concise Description'] || ''}">${(metric['Concise Description'] || '').substring(0, 40)}...</div>`;
+                            html += '<div style="background: white; border-radius: 8px; padding: 10px; border: 1px solid rgba(0,0,0,0.1);">';
+                            html += `<div style="font-size: 10px; font-weight: 700; color: ${config.color}; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">`;
+                            html += `<i class="fas fa-tag" style="font-size: 9px;"></i>${taggdCat}`;
+                            html += `<span style="margin-left: auto; background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 8px; font-size: 8px; color: #64748b;">${taggdMetrics.length}</span>`;
                             html += '</div>';
+                            
+                            html += '<div style="display: grid; gap: 6px;">';
+                            taggdMetrics.forEach(metric => {
+                                const adherence = metric['Adherence Status '] || metric['Adherence Status'] || 'NA';
+                                const status = adherence.trim().toUpperCase();
+                                let statusIcon = 'circle';
+                                let statusColor = '#6b7280';
+                                let statusBg = '#f3f4f6';
+                                let statusLabel = adherence;
+                                
+                                if (status === 'YES') {
+                                    statusIcon = 'check-circle';
+                                    statusColor = '#10b981';
+                                    statusBg = '#d1fae5';
+                                    statusLabel = '✓ Adopted';
+                                } else if (status === 'PARTIAL') {
+                                    statusIcon = 'clock';
+                                    statusColor = '#f59e0b';
+                                    statusBg = '#fef3c7';
+                                    statusLabel = '⏱ Partial';
+                                } else if (status === 'NO') {
+                                    statusIcon = 'times-circle';
+                                    statusColor = '#ef4444';
+                                    statusBg = '#fee2e2';
+                                    statusLabel = '✗ Not Used';
+                                } else {
+                                    statusLabel = '— N/A';
+                                }
+                                
+                                html += '<div style="display: flex; align-items: center; gap: 8px; padding: 6px; background: rgba(255,255,255,0.5); border-radius: 6px;">';
+                                html += `<div style="background: ${statusBg}; color: ${statusColor}; padding: 4px 10px; border-radius: 6px; font-size: 9px; font-weight: 700; white-space: nowrap; min-width: 80px; text-align: center;">${statusLabel}</div>`;
+                                html += `<div style="flex: 1; font-size: 10px; color: #374151; font-weight: 500;">${metric['Metric Name'] || 'N/A'}</div>`;
+                                html += `<i class="fas fa-info-circle" style="color: #94a3b8; font-size: 10px; cursor: help;" title="${metric['Concise Description'] || 'No description'}"></i>`;
+                                html += '</div>';
+                            });
+                            html += '</div></div>';
                         });
                         html += '</div>';
                         
                         html += '</div>';
                     });
+                    html += '</div>';
+                    
                     html += '</div>';
                     
                     html += '</div>';
