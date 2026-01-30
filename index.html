@@ -9012,6 +9012,14 @@ Total Population: ${totalPop}
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
+                        layout: {
+                            padding: {
+                                top: 25,
+                                right: 10,
+                                bottom: 10,
+                                left: 10
+                            }
+                        },
                         interaction: {
                             mode: 'index',
                             intersect: false
@@ -9109,7 +9117,8 @@ Total Population: ${totalPop}
                                 },
                                 grid: {
                                     color: 'rgba(0, 0, 0, 0.05)'
-                                }
+                                },
+                                grace: '5%'
                             },
                             y1: {
                                 type: 'linear',
