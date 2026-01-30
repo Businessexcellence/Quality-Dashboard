@@ -125,6 +125,7 @@
         };
         
         // Theme Toggle Function
+        /* REMOVED: Dark Mode functionality
         window.toggleTheme = function() {
             const body = document.body;
             const themeIcon = document.getElementById('themeIcon');
@@ -180,6 +181,7 @@
                 console.warn('⚠️ localStorage blocked - using default theme');
             }
         });
+        END REMOVED Dark Mode functionality */
         
         window.closeUserManual = function() {
             const modal = document.getElementById('userManualModal');
@@ -1702,11 +1704,6 @@
                 <span>User Manual</span>
             </div>
             
-            <!-- Theme Switch Button -->
-            <div id="themeToggle" class="menu-item" onclick="toggleTheme()" style="margin: 5px 15px 15px 15px; border: 1px solid #e5e7eb; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; cursor: pointer; font-weight: 600; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3); transition: all 0.3s ease;">
-                <i class="fas fa-moon" id="themeIcon"></i>
-                <span id="themeText">Dark Mode</span>
-            </div>
         </div>
     </div>
 
@@ -14719,15 +14716,6 @@ Total Population: ${totalPop}
                         <div class="nav-popup-item-content">
                             <div class="nav-popup-item-title">User Manual</div>
                             <div class="nav-popup-item-desc">Help & documentation</div>
-                        </div>
-                    </div>
-                    <div class="nav-popup-item" onclick="closeNavPopup(); toggleTheme();">
-                        <div class="nav-popup-item-icon" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);">
-                            <i class="fas fa-moon"></i>
-                        </div>
-                        <div class="nav-popup-item-content">
-                            <div class="nav-popup-item-title">Toggle Theme</div>
-                            <div class="nav-popup-item-desc">Dark/Light mode</div>
                         </div>
                     </div>
                 </div>
