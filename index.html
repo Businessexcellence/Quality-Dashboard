@@ -4439,27 +4439,19 @@
             const cards = [
                 {
                     title: 'Accounts Under Audit',
-                    value: accountsAudit.display,
-                    label: 'Active Audits',
-                    ribbon: 'Accounts'
+                    value: accountsAudit.display
                 },
                 {
                     title: 'Account of the Month',
-                    value: accountOfMonth.name || 'N/A',
-                    label: `${accountOfMonth.weightage}% Weightage`,
-                    ribbon: 'Top Performer'
+                    value: accountOfMonth.name || 'N/A'
                 },
                 {
                     title: 'Closed Projects',
-                    value: closedProjects,
-                    label: 'Projects',
-                    ribbon: 'Projects'
+                    value: closedProjects
                 },
                 {
                     title: 'Closed RCA & CAPA',
-                    value: closedRCA,
-                    label: 'Issues Resolved',
-                    ribbon: 'Quality'
+                    value: closedRCA
                 }
             ];
 
@@ -4468,10 +4460,8 @@
 
             container.innerHTML = allCards.map(card => `
                 <div class="insight-card">
-                    <div class="ribbon">${card.ribbon}</div>
                     <h3>${card.title}</h3>
                     <div class="insight-value">${card.value}</div>
-                    <div class="insight-label">${card.label}</div>
                 </div>
             `).join('');
         }
