@@ -12722,8 +12722,8 @@ Total Population: ${totalPop}
                 
                 if (rcaCapaItems.length === 0) {
                     safeSetHTML('rcaCapaListContainer', `
-                        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 200px; color: #94a3b8; text-align: center;">
-                            <i class="fas fa-inbox" style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"></i>
+                        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 200px; color: #718096; text-align: center;">
+                            <i class="fas fa-inbox" style="font-size: 48px; margin-bottom: 16px; opacity: 0.4;"></i>
                             <p style="font-size: 12px; margin: 0;">No items found matching the selected filters</p>
                         </div>
                     `);
@@ -12753,7 +12753,7 @@ Total Population: ${totalPop}
                             <div 
                                 onclick="toggleAccountRcaCapa('${accountId}')"
                                 style="
-                                    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+                                    background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
                                     color: white;
                                     padding: 8px;
                                     border-radius: 6px;
@@ -12762,9 +12762,10 @@ Total Population: ${totalPop}
                                     justify-content: space-between;
                                     align-items: center;
                                     transition: all 0.2s;
+                                    border: 1px solid #718096;
                                 "
-                                onmouseover="this.style.boxShadow='0 4px 12px rgba(239,68,68,0.4)'; this.style.transform='translateY(-1px)';"
-                                onmouseout="this.style.boxShadow='none'; this.style.transform='translateY(0)';"
+                                onmouseover="this.style.boxShadow='0 4px 12px rgba(74,85,104,0.4)'; this.style.transform='translateY(-1px)'; this.style.borderColor='#cbd5e0';"
+                                onmouseout="this.style.boxShadow='none'; this.style.transform='translateY(0)'; this.style.borderColor='#718096';"
                             >
                                 <div style="display: flex; align-items: center; gap: 6px;">
                                     <i class="fas fa-building" style="font-size: 10px;"></i>
@@ -12809,8 +12810,8 @@ Total Population: ${totalPop}
                                         <div 
                                             onclick="showRcaCapaDetails(${index}); event.stopPropagation();"
                                             style="
-                                                background: white;
-                                                border: 2px solid #fecaca;
+                                                background: #f7fafc;
+                                                border: 2px solid #e2e8f0;
                                                 border-left: 4px solid ${statusColor};
                                                 border-radius: 6px;
                                                 padding: 8px;
@@ -12818,15 +12819,15 @@ Total Population: ${totalPop}
                                                 cursor: pointer;
                                                 transition: all 0.2s;
                                             "
-                                            onmouseover="this.style.background='#fef2f2'; this.style.borderColor='#ef4444'; this.style.boxShadow='0 2px 8px rgba(239,68,68,0.2)';"
-                                            onmouseout="this.style.background='white'; this.style.borderColor='#fecaca'; this.style.boxShadow='none';"
+                                            onmouseover="this.style.background='#edf2f7'; this.style.borderColor='#4a5568'; this.style.boxShadow='0 2px 8px rgba(74,85,104,0.2)';"
+                                            onmouseout="this.style.background='#f7fafc'; this.style.borderColor='#e2e8f0'; this.style.boxShadow='none';"
                                         >
                                             <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 4px;">
                                                 <div style="flex: 1;">
-                                                    <div style="color: #1e293b; font-size: 9px; font-weight: 700; margin-bottom: 3px;" title="${problemStatement}">
+                                                    <div style="color: #2d3748; font-size: 9px; font-weight: 700; margin-bottom: 3px;" title="${problemStatement}">
                                                         ${shortStatement}
                                                     </div>
-                                                    <div style="color: #64748b; font-size: 7px;">
+                                                    <div style="color: #718096; font-size: 7px;">
                                                         <i class="fas fa-map-marker-alt" style="font-size: 6px; margin-right: 2px;"></i>${region}
                                                     </div>
                                                 </div>
@@ -12835,7 +12836,7 @@ Total Population: ${totalPop}
                                                 </div>
                                             </div>
                                             <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
-                                                <span style="background: #fef2f2; color: #ef4444; padding: 2px 6px; border-radius: 3px; font-size: 7px; font-weight: 600; border: 1px solid #fca5a5;">
+                                                <span style="background: #edf2f7; color: #4a5568; padding: 2px 6px; border-radius: 3px; font-size: 7px; font-weight: 600; border: 1px solid #cbd5e0;">
                                                     <i class="fas fa-exclamation-triangle" style="font-size: 6px; margin-right: 2px;"></i>${errorType}
                                                 </span>
                                                 <span style="background: ${impactColor}; color: white; padding: 2px 6px; border-radius: 3px; font-size: 7px; font-weight: 600;">
