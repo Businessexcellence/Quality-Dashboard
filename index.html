@@ -8564,7 +8564,13 @@ Total Population: ${totalPop}
                         error: error.toFixed(1),
                         auditCount: stats.opportunityCount
                     };
-                }).sort((a, b) => b.auditCount - a.auditCount);
+                }).sort((a, b) => {
+                    // Custom sort: Pre Selection before Post Selection
+                    if (a.stage === 'Pre Selection' && b.stage === 'Post Selection') return -1;
+                    if (a.stage === 'Post Selection' && b.stage === 'Pre Selection') return 1;
+                    // Otherwise sort by audit count descending
+                    return b.auditCount - a.auditCount;
+                });
 
                 // Render table (compact for side-by-side layout)
                 const html = `
@@ -14063,8 +14069,8 @@ Total Population: ${totalPop}
                                 <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: #000;">Overall Accuracy %</th>
                                 <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: #000;">Critical Accuracy %</th>
                                 <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: #000;">Non-Critical Acc %</th>
-                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: #000;">Pass (1)</th>
-                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: #000;">Fail (0)</th>
+                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: #000;">Pass</th>
+                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: #000;">Fail</th>
                                 <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: #000;">NA</th>
                             </tr>
                         </thead>
@@ -14194,8 +14200,8 @@ Total Population: ${totalPop}
                                 <th style="padding: 6px 8px; text-align: left; font-size: 10px; font-weight: 700; color: #000;">Parameter</th>
                                 <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: #000;">Accuracy %</th>
                                 <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: #000;">Audit Count</th>
-                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: #000;">Pass (1)</th>
-                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: #000;">Fail (0)</th>
+                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: #000;">Pass</th>
+                                <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: #000;">Fail</th>
                                 <th style="padding: 6px 8px; text-align: center; font-size: 10px; font-weight: 700; color: #000;">NA</th>
                             </tr>
                         </thead>
