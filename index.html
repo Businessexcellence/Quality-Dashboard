@@ -8989,7 +8989,9 @@ Total Population: ${totalPop}
                                 borderColor: 'rgba(59, 130, 246, 1)',
                                 borderWidth: 2,
                                 yAxisID: 'y1',
-                                order: 2
+                                order: 2,
+                                barPercentage: 0.5,
+                                categoryPercentage: 0.7
                             },
                             {
                                 label: 'Accuracy Score (%)',
@@ -9014,7 +9016,7 @@ Total Population: ${totalPop}
                         maintainAspectRatio: false,
                         layout: {
                             padding: {
-                                top: 25,
+                                top: 35,
                                 right: 10,
                                 bottom: 10,
                                 left: 10
@@ -9040,9 +9042,11 @@ Total Population: ${totalPop}
                             datalabels: {
                                 display: true,
                                 align: function(context) {
-                                    return context.datasetIndex === 0 ? 'end' : 'top';
+                                    // Bar: inside at top, Line: above the point
+                                    return context.datasetIndex === 0 ? 'start' : 'top';
                                 },
                                 anchor: function(context) {
+                                    // Bar: anchor at end (top), Line: anchor at end (on point)
                                     return context.datasetIndex === 0 ? 'end' : 'end';
                                 },
                                 color: function(context) {
@@ -9063,7 +9067,10 @@ Total Population: ${totalPop}
                                         return parseFloat(value).toFixed(1) + '%';
                                     }
                                 },
-                                offset: 4
+                                offset: function(context) {
+                                    // Bar: 4px inside from top, Line: 8px above point
+                                    return context.datasetIndex === 0 ? 4 : 8;
+                                }
                             },
                             tooltip: {
                                 backgroundColor: 'rgba(0, 0, 0, 0.8)',
