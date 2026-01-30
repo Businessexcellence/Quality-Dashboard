@@ -9242,7 +9242,29 @@ Total Population: ${totalPop}
                                 });
                                 
                                 const region = accountDetails?.['Region'] || 'N/A';
-                                const auditStatus = String(accountDetails?.['Audit Status'] || '').trim().toUpperCase();
+                                const auditStatusRaw = String(accountDetails?.['Audit Status'] || '').trim();
+                                const auditStatus = auditStatusRaw.toUpperCase();
+                                
+                                // Determine status display and color based on Account_Summary value
+                                let statusDisplay, statusColor, statusIcon;
+                                if (auditStatus === 'YES') {
+                                    statusDisplay = '✓ Under Audit';
+                                    statusColor = '#10b981'; // Green
+                                    statusIcon = '✓';
+                                } else if (auditStatusRaw === 'On Hold') {
+                                    statusDisplay = '⏸ Audit on hold';
+                                    statusColor = '#f59e0b'; // Orange/Amber
+                                    statusIcon = '⏸';
+                                } else if (auditStatus === 'NO' || !auditStatusRaw) {
+                                    statusDisplay = '⏳ To be initiated';
+                                    statusColor = '#ef4444'; // Red
+                                    statusIcon = '⏳';
+                                } else {
+                                    // Fallback for any other status
+                                    statusDisplay = auditStatusRaw || 'Unknown';
+                                    statusColor = '#6b7280'; // Gray
+                                    statusIcon = '•';
+                                }
                                 
                                 // Debug log for ALL accounts to see matching issues
                                 console.log(`🔍 Account ${index + 1}:`, {
@@ -9253,7 +9275,8 @@ Total Population: ${totalPop}
                                         Client: accountDetails['Client'],
                                         AccountName: accountDetails['Account Name'],
                                         Region: region,
-                                        AuditStatus: auditStatus
+                                        AuditStatusRaw: auditStatusRaw,
+                                        StatusDisplay: statusDisplay
                                     } : null
                                 });
                                 
@@ -9273,8 +9296,8 @@ Total Population: ${totalPop}
                                                         <span>${region}</span>
                                                     </div>
                                                     <div style="display: flex; align-items: center; gap: 4px; font-size: 13px;">
-                                                        <span style="background: ${auditStatus === 'YES' ? '#10b981' : '#ef4444'}; color: white; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600;">
-                                                            ${auditStatus === 'YES' ? '✓ Under Audit' : 'Not Under Audit'}
+                                                        <span style="background: ${statusColor}; color: white; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600;">
+                                                            ${statusDisplay}
                                                         </span>
                                                     </div>
                                                     <div style="display: flex; align-items: center; gap: 4px; font-size: 13px; color: #3b82f6; font-weight: 600;">
