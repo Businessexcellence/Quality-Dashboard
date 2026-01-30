@@ -2818,6 +2818,17 @@
                 </div>
             </div>
 
+            <!-- Industry Benchmarks Section -->
+            <div style="background: white; border: 1px solid var(--border); border-radius: 6px; padding: 12px; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                <h3 style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin: 0 0 12px 0; display: flex; align-items: center;">
+                    <i class="fas fa-trophy" style="color: #f59e0b; font-size: 11px; margin-right: 6px;"></i>
+                    Industry Benchmarks & Competitive Analysis
+                </h3>
+                <div id="benchmarkContainer">
+                    <!-- Benchmark data will be displayed here -->
+                </div>
+            </div>
+
             <!-- CSAT Data Table - REMOVED AS PER USER REQUEST -->
         </div>
     </div>
@@ -3016,7 +3027,8 @@
             rcaCapa: [],
             projects: [],
             csat: [],
-            transactionalOverview: []
+            transactionalOverview: [],
+            benchmark: []
         };
 
         // ==========================================
@@ -3479,11 +3491,11 @@
             try {
                 if (!window.dashboardData || !window.dashboardData.csat || window.dashboardData.csat.length === 0) {
                     console.warn('⚠️ No CSAT data available');
-                    return;
                 }
                 
                 populateCSATFilters();
                 renderTopBoxComparison();
+                renderBenchmarkData(); // Render benchmark data
                 renderCSATTable();
                 
                 console.log('✅ CSAT tab refreshed');
@@ -3841,130 +3853,16 @@
                 html += '<i class="fas fa-star" style="margin-right: 8px; color: #f59e0b;"></i>';
                 html += 'Customer Satisfaction: Top Box Analysis';
                 html += '</h4>';
-                html += '<p style="font-size: 11px; color: var(--text-secondary); margin: 0;">Comparison of Top 2, Top 3, and Top 4 Box scores across all financial years</p>';
+                html += '<p style="font-size: 11px; color: var(--text-secondary); margin: 0;">Comparison of Top Box scores across all financial years</p>';
                 html += '</div>';
                 
-                // Create cards for each Top Box metric
-                html += '<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 16px;">';
-                
-                const boxTypes = ['Top 2 Box', 'Top 3 Box', 'Top 4 Box'];
-                const boxColors = {
-                    'Top 2 Box': { primary: '#10b981', light: '#d1fae5', border: '#6ee7b7' },
-                    'Top 3 Box': { primary: '#3b82f6', light: '#dbeafe', border: '#93c5fd' },
-                    'Top 4 Box': { primary: '#8b5cf6', light: '#f3e8ff', border: '#c4b5fd' }
-                };
-                
-                boxTypes.forEach(boxType => {
-                    const colors = boxColors[boxType];
-                    const yearData = topBoxData[boxType];
-                    const years = Object.keys(yearData).sort();
-                    const hasData = years.length > 0 && Object.values(yearData).some(v => v > 0);
-                    
-                    html += `
-                        <div style="background: white; border: 3px solid ${colors.border}; border-radius: 12px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                            <div style="text-align: center; margin-bottom: 12px;">
-                                <div style="display: inline-block; background: ${colors.light}; border: 2px solid ${colors.primary}; border-radius: 8px; padding: 8px 16px;">
-                                    <div style="font-size: 16px; font-weight: 900; color: ${colors.primary};">${boxType}</div>
-                                </div>
-                            </div>
-                    `;
-                    
-                    if (!hasData) {
-                        html += `
-                            <div style="text-align: center; padding: 20px; color: #9ca3af; font-size: 11px;">
-                                <i class="fas fa-info-circle" style="font-size: 24px; margin-bottom: 8px; opacity: 0.3;"></i>
-                                <div>No data available</div>
-                            </div>
-                        `;
-                    } else {
-                        // Calculate trend
-                        const firstYear = years[0];
-                        const lastYear = years[years.length - 1];
-                        const firstValue = yearData[firstYear] || 0;
-                        const lastValue = yearData[lastYear] || 0;
-                        const trend = lastValue - firstValue;
-                        const trendIcon = trend > 0 ? '📈' : trend < 0 ? '📉' : '➡️';
-                        const trendColor = trend > 0 ? '#10b981' : trend < 0 ? '#ef4444' : '#6b7280';
-                        
-                        // Show trend card
-                        html += `
-                            <div style="background: ${colors.light}; border-radius: 6px; padding: 10px; margin-bottom: 12px; border: 2px solid ${colors.primary};">
-                                <div style="text-align: center;">
-                                    <div style="font-size: 10px; color: ${colors.primary}; font-weight: 600; margin-bottom: 4px;">Trend (${firstYear} → ${lastYear})</div>
-                                    <div style="font-size: 20px; font-weight: 900; color: ${trendColor};">${trendIcon} ${trend > 0 ? '+' : ''}${trend.toFixed(1)}%</div>
-                                </div>
-                            </div>
-                        `;
-                        
-                        // Show year-by-year data
-                        years.forEach(year => {
-                            const value = yearData[year] || 0;
-                            const maxValue = Math.max(...Object.values(yearData));
-                            const isMax = value === maxValue && value > 0;
-                            
-                            html += `
-                                <div style="margin-bottom: 8px; background: white; border-radius: 6px; padding: 10px; border: 1px solid #e5e7eb;">
-                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                                        <div style="font-size: 11px; font-weight: 700; color: #6b7280;">FY ${year}</div>
-                                        <div style="font-size: 18px; font-weight: 900; color: ${colors.primary};">
-                                            ${value.toFixed(1)}%${isMax ? ' 👑' : ''}
-                                        </div>
-                                    </div>
-                                    <div style="background: #e5e7eb; height: 6px; border-radius: 3px; overflow: hidden;">
-                                        <div style="background: ${colors.primary}; height: 100%; width: ${value}%; transition: width 0.5s ease;"></div>
-                                    </div>
-                                </div>
-                            `;
-                        });
-                    }
-                    
-                    html += '</div>';
-                });
-                
-                html += '</div>';
-                
-                // Add comprehensive insights section with all three Top Box trends
-                html += '<div style="margin-top: 16px; padding: 16px; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-left: 4px solid #0ea5e9; border-radius: 8px;">';
-                html += '<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;"><strong style="font-size: 13px; color: #0c4a6e;">📊 Top Box Trend Summary</strong></div>';
-                
-                // Calculate trends for all three boxes
-                const allTrends = [];
-                ['Top 2 Box', 'Top 3 Box', 'Top 4 Box'].forEach(boxType => {
-                    const years = Object.keys(topBoxData[boxType]).sort();
-                    if (years.length > 0) {
-                        const firstYear = years[0];
-                        const lastYear = years[years.length - 1];
-                        const firstValue = topBoxData[boxType][firstYear] || 0;
-                        const lastValue = topBoxData[boxType][lastYear] || 0;
-                        const change = lastValue - firstValue;
-                        allTrends.push({ boxType, firstYear, lastYear, firstValue, lastValue, change });
-                    }
-                });
-                
-                // Display all trends in a grid
-                if (allTrends.length > 0) {
-                    html += '<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 12px;">';
-                    allTrends.forEach(trend => {
-                        const color = trend.boxType === 'Top 2 Box' ? '#10b981' : trend.boxType === 'Top 3 Box' ? '#3b82f6' : '#8b5cf6';
-                        html += `<div style="padding: 10px; background: white; border-radius: 6px; border: 1px solid rgba(0,0,0,0.1);">`;
-                        html += `<div style="font-size: 10px; font-weight: 600; color: ${color}; margin-bottom: 6px;">${trend.boxType}</div>`;
-                        html += `<div style="font-size: 10px; color: #0c4a6e; line-height: 1.4;">`;
-                        html += `<div><strong>${trend.firstYear}:</strong> ${trend.firstValue.toFixed(1)}% → <strong>${trend.lastYear}:</strong> ${trend.lastValue.toFixed(1)}%</div>`;
-                        html += `<div style="margin-top: 4px;"><strong>Change:</strong> <span style="color: ${trend.change >= 0 ? '#10b981' : '#ef4444'}; font-weight: 700;">${trend.change > 0 ? '+' : ''}${trend.change.toFixed(1)}%</span></div>`;
-                        html += `</div></div>`;
-                    });
-                    html += '</div>';
-                }
-                
-                // Add custom insights section
-                html += '<div style="padding: 12px; background: white; border-radius: 6px; border: 1px solid rgba(0,0,0,0.1);">';
+                // Add Key Insights section directly (removed Top 2/3/4 Box cards as redundant)
+                html += '<div style="padding: 16px; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-left: 4px solid #0ea5e9; border-radius: 8px;">';
                 html += '<div style="font-size: 11px; font-weight: 600; color: #0c4a6e; margin-bottom: 8px;">📌 Key Insights</div>';
                 html += '<div style="font-size: 10px; color: #0c4a6e; line-height: 1.6;">';
                 html += '<div style="margin-bottom: 6px;">• <strong>Overall Satisfaction at 5.13:</strong> Drops from 5.95 in last cycle</div>';
                 html += '<div>• <strong>Response rates drop to 61%:</strong> in response rate to 61%; however, absolute number increases. Account coverage healthy</div>';
                 html += '</div></div>';
-                
-                html += '</div>';
                 
                 container.innerHTML = html;
                 
@@ -3973,6 +3871,139 @@
                 handleError(error, 'renderTopBoxComparison');
             }
         }
+        
+        function renderBenchmarkData() {
+            try {
+                console.log('🏆 Rendering benchmark data...');
+                
+                const container = document.getElementById('benchmarkContainer');
+                if (!container) {
+                    console.warn('⚠️ benchmarkContainer not found');
+                    return;
+                }
+                
+                if (!window.dashboardData || !window.dashboardData.benchmark || window.dashboardData.benchmark.length === 0) {
+                    container.innerHTML = '<div style="text-align: center; padding: 40px; color: #9ca3af;"><i class="fas fa-inbox" style="font-size: 48px; opacity: 0.3; margin-bottom: 10px; display: block;"></i><p>No benchmark data available. Please upload the benchmark metrics file.</p></div>';
+                    return;
+                }
+                
+                const benchmarkData = window.dashboardData.benchmark;
+                console.log(`📊 Benchmark data loaded: ${benchmarkData.length} metrics`);
+                
+                // Group by Category
+                const categories = {};
+                benchmarkData.forEach(row => {
+                    const category = row.Category || 'Other';
+                    if (!categories[category]) {
+                        categories[category] = [];
+                    }
+                    categories[category].push(row);
+                });
+                
+                // Define category colors and order
+                const categoryConfig = {
+                    'Global RPO': { color: '#10b981', icon: 'globe', label: 'Global RPO (Direct Competitors)' },
+                    'Indian RPO': { color: '#3b82f6', icon: 'flag-checkered', label: 'Indian RPO (Direct Competitors)' },
+                    'Global Service Provider': { color: '#8b5cf6', icon: 'server', label: 'Global Service Providers' },
+                    'Indian Service Provider': { color: '#f59e0b', icon: 'hands-helping', label: 'Indian Service Providers' }
+                };
+                
+                let html = '';
+                
+                // Filter bar
+                html += '<div style="margin-bottom: 16px; display: flex; gap: 8px; flex-wrap: wrap;">';
+                Object.keys(categoryConfig).forEach(cat => {
+                    const config = categoryConfig[cat];
+                    const count = categories[cat] ? categories[cat].length : 0;
+                    html += `<button onclick="filterBenchmarkCategory('${cat}')" style="padding: 6px 12px; border: 2px solid ${config.color}; background: white; color: ${config.color}; border-radius: 6px; cursor: pointer; font-size: 10px; font-weight: 600; display: flex; align-items: center; gap: 6px;" onmouseover="this.style.background='${config.color}'; this.style.color='white';" onmouseout="this.style.background='white'; this.style.color='${config.color}';"><i class="fas fa-${config.icon}"></i>${cat} (${count})</button>`;
+                });
+                html += '<button onclick="filterBenchmarkCategory(null)" style="padding: 6px 12px; border: 2px solid #6b7280; background: #6b7280; color: white; border-radius: 6px; cursor: pointer; font-size: 10px; font-weight: 600;"><i class="fas fa-list"></i> Show All</button>';
+                html += '</div>';
+                
+                // Render each category
+                html += '<div id="benchmarkCategoriesContainer">';
+                Object.keys(categoryConfig).forEach(categoryName => {
+                    if (!categories[categoryName]) return;
+                    
+                    const config = categoryConfig[categoryName];
+                    const metrics = categories[categoryName];
+                    
+                    html += `<div class="benchmark-category" data-category="${categoryName}" style="margin-bottom: 16px; border: 2px solid ${config.color}; border-radius: 8px; overflow: hidden;">`;
+                    html += `<div style="background: ${config.color}; color: white; padding: 10px 12px; display: flex; align-items: center; gap: 8px;">`;
+                    html += `<i class="fas fa-${config.icon}" style="font-size: 14px;"></i>`;
+                    html += `<span style="font-size: 12px; font-weight: 700;">${config.label}</span>`;
+                    html += `<span style="margin-left: auto; background: rgba(255,255,255,0.3); padding: 2px 8px; border-radius: 12px; font-size: 10px;">${metrics.length} metrics</span>`;
+                    html += `</div>`;
+                    
+                    // Group by company
+                    const companies = {};
+                    metrics.forEach(m => {
+                        const company = m.Company || 'Unknown';
+                        if (!companies[company]) companies[company] = [];
+                        companies[company].push(m);
+                    });
+                    
+                    html += '<div style="padding: 12px;">';
+                    Object.keys(companies).sort().forEach(company => {
+                        const companyMetrics = companies[company];
+                        html += `<div style="margin-bottom: 12px; background: #f9fafb; border-radius: 6px; padding: 10px;">`;
+                        html += `<div style="font-size: 11px; font-weight: 700; color: #1e293b; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">`;
+                        html += `<i class="fas fa-building" style="color: ${config.color};"></i>${company} <span style="color: #64748b; font-weight: 400;">(${companyMetrics.length} metrics)</span>`;
+                        html += `</div>`;
+                        
+                        // Metrics table
+                        html += '<div style="display: grid; gap: 6px;">';
+                        companyMetrics.forEach(metric => {
+                            const adherence = metric['Adherence Status '] || metric['Adherence Status'] || 'NA';
+                            const status = adherence.trim().toUpperCase();
+                            let statusColor = '#6b7280';
+                            let statusBg = '#f3f4f6';
+                            if (status === 'YES') {
+                                statusColor = '#10b981';
+                                statusBg = '#d1fae5';
+                            } else if (status === 'PARTIAL') {
+                                statusColor = '#f59e0b';
+                                statusBg = '#fef3c7';
+                            } else if (status === 'NO') {
+                                statusColor = '#ef4444';
+                                statusBg = '#fee2e2';
+                            }
+                            
+                            html += '<div style="background: white; border-radius: 4px; padding: 8px; border: 1px solid #e5e7eb; display: grid; grid-template-columns: 2fr 1fr auto 1fr; gap: 8px; align-items: center;">';
+                            html += `<div style="font-size: 10px; color: #1e293b; font-weight: 600;">${metric['Metric Name'] || 'N/A'}</div>`;
+                            html += `<div style="font-size: 9px; color: #64748b;">${metric['Taggd_Category'] || 'N/A'}</div>`;
+                            html += `<div style="background: ${statusBg}; color: ${statusColor}; padding: 3px 8px; border-radius: 4px; font-size: 8px; font-weight: 700; text-align: center; min-width: 60px;">${adherence}</div>`;
+                            html += `<div style="font-size: 8px; color: #9ca3af; text-align: right;" title="${metric['Concise Description'] || ''}">${(metric['Concise Description'] || '').substring(0, 40)}...</div>`;
+                            html += '</div>';
+                        });
+                        html += '</div>';
+                        
+                        html += '</div>';
+                    });
+                    html += '</div>';
+                    
+                    html += '</div>';
+                });
+                html += '</div>';
+                
+                container.innerHTML = html;
+                
+                console.log('✅ Benchmark data rendered successfully');
+            } catch (error) {
+                handleError(error, 'renderBenchmarkData');
+            }
+        }
+        
+        window.filterBenchmarkCategory = function(category) {
+            const allCategories = document.querySelectorAll('.benchmark-category');
+            allCategories.forEach(cat => {
+                if (category === null || cat.dataset.category === category) {
+                    cat.style.display = 'block';
+                } else {
+                    cat.style.display = 'none';
+                }
+            });
+        };
         
         function renderCSATTable() {
             try {
@@ -4221,6 +4252,26 @@
                         console.log('📋 CSAT columns:', Object.keys(window.dashboardData.csat[0]));
                     } else {
                         console.warn('⚠️ No CSAT data found! Available sheets:', workbook.SheetNames);
+                    }
+                    
+                    // Benchmark Data (optional - from separate file or same workbook)
+                    console.log('🔍 Searching for Benchmark sheet...');
+                    let benchmarkData = parseSheet(workbook, 'Company_Metrics');
+                    if (!benchmarkData || benchmarkData.length === 0) {
+                        console.log('🔍 Trying "Benchmark"...');
+                        benchmarkData = parseSheet(workbook, 'Benchmark');
+                    }
+                    if (!benchmarkData || benchmarkData.length === 0) {
+                        console.log('🔍 Trying "Industry_Benchmarks"...');
+                        benchmarkData = parseSheet(workbook, 'Industry_Benchmarks');
+                    }
+                    window.dashboardData.benchmark = benchmarkData || [];
+                    console.log('✅ Benchmark rows:', window.dashboardData.benchmark.length);
+                    if (window.dashboardData.benchmark.length > 0) {
+                        console.log('📋 Benchmark sample row:', window.dashboardData.benchmark[0]);
+                        console.log('📋 Benchmark columns:', Object.keys(window.dashboardData.benchmark[0]));
+                    } else {
+                        console.log('ℹ️ No benchmark data found in workbook - this is optional');
                     }
                     
                     // Transactional_Overview
