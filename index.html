@@ -9488,11 +9488,11 @@ Total Population: ${totalPop}
                 
                 if (accountExists) {
                     console.log(`✅ Account "${accountName}" found in journey data`);
-                    applyAccountFilter('journey-at-glance', accountName);
+                    applyAccountNavigationFilter('journey-at-glance', accountName);
                 } else {
                     console.warn(`⚠️ Account "${accountName}" not found in journey data`);
                     // Try with the account name anyway
-                    applyAccountFilter('journey-at-glance', accountName);
+                    applyAccountNavigationFilter('journey-at-glance', accountName);
                 }
             } else if (retryCount < maxRetries) {
                 // Data not ready, retry
@@ -9503,11 +9503,11 @@ Total Population: ${totalPop}
             } else {
                 // Max retries reached, try anyway
                 console.warn(`⚠️ Max retries reached, applying filter anyway...`);
-                applyAccountFilter('journey-at-glance', accountName);
+                applyAccountNavigationFilter('journey-at-glance', accountName);
             }
         }
         
-        function applyAccountFilter(viewType, accountName) {
+        function applyAccountNavigationFilter(viewType, accountName) {
             try {
                 console.log(`🔍 Applying filter for account: ${accountName} on ${viewType}`);
                 
