@@ -9330,26 +9330,26 @@ Total Population: ${totalPop}
                                 });
                                 
                                 return `
-                                    <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 15px; transition: all 0.2s; cursor: pointer;" 
-                                         onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'; this.style.borderColor='#3b82f6';" 
-                                         onmouseout="this.style.boxShadow='none'; this.style.borderColor='#e5e7eb';"
+                                    <div style="background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%); border: 1px solid #718096; border-radius: 8px; padding: 15px; transition: all 0.2s; cursor: pointer;" 
+                                         onmouseover="this.style.boxShadow='0 4px 12px rgba(74,85,104,0.3)'; this.style.borderColor='#cbd5e0'; this.style.transform='translateY(-2px)';" 
+                                         onmouseout="this.style.boxShadow='none'; this.style.borderColor='#718096'; this.style.transform='translateY(0)';"
                                          onclick="showAccountNavigationMenu('${account.replace(/'/g, "\\'")}')">
                                         <div style="display: flex; justify-content: space-between; align-items: start;">
                                             <div style="flex: 1;">
-                                                <div style="font-size: 16px; font-weight: 600; color: #1f2937; margin-bottom: 8px;">
-                                                    ${index + 1}. ${account} <i class="fas fa-external-link-alt" style="font-size: 12px; margin-left: 6px; opacity: 0.5;"></i>
+                                                <div style="font-size: 16px; font-weight: 700; color: #ffffff; margin-bottom: 8px;">
+                                                    ${index + 1}. ${account} <i class="fas fa-external-link-alt" style="font-size: 12px; margin-left: 6px; opacity: 0.8;"></i>
                                                 </div>
                                                 <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-                                                    <div style="display: flex; align-items: center; gap: 4px; font-size: 13px; color: #6b7280;">
-                                                        <i class="fas fa-map-marker-alt" style="color: #3b82f6;"></i>
+                                                    <div style="display: flex; align-items: center; gap: 4px; font-size: 13px; color: #e2e8f0;">
+                                                        <i class="fas fa-map-marker-alt" style="color: #cbd5e0;"></i>
                                                         <span>${region}</span>
                                                     </div>
                                                     <div style="display: flex; align-items: center; gap: 4px; font-size: 13px;">
-                                                        <span style="background: ${statusColor}; color: white; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600;">
+                                                        <span style="background: ${statusColor}; color: white; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 700;">
                                                             ${statusDisplay}
                                                         </span>
                                                     </div>
-                                                    <div style="display: flex; align-items: center; gap: 4px; font-size: 13px; color: #3b82f6; font-weight: 600;">
+                                                    <div style="display: flex; align-items: center; gap: 4px; font-size: 13px; color: #cbd5e0; font-weight: 600;">
                                                         <i class="fas fa-mouse-pointer" style="font-size: 11px;"></i>
                                                         <span style="font-size: 11px;">Click to navigate</span>
                                                     </div>
