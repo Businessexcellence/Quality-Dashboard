@@ -2590,9 +2590,9 @@
             <div style="display: grid; grid-template-columns: 1fr 400px; gap: 12px;">
                 
                 <!-- Left: Project List -->
-                <div style="background: white; border-radius: 10px; padding: 10px; box-shadow: 0 3px 10px rgba(20,184,166,0.15); border-left: 5px solid #14b8a6;">
+                <div style="background: #000000; border-radius: 10px; padding: 10px; box-shadow: 0 3px 10px rgba(20,184,166,0.15); border-left: 5px solid #14b8a6;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                        <h2 style="font-size: 12px; font-weight: 800; color: #0f766e; margin: 0; display: flex; align-items: center;">
+                        <h2 style="font-size: 12px; font-weight: 800; color: #ffffff; margin: 0; display: flex; align-items: center;">
                             <div style="background: linear-gradient(135deg, #14b8a6 0%, #06b6d4 100%); width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 8px; box-shadow: 0 3px 6px rgba(20,184,166,0.3);">
                                 <i class="fas fa-list" style="color: white; font-size: 12px;"></i>
                             </div>
@@ -11822,8 +11822,8 @@ Total Population: ${totalPop}
                 
                 if (projects.length === 0) {
                     safeSetHTML('projectListContainer', `
-                        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 200px; color: #94a3b8; text-align: center;">
-                            <i class="fas fa-inbox" style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"></i>
+                        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 200px; color: #ffffff; text-align: center;">
+                            <i class="fas fa-inbox" style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;"></i>
                             <p style="font-size: 12px; margin: 0;">No projects found matching the selected filters</p>
                         </div>
                     `);
@@ -11894,8 +11894,8 @@ Total Population: ${totalPop}
                                         <div 
                                             onclick="showProjectDetails(${index}); event.stopPropagation();"
                                             style="
-                                                background: white;
-                                                border: 2px solid #e2e8f0;
+                                                background: #1a1a1a;
+                                                border: 2px solid #333333;
                                                 border-left: 4px solid ${statusColor};
                                                 border-radius: 6px;
                                                 padding: 8px;
@@ -11903,15 +11903,15 @@ Total Population: ${totalPop}
                                                 cursor: pointer;
                                                 transition: all 0.2s;
                                             "
-                                            onmouseover="this.style.background='#f8fafc'; this.style.borderColor='#3b82f6'; this.style.boxShadow='0 2px 8px rgba(59,130,246,0.2)';"
-                                            onmouseout="this.style.background='white'; this.style.borderColor='#e2e8f0'; this.style.boxShadow='none';"
+                                            onmouseover="this.style.background='#2a2a2a'; this.style.borderColor='#14b8a6'; this.style.boxShadow='0 2px 8px rgba(20,184,166,0.3)';"
+                                            onmouseout="this.style.background='#1a1a1a'; this.style.borderColor='#333333'; this.style.boxShadow='none';"
                                         >
                                             <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 4px;">
                                                 <div style="flex: 1;">
-                                                    <div style="color: #1e293b; font-size: 9px; font-weight: 700; margin-bottom: 3px;" title="${opportunityStatement}">
+                                                    <div style="color: #ffffff; font-size: 9px; font-weight: 700; margin-bottom: 3px;" title="${opportunityStatement}">
                                                         ${shortStatement}
                                                     </div>
-                                                    <div style="color: #64748b; font-size: 7px;">
+                                                    <div style="color: #a0aec0; font-size: 7px;">
                                                         <i class="fas fa-map-marker-alt" style="font-size: 6px; margin-right: 2px;"></i>${region}
                                                     </div>
                                                 </div>
