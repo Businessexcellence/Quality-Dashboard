@@ -2590,15 +2590,15 @@
             <div style="display: grid; grid-template-columns: 1fr 400px; gap: 12px;">
                 
                 <!-- Left: Project List -->
-                <div style="background: #000000; border-radius: 10px; padding: 10px; box-shadow: 0 3px 10px rgba(20,184,166,0.15); border-left: 5px solid #14b8a6;">
+                <div style="background: #000000; border-radius: 10px; padding: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.3); border-left: 5px solid #4a5568;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                         <h2 style="font-size: 12px; font-weight: 800; color: #ffffff; margin: 0; display: flex; align-items: center;">
-                            <div style="background: linear-gradient(135deg, #14b8a6 0%, #06b6d4 100%); width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 8px; box-shadow: 0 3px 6px rgba(20,184,166,0.3);">
+                            <div style="background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%); width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 8px; box-shadow: 0 3px 6px rgba(0,0,0,0.3);">
                                 <i class="fas fa-list" style="color: white; font-size: 12px;"></i>
                             </div>
                             PROJECT LIST
                         </h2>
-                        <div style="background: linear-gradient(135deg, #14b8a6 0%, #06b6d4 100%); color: white; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 700;">
+                        <div style="background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%); color: white; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 700;">
                             <span id="projectListCount">0</span> Projects
                         </div>
                     </div>
@@ -2610,9 +2610,9 @@
                 </div>
 
                 <!-- Right: Project Details Panel -->
-                <div style="background: white; border-radius: 10px; padding: 10px; box-shadow: 0 3px 10px rgba(20,184,166,0.15); border-left: 5px solid #14b8a6;">
-                    <h2 style="font-size: 12px; font-weight: 800; color: #0f766e; margin: 0 0 8px 0; display: flex; align-items: center;">
-                        <div style="background: linear-gradient(135deg, #14b8a6 0%, #06b6d4 100%); width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 8px; box-shadow: 0 3px 6px rgba(20,184,166,0.3);">
+                <div style="background: #1a1a1a; border-radius: 10px; padding: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.3); border-left: 5px solid #4a5568;">
+                    <h2 style="font-size: 12px; font-weight: 800; color: #ffffff; margin: 0 0 8px 0; display: flex; align-items: center;">
+                        <div style="background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%); width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 8px; box-shadow: 0 3px 6px rgba(0,0,0,0.3);">
                             <i class="fas fa-info-circle" style="color: white; font-size: 12px;"></i>
                         </div>
                         PROJECT DETAILS
@@ -2620,8 +2620,8 @@
                     
                     <div id="projectDetailsContainer" style="max-height: calc(100vh - 280px); overflow-y: auto; padding-right: 6px;">
                         <!-- Project details will be populated here -->
-                        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 300px; color: #94a3b8; text-align: center;">
-                            <i class="fas fa-mouse-pointer" style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"></i>
+                        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 300px; color: #a0aec0; text-align: center;">
+                            <i class="fas fa-mouse-pointer" style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;"></i>
                             <p style="font-size: 12px; margin: 0;">Select a project from the list to view details</p>
                         </div>
                     </div>
@@ -11850,7 +11850,7 @@ Total Population: ${totalPop}
                             <div 
                                 onclick="toggleAccountProjects('${accountId}')"
                                 style="
-                                    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+                                    background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
                                     color: white;
                                     border-radius: 6px;
                                     padding: 8px 12px;
@@ -11859,9 +11859,10 @@ Total Population: ${totalPop}
                                     display: flex;
                                     justify-content: space-between;
                                     align-items: center;
+                                    border: 1px solid #718096;
                                 "
-                                onmouseover="this.style.transform='translateX(2px)'; this.style.boxShadow='0 3px 10px rgba(59,130,246,0.3)';"
-                                onmouseout="this.style.transform='translateX(0)'; this.style.boxShadow='none';"
+                                onmouseover="this.style.transform='translateX(2px)'; this.style.boxShadow='0 3px 10px rgba(113,128,150,0.4)'; this.style.borderColor='#cbd5e0';"
+                                onmouseout="this.style.transform='translateX(0)'; this.style.boxShadow='none'; this.style.borderColor='#718096';"
                             >
                                 <div style="display: flex; align-items: center; gap: 8px;">
                                     <i class="fas fa-building" style="font-size: 10px;"></i>
@@ -11991,13 +11992,13 @@ Total Population: ${totalPop}
                 else if (statusUpper === 'WIP' || statusUpper.includes('WIP')) statusColor = '#3b82f6';
                 
                 const detailsHTML = `
-                    <div style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); color: white; padding: 12px; border-radius: 8px; margin-bottom: 12px;">
+                    <div style="background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%); color: white; padding: 12px; border-radius: 8px; margin-bottom: 12px; border: 1px solid #4a5568;">
                         <div style="font-size: 14px; font-weight: 800; margin-bottom: 4px;">${account}</div>
                         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                            <span style="background: rgba(255,255,255,0.2); padding: 3px 8px; border-radius: 4px; font-size: 8px; font-weight: 600;">
+                            <span style="background: rgba(255,255,255,0.15); padding: 3px 8px; border-radius: 4px; font-size: 8px; font-weight: 600;">
                                 <i class="fas fa-map-marker-alt" style="font-size: 7px; margin-right: 3px;"></i>${region}
                             </span>
-                            <span style="background: rgba(255,255,255,0.2); padding: 3px 8px; border-radius: 4px; font-size: 8px; font-weight: 600;">
+                            <span style="background: rgba(255,255,255,0.15); padding: 3px 8px; border-radius: 4px; font-size: 8px; font-weight: 600;">
                                 <i class="fas fa-calendar" style="font-size: 7px; margin-right: 3px;"></i>${financialYear}
                             </span>
                             <span style="background: ${statusColor}; padding: 3px 8px; border-radius: 4px; font-size: 8px; font-weight: 700;">
@@ -12009,43 +12010,43 @@ Total Population: ${totalPop}
                     <div style="display: flex; flex-direction: column; gap: 10px;">
                         
                         <!-- Project Type -->
-                        <div style="background: #f8fafc; border-radius: 6px; padding: 8px; border-left: 3px solid #3b82f6;">
-                            <div style="color: #64748b; font-size: 8px; font-weight: 700; text-transform: uppercase; margin-bottom: 3px;">
+                        <div style="background: #2d3748; border-radius: 6px; padding: 8px; border-left: 3px solid #718096;">
+                            <div style="color: #a0aec0; font-size: 8px; font-weight: 700; text-transform: uppercase; margin-bottom: 3px;">
                                 <i class="fas fa-tag" style="margin-right: 4px;"></i>Project Type
                             </div>
-                            <div style="color: #1e293b; font-size: 10px; font-weight: 600;">${projectType}</div>
+                            <div style="color: #ffffff; font-size: 10px; font-weight: 600;">${projectType}</div>
                         </div>
                         
                         <!-- Opportunity Statement -->
-                        <div style="background: #f8fafc; border-radius: 6px; padding: 8px; border-left: 3px solid #f04616;">
-                            <div style="color: #64748b; font-size: 8px; font-weight: 700; text-transform: uppercase; margin-bottom: 3px;">
+                        <div style="background: #2d3748; border-radius: 6px; padding: 8px; border-left: 3px solid #cbd5e0;">
+                            <div style="color: #a0aec0; font-size: 8px; font-weight: 700; text-transform: uppercase; margin-bottom: 3px;">
                                 <i class="fas fa-lightbulb" style="margin-right: 4px;"></i>Opportunity Statement
                             </div>
-                            <div style="color: #1e293b; font-size: 9px; line-height: 1.4;">${opportunityStatement}</div>
+                            <div style="color: #e2e8f0; font-size: 9px; line-height: 1.4;">${opportunityStatement}</div>
                         </div>
                         
                         <!-- Sponsor -->
-                        <div style="background: #f8fafc; border-radius: 6px; padding: 8px; border-left: 3px solid #f59e0b;">
-                            <div style="color: #64748b; font-size: 8px; font-weight: 700; text-transform: uppercase; margin-bottom: 3px;">
+                        <div style="background: #2d3748; border-radius: 6px; padding: 8px; border-left: 3px solid #718096;">
+                            <div style="color: #a0aec0; font-size: 8px; font-weight: 700; text-transform: uppercase; margin-bottom: 3px;">
                                 <i class="fas fa-user-shield" style="margin-right: 4px;"></i>Sponsor
                             </div>
-                            <div style="color: #1e293b; font-size: 10px; font-weight: 600;">${sponsor}</div>
+                            <div style="color: #ffffff; font-size: 10px; font-weight: 600;">${sponsor}</div>
                         </div>
                         
                         <!-- Quarter -->
-                        <div style="background: #f8fafc; border-radius: 6px; padding: 8px; border-left: 3px solid #8b5cf6;">
-                            <div style="color: #64748b; font-size: 8px; font-weight: 700; text-transform: uppercase; margin-bottom: 3px;">
+                        <div style="background: #2d3748; border-radius: 6px; padding: 8px; border-left: 3px solid #cbd5e0;">
+                            <div style="color: #a0aec0; font-size: 8px; font-weight: 700; text-transform: uppercase; margin-bottom: 3px;">
                                 <i class="fas fa-calendar-alt" style="margin-right: 4px;"></i>Quarter
                             </div>
-                            <div style="color: #1e293b; font-size: 10px; font-weight: 600;">${quarter}</div>
+                            <div style="color: #ffffff; font-size: 10px; font-weight: 600;">${quarter}</div>
                         </div>
                         
                         <!-- Practice Head -->
-                        <div style="background: #f8fafc; border-radius: 6px; padding: 8px; border-left: 3px solid #ec4899;">
-                            <div style="color: #64748b; font-size: 8px; font-weight: 700; text-transform: uppercase; margin-bottom: 3px;">
+                        <div style="background: #2d3748; border-radius: 6px; padding: 8px; border-left: 3px solid #718096;">
+                            <div style="color: #a0aec0; font-size: 8px; font-weight: 700; text-transform: uppercase; margin-bottom: 3px;">
                                 <i class="fas fa-user-tie" style="margin-right: 4px;"></i>Practice Head
                             </div>
-                            <div style="color: #1e293b; font-size: 10px; font-weight: 600;">${practiceHead}</div>
+                            <div style="color: #ffffff; font-size: 10px; font-weight: 600;">${practiceHead}</div>
                         </div>
                         
                     </div>
