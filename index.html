@@ -3856,7 +3856,132 @@
                 html += '<p style="font-size: 11px; color: var(--text-secondary); margin: 0;">Comparison of Top Box scores across all financial years</p>';
                 html += '</div>';
                 
-                // Add Key Insights section directly (removed Top 2/3/4 Box cards as redundant)
+                // Render Top Box Cards in 3-column grid
+                html += '<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px;">';
+                
+                // Top 2 Box Card
+                html += '<div style="padding: 12px; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-radius: 8px; border-left: 4px solid #3b82f6;">';
+                html += '<div style="font-size: 11px; font-weight: 600; color: #1e40af; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">';
+                html += '<i class="fas fa-star"></i>Top 2 Box</div>';
+                
+                const top2Years = Object.keys(topBoxData['Top 2 Box']).sort();
+                if (top2Years.length > 0) {
+                    const firstYear = top2Years[0];
+                    const lastYear = top2Years[top2Years.length - 1];
+                    const firstValue = topBoxData['Top 2 Box'][firstYear];
+                    const lastValue = topBoxData['Top 2 Box'][lastYear];
+                    const trend = lastValue - firstValue;
+                    const trendIcon = trend >= 0 ? '📈' : '📉';
+                    
+                    html += '<div style="margin-bottom: 8px;">';
+                    html += `<div style="font-size: 10px; color: #64748b; margin-bottom: 4px;">Trend: ${firstYear} → ${lastYear}</div>`;
+                    html += `<div style="font-size: 18px; font-weight: 700; color: ${trend >= 0 ? '#10b981' : '#ef4444'};">${trendIcon} ${trend >= 0 ? '+' : ''}${trend.toFixed(1)}%</div>`;
+                    html += '</div>';
+                    
+                    html += '<div style="display: flex; flex-direction: column; gap: 4px;">';
+                    top2Years.forEach(year => {
+                        const value = topBoxData['Top 2 Box'][year];
+                        html += `<div style="display: flex; justify-content: space-between; font-size: 10px; padding: 4px; background: white; border-radius: 4px;">`;
+                        html += `<span style="color: #64748b;">FY ${year}</span>`;
+                        html += `<span style="font-weight: 600; color: #1e40af;">${value.toFixed(1)}%</span>`;
+                        html += '</div>';
+                    });
+                    html += '</div>';
+                } else {
+                    html += '<div style="font-size: 10px; color: #9ca3af; text-align: center; padding: 20px;">No data available</div>';
+                }
+                html += '</div>';
+                
+                // Top 3 Box Card
+                html += '<div style="padding: 12px; background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-radius: 8px; border-left: 4px solid #10b981;">';
+                html += '<div style="font-size: 11px; font-weight: 600; color: #065f46; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">';
+                html += '<i class="fas fa-star"></i>Top 3 Box</div>';
+                
+                const top3Years = Object.keys(topBoxData['Top 3 Box']).sort();
+                if (top3Years.length > 0) {
+                    const firstYear = top3Years[0];
+                    const lastYear = top3Years[top3Years.length - 1];
+                    const firstValue = topBoxData['Top 3 Box'][firstYear];
+                    const lastValue = topBoxData['Top 3 Box'][lastYear];
+                    const trend = lastValue - firstValue;
+                    const trendIcon = trend >= 0 ? '📈' : '📉';
+                    
+                    html += '<div style="margin-bottom: 8px;">';
+                    html += `<div style="font-size: 10px; color: #64748b; margin-bottom: 4px;">Trend: ${firstYear} → ${lastYear}</div>`;
+                    html += `<div style="font-size: 18px; font-weight: 700; color: ${trend >= 0 ? '#10b981' : '#ef4444'};">${trendIcon} ${trend >= 0 ? '+' : ''}${trend.toFixed(1)}%</div>`;
+                    html += '</div>';
+                    
+                    html += '<div style="display: flex; flex-direction: column; gap: 4px;">';
+                    top3Years.forEach(year => {
+                        const value = topBoxData['Top 3 Box'][year];
+                        html += `<div style="display: flex; justify-content: space-between; font-size: 10px; padding: 4px; background: white; border-radius: 4px;">`;
+                        html += `<span style="color: #64748b;">FY ${year}</span>`;
+                        html += `<span style="font-weight: 600; color: #065f46;">${value.toFixed(1)}%</span>`;
+                        html += '</div>';
+                    });
+                    html += '</div>';
+                } else {
+                    html += '<div style="font-size: 10px; color: #9ca3af; text-align: center; padding: 20px;">No data available</div>';
+                }
+                html += '</div>';
+                
+                // Top 4 Box Card
+                html += '<div style="padding: 12px; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 8px; border-left: 4px solid #f59e0b;">';
+                html += '<div style="font-size: 11px; font-weight: 600; color: #92400e; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">';
+                html += '<i class="fas fa-star"></i>Top 4 Box</div>';
+                
+                const top4Years = Object.keys(topBoxData['Top 4 Box']).sort();
+                if (top4Years.length > 0) {
+                    const firstYear = top4Years[0];
+                    const lastYear = top4Years[top4Years.length - 1];
+                    const firstValue = topBoxData['Top 4 Box'][firstYear];
+                    const lastValue = topBoxData['Top 4 Box'][lastYear];
+                    const trend = lastValue - firstValue;
+                    const trendIcon = trend >= 0 ? '📈' : '📉';
+                    
+                    html += '<div style="margin-bottom: 8px;">';
+                    html += `<div style="font-size: 10px; color: #64748b; margin-bottom: 4px;">Trend: ${firstYear} → ${lastYear}</div>`;
+                    html += `<div style="font-size: 18px; font-weight: 700; color: ${trend >= 0 ? '#10b981' : '#ef4444'};">${trendIcon} ${trend >= 0 ? '+' : ''}${trend.toFixed(1)}%</div>`;
+                    html += '</div>';
+                    
+                    html += '<div style="display: flex; flex-direction: column; gap: 4px;">';
+                    top4Years.forEach(year => {
+                        const value = topBoxData['Top 4 Box'][year];
+                        html += `<div style="display: flex; justify-content: space-between; font-size: 10px; padding: 4px; background: white; border-radius: 4px;">`;
+                        html += `<span style="color: #64748b;">FY ${year}</span>`;
+                        html += `<span style="font-weight: 600; color: #92400e;">${value.toFixed(1)}%</span>`;
+                        html += '</div>';
+                    });
+                    html += '</div>';
+                } else {
+                    html += '<div style="font-size: 10px; color: #9ca3af; text-align: center; padding: 20px;">No data available</div>';
+                }
+                html += '</div>';
+                
+                html += '</div>'; // Close grid
+                
+                // Top Box Trend Summary
+                html += '<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px;">';
+                ['Top 2 Box', 'Top 3 Box', 'Top 4 Box'].forEach(boxType => {
+                    const years = Object.keys(topBoxData[boxType]).sort();
+                    if (years.length > 0) {
+                        const values = years.map(y => topBoxData[boxType][y]);
+                        const avg = values.reduce((a, b) => a + b, 0) / values.length;
+                        const min = Math.min(...values);
+                        const max = Math.max(...values);
+                        
+                        html += '<div style="padding: 12px; background: white; border-radius: 8px; border: 1px solid #e5e7eb;">';
+                        html += `<div style="font-size: 10px; font-weight: 600; color: #6b7280; margin-bottom: 8px;">${boxType} Summary</div>`;
+                        html += '<div style="display: flex; flex-direction: column; gap: 4px; font-size: 10px;">';
+                        html += `<div><span style="color: #9ca3af;">Average:</span> <span style="font-weight: 600; color: #374151;">${avg.toFixed(1)}%</span></div>`;
+                        html += `<div><span style="color: #9ca3af;">Highest:</span> <span style="font-weight: 600; color: #10b981;">${max.toFixed(1)}%</span></div>`;
+                        html += `<div><span style="color: #9ca3af;">Lowest:</span> <span style="font-weight: 600; color: #ef4444;">${min.toFixed(1)}%</span></div>`;
+                        html += '</div></div>';
+                    }
+                });
+                html += '</div>';
+                
+                // Add Key Insights section
                 html += '<div style="padding: 16px; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-left: 4px solid #0ea5e9; border-radius: 8px;">';
                 html += '<div style="font-size: 11px; font-weight: 600; color: #0c4a6e; margin-bottom: 8px;">📌 Key Insights</div>';
                 html += '<div style="font-size: 10px; color: #0c4a6e; line-height: 1.6;">';
