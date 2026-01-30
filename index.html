@@ -9038,7 +9038,7 @@ Total Population: ${totalPop}
                                     return context.datasetIndex === 0 ? 'end' : 'end';
                                 },
                                 color: function(context) {
-                                    return context.datasetIndex === 0 ? '#f04616' : '#3b82f6';
+                                    return context.datasetIndex === 0 ? '#3b82f6' : '#f04616';
                                 },
                                 font: {
                                     size: 9,
@@ -9048,11 +9048,11 @@ Total Population: ${totalPop}
                                     if (!value || isNaN(value)) return '';
                                     
                                     if (context.datasetIndex === 0) {
-                                        // Accuracy - show percentage
-                                        return parseFloat(value).toFixed(1) + '%';
-                                    } else {
-                                        // Audit Count - show number
+                                        // Dataset 0 is now Audit Count - show number
                                         return Math.round(value).toLocaleString();
+                                    } else {
+                                        // Dataset 1 is now Accuracy - show percentage
+                                        return parseFloat(value).toFixed(1) + '%';
                                     }
                                 },
                                 offset: 4
@@ -9075,11 +9075,11 @@ Total Population: ${totalPop}
                                             label += ': ';
                                         }
                                         if (context.datasetIndex === 0) {
-                                            // Accuracy
-                                            label += context.parsed.y.toFixed(1) + '%';
+                                            // Dataset 0 is now Audit Count - show number
+                                            label += Math.round(context.parsed.y).toLocaleString();
                                         } else {
-                                            // Audit Count
-                                            label += context.parsed.y.toLocaleString();
+                                            // Dataset 1 is now Accuracy - show percentage
+                                            label += context.parsed.y.toFixed(1) + '%';
                                         }
                                         return label;
                                     }
