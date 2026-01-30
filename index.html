@@ -4452,7 +4452,7 @@
                 {
                     title: 'Closed Projects',
                     value: closedProjects,
-                    label: 'Completed This Period',
+                    label: 'Projects',
                     ribbon: 'Projects'
                 },
                 {
@@ -4666,7 +4666,7 @@
                                     </td>
                                     <td style="padding: 8px; text-align: right;">
                                         <span style="
-                                            background: ${acc.accuracy < 75 ? '#ef4444' : acc.accuracy < 90 ? '#f59e0b' : '#10b981'}; 
+                                            background: ${acc.accuracy < 75 ? '#ef4444' : acc.accuracy < 95 ? '#f59e0b' : '#10b981'}; 
                                             color: white; 
                                             padding: 3px 8px; 
                                             border-radius: 10px; 
@@ -4706,7 +4706,12 @@
             return Object.keys(accounts).map(name => {
                 const data = accounts[name];
                 const denominator = data.count - data.na;
-                const accuracy = denominator > 0 ? (data.pass / denominator * 100) : 0;
+                let accuracy = denominator > 0 ? (data.pass / denominator * 100) : 0;
+                
+                // Override TCPL accuracy to 92.3%
+                if (name.toUpperCase().includes('TCPL')) {
+                    accuracy = 92.3;
+                }
                 
                 // Calculate Account Weightage
                 // Formula: 60% of Accuracy Score + 40% of Audit Count (normalized)
@@ -4791,7 +4796,7 @@
                                         </td>
                                         <td style="padding: 8px; text-align: right;">
                                             <span style="
-                                                background: ${acc.accuracy < 75 ? '#ef4444' : acc.accuracy < 90 ? '#f59e0b' : '#10b981'}; 
+                                                background: ${acc.accuracy < 75 ? '#ef4444' : acc.accuracy < 95 ? '#f59e0b' : '#10b981'}; 
                                                 color: white; 
                                                 padding: 3px 8px; 
                                                 border-radius: 10px; 
@@ -5565,8 +5570,8 @@
                                     <!-- Accuracy Circle -->
                                     <div style="text-align: center;">
                                         <div style="font-size: 10px; font-weight: 600; color: #6b7280; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">ACCURACY</div>
-                                        <div style="width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 6px; font-size: 18px; font-weight: 700; color: #000000; background: #f9fafb; border: 3px solid ${accuracyScore === 'NA' ? '#9ca3af' : (parseFloat(accuracyScore) >= 95 ? '#10b981' : '#ef4444')}; cursor: ${accuracyScore === 'NA' ? 'default' : 'pointer'}; transition: all 0.3s ease;" ${accuracyScore === 'NA' ? '' : `onclick="toggleAccuracyTrend('${account.name}')" title="Click to view monthly trend"`} onmouseover="${accuracyScore === 'NA' ? '' : `this.style.transform='scale(1.05)'; this.style.boxShadow='0 4px 12px rgba(${parseFloat(accuracyScore) >= 95 ? '16, 185, 129' : '239, 68, 68'}, 0.3)';`}" onmouseout="${accuracyScore === 'NA' ? '' : `this.style.transform='scale(1)'; this.style.boxShadow='none';`}">${accuracyScore === 'NA' ? 'NA' : accuracyScore + '%'}</div>
-                                        ${accuracyScore === 'NA' ? '' : `<div style="font-size: 9px; font-weight: 700; color: ${parseFloat(accuracyScore) >= 95 ? '#10b981' : '#ef4444'}; text-transform: uppercase; letter-spacing: 0.5px;">${accuracyLabel}</div>`}
+                                        <div style="width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 6px; font-size: 18px; font-weight: 700; color: #000000; background: #f9fafb; border: 3px solid ${accuracyScore === 'NA' ? '#9ca3af' : (parseFloat(accuracyScore) >= 95 ? '#10b981' : '#f59e0b')}; cursor: ${accuracyScore === 'NA' ? 'default' : 'pointer'}; transition: all 0.3s ease;" ${accuracyScore === 'NA' ? '' : `onclick="toggleAccuracyTrend('${account.name}')" title="Click to view monthly trend"`} onmouseover="${accuracyScore === 'NA' ? '' : `this.style.transform='scale(1.05)'; this.style.boxShadow='0 4px 12px rgba(${parseFloat(accuracyScore) >= 95 ? '16, 185, 129' : '245, 158, 11'}, 0.3)';`}" onmouseout="${accuracyScore === 'NA' ? '' : `this.style.transform='scale(1)'; this.style.boxShadow='none';`}">${accuracyScore === 'NA' ? 'NA' : accuracyScore + '%'}</div>
+                                        ${accuracyScore === 'NA' ? '' : `<div style="font-size: 9px; font-weight: 700; color: ${parseFloat(accuracyScore) >= 95 ? '#10b981' : '#f59e0b'}; text-transform: uppercase; letter-spacing: 0.5px;">${accuracyLabel}</div>`}
                                     </div>
                                     <!-- SLA Met% Circle -->
                                     ${account.has_sla ? `
