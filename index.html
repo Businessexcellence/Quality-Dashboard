@@ -9050,11 +9050,24 @@ Total Population: ${totalPop}
                                     return context.datasetIndex === 0 ? 'end' : 'end';
                                 },
                                 color: function(context) {
-                                    return context.datasetIndex === 0 ? '#3b82f6' : '#f04616';
+                                    // Dataset 0 (Audit Count bars): White text for contrast
+                                    // Dataset 1 (Accuracy line): Orange text matching line color
+                                    return context.datasetIndex === 0 ? '#ffffff' : '#f04616';
                                 },
                                 font: {
                                     size: 9,
                                     weight: 'bold'
+                                },
+                                backgroundColor: function(context) {
+                                    // Add semi-transparent dark background for bar labels for better contrast
+                                    return context.datasetIndex === 0 ? 'rgba(0, 0, 0, 0.6)' : 'transparent';
+                                },
+                                borderRadius: 4,
+                                padding: {
+                                    top: 2,
+                                    bottom: 2,
+                                    left: 4,
+                                    right: 4
                                 },
                                 formatter: function(value, context) {
                                     if (!value || isNaN(value)) return '';
