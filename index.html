@@ -1893,6 +1893,11 @@
                             <option value="poor">Poor (<75%)</option>
                         </select>
                     </div>
+                    <div style="display: flex; align-items: flex-end;">
+                        <button onclick="clearJourneyFilters()" style="padding: 6px 16px; background: #dc2626; border: none; color: white; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 600; display: flex; align-items: center; gap: 4px; transition: all 0.2s; height: 34px;" onmouseover="this.style.background='#b91c1c'" onmouseout="this.style.background='#dc2626'">
+                            <i class="fas fa-times"></i> Clear All
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -5226,6 +5231,42 @@
                 console.log(`✅ Filtered to ${filtered.length} accounts`);
             } catch (error) {
                 console.error('❌ Error applying journey filters:', error);
+            }
+        }
+        
+        function clearJourneyFilters() {
+            try {
+                console.log('🔄 Clearing all Journey at Glance filters...');
+                
+                // Clear search input
+                const searchInput = document.getElementById('journeySearchInput');
+                if (searchInput) searchInput.value = '';
+                
+                // Reset all dropdowns to "all"
+                const regionFilter = document.getElementById('journeyRegionFilter');
+                if (regionFilter) regionFilter.value = 'all';
+                
+                const statusFilter = document.getElementById('journeyStatusFilter');
+                if (statusFilter) statusFilter.value = 'all';
+                
+                const auditFilter = document.getElementById('journeyAuditFilter');
+                if (auditFilter) auditFilter.value = 'all';
+                
+                const healthFilter = document.getElementById('journeyHealthFilter');
+                if (healthFilter) healthFilter.value = 'all';
+                
+                // Hide suggestions dropdown
+                const suggestionsDiv = document.getElementById('accountSuggestions');
+                if (suggestionsDiv) {
+                    suggestionsDiv.style.display = 'none';
+                }
+                
+                // Reapply filters (which will now show all accounts)
+                applyJourneyFilters();
+                
+                console.log('✅ All Journey at Glance filters cleared');
+            } catch (error) {
+                console.error('❌ Error clearing journey filters:', error);
             }
         }
         
