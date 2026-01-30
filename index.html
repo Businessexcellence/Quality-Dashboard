@@ -2013,7 +2013,7 @@
                 <!-- Critical/Non Critical Breakdown -->
                 <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 10px;">
                     <h3 style="font-size: 12px; font-weight: 700; color: var(--text-primary); margin: 0 0 8px 0;">
-                        <i class="fas fa-flag" style="color: var(--primary); font-size: 11px;"></i> Critical/Non Critical
+                        <i class="fas fa-flag" style="color: var(--primary); font-size: 11px;"></i> Critical & Non Critical Parameters
                     </h3>
                     <div id="criticalBreakdown" style="overflow-x: auto;">
                         <!-- Critical table will be populated -->
@@ -2212,14 +2212,14 @@
                 <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 8px; color: #000000;">
                     <div style="font-size: 9px; margin-bottom: 3px; color: #000000; display: flex; align-items: center; gap: 4px;">
                         <i class="fas fa-exclamation-circle" style="font-size: 10px; color: #000000; font-weight: 400;"></i>
-                        <span>CRITICAL PARAMS</span>
+                        <span>CRITICAL PARAMETERS</span>
                     </div>
                     <div style="font-size: 22px; font-weight: 700; color: #000000;" id="paramCriticalCount">0</div>
                 </div>
                 <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 8px; color: #000000;">
                     <div style="font-size: 9px; margin-bottom: 3px; color: #000000; display: flex; align-items: center; gap: 4px;">
                         <i class="fas fa-check-double" style="font-size: 10px; color: #000000; font-weight: 400;"></i>
-                        <span>NON-CRITICAL PARAMS</span>
+                        <span>NON-CRITICAL PARAMETERS</span>
                     </div>
                     <div style="font-size: 22px; font-weight: 700; color: #000000;" id="paramNonCriticalCount">0</div>
                 </div>
@@ -2311,14 +2311,14 @@
                 <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 8px; color: #000000;">
                     <div style="font-size: 9px; margin-bottom: 3px; color: #000000; display: flex; align-items: center; gap: 4px;">
                         <i class="fas fa-star" style="font-size: 10px; color: #000000; font-weight: 400;"></i>
-                        <span>CRITICAL ACCURACY</span>
+                        <span>CRITICAL PARAMETER</span>
                     </div>
                     <div style="font-size: 22px; font-weight: 700; color: #000000;" id="recruiterCriticalAccuracy">0%</div>
                 </div>
                 <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 8px; color: #000000;">
                     <div style="font-size: 9px; margin-bottom: 3px; color: #000000; display: flex; align-items: center; gap: 4px;">
                         <i class="fas fa-check-double" style="font-size: 10px; color: #000000; font-weight: 400;"></i>
-                        <span>NON-CRITICAL ACC</span>
+                        <span>NON CRITICAL PARAMETER</span>
                     </div>
                     <div style="font-size: 22px; font-weight: 700; color: #000000;" id="recruiterNonCriticalAccuracy">0%</div>
                 </div>
@@ -8500,11 +8500,12 @@ Total Population: ${totalPop}
                         <tbody>
                             ${criticalRows.map(row => {
                                 const icon = row.type === 'Critical' ? '🔴' : row.type === 'Non Critical' ? '🟢' : '⚪';
+                                const displayType = row.type === 'Critical' ? 'Critical Parameter' : row.type === 'Non Critical' ? 'Non Critical Parameter' : row.type;
                                 return `
                                     <tr style="border-bottom: 1px solid var(--border); transition: background 0.2s;" 
                                         onmouseover="this.style.background='var(--bg-hover)'" 
                                         onmouseout="this.style.background='transparent'">
-                                        <td style="padding: 5px; font-size: 10px; color: var(--text-primary); font-weight: 600;">${icon} ${row.type}</td>
+                                        <td style="padding: 5px; font-size: 10px; color: var(--text-primary); font-weight: 600;">${icon} ${displayType}</td>
                                         <td style="padding: 5px; text-align: center;">
                                             <span style="background: ${row.accuracy > 90 ? '#10b981' : row.accuracy >= 75 ? '#f59e0b' : '#ef4444'}; color: white; padding: 2px 6px; border-radius: 8px; font-size: 9px; font-weight: 700;">${row.accuracy}%</span>
                                         </td>
