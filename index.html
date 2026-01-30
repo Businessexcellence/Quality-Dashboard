@@ -2065,6 +2065,91 @@
             </div>
         </div>
 
+        <!-- Head Accounts Modal -->
+        <div id="headAccountsModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; justify-content: center; align-items: center;">
+            <div style="background: white; border-radius: 12px; padding: 30px; max-width: 800px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 id="modalHeadTitle" style="font-size: 20px; font-weight: 700; color: #374151; margin: 0;"></h3>
+                    <button onclick="closeHeadAccountsModal()" style="background: none; border: none; font-size: 24px; color: #6b7280; cursor: pointer; padding: 0; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; transition: color 0.2s;" onmouseover="this.style.color='#ef4444'" onmouseout="this.style.color='#6b7280'">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div id="modalAccountsList" style="margin-top: 15px;">
+                    <!-- Accounts list will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Account Navigation Menu Modal -->
+        <div id="accountNavigationModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10001; justify-content: center; align-items: center;">
+            <div style="background: white; border-radius: 12px; padding: 30px; max-width: 500px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 id="navigationAccountName" style="font-size: 20px; font-weight: 700; color: #374151; margin: 0;"></h3>
+                    <button onclick="closeAccountNavigationModal()" style="background: none; border: none; font-size: 24px; color: #6b7280; cursor: pointer; padding: 0; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; transition: color 0.2s;" onmouseover="this.style.color='#ef4444'" onmouseout="this.style.color='#6b7280'">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div style="margin-bottom: 20px; padding: 12px; background: #f3f4f6; border-radius: 8px;">
+                    <p style="font-size: 14px; color: #6b7280; margin: 0;">
+                        <i class="fas fa-info-circle" style="color: #3b82f6; margin-right: 6px;"></i>
+                        Choose a view to navigate to for this account
+                    </p>
+                </div>
+                <div style="display: grid; gap: 12px;">
+                    <!-- Journey at a Glance -->
+                    <div onclick="navigateToAccountView('journey-at-glance')" 
+                         style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 10px; cursor: pointer; transition: all 0.3s; border: 2px solid transparent;"
+                         onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(102,126,234,0.4)'; this.style.borderColor='#667eea';"
+                         onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'; this.style.borderColor='transparent';">
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div style="background: rgba(255,255,255,0.2); width: 50px; height: 50px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 24px;">
+                                <i class="fas fa-route"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-size: 18px; font-weight: 700; margin-bottom: 4px;">Journey at a Glance</div>
+                                <div style="font-size: 13px; opacity: 0.9;">View complete account journey and overview</div>
+                            </div>
+                            <i class="fas fa-arrow-right" style="font-size: 20px;"></i>
+                        </div>
+                    </div>
+
+                    <!-- Parameter Performance -->
+                    <div onclick="navigateToAccountView('audit-summary')" 
+                         style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 20px; border-radius: 10px; cursor: pointer; transition: all 0.3s; border: 2px solid transparent;"
+                         onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(240,147,251,0.4)'; this.style.borderColor='#f093fb';"
+                         onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'; this.style.borderColor='transparent';">
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div style="background: rgba(255,255,255,0.2); width: 50px; height: 50px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 24px;">
+                                <i class="fas fa-clipboard-check"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-size: 18px; font-weight: 700; margin-bottom: 4px;">Parameter Performance</div>
+                                <div style="font-size: 13px; opacity: 0.9;">View parameter-wise audit performance</div>
+                            </div>
+                            <i class="fas fa-arrow-right" style="font-size: 20px;"></i>
+                        </div>
+                    </div>
+
+                    <!-- Recruiter Insights -->
+                    <div onclick="navigateToAccountView('recruiter')" 
+                         style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 20px; border-radius: 10px; cursor: pointer; transition: all 0.3s; border: 2px solid transparent;"
+                         onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(79,172,254,0.4)'; this.style.borderColor='#4facfe';"
+                         onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'; this.style.borderColor='transparent';">
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div style="background: rgba(255,255,255,0.2); width: 50px; height: 50px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 24px;">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-size: 18px; font-weight: 700; margin-bottom: 4px;">Recruiter Insights</div>
+                                <div style="font-size: 13px; opacity: 0.9;">View recruiter-wise performance data</div>
+                            </div>
+                            <i class="fas fa-arrow-right" style="font-size: 20px;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div id="audit-summary" class="tab-content">
             <!-- Drill-Down Filters Section -->
             <div style="background: #f5f5f5; border: 1px solid #e0e0e0; border-radius: 6px; padding: 12px; margin-bottom: 12px; position: relative;">
@@ -2707,44 +2792,18 @@
                 </h2>
             </div>
 
-            <!-- NPS Comparison Section - Compact -->
-            <div style="background: white; border: 1px solid var(--border); border-radius: 6px; padding: 8px; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                <h3 style="font-size: 12px; font-weight: 700; color: var(--text-primary); margin: 0 0 8px 0; display: flex; align-items: center;">
-                    <i class="fas fa-chart-bar" style="color: var(--primary); font-size: 10px; margin-right: 6px;"></i>
-                    NPS Comparison: Taggd vs Competitor vs Industry
+            <!-- Top Box Comparison Section -->
+            <div style="background: white; border: 1px solid var(--border); border-radius: 6px; padding: 12px; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                <h3 style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin: 0 0 12px 0; display: flex; align-items: center;">
+                    <i class="fas fa-chart-line" style="color: var(--primary); font-size: 11px; margin-right: 6px;"></i>
+                    Top Box Comparison Across Financial Years
                 </h3>
-                <div id="npsComparisonContainer">
-                    <!-- NPS comparison will be displayed here -->
+                <div id="topBoxComparisonContainer">
+                    <!-- Top Box comparison will be displayed here -->
                 </div>
             </div>
 
-            <!-- CSAT Data Table - Compact with 1/4 height and scrollbar -->
-            <div style="background: white; border: 1px solid var(--border); border-radius: 6px; padding: 8px;">
-                <h3 style="font-size: 12px; font-weight: 700; color: var(--text-primary); margin: 0 0 6px 0; display: flex; align-items: center; justify-content: space-between;">
-                    <span>
-                        <i class="fas fa-table" style="color: var(--primary); font-size: 10px; margin-right: 6px;"></i>
-                        CSAT Data Details
-                    </span>
-                    <span id="csatTableCount" style="font-size: 10px; color: var(--text-secondary);">0 records</span>
-                </h3>
-                <div style="overflow-x: auto; overflow-y: auto; max-height: 400px; border: 1px solid var(--border); border-radius: 4px;">
-                    <table id="csatTable" class="data-table" style="width: 100%; border-collapse: collapse; font-size: 10px;">
-                        <thead style="position: sticky; top: 0; background: white; z-index: 10;">
-                            <tr id="csatTableHeader">
-                                <!-- Headers will be dynamically populated -->
-                            </tr>
-                        </thead>
-                        <tbody id="csatTableBody">
-                            <tr>
-                                <td colspan="100%" style="text-align: center; padding: 30px; color: #9ca3af;">
-                                    <i class="fas fa-inbox" style="font-size: 32px; opacity: 0.3; margin-bottom: 8px; display: block;"></i>
-                                    <p style="margin: 0; font-size: 10px;">No CSAT data available. Upload Base File.xlsx to load data.</p>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            <!-- CSAT Data Table - REMOVED AS PER USER REQUEST -->
         </div>
     </div>
 
@@ -3409,7 +3468,7 @@
                 }
                 
                 populateCSATFilters();
-                renderNPSComparison();
+                renderTopBoxComparison();
                 renderCSATTable();
                 
                 console.log('✅ CSAT tab refreshed');
@@ -3424,6 +3483,13 @@
         function populateCSATFilters() {
             try {
                 const container = document.getElementById('csatFilters');
+                
+                // Check if container exists
+                if (!container) {
+                    console.warn('⚠️ csatFilters container not found - skipping CSAT filter population');
+                    return;
+                }
+                
                 const data = window.dashboardData.csat;
                 
                 if (!data || data.length === 0) {
@@ -3564,7 +3630,7 @@
                 
                 // Update UI
                 updateCSATFilterButtons();
-                renderNPSComparison();
+                renderTopBoxComparison();
                 renderCSATTable();
                 
                 console.log('Active CSAT filters:', window.activeCSATFilters);
@@ -3604,7 +3670,7 @@
             try {
                 window.activeCSATFilters = {};
                 updateCSATFilterButtons();
-                renderNPSComparison();
+                renderTopBoxComparison();
                 renderCSATTable();
                 console.log('✅ CSAT filters cleared');
             } catch (error) {
@@ -3637,373 +3703,259 @@
             }
         }
         
-        function renderNPSComparison() {
+        function renderTopBoxComparison() {
             try {
-                const container = document.getElementById('npsComparisonContainer');
-                // Use ALL CSAT data (not filtered) to get all years
+                const container = document.getElementById('topBoxComparisonContainer');
+                if (!container) {
+                    console.warn('⚠️ topBoxComparisonContainer not found - skipping Top Box rendering');
+                    return;
+                }
+                
                 const allData = window.dashboardData.csat || [];
                 
-                console.log('📊 All CSAT data for NPS:', allData.length, 'rows');
+                console.log('📊 ========== TOP BOX DEBUGGING ==========');
+                console.log('📊 CSAT data loaded:', allData.length, 'rows');
+                console.log('📊 Dashboard data keys:', Object.keys(window.dashboardData || {}));
+                
                 if (allData.length > 0) {
-                    console.log('📊 Sample CSAT row:', allData[0]);
+                    console.log('📊 Sample CSAT row (first row):', allData[0]);
+                    console.log('📊 CSAT column names:', Object.keys(allData[0]));
+                    console.log('📊 Values column content (first 5 rows):', allData.slice(0, 5).map(r => r['Values']));
+                    
+                    // Log all unique parameters AND sub parameters to help debug
+                    const uniqueParams = [...new Set(allData.map(row => String(row['Parameter'] || '').trim()))].filter(Boolean);
+                    const uniqueSubParams = [...new Set(allData.map(row => String(row['Sub Parameter 1'] || '').trim()))].filter(Boolean);
+                    console.log('📊 All unique parameters in CSAT data:', uniqueParams);
+                    console.log('📊 All unique sub parameters (Sub Parameter 1):', uniqueSubParams);
+                    console.log('📊 Looking for "Top 2/3/4 Box" in BOTH Parameter and Sub Parameter 1 columns');
+                    
+                    // Check for specific patterns
+                    const top2Params = allData.filter(row => {
+                        const param = String(row['Parameter'] || '').trim().toLowerCase();
+                        const subParam = String(row['Sub Parameter 1'] || '').trim().toLowerCase();
+                        return (param + ' ' + subParam).includes('top') && (param + ' ' + subParam).includes('2');
+                    });
+                    console.log('📊 Rows with "top" and "2":', top2Params.length);
+                    if (top2Params.length > 0) {
+                        console.log('📊 Sample Top 2 row:', {
+                            Parameter: top2Params[0]['Parameter'],
+                            'Sub Parameter 1': top2Params[0]['Sub Parameter 1'],
+                            'Financial Year': top2Params[0]['Financial Year'],
+                            Values: top2Params[0]['Values']
+                        });
+                    }
+                } else {
+                    console.error('❌ NO CSAT DATA LOADED!');
+                    console.log('❌ Please check if BaseFile.xlsx contains a "CSAT" sheet');
+                    console.log('❌ Please check if the CSAT sheet has columns: "Financial Year", "Parameter", "Values"');
                 }
+                console.log('📊 ========================================');
                 
                 if (allData.length === 0) {
                     container.innerHTML = '<div style="text-align: center; padding: 20px; color: #9ca3af;">No data available for comparison</div>';
                     return;
                 }
                 
-                // Extract Taggd NPS data for each year (2022, 2023, 2024) from Column G (Values)
-                const taggdNPSByYear = {
-                    '2022': 0,
-                    '2023': 0,
-                    '2024': 0
+                // Extract Top 2, Top 3, Top 4 Box data from CSAT
+                // Looking for parameters that contain "Top 2 Box", "Top 3 Box", "Top 4 Box"
+                const topBoxData = {
+                    'Top 2 Box': {},
+                    'Top 3 Box': {},
+                    'Top 4 Box': {}
                 };
                 
+                // Extract all unique financial years
+                const financialYears = [...new Set(allData.map(row => String(row['Financial Year'] || '').trim()))].filter(Boolean).sort();
+                
+                console.log('📊 Financial Years found:', financialYears);
+                
+                // Extract Top Box values for each year
+                // NOTE: Top Box data is in "Sub Parameter 1" column (Column D), not "Parameter" column
                 allData.forEach(row => {
-                    const parameter = String(row['Parameter'] || '').trim(); // Column C
-                    const financialYear = String(row['Financial Year'] || '').trim(); // Column B
-                    const value = parseFloat(row['Values'] || 0); // Column G - UPDATED
+                    // Check BOTH Parameter and Sub Parameter 1 columns
+                    const parameter = String(row['Parameter'] || '').trim().toLowerCase();
+                    const subParameter1 = String(row['Sub Parameter 1'] || '').trim().toLowerCase();
+                    const financialYear = String(row['Financial Year'] || '').trim();
+                    let value = parseFloat(row['Values'] || 0);
                     
-                    // Look for NPS Score parameter (Column C)
-                    if (parameter.toLowerCase().includes('nps') && parameter.toLowerCase().includes('score')) {
-                        // Check which year
-                        if (financialYear.includes('2022') || financialYear === '2022') {
-                            taggdNPSByYear['2022'] = value;
-                            console.log(`📊 Found Taggd NPS 2022: ${value}`);
-                        } else if (financialYear.includes('2023') || financialYear === '2023') {
-                            taggdNPSByYear['2023'] = value;
-                            console.log(`📊 Found Taggd NPS 2023: ${value}`);
-                        } else if (financialYear.includes('2024') || financialYear === '2024') {
-                            taggdNPSByYear['2024'] = value;
-                            console.log(`📊 Found Taggd NPS 2024: ${value}`);
+                    // If value is between 0 and 1, convert to percentage
+                    if (value > 0 && value <= 1) {
+                        value = value * 100;
+                    }
+                    
+                    // Search in both Parameter and Sub Parameter 1
+                    const searchText = parameter + ' ' + subParameter1;
+                    
+                    // More flexible matching - check for "top" AND "2" AND "box"
+                    // Check for Top 2 Box
+                    if (searchText.includes('top') && searchText.includes('2') && searchText.includes('box')) {
+                        if (financialYear && !topBoxData['Top 2 Box'][financialYear]) {
+                            topBoxData['Top 2 Box'][financialYear] = value;
+                            console.log(`📊 Found Top 2 Box for ${financialYear}: ${value.toFixed(1)}% (Sub Parameter: "${row['Sub Parameter 1']}")`);
+                        }
+                    }
+                    
+                    // Check for Top 3 Box
+                    if (searchText.includes('top') && searchText.includes('3') && searchText.includes('box')) {
+                        if (financialYear && !topBoxData['Top 3 Box'][financialYear]) {
+                            topBoxData['Top 3 Box'][financialYear] = value;
+                            console.log(`📊 Found Top 3 Box for ${financialYear}: ${value.toFixed(1)}% (Sub Parameter: "${row['Sub Parameter 1']}")`);
+                        }
+                    }
+                    
+                    // Check for Top 4 Box
+                    if (searchText.includes('top') && searchText.includes('4') && searchText.includes('box')) {
+                        if (financialYear && !topBoxData['Top 4 Box'][financialYear]) {
+                            topBoxData['Top 4 Box'][financialYear] = value;
+                            console.log(`📊 Found Top 4 Box for ${financialYear}: ${value.toFixed(1)}% (Sub Parameter: "${row['Sub Parameter 1']}")`);
                         }
                     }
                 });
                 
-                // Web-researched competitor NPS data (sourced from Comparably, Annual Reports, ClearlyRated)
-                const competitorNPSByYear = {
-                    '2022': {
-                        'Taggd': taggdNPSByYear['2022'],
-                        'Randstad': 19,
-                        'Adecco Group': 32,
-                        'ManpowerGroup': 2,
-                        'Industry Average': 43
-                    },
-                    '2023': {
-                        'Taggd': taggdNPSByYear['2023'],
-                        'Randstad': 19,
-                        'Adecco Group': 35,
-                        'ManpowerGroup': 2,
-                        'Industry Average': 44
-                    },
-                    '2024': {
-                        'Taggd': taggdNPSByYear['2024'],
-                        'Randstad': 19,
-                        'Adecco Group': 37,
-                        'ManpowerGroup': 2,
-                        'Industry Average': 45
-                    }
+                console.log('📊 Top Box Data extracted:', topBoxData);
+                console.log('📊 Top 2 Box years:', Object.keys(topBoxData['Top 2 Box']));
+                console.log('📊 Top 3 Box years:', Object.keys(topBoxData['Top 3 Box']));
+                console.log('📊 Top 4 Box years:', Object.keys(topBoxData['Top 4 Box']));
+                
+                // Create HTML for Top Box comparison
+                let html = '';
+                
+                // Header
+                html += '<div style="margin-bottom: 16px;">';
+                html += '<h4 style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin: 0 0 8px 0; display: flex; align-items: center;">';
+                html += '<i class="fas fa-star" style="margin-right: 8px; color: #f59e0b;"></i>';
+                html += 'Customer Satisfaction: Top Box Analysis';
+                html += '</h4>';
+                html += '<p style="font-size: 11px; color: var(--text-secondary); margin: 0;">Comparison of Top 2, Top 3, and Top 4 Box scores across all financial years</p>';
+                html += '</div>';
+                
+                // Create cards for each Top Box metric
+                html += '<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 16px;">';
+                
+                const boxTypes = ['Top 2 Box', 'Top 3 Box', 'Top 4 Box'];
+                const boxColors = {
+                    'Top 2 Box': { primary: '#10b981', light: '#d1fae5', border: '#6ee7b7' },
+                    'Top 3 Box': { primary: '#3b82f6', light: '#dbeafe', border: '#93c5fd' },
+                    'Top 4 Box': { primary: '#8b5cf6', light: '#f3e8ff', border: '#c4b5fd' }
                 };
                 
-                console.log('📊 Taggd NPS By Year:', taggdNPSByYear);
-                console.log('📊 Competitor NPS By Year (with web data):', competitorNPSByYear);
-                
-                // Create Year-wise NPS Comparison HTML
-                let html = '<div style="margin-bottom: 20px;">';
-                html += '<h4 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin: 0 0 16px 0; border-bottom: 3px solid var(--primary); padding-bottom: 8px; display: flex; align-items: center;"><i class="fas fa-chart-line" style="margin-right: 8px; color: var(--primary);"></i>NPS Score Comparison: Taggd vs RPO Industry Leaders (2022 - 2024)</h4>';
-                
-                // Create a card for each year
-                html += '<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px;">';
-                
-                ['2022', '2023', '2024'].forEach((year, index) => {
-                    const yearData = competitorNPSByYear[year];
-                    const companies = Object.entries(yearData);
-                    const maxNPS = Math.max(...Object.values(yearData));
-                    const hasData = maxNPS > 0;
-                    
-                    // Color scheme for each year
-                    const yearColors = {
-                        '2022': { primary: '#8b5cf6', light: '#f3e8ff', border: '#c4b5fd' },
-                        '2023': { primary: '#3b82f6', light: '#dbeafe', border: '#93c5fd' },
-                        '2024': { primary: '#10b981', light: '#d1fae5', border: '#6ee7b7' }
-                    };
-                    const colors = yearColors[year];
+                boxTypes.forEach(boxType => {
+                    const colors = boxColors[boxType];
+                    const yearData = topBoxData[boxType];
+                    const years = Object.keys(yearData).sort();
+                    const hasData = years.length > 0 && Object.values(yearData).some(v => v > 0);
                     
                     html += `
                         <div style="background: white; border: 3px solid ${colors.border}; border-radius: 12px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                            <div style="text-align: center; margin-bottom: 14px;">
+                            <div style="text-align: center; margin-bottom: 12px;">
                                 <div style="display: inline-block; background: ${colors.light}; border: 2px solid ${colors.primary}; border-radius: 8px; padding: 8px 16px;">
-                                    <div style="font-size: 11px; font-weight: 600; color: ${colors.primary}; text-transform: uppercase; letter-spacing: 0.5px;">Financial Year</div>
-                                    <div style="font-size: 24px; font-weight: 900; color: ${colors.primary}; margin-top: 2px;">${year}</div>
+                                    <div style="font-size: 16px; font-weight: 900; color: ${colors.primary};">${boxType}</div>
                                 </div>
                             </div>
-                            
-                            ${!hasData ? `
-                                <div style="text-align: center; padding: 20px; color: #9ca3af; font-size: 10px;">
-                                    <i class="fas fa-info-circle" style="font-size: 24px; margin-bottom: 8px; opacity: 0.3;"></i>
-                                    <div>No NPS data available</div>
-                                </div>
-                            ` : companies.map(([company, nps]) => {
-                                const isTaggd = company === 'Taggd';
-                                const isIndustryAvg = company === 'Industry Average';
-                                const isMax = nps === maxNPS && nps > 0;
-                                
-                                return `
-                                    <div style="margin-bottom: 10px; background: ${isTaggd ? colors.light : '#f9fafb'}; border-radius: 6px; padding: 10px; border: ${isTaggd ? `2px solid ${colors.primary}` : '1px solid #e5e7eb'};">
-                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                                            <div style="font-size: 10px; font-weight: 700; color: ${isTaggd ? colors.primary : '#6b7280'}; text-transform: uppercase;">
-                                                ${isTaggd ? '🎯' : isIndustryAvg ? '📊' : '🏢'} ${company}
-                                            </div>
-                                            <div style="font-size: 18px; font-weight: 900; color: ${isMax ? colors.primary : '#1f2937'};">
-                                                ${nps}${isMax ? ' 👑' : ''}
-                                            </div>
-                                        </div>
-                                        <div style="background: ${isTaggd ? 'white' : '#e5e7eb'}; height: 8px; border-radius: 4px; overflow: hidden;">
-                                            <div style="background: ${isTaggd ? colors.primary : '#6b7280'}; height: 100%; width: ${(nps / maxNPS) * 100}%; transition: width 0.5s ease;"></div>
-                                        </div>
-                                    </div>
-                                `;
-                            }).join('')}
-                        </div>
                     `;
+                    
+                    if (!hasData) {
+                        html += `
+                            <div style="text-align: center; padding: 20px; color: #9ca3af; font-size: 11px;">
+                                <i class="fas fa-info-circle" style="font-size: 24px; margin-bottom: 8px; opacity: 0.3;"></i>
+                                <div>No data available</div>
+                            </div>
+                        `;
+                    } else {
+                        // Calculate trend
+                        const firstYear = years[0];
+                        const lastYear = years[years.length - 1];
+                        const firstValue = yearData[firstYear] || 0;
+                        const lastValue = yearData[lastYear] || 0;
+                        const trend = lastValue - firstValue;
+                        const trendIcon = trend > 0 ? '📈' : trend < 0 ? '📉' : '➡️';
+                        const trendColor = trend > 0 ? '#10b981' : trend < 0 ? '#ef4444' : '#6b7280';
+                        
+                        // Show trend card
+                        html += `
+                            <div style="background: ${colors.light}; border-radius: 6px; padding: 10px; margin-bottom: 12px; border: 2px solid ${colors.primary};">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 10px; color: ${colors.primary}; font-weight: 600; margin-bottom: 4px;">Trend (${firstYear} → ${lastYear})</div>
+                                    <div style="font-size: 20px; font-weight: 900; color: ${trendColor};">${trendIcon} ${trend > 0 ? '+' : ''}${trend.toFixed(1)}%</div>
+                                </div>
+                            </div>
+                        `;
+                        
+                        // Show year-by-year data
+                        years.forEach(year => {
+                            const value = yearData[year] || 0;
+                            const maxValue = Math.max(...Object.values(yearData));
+                            const isMax = value === maxValue && value > 0;
+                            
+                            html += `
+                                <div style="margin-bottom: 8px; background: white; border-radius: 6px; padding: 10px; border: 1px solid #e5e7eb;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                        <div style="font-size: 11px; font-weight: 700; color: #6b7280;">FY ${year}</div>
+                                        <div style="font-size: 18px; font-weight: 900; color: ${colors.primary};">
+                                            ${value.toFixed(1)}%${isMax ? ' 👑' : ''}
+                                        </div>
+                                    </div>
+                                    <div style="background: #e5e7eb; height: 6px; border-radius: 3px; overflow: hidden;">
+                                        <div style="background: ${colors.primary}; height: 100%; width: ${value}%; transition: width 0.5s ease;"></div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    }
+                    
+                    html += '</div>';
                 });
                 
                 html += '</div>';
                 
-                // Add trend analysis for Taggd
-                const taggdTrend = taggdNPSByYear['2024'] - taggdNPSByYear['2022'];
-                const trendIcon = taggdTrend > 0 ? '📈' : taggdTrend < 0 ? '📉' : '➡️';
-                const trendColor = taggdTrend > 0 ? '#10b981' : taggdTrend < 0 ? '#ef4444' : '#6b7280';
-                const trendText = taggdTrend > 0 ? 'Growth' : taggdTrend < 0 ? 'Decline' : 'Stable';
+                // Add comprehensive insights section with all three Top Box trends
+                html += '<div style="margin-top: 16px; padding: 16px; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-left: 4px solid #0ea5e9; border-radius: 8px;">';
+                html += '<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;"><strong style="font-size: 13px; color: #0c4a6e;">📊 Top Box Trend Summary</strong></div>';
                 
-                html += '<div style="padding: 14px; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-left: 4px solid #0ea5e9; border-radius: 8px; font-size: 11px; color: #0c4a6e; margin-bottom: 20px;">';
-                html += '<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;"><strong style="font-size: 13px;">📊 Taggd NPS Trend Analysis (2022 → 2024)</strong></div>';
-                html += `<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">`;
-                
-                // Trend Movement
-                html += `<div style="background: white; padding: 10px; border-radius: 6px; border: 2px solid ${trendColor};">`;
-                html += `<div style="font-size: 9px; color: #64748b; margin-bottom: 4px; font-weight: 600;">Movement</div>`;
-                html += `<div style="font-size: 20px; font-weight: 900; color: ${trendColor};">${trendIcon} ${taggdTrend > 0 ? '+' : ''}${taggdTrend.toFixed(0)}</div>`;
-                html += `<div style="font-size: 8px; color: #64748b; margin-top: 2px;">${trendText}</div>`;
-                html += `</div>`;
-                
-                // 2022 Score
-                html += `<div style="background: white; padding: 10px; border-radius: 6px; border: 2px solid #c4b5fd;">`;
-                html += `<div style="font-size: 9px; color: #64748b; margin-bottom: 4px; font-weight: 600;">2022 Score</div>`;
-                html += `<div style="font-size: 20px; font-weight: 900; color: #8b5cf6;">${taggdNPSByYear['2022']}</div>`;
-                html += `<div style="font-size: 8px; color: #64748b; margin-top: 2px;">Starting Point</div>`;
-                html += `</div>`;
-                
-                // 2024 Score
-                html += `<div style="background: white; padding: 10px; border-radius: 6px; border: 2px solid #6ee7b7;">`;
-                html += `<div style="font-size: 9px; color: #64748b; margin-bottom: 4px; font-weight: 600;">2024 Score</div>`;
-                html += `<div style="font-size: 20px; font-weight: 900; color: #10b981;">${taggdNPSByYear['2024']}</div>`;
-                html += `<div style="font-size: 8px; color: #64748b; margin-top: 2px;">Current</div>`;
-                html += `</div>`;
-                
-                html += `</div></div>`;
-                
-                // Add data source note with clickable links
-                html += '<div style="padding: 14px; background: #fffbeb; border-left: 4px solid #f59e0b; border-radius: 6px; font-size: 10px; color: #78350f; margin-bottom: 20px; line-height: 1.6;">';
-                html += '<div style="font-weight: 700; margin-bottom: 8px; font-size: 11px;">📌 Data Sources & References:</div>';
-                html += '<div style="margin-bottom: 6px;"><strong>🎯 Taggd NPS:</strong> Internal CSAT data (Column G, Parameter: NPS Score)</div>';
-                html += '<div style="margin-bottom: 4px;"><strong>🏢 Competitor NPS Data:</strong></div>';
-                html += '<ul style="margin: 4px 0 4px 16px; padding: 0; list-style: disc;">';
-                html += '<li style="margin-bottom: 3px;"><strong>Randstad (NPS: 19):</strong> <a href="https://www.comparably.com/brands/randstad" target="_blank" rel="noopener noreferrer" style="color: #0ea5e9; text-decoration: underline; font-weight: 600;">Comparably - Randstad NPS</a></li>';
-                html += '<li style="margin-bottom: 3px;"><strong>Adecco Group (2022: 32, 2023: 35, 2024: 37):</strong> <a href="https://www.adeccogroup.com/-/media/project/adecco-group/adeccogroup/pdf-files/Annual-Report-2022/Adecco-Group-Annual-Report-2022.pdf" target="_blank" rel="noopener noreferrer" style="color: #0ea5e9; text-decoration: underline; font-weight: 600;">2022 Annual Report</a>, <a href="https://www.adeccogroup.com/-/media/project/Adecco%20Group/adeccogroup/pdf-files/2024-march/the-adecco-group-annual-report-2023.pdf" target="_blank" rel="noopener noreferrer" style="color: #0ea5e9; text-decoration: underline; font-weight: 600;">2023 Annual Report</a>, <a href="https://www.adeccogroup.com/-/media/project/adecco-group/adeccogroup/pdf-files/2025-march/the-adecco-group-annual-report-2024.pdf" target="_blank" rel="noopener noreferrer" style="color: #0ea5e9; text-decoration: underline; font-weight: 600;">2024 Annual Report</a></li>';
-                html += '<li style="margin-bottom: 3px;"><strong>ManpowerGroup (NPS: 2):</strong> <a href="https://www.comparably.com/brands/manpowergroup" target="_blank" rel="noopener noreferrer" style="color: #0ea5e9; text-decoration: underline; font-weight: 600;">Comparably - ManpowerGroup NPS</a></li>';
-                html += '<li style="margin-bottom: 3px;"><strong>Industry Average (2022: 43, 2023: 44, 2024: 45):</strong> <a href="https://www.clearlyrated.com/industry-benchmark/nps-benchmarks-for-the-staffing-industry" target="_blank" rel="noopener noreferrer" style="color: #0ea5e9; text-decoration: underline; font-weight: 600;">ClearlyRated 2024 Staffing Industry Benchmark Report</a></li>';
-                html += '</ul>';
-                html += '<div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #fcd34d; font-size: 9px; color: #92400e;"><em>💡 All links open in a new tab. Data collected from publicly available reports and industry benchmarks.</em></div>';
-                html += '</div>';
-                
-                // Add Coverage Respondents & Levels Overview
-                const filteredData = getFilteredCSATData();
-                
-                // Extract data for "Coverage Respondents & Levels" parameter
-                const coverageData = filteredData.filter(row => {
-                    const parameter = String(row['Parameter'] || '').trim();
-                    return parameter.toLowerCase().includes('coverage') && 
-                           (parameter.toLowerCase().includes('respondent') || parameter.toLowerCase().includes('level'));
+                // Calculate trends for all three boxes
+                const allTrends = [];
+                ['Top 2 Box', 'Top 3 Box', 'Top 4 Box'].forEach(boxType => {
+                    const years = Object.keys(topBoxData[boxType]).sort();
+                    if (years.length > 0) {
+                        const firstYear = years[0];
+                        const lastYear = years[years.length - 1];
+                        const firstValue = topBoxData[boxType][firstYear] || 0;
+                        const lastValue = topBoxData[boxType][lastYear] || 0;
+                        const change = lastValue - firstValue;
+                        allTrends.push({ boxType, firstYear, lastYear, firstValue, lastValue, change });
+                    }
                 });
                 
-                if (coverageData.length > 0) {
-                    console.log('📊 Coverage Respondents & Levels data:', coverageData);
-                    
-                    // View 1: Polled and Responded (using Financial Year, Parameter, Sub Parameter 1, Sub Parameter 2, Values)
-                    const polledRespondedData = {};
-                    
-                    // View 2: Senior and Operational Level (using Financial Year, Parameter, Sub Parameter 1, Sub Parameter 2, Level, Values)
-                    const levelWiseData = {};
-                    
-                    coverageData.forEach(row => {
-                        const financialYear = String(row['Financial Year'] || '').trim();
-                        const parameter = String(row['Parameter'] || '').trim();
-                        const subParam1 = String(row['Sub Parameter 1'] || '').trim();
-                        const subParam2 = String(row['Sub Parameter 2'] || '').trim();
-                        const level = String(row['Level'] || '').trim();
-                        const value = parseFloat(row['Values'] || 0);
-                        
-                        // View 1: Check Sub Parameter 2 for "Polled" or "Responded"
-                        if (subParam2.toLowerCase().includes('polled') || subParam2.toLowerCase().includes('responded')) {
-                            if (!polledRespondedData[financialYear]) {
-                                polledRespondedData[financialYear] = { polled: 0, responded: 0 };
-                            }
-                            if (subParam2.toLowerCase().includes('polled')) {
-                                polledRespondedData[financialYear].polled = value;
-                            } else if (subParam2.toLowerCase().includes('responded')) {
-                                polledRespondedData[financialYear].responded = value;
-                            }
-                        }
-                        
-                        // View 2: Check Level for "Senior" or "Operational" AND Sub Parameter 2 for "Polled" or "Responded"
-                        if (level && (level.toLowerCase().includes('senior') || level.toLowerCase().includes('operational'))) {
-                            if (!levelWiseData[financialYear]) {
-                                levelWiseData[financialYear] = { 
-                                    senior: { polled: 0, responded: 0 },
-                                    operational: { polled: 0, responded: 0 }
-                                };
-                            }
-                            
-                            const levelType = level.toLowerCase().includes('senior') ? 'senior' : 'operational';
-                            
-                            // Check Sub Parameter 2 for Polled or Responded
-                            if (subParam2.toLowerCase().includes('polled')) {
-                                levelWiseData[financialYear][levelType].polled = value;
-                            } else if (subParam2.toLowerCase().includes('responded')) {
-                                levelWiseData[financialYear][levelType].responded = value;
-                            }
-                        }
+                // Display all trends in a grid
+                if (allTrends.length > 0) {
+                    html += '<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 12px;">';
+                    allTrends.forEach(trend => {
+                        const color = trend.boxType === 'Top 2 Box' ? '#10b981' : trend.boxType === 'Top 3 Box' ? '#3b82f6' : '#8b5cf6';
+                        html += `<div style="padding: 10px; background: white; border-radius: 6px; border: 1px solid rgba(0,0,0,0.1);">`;
+                        html += `<div style="font-size: 10px; font-weight: 600; color: ${color}; margin-bottom: 6px;">${trend.boxType}</div>`;
+                        html += `<div style="font-size: 10px; color: #0c4a6e; line-height: 1.4;">`;
+                        html += `<div><strong>${trend.firstYear}:</strong> ${trend.firstValue.toFixed(1)}% → <strong>${trend.lastYear}:</strong> ${trend.lastValue.toFixed(1)}%</div>`;
+                        html += `<div style="margin-top: 4px;"><strong>Change:</strong> <span style="color: ${trend.change >= 0 ? '#10b981' : '#ef4444'}; font-weight: 700;">${trend.change > 0 ? '+' : ''}${trend.change.toFixed(1)}%</span></div>`;
+                        html += `</div></div>`;
                     });
-                    
-                    console.log('📊 Polled & Responded Data:', polledRespondedData);
-                    console.log('📊 Level Wise Data:', levelWiseData);
-                    
-                    html += '<h4 style="font-size: 12px; font-weight: 700; color: var(--text-primary); margin: 12px 0 10px 0; border-bottom: 2px solid var(--primary); padding-bottom: 6px; display: flex; align-items: center;"><i class="fas fa-users" style="margin-right: 6px; color: var(--primary); font-size: 11px;"></i>Coverage: Respondents & Levels Overview</h4>';
-                    
-                    html += '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; max-height: 300px; overflow-y: auto;">';
-                    
-                    // View 1: Individual Response Rate (Polled vs Responded)
-                    html += '<div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border: 1px solid #0ea5e9; border-radius: 8px; padding: 10px; height: fit-content;">';
-                    html += '<h5 style="font-size: 11px; font-weight: 800; color: #0c4a6e; margin: 0 0 8px 0; display: flex; align-items: center;"><i class="fas fa-users-cog" style="margin-right: 4px; color: #0ea5e9; font-size: 10px;"></i>Individual Response Rate</h5>';
-                    
-                    if (Object.keys(polledRespondedData).length > 0) {
-                        Object.keys(polledRespondedData).sort().forEach(year => {
-                            const data = polledRespondedData[year];
-                            const responseRate = data.polled > 0 ? ((data.responded / data.polled) * 100) : 0;
-                            
-                            html += `
-                                <div style="background: white; border-radius: 6px; padding: 8px; margin-bottom: 8px; border: 1px solid #bae6fd; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                                        <span style="font-size: 10px; font-weight: 800; color: #0369a1;">FY ${year}</span>
-                                        <div style="background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%); color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 700;">
-                                            ${responseRate.toFixed(1)}%
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Polled -->
-                                    <div style="margin-bottom: 6px;">
-                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
-                                            <span style="font-size: 9px; font-weight: 600; color: #475569; display: flex; align-items: center;">
-                                                <span style="display: inline-block; width: 6px; height: 6px; background: #94a3b8; border-radius: 2px; margin-right: 4px;"></span>
-                                                Polled
-                                            </span>
-                                            <span style="font-size: 13px; font-weight: 900; color: #475569;">${data.polled}</span>
-                                        </div>
-                                        <div style="background: #e2e8f0; height: 6px; border-radius: 3px; overflow: hidden;">
-                                            <div style="background: #94a3b8; height: 100%; width: 100%; transition: width 0.5s ease;"></div>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Responded -->
-                                    <div style="margin-bottom: 2px;">
-                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
-                                            <span style="font-size: 9px; font-weight: 600; color: #0369a1; display: flex; align-items: center;">
-                                                <span style="display: inline-block; width: 6px; height: 6px; background: #0ea5e9; border-radius: 2px; margin-right: 4px;"></span>
-                                                Responded
-                                            </span>
-                                            <span style="font-size: 13px; font-weight: 900; color: #0ea5e9;">${data.responded}</span>
-                                        </div>
-                                        <div style="background: #e0f2fe; height: 6px; border-radius: 3px; overflow: hidden;">
-                                            <div style="background: #0ea5e9; height: 100%; width: ${responseRate}%; transition: width 0.5s ease;"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
-                        });
-                    } else {
-                        html += '<div style="text-align: center; padding: 20px; color: #64748b; font-size: 9px;"><i class="fas fa-info-circle" style="font-size: 18px; opacity: 0.3; margin-bottom: 6px;"></i><div>No Polled/Responded data available</div></div>';
-                    }
-                    
-                    html += '</div>';
-                    
-                    // View 2: Level Wise Response Rate (Senior vs Operational) - Matching Taggd Orange Theme - Compact
-                    html += '<div style="background: linear-gradient(135deg, #fff5f0 0%, #ffe5d9 100%); border: 1px solid #f97316; border-radius: 8px; padding: 10px; height: fit-content;">';
-                    html += '<h5 style="font-size: 11px; font-weight: 800; color: #c2410c; margin: 0 0 8px 0; display: flex; align-items: center;"><i class="fas fa-sitemap" style="margin-right: 4px; color: #f97316; font-size: 10px;"></i>Level Wise Response Rate</h5>';
-                    
-                    if (Object.keys(levelWiseData).length > 0) {
-                        Object.keys(levelWiseData).sort().forEach(year => {
-                            const data = levelWiseData[year];
-                            
-                            // Calculate response rates
-                            const seniorRate = data.senior.polled > 0 ? ((data.senior.responded / data.senior.polled) * 100) : 0;
-                            const operationalRate = data.operational.polled > 0 ? ((data.operational.responded / data.operational.polled) * 100) : 0;
-                            const maxRate = Math.max(seniorRate, operationalRate);
-                            
-                            html += `
-                                <div style="background: white; border-radius: 6px; padding: 8px; margin-bottom: 8px; border: 1px solid #fed7aa; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                                        <span style="font-size: 10px; font-weight: 800; color: #c2410c;">FY ${year}</span>
-                                        <div style="background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 700;">
-                                            ${maxRate.toFixed(1)}%
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Senior Level - Compact -->
-                                    <div style="margin-bottom: 4px;">
-                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-                                            <span style="font-size: 9px; font-weight: 600; color: #c2410c; display: flex; align-items: center;">
-                                                <span style="display: inline-block; width: 6px; height: 6px; background: #f97316; border-radius: 2px; margin-right: 4px;"></span>
-                                                Senior ${seniorRate === maxRate && maxRate > 0 ? '👑' : ''} <span style="font-size: 7px; color: #64748b; margin-left: 4px;">(${data.senior.responded}/${data.senior.polled})</span>
-                                            </span>
-                                            <span style="font-size: 13px; font-weight: 900; color: ${seniorRate === maxRate ? '#f97316' : '#6b7280'};">${seniorRate.toFixed(1)}%</span>
-                                        </div>
-                                        <div style="background: #ffedd5; height: 6px; border-radius: 3px; overflow: hidden;">
-                                            <div style="background: ${seniorRate === maxRate ? '#f97316' : '#6b7280'}; height: 100%; width: ${seniorRate}%; transition: width 0.5s ease;"></div>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Operational Level - Compact -->
-                                    <div style="margin-bottom: 2px;">
-                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-                                            <span style="font-size: 9px; font-weight: 600; color: #c2410c; display: flex; align-items: center;">
-                                                <span style="display: inline-block; width: 6px; height: 6px; background: ${operationalRate === maxRate ? '#f97316' : '#94a3b8'}; border-radius: 2px; margin-right: 4px;"></span>
-                                                Operational ${operationalRate === maxRate && maxRate > 0 ? '👑' : ''} <span style="font-size: 7px; color: #64748b; margin-left: 4px;">(${data.operational.responded}/${data.operational.polled})</span>
-                                            </span>
-                                            <span style="font-size: 13px; font-weight: 900; color: ${operationalRate === maxRate ? '#f97316' : '#6b7280'};">${operationalRate.toFixed(1)}%</span>
-                                        </div>
-                                        <div style="background: #ffedd5; height: 6px; border-radius: 3px; overflow: hidden;">
-                                            <div style="background: ${operationalRate === maxRate ? '#f97316' : '#6b7280'}; height: 100%; width: ${operationalRate}%; transition: width 0.5s ease;"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
-                        });
-                    } else {
-                        html += '<div style="text-align: center; padding: 20px; color: #64748b; font-size: 9px;"><i class="fas fa-info-circle" style="font-size: 18px; opacity: 0.3; margin-bottom: 6px;"></i><div>No Level Wise data available</div></div>';
-                    }
-                    
-                    html += '</div>';
-                    
                     html += '</div>';
                 }
                 
+                // Add custom insights section
+                html += '<div style="padding: 12px; background: white; border-radius: 6px; border: 1px solid rgba(0,0,0,0.1);">';
+                html += '<div style="font-size: 11px; font-weight: 600; color: #0c4a6e; margin-bottom: 8px;">📌 Key Insights</div>';
+                html += '<div style="font-size: 10px; color: #0c4a6e; line-height: 1.6;">';
+                html += '<div style="margin-bottom: 6px;">• <strong>Overall Satisfaction at 5.13:</strong> Drops from 5.95 in last cycle</div>';
+                html += '<div>• <strong>Response rates drop to 61%:</strong> in response rate to 61%; however, absolute number increases. Account coverage healthy</div>';
+                html += '</div></div>';
+                
+                html += '</div>';
+                
                 container.innerHTML = html;
                 
-                console.log('✅ NPS comparison rendered with year-wise data and web-researched competitor data');
+                console.log('✅ Top Box comparison rendered successfully');
             } catch (error) {
-                handleError(error, 'renderNPSComparison');
+                handleError(error, 'renderTopBoxComparison');
             }
         }
         
@@ -4232,9 +4184,29 @@
                         console.warn('📋 Available sheets:', workbook.SheetNames.join(', '));
                     }
                     
-                    // CSAT
-                    window.dashboardData.csat = parseSheet(workbook, 'CSAT') || [];
+                    // CSAT - try multiple sheet name variations
+                    console.log('🔍 Searching for CSAT sheet...');
+                    let csatData = parseSheet(workbook, 'CSAT');
+                    if (!csatData || csatData.length === 0) {
+                        console.log('🔍 Trying "Customer Satisfaction"...');
+                        csatData = parseSheet(workbook, 'Customer Satisfaction');
+                    }
+                    if (!csatData || csatData.length === 0) {
+                        console.log('🔍 Trying "CustomerSatisfaction"...');
+                        csatData = parseSheet(workbook, 'CustomerSatisfaction');
+                    }
+                    if (!csatData || csatData.length === 0) {
+                        console.log('🔍 Trying "Csat"...');
+                        csatData = parseSheet(workbook, 'Csat');
+                    }
+                    window.dashboardData.csat = csatData || [];
                     console.log('✅ CSAT rows:', window.dashboardData.csat.length);
+                    if (window.dashboardData.csat.length > 0) {
+                        console.log('📋 CSAT sample row:', window.dashboardData.csat[0]);
+                        console.log('📋 CSAT columns:', Object.keys(window.dashboardData.csat[0]));
+                    } else {
+                        console.warn('⚠️ No CSAT data found! Available sheets:', workbook.SheetNames);
+                    }
                     
                     // Transactional_Overview
                     console.log('🔍 Searching for Transactional Overview sheet...');
@@ -4395,7 +4367,7 @@
                 }
             }
             
-            console.error(`❌ Sheet "${sheetName}" not found in workbook`);
+            console.warn(`⚠️ Sheet "${sheetName}" not found in workbook (this may be optional)`);
             console.log(`📋 Available sheets:`, workbook.SheetNames);
             return [];
         }
@@ -7977,6 +7949,13 @@ Total Population: ${totalPop}
         function populateTransactionalFilters() {
             try {
                 const container = document.getElementById('transactionalFilters');
+                
+                // Check if container exists
+                if (!container) {
+                    console.warn('⚠️ transactionalFilters container not found - skipping Transactional filter population');
+                    return;
+                }
+                
                 const data = window.dashboardData.parameterAuditCount;
                 const accountData = window.dashboardData.accountSummary;
                 
@@ -8789,10 +8768,12 @@ Total Population: ${totalPop}
                         </thead>
                         <tbody>
                             ${regionalHeadRows.map(row => `
-                                <tr style="border-bottom: 1px solid var(--border); transition: background 0.2s;" 
+                                <tr style="border-bottom: 1px solid var(--border); transition: background 0.2s; cursor: pointer;" 
                                     onmouseover="this.style.background='var(--bg-hover)'" 
-                                    onmouseout="this.style.background='transparent'">
-                                    <td style="padding: 6px 8px; font-size: 11px; color: var(--text-primary); font-weight: 600;">👤 ${row.regionalHead}</td>
+                                    onmouseout="this.style.background='transparent'"
+                                    onclick="showHeadAccounts('regional', '${row.regionalHead.replace(/'/g, "\\'")}')"
+                                    title="Click to view accounts">
+                                    <td style="padding: 6px 8px; font-size: 11px; color: var(--text-primary); font-weight: 600;">👤 ${row.regionalHead} <i class="fas fa-external-link-alt" style="font-size: 8px; margin-left: 4px; opacity: 0.6;"></i></td>
                                     <td style="padding: 6px 8px; text-align: center;">
                                         <span style="background: ${row.accuracy > 90 ? '#10b981' : row.accuracy >= 75 ? '#f59e0b' : '#ef4444'}; color: white; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: 700;">${row.accuracy}%</span>
                                     </td>
@@ -8897,10 +8878,12 @@ Total Population: ${totalPop}
                         </thead>
                         <tbody>
                             ${practiceHeadRows.map(row => `
-                                <tr style="border-bottom: 1px solid var(--border); transition: background 0.2s;" 
+                                <tr style="border-bottom: 1px solid var(--border); transition: background 0.2s; cursor: pointer;" 
                                     onmouseover="this.style.background='var(--bg-hover)'" 
-                                    onmouseout="this.style.background='transparent'">
-                                    <td style="padding: 6px 8px; font-size: 11px; color: var(--text-primary); font-weight: 600;">👥 ${row.practiceHead}</td>
+                                    onmouseout="this.style.background='transparent'"
+                                    onclick="showHeadAccounts('practice', '${row.practiceHead.replace(/'/g, "\\'")}')"
+                                    title="Click to view accounts">
+                                    <td style="padding: 6px 8px; font-size: 11px; color: var(--text-primary); font-weight: 600;">👥 ${row.practiceHead} <i class="fas fa-external-link-alt" style="font-size: 8px; margin-left: 4px; opacity: 0.6;"></i></td>
                                     <td style="padding: 6px 8px; text-align: center;">
                                         <span style="background: ${row.accuracy > 90 ? '#10b981' : row.accuracy >= 75 ? '#f59e0b' : '#ef4444'}; color: white; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: 700;">${row.accuracy}%</span>
                                     </td>
@@ -9167,6 +9150,437 @@ Total Population: ${totalPop}
         }
 
         // ==========================================
+        // HEAD ACCOUNTS DRILL-DOWN MODAL
+        // ==========================================
+        
+        function showHeadAccounts(type, headName) {
+            try {
+                console.log(`🔍 Showing accounts for ${type} head: ${headName}`);
+                
+                const data = window.dashboardData.parameterAuditCount || [];
+                const accountSummary = window.dashboardData.accountSummary || [];
+                
+                // Get unique accounts for this head
+                const accounts = new Set();
+                
+                data.forEach(row => {
+                    let matchHead = '';
+                    
+                    if (type === 'regional') {
+                        // Try to get Regional Head from column or mapping
+                        matchHead = String(row['Regional Head'] || '').trim();
+                        if (!matchHead && window.clientToAccountMapping) {
+                            const client = String(row['Client'] || '').trim();
+                            const mapping = window.clientToAccountMapping?.[client];
+                            matchHead = mapping?.regionalHead || '';
+                        }
+                    } else if (type === 'practice') {
+                        // Try to get Practice Head from column or mapping
+                        matchHead = String(row['Practice Head'] || '').trim();
+                        if (!matchHead && window.clientToAccountMapping) {
+                            const client = String(row['Client'] || '').trim();
+                            const mapping = window.clientToAccountMapping?.[client];
+                            matchHead = mapping?.practiceHead || '';
+                        }
+                    }
+                    
+                    if (matchHead === headName) {
+                        const account = String(row['Account'] || row['Client'] || '').trim();
+                        if (account) {
+                            accounts.add(account);
+                        }
+                    }
+                });
+                
+                const accountsList = Array.from(accounts).sort();
+                
+                // Debug: Log all available accounts in Account_Summary for comparison
+                console.log('📋 Available accounts in Account_Summary:', accountSummary.map(a => ({
+                    Account: a['Account'],
+                    Client: a['Client'],
+                    AccountName: a['Account Name'],
+                    Region: a['Region'],
+                    AuditStatus: a['Audit Status']
+                })));
+                
+                console.log('🔍 Accounts to display:', accountsList);
+                
+                // Build title
+                const headType = type === 'regional' ? 'Regional Head' : 'Practice Head';
+                const modalTitle = `${headType}: ${headName}`;
+                document.getElementById('modalHeadTitle').textContent = modalTitle;
+                
+                // Build accounts list with details
+                let accountsHTML = '';
+                
+                if (accountsList.length === 0) {
+                    accountsHTML = `
+                        <div style="text-align: center; padding: 40px; color: #6b7280;">
+                            <i class="fas fa-inbox" style="font-size: 48px; margin-bottom: 15px; opacity: 0.3;"></i>
+                            <p style="font-size: 16px; margin: 0;">No accounts found for this head</p>
+                        </div>
+                    `;
+                } else {
+                    accountsHTML = `
+                        <div style="background: #f3f4f6; padding: 12px; border-radius: 8px; margin-bottom: 15px;">
+                            <div style="font-size: 14px; color: #374151;">
+                                <strong>Total Accounts:</strong> ${accountsList.length}
+                            </div>
+                        </div>
+                        <div style="display: grid; gap: 10px;">
+                            ${accountsList.map((account, index) => {
+                                // Get account details from Account_Summary with flexible matching
+                                const accountDetails = accountSummary.find(a => {
+                                    const accountName = String(a['Account'] || '').trim().toLowerCase();
+                                    const clientName = String(a['Client'] || '').trim().toLowerCase();
+                                    const accountNameAlt = String(a['Account Name'] || '').trim().toLowerCase();
+                                    const searchTerm = account.trim().toLowerCase();
+                                    
+                                    return accountName === searchTerm || 
+                                           clientName === searchTerm || 
+                                           accountNameAlt === searchTerm;
+                                });
+                                
+                                const region = accountDetails?.['Region'] || 'N/A';
+                                const auditStatus = String(accountDetails?.['Audit Status'] || '').trim().toUpperCase();
+                                
+                                // Debug log for ALL accounts to see matching issues
+                                console.log(`🔍 Account ${index + 1}:`, {
+                                    searchFor: account,
+                                    found: !!accountDetails,
+                                    accountDetails: accountDetails ? {
+                                        Account: accountDetails['Account'],
+                                        Client: accountDetails['Client'],
+                                        AccountName: accountDetails['Account Name'],
+                                        Region: region,
+                                        AuditStatus: auditStatus
+                                    } : null
+                                });
+                                
+                                return `
+                                    <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 15px; transition: all 0.2s; cursor: pointer;" 
+                                         onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'; this.style.borderColor='#3b82f6';" 
+                                         onmouseout="this.style.boxShadow='none'; this.style.borderColor='#e5e7eb';"
+                                         onclick="showAccountNavigationMenu('${account.replace(/'/g, "\\'")}')">
+                                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                                            <div style="flex: 1;">
+                                                <div style="font-size: 16px; font-weight: 600; color: #1f2937; margin-bottom: 8px;">
+                                                    ${index + 1}. ${account} <i class="fas fa-external-link-alt" style="font-size: 12px; margin-left: 6px; opacity: 0.5;"></i>
+                                                </div>
+                                                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                                                    <div style="display: flex; align-items: center; gap: 4px; font-size: 13px; color: #6b7280;">
+                                                        <i class="fas fa-map-marker-alt" style="color: #3b82f6;"></i>
+                                                        <span>${region}</span>
+                                                    </div>
+                                                    <div style="display: flex; align-items: center; gap: 4px; font-size: 13px;">
+                                                        <span style="background: ${auditStatus === 'YES' ? '#10b981' : '#ef4444'}; color: white; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600;">
+                                                            ${auditStatus === 'YES' ? '✓ Under Audit' : 'Not Under Audit'}
+                                                        </span>
+                                                    </div>
+                                                    <div style="display: flex; align-items: center; gap: 4px; font-size: 13px; color: #3b82f6; font-weight: 600;">
+                                                        <i class="fas fa-mouse-pointer" style="font-size: 11px;"></i>
+                                                        <span style="font-size: 11px;">Click to navigate</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    `;
+                }
+                
+                document.getElementById('modalAccountsList').innerHTML = accountsHTML;
+                
+                // Show modal
+                const modal = document.getElementById('headAccountsModal');
+                modal.style.display = 'flex';
+                
+                console.log(`✅ Displayed ${accountsList.length} accounts for ${headName}`);
+                
+            } catch (error) {
+                console.error('❌ Error showing head accounts:', error);
+                alert('Error showing accounts: ' + error.message);
+            }
+        }
+        
+        function closeHeadAccountsModal() {
+            document.getElementById('headAccountsModal').style.display = 'none';
+        }
+        
+        // Close modal when clicking outside
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('headAccountsModal');
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        closeHeadAccountsModal();
+                    }
+                });
+            }
+            
+            // Also handle navigation modal
+            const navModal = document.getElementById('accountNavigationModal');
+            if (navModal) {
+                navModal.addEventListener('click', function(e) {
+                    if (e.target === navModal) {
+                        closeAccountNavigationModal();
+                    }
+                });
+            }
+        });
+
+        // ==========================================
+        // ACCOUNT NAVIGATION MENU
+        // ==========================================
+        
+        let selectedAccountName = '';
+        
+        function showAccountNavigationMenu(accountName) {
+            try {
+                console.log('🔍 Opening navigation menu for account:', accountName);
+                console.log('📝 Account name type:', typeof accountName, 'Length:', accountName?.length);
+                console.log('📝 Account name JSON:', JSON.stringify(accountName));
+                
+                selectedAccountName = accountName;
+                console.log('📝 Stored selectedAccountName:', selectedAccountName);
+                
+                // Update modal title
+                document.getElementById('navigationAccountName').textContent = accountName;
+                
+                // Show navigation modal
+                const modal = document.getElementById('accountNavigationModal');
+                modal.style.display = 'flex';
+                
+            } catch (error) {
+                console.error('❌ Error showing navigation menu:', error);
+                alert('Error showing navigation menu: ' + error.message);
+            }
+        }
+        
+        function closeAccountNavigationModal() {
+            document.getElementById('accountNavigationModal').style.display = 'none';
+            selectedAccountName = '';
+        }
+        
+        function navigateToAccountView(viewType) {
+            try {
+                // IMPORTANT: Save account name BEFORE closing modal (which clears it)
+                const accountNameToFilter = selectedAccountName;
+                
+                console.log('🚀 Navigating to', viewType, 'for account:', accountNameToFilter);
+                console.log('📝 Account name type:', typeof accountNameToFilter, 'Length:', accountNameToFilter?.length);
+                console.log('📝 Account name JSON:', JSON.stringify(accountNameToFilter));
+                
+                // Close both modals (this will clear selectedAccountName)
+                closeAccountNavigationModal();
+                closeHeadAccountsModal();
+                
+                // Switch to the selected tab
+                const tabElement = document.querySelector(`.menu-item[onclick*="${viewType}"]`);
+                if (tabElement) {
+                    window.switchTab(viewType, tabElement);
+                }
+                
+                // For Journey at Glance, wait for data to be loaded with retry mechanism
+                if (viewType === 'journey-at-glance') {
+                    console.log('⏰ Waiting for Journey at Glance data to load...');
+                    waitForJourneyDataAndApplyFilter(accountNameToFilter, 0);
+                } else {
+                    // For other views, use standard delay
+                    setTimeout(() => {
+                        console.log('⏰ Applying filter after tab switch...');
+                        applyAccountFilter(viewType, accountNameToFilter);
+                    }, 1000);
+                }
+                
+            } catch (error) {
+                console.error('❌ Error navigating to view:', error);
+                alert('Error navigating: ' + error.message);
+            }
+        }
+        
+        function waitForJourneyDataAndApplyFilter(accountName, retryCount) {
+            const maxRetries = 10;
+            const retryDelay = 300;
+            
+            // Check if journey data is loaded
+            if (window.journeyAccountsData && window.journeyAccountsData.length > 0) {
+                console.log(`✅ Journey data loaded (${window.journeyAccountsData.length} accounts)`);
+                
+                // Check if the account exists in the data
+                const accountExists = window.journeyAccountsData.some(acc => 
+                    acc.name.toLowerCase().includes(accountName.toLowerCase())
+                );
+                
+                if (accountExists) {
+                    console.log(`✅ Account "${accountName}" found in journey data`);
+                    applyAccountFilter('journey-at-glance', accountName);
+                } else {
+                    console.warn(`⚠️ Account "${accountName}" not found in journey data`);
+                    // Try with the account name anyway
+                    applyAccountFilter('journey-at-glance', accountName);
+                }
+            } else if (retryCount < maxRetries) {
+                // Data not ready, retry
+                console.log(`⏳ Journey data not ready, retry ${retryCount + 1}/${maxRetries}...`);
+                setTimeout(() => {
+                    waitForJourneyDataAndApplyFilter(accountName, retryCount + 1);
+                }, retryDelay);
+            } else {
+                // Max retries reached, try anyway
+                console.warn(`⚠️ Max retries reached, applying filter anyway...`);
+                applyAccountFilter('journey-at-glance', accountName);
+            }
+        }
+        
+        function applyAccountFilter(viewType, accountName) {
+            try {
+                console.log(`🔍 Applying filter for account: ${accountName} on ${viewType}`);
+                
+                if (viewType === 'journey-at-glance') {
+                    // Apply filter to Journey at Glance search
+                    const searchInput = document.getElementById('journeySearchInput');
+                    if (searchInput) {
+                        console.log('📝 Setting journey search input to:', accountName);
+                        searchInput.value = accountName;
+                        
+                        // Hide suggestions dropdown
+                        const suggestionsDiv = document.getElementById('accountSuggestions');
+                        if (suggestionsDiv) {
+                            suggestionsDiv.style.display = 'none';
+                        }
+                        
+                        // Log journey data state
+                        console.log('📊 Journey data state:', {
+                            totalAccounts: window.journeyAccountsData?.length || 0,
+                            searchTerm: accountName,
+                            dataLoaded: !!window.journeyAccountsData
+                        });
+                        
+                        // Directly call the filter function
+                        console.log('🔄 Calling applyJourneyFilters...');
+                        applyJourneyFilters();
+                        
+                        // Verify filter was applied
+                        setTimeout(() => {
+                            const visibleCards = document.querySelectorAll('#journeyAccountsGrid > div:not([style*="display: none"])');
+                            console.log(`✅ Journey filter applied - Showing ${visibleCards.length} account(s)`);
+                            
+                            if (visibleCards.length === 0) {
+                                console.warn('⚠️ No accounts visible after filter - account name may not match exactly');
+                                console.log('💡 Available accounts:', window.journeyAccountsData?.map(a => a.name) || []);
+                            }
+                        }, 500);
+                        
+                    } else {
+                        console.error('❌ Journey search input not found');
+                    }
+                } else if (viewType === 'audit-summary') {
+                    // Apply filter to Parameter Performance
+                    console.log('🔍 Looking for parameter filters...');
+                    const allSelects = document.querySelectorAll('#parameterFilters select');
+                    console.log('📊 Found', allSelects.length, 'dropdowns in parameter filters');
+                    
+                    let filterApplied = false;
+                    
+                    allSelects.forEach((select, index) => {
+                        const options = Array.from(select.options);
+                        console.log(`   Dropdown ${index + 1}: ${options.length} options`);
+                        
+                        // Check if this dropdown has account options
+                        const hasAccountOptions = options.some(opt => 
+                            opt.value && opt.value !== 'all' && 
+                            (opt.text.toLowerCase().includes(accountName.toLowerCase()) ||
+                             opt.value.toLowerCase().includes(accountName.toLowerCase()))
+                        );
+                        
+                        if (hasAccountOptions) {
+                            // Find the exact matching option
+                            const matchingOption = options.find(opt => 
+                                opt.text.toLowerCase().includes(accountName.toLowerCase()) ||
+                                opt.value.toLowerCase().includes(accountName.toLowerCase())
+                            );
+                            
+                            if (matchingOption) {
+                                console.log('✅ Found matching option:', matchingOption.text, '(value:', matchingOption.value + ')');
+                                select.value = matchingOption.value;
+                                filterApplied = true;
+                            }
+                        }
+                    });
+                    
+                    // Directly call the filter function
+                    if (filterApplied) {
+                        console.log('🔄 Calling applyParameterFilters...');
+                        applyParameterFilters();
+                        console.log('✅ Applied Parameter Performance filter for:', accountName);
+                    } else {
+                        console.warn('⚠️ Could not find Account dropdown in Parameter filters');
+                    }
+                } else if (viewType === 'recruiter') {
+                    // Apply filter to Recruiter tab
+                    console.log('🔍 Looking for recruiter filters...');
+                    const allSelects = document.querySelectorAll('#recruiterFilters select');
+                    console.log('📊 Found', allSelects.length, 'dropdowns in recruiter filters');
+                    
+                    let filterApplied = false;
+                    
+                    allSelects.forEach((select, index) => {
+                        const options = Array.from(select.options);
+                        console.log(`   Dropdown ${index + 1}: ${options.length} options`);
+                        
+                        // Check if this dropdown has account options
+                        const hasAccountOptions = options.some(opt => 
+                            opt.value && opt.value !== 'all' && 
+                            (opt.text.toLowerCase().includes(accountName.toLowerCase()) ||
+                             opt.value.toLowerCase().includes(accountName.toLowerCase()))
+                        );
+                        
+                        if (hasAccountOptions) {
+                            const matchingOption = options.find(opt => 
+                                opt.text.toLowerCase().includes(accountName.toLowerCase()) ||
+                                opt.value.toLowerCase().includes(accountName.toLowerCase())
+                            );
+                            
+                            if (matchingOption) {
+                                console.log('✅ Found matching option:', matchingOption.text, '(value:', matchingOption.value + ')');
+                                select.value = matchingOption.value;
+                                filterApplied = true;
+                            }
+                        }
+                    });
+                    
+                    // Directly call the filter function
+                    if (filterApplied) {
+                        console.log('🔄 Calling applyRecruiterFilters...');
+                        applyRecruiterFilters();
+                        console.log('✅ Applied Recruiter filter for:', accountName);
+                    } else {
+                        console.warn('⚠️ Could not find Account dropdown in Recruiter filters');
+                    }
+                }
+                
+                // Show success message
+                const successMsg = document.createElement('div');
+                successMsg.style.cssText = 'position: fixed; top: 120px; right: 20px; background: #10b981; color: white; padding: 16px 24px; border-radius: 8px; z-index: 10002; font-size: 14px; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 8px;';
+                successMsg.innerHTML = `<i class="fas fa-check-circle"></i> <span>Filtering to: <strong>${accountName}</strong></span>`;
+                document.body.appendChild(successMsg);
+                
+                setTimeout(() => {
+                    successMsg.style.transition = 'opacity 0.3s';
+                    successMsg.style.opacity = '0';
+                    setTimeout(() => successMsg.remove(), 300);
+                }, 3000);
+                
+            } catch (error) {
+                console.error('❌ Error applying account filter:', error);
+                alert('Error applying filter: ' + error.message);
+            }
+        }
+
+        // ==========================================
         // PARAMETER PERFORMANCE TAB
         // ==========================================
 
@@ -9197,6 +9611,13 @@ Total Population: ${totalPop}
         function populateParameterFilters() {
             try {
                 const container = document.getElementById('parameterFilters');
+                
+                // Check if container exists
+                if (!container) {
+                    console.warn('⚠️ parameterFilters container not found - skipping Parameter filter population');
+                    return;
+                }
+                
                 const data = window.dashboardData.parameterAuditCount;
                 
                 if (!data || data.length === 0) {
@@ -12872,6 +13293,13 @@ Total Population: ${totalPop}
         function populateRecruiterFilters() {
             try {
                 const container = document.getElementById('recruiterFilters');
+                
+                // Check if container exists
+                if (!container) {
+                    console.warn('⚠️ recruiterFilters container not found - skipping Recruiter filter population');
+                    return;
+                }
+                
                 const data = window.dashboardData.recruiterAuditCount;
                 
                 if (!data || data.length === 0) {
@@ -13860,6 +14288,10 @@ Total Population: ${totalPop}
             
             // Try multiple paths for compatibility with different hosting environments
             const paths = [
+                'BaseFile.xlsx',                 // Root directory (symlink)
+                'Base File.xlsx',                // Root directory (with space)
+                '/BaseFile.xlsx',                // Absolute root
+                '/Base File.xlsx',               // Absolute root (with space)
                 '/data/BaseFile.xlsx',           // Local server (server.js)
                 '/public/data/BaseFile.xlsx',    // GitHub Pages
                 'public/data/BaseFile.xlsx',     // Relative path
@@ -13934,8 +14366,12 @@ Total Population: ${totalPop}
                                 window.dashboardData.csat = parseSheet(workbook, 'CSAT') || [];
                                 console.log('✅ CSAT rows:', window.dashboardData.csat.length);
                                 
-                                window.dashboardData.transactionalOverview = parseSheet(workbook, 'Transactional_Overview') || parseSheet(workbook, 'Transactional Overview') || [];
-                                console.log('✅ Transactional_Overview rows:', window.dashboardData.transactionalOverview.length);
+                                window.dashboardData.transactionalOverview = parseSheet(workbook, 'Transactional_Overview') || parseSheet(workbook, 'Transactional Overview') || parseSheet(workbook, 'TransactionalOverview') || [];
+                                if (window.dashboardData.transactionalOverview.length > 0) {
+                                    console.log('✅ Transactional_Overview rows:', window.dashboardData.transactionalOverview.length);
+                                } else {
+                                    console.log('ℹ️ Transactional_Overview sheet not found (optional - skipping)');
+                                }
                                 
                                 // Initialize all dashboards
                                 console.log('🎨 Rendering dashboards with auto-loaded data...');
