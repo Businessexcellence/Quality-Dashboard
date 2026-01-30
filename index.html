@@ -11132,6 +11132,33 @@ Total Population: ${totalPop}
             
             return '';
         };
+        
+        window.getRcaCapaType = function(item) {
+            const keys = Object.keys(item);
+            
+            // Column B (2nd column, index 1) - RCA/CAPA Type
+            const possibleKeys = [
+                'Type',
+                'RCA/CAPA',
+                'RCA CAPA',
+                'Category',
+                'B',          // Direct column letter
+                '__EMPTY_1',  // XLSX headerless column naming
+                keys[1]       // 2nd column by index
+            ];
+            
+            for (const key of possibleKeys) {
+                if (key && item[key] !== null && item[key] !== undefined && item[key] !== '') {
+                    const value = String(item[key]).trim().toUpperCase();
+                    // Normalize RCA/CAPA variations
+                    if (value.includes('RCA')) return 'RCA';
+                    if (value.includes('CAPA')) return 'CAPA';
+                    return value;
+                }
+            }
+            
+            return 'RCA'; // Default to RCA if not specified
+        };
 
         function generateProjectsSection(projects) {
             try {
@@ -12175,11 +12202,11 @@ Total Population: ${totalPop}
         function populateRcaCapaFilters(rcaCapaData) {
             try {
                 const filters = [
+                    { field: 'Type', label: 'RCA/CAPA Type', icon: 'tags' },
                     { field: 'Account', label: 'Account', icon: 'building' },
                     { field: 'Region', label: 'Region', icon: 'globe' },
                     { field: 'Financial Year', label: 'Financial Year', icon: 'calendar' },
-                    { field: 'Practice Head', label: 'Practice Head', icon: 'user-tie' },
-                    { field: 'Status', label: 'Status', icon: 'check-circle' }
+                    { field: 'Practice Head', label: 'Practice Head', icon: 'user-tie' }
                 ];
                 
                 const filtersHTML = filters.map(filter => {
@@ -12188,8 +12215,8 @@ Total Population: ${totalPop}
                     const valueSet = new Set();
                     rcaCapaData.forEach(item => {
                         let value;
-                        if (filter.field === 'Status') {
-                            value = window.getRcaCapaStatus(item);
+                        if (filter.field === 'Type') {
+                            value = window.getRcaCapaType(item);
                         } else if (filter.field === 'Region') {
                             value = window.getRcaRegion(item);
                         } else if (filter.field === 'Financial Year') {
@@ -12216,8 +12243,8 @@ Total Population: ${totalPop}
                     const valueCounts = Array.from(valueSet).map(value => {
                         const count = rcaCapaData.filter(item => {
                             let itemValue;
-                            if (filter.field === 'Status') {
-                                itemValue = window.getRcaCapaStatus(item);
+                            if (filter.field === 'Type') {
+                                itemValue = window.getRcaCapaType(item);
                             } else if (filter.field === 'Region') {
                                 itemValue = window.getRcaRegion(item);
                             } else if (filter.field === 'Financial Year') {
@@ -12479,8 +12506,8 @@ Total Population: ${totalPop}
                         if (values.length === 0) continue;
                         
                         let itemValue;
-                        if (field === 'Status') {
-                            itemValue = window.getRcaCapaStatus(item);
+                        if (field === 'Type') {
+                            itemValue = window.getRcaCapaType(item);
                         } else if (field === 'Region') {
                             itemValue = window.getRcaRegion(item);
                         } else if (field === 'Financial Year') {
@@ -12535,7 +12562,7 @@ Total Population: ${totalPop}
                     .sort((a, b) => b[1] - a[1])
                     .slice(0, 5);
                 
-                safeSetText('rcaErrorTypeCount', Object.keys(errorTypeCounts).length);
+                safeSetText('rcaErrorTypeCount', '');
                 
                 const errorTypeHTML = sortedErrorTypes.map(([type, count]) => {
                     const percentage = rcaCapaItems.length > 0 ? Math.round((count / rcaCapaItems.length) * 100) : 0;
@@ -12561,7 +12588,7 @@ Total Population: ${totalPop}
                     .sort((a, b) => b[1] - a[1])
                     .slice(0, 5);
                 
-                safeSetText('rcaImpactCount', Object.keys(impactCounts).length);
+                safeSetText('rcaImpactCount', '');
                 
                 const impactHTML = sortedImpacts.map(([impact, count]) => {
                     const percentage = rcaCapaItems.length > 0 ? Math.round((count / rcaCapaItems.length) * 100) : 0;
@@ -12590,7 +12617,7 @@ Total Population: ${totalPop}
                 });
                 
                 // Set the count of unique statuses (matching other cards)
-                safeSetText('rcaStatusCount', Object.keys(statusCounts).length);
+                safeSetText('rcaStatusCount', '');
                 
                 const statusHTML = Object.entries(statusCounts)
                     .sort((a, b) => b[1] - a[1])
