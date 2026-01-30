@@ -9301,8 +9301,8 @@ Total Population: ${totalPop}
                             {
                                 label: 'Audit Count',
                                 data: auditCountData,
-                                backgroundColor: 'rgba(59, 130, 246, 0.7)',
-                                borderColor: 'rgba(59, 130, 246, 1)',
+                                backgroundColor: 'rgba(240, 70, 22, 0.7)',
+                                borderColor: 'rgba(240, 70, 22, 1)',
                                 borderWidth: 2,
                                 yAxisID: 'y1',
                                 order: 2,
@@ -9313,10 +9313,10 @@ Total Population: ${totalPop}
                                 label: 'Accuracy Score (%)',
                                 data: accuracyData,
                                 type: 'line',
-                                backgroundColor: 'rgba(240, 70, 22, 0.1)',
-                                borderColor: 'rgba(240, 70, 22, 1)',
+                                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                                borderColor: 'rgba(59, 130, 246, 1)',
                                 borderWidth: 3,
-                                pointBackgroundColor: 'rgba(240, 70, 22, 1)',
+                                pointBackgroundColor: 'rgba(59, 130, 246, 1)',
                                 pointBorderColor: '#fff',
                                 pointBorderWidth: 2,
                                 pointRadius: 5,
@@ -9367,8 +9367,8 @@ Total Population: ${totalPop}
                                 },
                                 color: function(context) {
                                     // Dataset 0 (Audit Count bars): White text for contrast
-                                    // Dataset 1 (Accuracy line): Orange text matching line color
-                                    return context.datasetIndex === 0 ? '#ffffff' : '#f04616';
+                                    // Dataset 1 (Accuracy line): Blue text matching line color
+                                    return context.datasetIndex === 0 ? '#ffffff' : '#3b82f6';
                                 },
                                 font: {
                                     size: 9,
