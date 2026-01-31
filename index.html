@@ -4110,35 +4110,28 @@
                 
                 html += '</div>';
                 
-                // Strategic Recommendations
+                // Key Findings & Focus Areas
                 html += '<div style="padding: 14px; background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%); border-left: 4px solid #a855f7; border-radius: 8px;">';
                 html += '<div style="font-size: 11px; font-weight: 600; color: #6b21a8; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">';
-                html += '<i class="fas fa-lightbulb"></i>Strategic Recommendations</div>';
+                html += '<i class="fas fa-clipboard-list"></i>Key Findings & Focus Areas</div>';
                 html += '<div style="font-size: 10px; color: #581c87; line-height: 1.6;">';
                 
-                // Dynamic recommendations based on data
-                const recommendations = [];
+                // Fixed insights based on user requirements
+                const insights = [];
                 
-                if (years.length >= 2) {
-                    const latestScore = satisfactionByYear[years[years.length - 1]];
-                    if (latestScore < 5.0) {
-                        recommendations.push('• <strong>Priority:</strong> Focus on improving overall satisfaction score through targeted service enhancements');
-                    } else if (latestScore >= 5.5) {
-                        recommendations.push('• <strong>Maintain Excellence:</strong> Continue current service delivery practices and share best practices across teams');
-                    }
-                }
+                // Response Rate Analysis
+                insights.push('• <strong>Response Rate:</strong> Drops to 61%; however, absolute number increases. Account coverage healthy');
                 
-                const latestResponseRate = responseRateByYear[responseYears[responseYears.length - 1]];
-                if (latestResponseRate < 60) {
-                    recommendations.push('• <strong>Engagement:</strong> Implement survey incentives and follow-up campaigns to boost response rates');
-                } else if (latestResponseRate >= 70) {
-                    recommendations.push('• <strong>Strong Feedback Loop:</strong> Leverage high engagement to gather deeper insights through follow-up interviews');
-                }
+                // Overall Satisfaction
+                insights.push('• <strong>Overall Satisfaction at 5.13:</strong> Drops from 5.95 in last cycle (OPS level and Non-Key accounts most pronounced)');
                 
-                recommendations.push('• <strong>Trend Analysis:</strong> Monitor Top Box scores monthly to identify early warning signals and opportunities');
-                recommendations.push('• <strong>Action Planning:</strong> Convert feedback into actionable improvement initiatives with clear ownership and timelines');
+                // Positives
+                insights.push('• <strong>Positives:</strong> End-to-end hiring, engagement, flexibility, commitment');
                 
-                html += recommendations.join('<br>');
+                // Focus Areas
+                insights.push('• <strong>Focus:</strong> Niche hiring, team quality, insights, better profiles, more tech');
+                
+                html += insights.join('<br>');
                 html += '</div></div>';
                 
                 container.innerHTML = html;
