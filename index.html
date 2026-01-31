@@ -4095,7 +4095,7 @@
                     const catMetrics = categories[cat] || [];
                     const yesCount = catMetrics.filter(m => (m['Adherence Status '] || m['Adherence Status'] || '').trim().toUpperCase() === 'YES').length;
                     html += `<button onclick="filterBenchmarkCategory('${cat}')" class="benchmark-filter-btn" data-category="${cat}" data-color="${config.color}" style="padding: 8px 14px; border: 2px solid ${config.color}; background: white; color: ${config.color}; border-radius: 8px; cursor: pointer; font-size: 10px; font-weight: 600; display: flex; align-items: center; gap: 6px; transition: all 0.3s ease; box-shadow: none;">`;
-                    html += `<i class="fas fa-${config.icon}"></i>${cat.replace(' RPO', '').replace(' Service Provider', '')}`;
+                    html += `<i class="fas fa-${config.icon}"></i>${cat}`;
                     html += `<span style="background: rgba(0,0,0,0.1); padding: 2px 6px; border-radius: 10px; font-size: 9px;">${yesCount}/${count}</span>`;
                     html += `</button>`;
                 });
