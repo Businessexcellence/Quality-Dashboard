@@ -4559,7 +4559,8 @@
                             `• RCA/CAPA: ${window.dashboardData.rcaCapa.length} rows\n` +
                             `• Projects: ${window.dashboardData.projects.length} rows\n` +
                             `• SLA: ${window.dashboardData.sla.length} rows\n` +
-                            `• CSAT: ${window.dashboardData.csat.length} rows\n\n` +
+                            `• CSAT: ${window.dashboardData.csat.length} rows\n` +
+                            `• Benchmarks: ${window.dashboardData.benchmark ? window.dashboardData.benchmark.length : 0} metrics\n\n` +
                             `✨ Dashboard has been refreshed with your data!`;
                         
                         alert(summary);
@@ -14676,6 +14677,11 @@ Total Population: ${totalPop}
             // Refresh CSAT tab
             if (typeof window.refreshCSATTab === 'function') {
                 window.refreshCSATTab();
+            }
+            
+            // Refresh Benchmarks tab
+            if (typeof window.refreshBenchmarksTab === 'function') {
+                window.refreshBenchmarksTab();
             }
         }
 
