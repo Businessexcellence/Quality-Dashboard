@@ -4094,12 +4094,12 @@
                     const count = categories[cat] ? categories[cat].length : 0;
                     const catMetrics = categories[cat] || [];
                     const yesCount = catMetrics.filter(m => (m['Adherence Status '] || m['Adherence Status'] || '').trim().toUpperCase() === 'YES').length;
-                    html += `<button onclick="filterBenchmarkCategory('${cat}')" class="benchmark-filter-btn" data-category="${cat}" style="padding: 8px 14px; border: 2px solid ${config.color}; background: white; color: ${config.color}; border-radius: 8px; cursor: pointer; font-size: 10px; font-weight: 600; display: flex; align-items: center; gap: 6px; transition: all 0.2s;" onmouseover="this.style.background='${config.color}'; this.style.color='white';" onmouseout="if(!this.classList.contains('active')){this.style.background='white'; this.style.color='${config.color}';}">`;
+                    html += `<button onclick="filterBenchmarkCategory('${cat}')" class="benchmark-filter-btn" data-category="${cat}" data-color="${config.color}" style="padding: 8px 14px; border: 2px solid ${config.color}; background: white; color: ${config.color}; border-radius: 8px; cursor: pointer; font-size: 10px; font-weight: 600; display: flex; align-items: center; gap: 6px; transition: all 0.3s ease; box-shadow: none;">`;
                     html += `<i class="fas fa-${config.icon}"></i>${cat.replace(' RPO', '').replace(' Service Provider', '')}`;
                     html += `<span style="background: rgba(0,0,0,0.1); padding: 2px 6px; border-radius: 10px; font-size: 9px;">${yesCount}/${count}</span>`;
                     html += `</button>`;
                 });
-                html += '<button onclick="filterBenchmarkCategory(null)" class="benchmark-filter-btn active" style="padding: 8px 14px; border: 2px solid #6b7280; background: #6b7280; color: white; border-radius: 8px; cursor: pointer; font-size: 10px; font-weight: 600;"><i class="fas fa-list"></i> View All</button>';
+                html += '<button onclick="filterBenchmarkCategory(null)" class="benchmark-filter-btn active" data-color="#6b7280" style="padding: 8px 14px; border: 2px solid #6b7280; background: #6b7280; color: white; border-radius: 8px; cursor: pointer; font-size: 10px; font-weight: 600; transition: all 0.3s ease; transform: scale(1.05); box-shadow: 0 4px 12px rgba(107, 114, 128, 0.25);"><i class="fas fa-list"></i> View All</button>';
                 html += '</div>';
                 
                 // Render each category
@@ -4239,12 +4239,38 @@
         }
         
         window.filterBenchmarkCategory = function(category) {
+            // Show/hide categories
             const allCategories = document.querySelectorAll('.benchmark-category');
             allCategories.forEach(cat => {
                 if (category === null || cat.dataset.category === category) {
                     cat.style.display = 'block';
                 } else {
                     cat.style.display = 'none';
+                }
+            });
+            
+            // Update button states
+            const allButtons = document.querySelectorAll('.benchmark-filter-btn');
+            allButtons.forEach(btn => {
+                const btnCategory = btn.dataset.category;
+                const isActive = (category === null && !btnCategory) || (btnCategory === category);
+                
+                if (isActive) {
+                    // Active state
+                    btn.classList.add('active');
+                    const color = btn.dataset.color || '#6b7280';
+                    btn.style.background = color;
+                    btn.style.color = 'white';
+                    btn.style.transform = 'scale(1.05)';
+                    btn.style.boxShadow = `0 4px 12px ${color}40`;
+                } else {
+                    // Inactive state
+                    btn.classList.remove('active');
+                    const color = btn.dataset.color || '#6b7280';
+                    btn.style.background = 'white';
+                    btn.style.color = color;
+                    btn.style.transform = 'scale(1)';
+                    btn.style.boxShadow = 'none';
                 }
             });
         };
