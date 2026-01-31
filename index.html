@@ -2824,6 +2824,17 @@
                 </div>
             </div>
 
+            <!-- Key Insights Section -->
+            <div style="background: white; border: 1px solid var(--border); border-radius: 6px; padding: 12px; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                <h3 style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin: 0 0 12px 0; display: flex; align-items: center;">
+                    <i class="fas fa-lightbulb" style="color: #f59e0b; font-size: 11px; margin-right: 6px;"></i>
+                    Key Insights & Analysis
+                </h3>
+                <div id="csatInsightsContainer">
+                    <!-- CSAT insights will be displayed here -->
+                </div>
+            </div>
+
             <!-- CSAT Data Table - REMOVED AS PER USER REQUEST -->
         </div>
 
@@ -3511,6 +3522,7 @@
                 
                 populateCSATFilters();
                 renderTopBoxComparison();
+                renderCSATInsights();
                 renderCSATTable();
                 
                 console.log('✅ CSAT tab refreshed');
@@ -3987,6 +3999,153 @@
                 console.log('✅ Top Box comparison rendered successfully');
             } catch (error) {
                 handleError(error, 'renderTopBoxComparison');
+            }
+        }
+        
+        function renderCSATInsights() {
+            try {
+                console.log('💡 Rendering CSAT insights...');
+                
+                const container = document.getElementById('csatInsightsContainer');
+                if (!container) {
+                    console.warn('⚠️ csatInsightsContainer not found');
+                    return;
+                }
+                
+                const allData = window.dashboardData.csat || [];
+                
+                if (allData.length === 0) {
+                    container.innerHTML = '<div style="text-align: center; padding: 20px; color: #9ca3af; font-size: 11px;">No CSAT data available for insights analysis</div>';
+                    return;
+                }
+                
+                // Calculate insights from CSAT data
+                const financialYears = [...new Set(allData.map(row => String(row['Financial Year'] || '').trim()))].filter(Boolean).sort();
+                
+                // Get satisfaction scores by year
+                const satisfactionByYear = {};
+                const responseRateByYear = {};
+                const accountCoverageByYear = {};
+                
+                allData.forEach(row => {
+                    const year = String(row['Financial Year'] || '').trim();
+                    const param = String(row['Parameter'] || '').trim().toLowerCase();
+                    const subParam = String(row['Sub Parameter 1'] || '').trim().toLowerCase();
+                    let value = parseFloat(row['Values'] || 0);
+                    
+                    if (value > 0 && value <= 1) value = value * 100;
+                    
+                    if (year) {
+                        if ((param + ' ' + subParam).includes('satisfaction') && (param + ' ' + subParam).includes('overall')) {
+                            satisfactionByYear[year] = value;
+                        }
+                        if ((param + ' ' + subParam).includes('response') && (param + ' ' + subParam).includes('rate')) {
+                            responseRateByYear[year] = value;
+                        }
+                        if ((param + ' ' + subParam).includes('account') && (param + ' ' + subParam).includes('coverage')) {
+                            accountCoverageByYear[year] = value;
+                        }
+                    }
+                });
+                
+                let html = '';
+                
+                // Insights Grid
+                html += '<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px;">';
+                
+                // Insight 1: Overall Satisfaction Trend
+                const years = Object.keys(satisfactionByYear).sort();
+                if (years.length >= 2) {
+                    const latestYear = years[years.length - 1];
+                    const previousYear = years[years.length - 2];
+                    const latestScore = satisfactionByYear[latestYear];
+                    const previousScore = satisfactionByYear[previousYear];
+                    const change = latestScore - previousScore;
+                    const trend = change >= 0 ? 'improving' : 'declining';
+                    const trendIcon = change >= 0 ? '📈' : '📉';
+                    const trendColor = change >= 0 ? '#10b981' : '#ef4444';
+                    
+                    html += '<div style="padding: 14px; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-left: 4px solid #3b82f6; border-radius: 8px;">';
+                    html += '<div style="font-size: 10px; font-weight: 600; color: #1e40af; margin-bottom: 8px; display: flex; align-items: center; gap: 4px;">';
+                    html += '<i class="fas fa-chart-line"></i>Satisfaction Trend</div>';
+                    html += '<div style="font-size: 9px; color: #0c4a6e; line-height: 1.5;">';
+                    html += `Overall satisfaction is <strong style="color: ${trendColor};">${trend} ${trendIcon}</strong> with a ${change >= 0 ? 'gain' : 'drop'} of <strong>${Math.abs(change).toFixed(1)} points</strong> from FY${previousYear} (${previousScore.toFixed(1)}) to FY${latestYear} (${latestScore.toFixed(1)})`;
+                    html += '</div></div>';
+                }
+                
+                // Insight 2: Response Rate Analysis
+                const responseYears = Object.keys(responseRateByYear).sort();
+                if (responseYears.length >= 2) {
+                    const latestYear = responseYears[responseYears.length - 1];
+                    const previousYear = responseYears[responseYears.length - 2];
+                    const latestRate = responseRateByYear[latestYear];
+                    const previousRate = responseRateByYear[previousYear];
+                    const change = latestRate - previousRate;
+                    const status = latestRate >= 70 ? 'Strong' : latestRate >= 50 ? 'Moderate' : 'Weak';
+                    const statusColor = latestRate >= 70 ? '#10b981' : latestRate >= 50 ? '#f59e0b' : '#ef4444';
+                    
+                    html += '<div style="padding: 14px; background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-left: 4px solid #10b981; border-radius: 8px;">';
+                    html += '<div style="font-size: 10px; font-weight: 600; color: #065f46; margin-bottom: 8px; display: flex; align-items: center; gap: 4px;">';
+                    html += '<i class="fas fa-users"></i>Response Rate</div>';
+                    html += '<div style="font-size: 9px; color: #064e3b; line-height: 1.5;">';
+                    html += `<strong style="color: ${statusColor};">${status} engagement</strong> at ${latestRate.toFixed(1)}% response rate in FY${latestYear}. ${change >= 0 ? 'Increased' : 'Decreased'} by ${Math.abs(change).toFixed(1)}% from previous year`;
+                    html += '</div></div>';
+                }
+                
+                // Insight 3: Account Coverage
+                const coverageYears = Object.keys(accountCoverageByYear).sort();
+                if (coverageYears.length >= 1) {
+                    const latestYear = coverageYears[coverageYears.length - 1];
+                    const coverage = accountCoverageByYear[latestYear];
+                    const status = coverage >= 90 ? 'Excellent' : coverage >= 75 ? 'Good' : 'Needs Improvement';
+                    const statusColor = coverage >= 90 ? '#10b981' : coverage >= 75 ? '#f59e0b' : '#ef4444';
+                    
+                    html += '<div style="padding: 14px; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-left: 4px solid #f59e0b; border-radius: 8px;">';
+                    html += '<div style="font-size: 10px; font-weight: 600; color: #92400e; margin-bottom: 8px; display: flex; align-items: center; gap: 4px;">';
+                    html += '<i class="fas fa-building"></i>Account Coverage</div>';
+                    html += '<div style="font-size: 9px; color: #78350f; line-height: 1.5;">';
+                    html += `<strong style="color: ${statusColor};">${status}</strong> account coverage at ${coverage.toFixed(1)}% in FY${latestYear}. Maintaining comprehensive feedback across client base`;
+                    html += '</div></div>';
+                }
+                
+                html += '</div>';
+                
+                // Strategic Recommendations
+                html += '<div style="padding: 14px; background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%); border-left: 4px solid #a855f7; border-radius: 8px;">';
+                html += '<div style="font-size: 11px; font-weight: 600; color: #6b21a8; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">';
+                html += '<i class="fas fa-lightbulb"></i>Strategic Recommendations</div>';
+                html += '<div style="font-size: 10px; color: #581c87; line-height: 1.6;">';
+                
+                // Dynamic recommendations based on data
+                const recommendations = [];
+                
+                if (years.length >= 2) {
+                    const latestScore = satisfactionByYear[years[years.length - 1]];
+                    if (latestScore < 5.0) {
+                        recommendations.push('• <strong>Priority:</strong> Focus on improving overall satisfaction score through targeted service enhancements');
+                    } else if (latestScore >= 5.5) {
+                        recommendations.push('• <strong>Maintain Excellence:</strong> Continue current service delivery practices and share best practices across teams');
+                    }
+                }
+                
+                const latestResponseRate = responseRateByYear[responseYears[responseYears.length - 1]];
+                if (latestResponseRate < 60) {
+                    recommendations.push('• <strong>Engagement:</strong> Implement survey incentives and follow-up campaigns to boost response rates');
+                } else if (latestResponseRate >= 70) {
+                    recommendations.push('• <strong>Strong Feedback Loop:</strong> Leverage high engagement to gather deeper insights through follow-up interviews');
+                }
+                
+                recommendations.push('• <strong>Trend Analysis:</strong> Monitor Top Box scores monthly to identify early warning signals and opportunities');
+                recommendations.push('• <strong>Action Planning:</strong> Convert feedback into actionable improvement initiatives with clear ownership and timelines');
+                
+                html += recommendations.join('<br>');
+                html += '</div></div>';
+                
+                container.innerHTML = html;
+                
+                console.log('✅ CSAT insights rendered successfully');
+            } catch (error) {
+                handleError(error, 'renderCSATInsights');
             }
         }
         
@@ -9488,6 +9647,8 @@ Total Population: ${totalPop}
                                 type: 'linear',
                                 display: true,
                                 position: 'left',
+                                min: 0,
+                                max: 100,
                                 title: {
                                     display: true,
                                     text: 'Accuracy Score (%)',
@@ -9506,8 +9667,7 @@ Total Population: ${totalPop}
                                 },
                                 grid: {
                                     color: 'rgba(0, 0, 0, 0.05)'
-                                },
-                                grace: '5%'
+                                }
                             },
                             y1: {
                                 type: 'linear',
