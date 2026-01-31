@@ -9544,7 +9544,7 @@ Total Population: ${totalPop}
                         maintainAspectRatio: false,
                         layout: {
                             padding: {
-                                top: 35,
+                                top: 10,
                                 right: 10,
                                 bottom: 10,
                                 left: 10
@@ -9558,13 +9558,16 @@ Total Population: ${totalPop}
                             legend: {
                                 display: true,
                                 position: 'top',
+                                align: 'end',
                                 labels: {
                                     font: {
                                         size: 11,
                                         weight: '600'
                                     },
-                                    padding: 15,
-                                    usePointStyle: true
+                                    padding: 12,
+                                    usePointStyle: true,
+                                    boxWidth: 12,
+                                    boxHeight: 12
                                 }
                             },
                             datalabels: {
@@ -9609,8 +9612,8 @@ Total Population: ${totalPop}
                                     }
                                 },
                                 offset: function(context) {
-                                    // Bar: 4px inside from top, Line: 8px above point
-                                    return context.datasetIndex === 0 ? 4 : 8;
+                                    // Bar: 4px inside from top, Line: 6px above point (reduced from 8px)
+                                    return context.datasetIndex === 0 ? 4 : 6;
                                 }
                             },
                             tooltip: {
