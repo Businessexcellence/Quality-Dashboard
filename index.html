@@ -1688,7 +1688,7 @@
             </div>
             <div class="menu-item" onclick="window.switchTab('benchmarks', this)">
                 <i class="fas fa-trophy"></i>
-                <span>Industry Benchmarks</span>
+                <span>Competitive Intelligence</span>
             </div>
             <div class="menu-item" onclick="window.open('https://businessexcellence.github.io/SLA-DASHBOARD', '_blank')">
                 <i class="fas fa-clock"></i>
@@ -2063,11 +2063,22 @@
             </div>
 
             <!-- Month Wise Accuracy & Audit Count Chart -->
-            <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 16px; margin-top: 10px;">
-                <h3 style="font-size: 12px; font-weight: 700; color: var(--text-primary); margin: 0 0 12px 0;">
+            <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 12px; margin-top: 10px;">
+                <h3 style="font-size: 12px; font-weight: 700; color: var(--text-primary); margin: 0 0 8px 0;">
                     <i class="fas fa-chart-line" style="color: var(--primary); font-size: 11px;"></i> Month Wise Accuracy Score & Audit Count
                 </h3>
-                <div style="position: relative; height: 320px;">
+                <!-- External Legend -->
+                <div style="display: flex; justify-content: center; align-items: center; gap: 20px; margin-bottom: 8px; padding: 8px 0;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="width: 15px; height: 15px; background: rgba(59, 130, 246, 1); border-radius: 50%;"></div>
+                        <span style="font-size: 12px; font-weight: 700; color: var(--text-primary);">Accuracy Score (%)</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="width: 15px; height: 15px; background: rgba(240, 70, 22, 0.7); border-radius: 3px;"></div>
+                        <span style="font-size: 12px; font-weight: 700; color: var(--text-primary);">Audit Count</span>
+                    </div>
+                </div>
+                <div style="position: relative; height: 300px;">
                     <canvas id="monthWiseChart"></canvas>
                 </div>
             </div>
@@ -2844,14 +2855,14 @@
             <div style="margin-bottom: 8px;">
                 <h2 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin: 0 0 4px 0;">
                     <i class="fas fa-trophy" style="color: #f59e0b; margin-right: 6px; font-size: 12px;"></i>
-                    Industry Benchmarks & Competitive Intelligence
+                    Competitive Intelligence
                 </h2>
                 <p style="font-size: 11px; color: var(--text-secondary); margin: 0;">
                     Comprehensive analysis of metrics tracked by competitors across Global RPO, Indian RPO, and Service Providers
                 </p>
             </div>
 
-            <!-- Industry Benchmarks Section -->
+            <!-- Competitive Intelligence Section -->
             <div style="background: white; border: 1px solid var(--border); border-radius: 6px; padding: 12px; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
                 <div id="benchmarkContainer">
                     <!-- Benchmark data will be displayed here -->
@@ -9511,8 +9522,8 @@ Total Population: ${totalPop}
                                 borderWidth: 2,
                                 yAxisID: 'y1',
                                 order: 2,
-                                barPercentage: 0.5,
-                                categoryPercentage: 0.7
+                                barPercentage: 0.4,
+                                categoryPercentage: 0.6
                             },
                             {
                                 label: 'Accuracy Score (%)',
@@ -9524,8 +9535,8 @@ Total Population: ${totalPop}
                                 pointBackgroundColor: 'rgba(59, 130, 246, 1)',
                                 pointBorderColor: '#fff',
                                 pointBorderWidth: 2,
-                                pointRadius: 5,
-                                pointHoverRadius: 7,
+                                pointRadius: 4,
+                                pointHoverRadius: 6,
                                 yAxisID: 'y',
                                 order: 1,
                                 tension: 0.3
@@ -9537,9 +9548,9 @@ Total Population: ${totalPop}
                         maintainAspectRatio: false,
                         layout: {
                             padding: {
-                                top: 50,
-                                right: 15,
-                                bottom: 15,
+                                top: 35,
+                                right: 20,
+                                bottom: 10,
                                 left: 15
                             }
                         },
@@ -9549,19 +9560,7 @@ Total Population: ${totalPop}
                         },
                         plugins: {
                             legend: {
-                                display: true,
-                                position: 'top',
-                                align: 'center',
-                                labels: {
-                                    font: {
-                                        size: 12,
-                                        weight: '600'
-                                    },
-                                    padding: 15,
-                                    usePointStyle: true,
-                                    boxWidth: 14,
-                                    boxHeight: 14
-                                }
+                                display: false
                             },
                             datalabels: {
                                 display: function(context) {
@@ -9610,9 +9609,10 @@ Total Population: ${totalPop}
                                     }
                                 },
                                 offset: function(context) {
-                                    // Bar: 4px inside from top, Line: 10px above point for better spacing
-                                    return context.datasetIndex === 0 ? 4 : 10;
-                                }
+                                    // Bar: 4px inside from top, Line: 15px above point to avoid overlap
+                                    return context.datasetIndex === 0 ? 4 : 15;
+                                },
+                                clip: false
                             },
                             tooltip: {
                                 backgroundColor: 'rgba(0, 0, 0, 0.8)',
