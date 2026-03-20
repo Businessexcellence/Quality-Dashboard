@@ -1,0 +1,821 @@
+[
+  {
+    "S.No.#": 1,
+    "Category": "Indian Service Provider",
+    "Company": "Wipro",
+    "Metric Name": "Interaction QA Score (%)",
+    "Adherence Status ": "Partial ",
+    "Taggd_Category": "Quality & Compliance",
+    "Concise Description": "% interactions meeting QA checklist"
+  },
+  {
+    "S.No.#": 2,
+    "Category": "Indian Service Provider",
+    "Company": "Wipro",
+    "Metric Name": "Defect Rate per 100 Transactions",
+    "Adherence Status ": "No ",
+    "Taggd_Category": "Quality & Compliance",
+    "Concise Description": "Errors or rework per 100 transactions"
+  },
+  {
+    "S.No.#": 3,
+    "Category": "Indian Service Provider",
+    "Company": "Wipro",
+    "Metric Name": "First Contact Resolution (%)",
+    "Adherence Status ": "NA ",
+    "Taggd_Category": "Process Efficiency & SLA",
+    "Concise Description": "% issues resolved in first interaction"
+  },
+  {
+    "S.No.#": 4,
+    "Category": "Indian Service Provider",
+    "Company": "Wipro",
+    "Metric Name": "Average Resolution Time",
+    "Adherence Status ": "NA ",
+    "Taggd_Category": "Process Efficiency & SLA",
+    "Concise Description": "Avg time from ticket open to close"
+  },
+  {
+    "S.No.#": 5,
+    "Category": "Indian Service Provider",
+    "Company": "Wipro",
+    "Metric Name": "SLA Adherence (%)",
+    "Adherence Status ": "Yes",
+    "Taggd_Category": "Process Efficiency & SLA",
+    "Concise Description": "Targets to achieved for contractual and internal KPI"
+  },
+  {
+    "S.No.#": 6,
+    "Category": "Indian Service Provider",
+    "Company": "Wipro",
+    "Metric Name": "Automation Coverage (%)",
+    "Adherence Status ": "No ",
+    "Taggd_Category": "Productivity",
+    "Concise Description": "% tickets handled or assisted by bots"
+  },
+  {
+    "S.No.#": 7,
+    "Category": "Indian Service Provider",
+    "Company": "Wipro",
+    "Metric Name": "Escalation Rate",
+    "Adherence Status ": "NA ",
+    "Taggd_Category": "Process Efficiency & SLA",
+    "Concise Description": "% cases escalated to higher tier"
+  },
+  {
+    "S.No.#": 8,
+    "Category": "Indian Service Provider",
+    "Company": "Wipro",
+    "Metric Name": "Escalation Resolution Time",
+    "Adherence Status ": "NA ",
+    "Taggd_Category": "Process Efficiency & SLA",
+    "Concise Description": "Avg time to close escalated cases"
+  },
+  {
+    "S.No.#": 9,
+    "Category": "Indian Service Provider",
+    "Company": "Infosys",
+    "Metric Name": "Incident Volume",
+    "Adherence Status ": "NA ",
+    "Taggd_Category": "Process Efficiency & SLA",
+    "Concise Description": "Total incident count in period"
+  },
+  {
+    "S.No.#": 10,
+    "Category": "Indian Service Provider",
+    "Company": "Infosys",
+    "Metric Name": "Repeat Incident Rate",
+    "Adherence Status ": "No ",
+    "Taggd_Category": "Process Efficiency & SLA",
+    "Concise Description": "% incidents recurring on same root cause"
+  },
+  {
+    "S.No.#": 11,
+    "Category": "Indian Service Provider",
+    "Company": "Infosys",
+    "Metric Name": "Problem Resolution Cycle Time",
+    "Adherence Status ": "NA ",
+    "Taggd_Category": "Process Efficiency & SLA",
+    "Concise Description": "Time from incident log to permanent fix"
+  },
+  {
+    "S.No.#": 12,
+    "Category": "Indian Service Provider",
+    "Company": "Infosys",
+    "Metric Name": "SLA Adherence (%)",
+    "Adherence Status ": "Yes",
+    "Taggd_Category": "Process Efficiency & SLA",
+    "Concise Description": "Targets to achieved for contractual and internal KPI"
+  },
+  {
+    "S.No.#": 13,
+    "Category": "Indian Service Provider",
+    "Company": "Infosys",
+    "Metric Name": "VOC Sentiment Score",
+    "Adherence Status ": "NA ",
+    "Taggd_Category": "Client Experience",
+    "Concise Description": "Sentiment score from feedback text"
+  },
+  {
+    "S.No.#": 14,
+    "Category": "Indian Service Provider",
+    "Company": "Infosys",
+    "Metric Name": "VOC Closed-loop Rate (%)",
+    "Adherence Status ": "NA ",
+    "Taggd_Category": "Client Experience",
+    "Concise Description": "% feedback items with tracked action"
+  },
+  {
+    "S.No.#": 15,
+    "Category": "Indian Service Provider",
+    "Company": "Infosys",
+    "Metric Name": "Compliance Audit Score",
+    "Adherence Status ": "Yes",
+    "Taggd_Category": "Quality & Compliance",
+    "Concise Description": "% controls passed in audits"
+  },
+  {
+    "S.No.#": 16,
+    "Category": "Indian Service Provider",
+    "Company": "TCS",
+    "Metric Name": "Audit Non-conformities per Audit",
+    "Adherence Status ": "Yes",
+    "Taggd_Category": "Quality & Compliance",
+    "Concise Description": "Number/severity of findings per audit"
+  },
+  {
+    "S.No.#": 17,
+    "Category": "Indian Service Provider",
+    "Company": "TCS",
+    "Metric Name": "Defect Leakage Rate",
+    "Adherence Status ": "NA ",
+    "Taggd_Category": "Quality & Compliance",
+    "Concise Description": "% defects found after go-live vs total"
+  },
+  {
+    "S.No.#": 18,
+    "Category": "Indian Service Provider",
+    "Company": "TCS",
+    "Metric Name": "CAPA Closure Time",
+    "Adherence Status ": "Yes",
+    "Taggd_Category": "Quality & Compliance",
+    "Concise Description": "Avg time from CAPA raised to closed"
+  },
+  {
+    "S.No.#": 19,
+    "Category": "Indian Service Provider",
+    "Company": "TCS",
+    "Metric Name": "RCA Completion SLA (%)",
+    "Adherence Status ": "Yes",
+    "Taggd_Category": "Process Efficiency & SLA",
+    "Concise Description": "% RCAs completed within SLA"
+  },
+  {
+    "S.No.#": 20,
+    "Category": "Indian Service Provider",
+    "Company": "TCS",
+    "Metric Name": "Knowledge Article Usage",
+    "Adherence Status ": "Yes",
+    "Taggd_Category": "Productivity",
+    "Concise Description": "Views or use of knowledge articles"
+  },
+  {
+    "S.No.#": 21,
+    "Category": "Indian Service Provider",
+    "Company": "TCS",
+    "Metric Name": "Automation/AI Test Coverage (%)",
+    "Adherence Status ": "No ",
+    "Taggd_Category": "Productivity",
+    "Concise Description": "% test cases automated or AI-assisted"
+  },
+  {
+    "S.No.#": 22,
+    "Category": "Indian Service Provider",
+    "Company": "Genpact",
+    "Metric Name": "Process Maturity Index",
+    "Adherence Status ": "No ",
+    "Taggd_Category": "Quality & Compliance",
+    "Concise Description": "Composite score of process maturity"
+  },
+  {
+    "S.No.#": 23,
+    "Category": "Indian Service Provider",
+    "Company": "Genpact",
+    "Metric Name": "Cycle Time per Process",
+    "Adherence Status ": "Partial ",
+    "Taggd_Category": "Process Efficiency & SLA",
+    "Concise Description": "Avg time to complete a process"
+  },
+  {
+    "S.No.#": 24,
+    "Category": "Indian Service Provider",
+    "Company": "Genpact",
+    "Metric Name": "Data Quality Score",
+    "Adherence Status ": "No ",
+    "Taggd_Category": "Platform Health",
+    "Concise Description": "Score for data completeness and accuracy"
+  },
+  {
+    "S.No.#": 25,
+    "Category": "Indian Service Provider",
+    "Company": "Genpact",
+    "Metric Name": "Improvement Impact",
+    "Adherence Status ": "Yes",
+    "Taggd_Category": "Financial",
+    "Concise Description": "Savings or cycle time reduction from improvements"
+  },
+  {
+    "S.No.#": 26,
+    "Category": "Indian Service Provider",
+    "Company": "Genpact",
+    "Metric Name": "Analytics Adoption (%)",
+    "Adherence Status ": "No ",
+    "Taggd_Category": "AI Performance",
+    "Concise Description": "% decisions supported by analytics"
+  },
+  {
+    "S.No.#": 27,
+    "Category": "Indian Service Provider",
+    "Company": "HCL",
+    "Metric Name": "Early Defect Detection Rate",
+    "Adherence Status ": "Yes",
+    "Taggd_Category": "Quality & Compliance",
+    "Concise Description": "% defects caught in early stages"
+  },
+  {
+    "S.No.#": 28,
+    "Category": "Indian Service Provider",
+    "Company": "HCL",
+    "Metric Name": "Test Automation Coverage (%)",
+    "Adherence Status ": "NA ",
+    "Taggd_Category": "Productivity",
+    "Concise Description": "% test cases automated"
+  },
+  {
+    "S.No.#": 29,
+    "Category": "Indian Service Provider",
+    "Company": "HCL",
+    "Metric Name": "CAPA Automation Rate",
+    "Adherence Status ": "No ",
+    "Taggd_Category": "Quality & Compliance",
+    "Concise Description": "% CAPAs managed end-to-end by system"
+  },
+  {
+    "S.No.#": 30,
+    "Category": "Indian Service Provider",
+    "Company": "HCL",
+    "Metric Name": "Customer Feedback Sentiment",
+    "Adherence Status ": "No ",
+    "Taggd_Category": "Client Experience",
+    "Concise Description": "Sentiment score from feedback"
+  },
+  {
+    "S.No.#": 31,
+    "Category": "Indian Service Provider",
+    "Company": "HCL",
+    "Metric Name": "Documentation Coverage (%)",
+    "Adherence Status ": "No ",
+    "Taggd_Category": "Platform Health",
+    "Concise Description": "% processes with up-to-date SOPs"
+  },
+  {
+    "S.No.#": 32,
+    "Category": "Indian RPO",
+    "Company": "Cielo",
+    "Metric Name": "Recruitment SLA Adherence (%)",
+    "Adherence Status ": "Yes",
+    "Taggd_Category": "Process Efficiency & SLA",
+    "Concise Description": "% hiring steps within SLA"
+  },
+  {
+    "S.No.#": 33,
+    "Category": "Indian RPO",
+    "Company": "Cielo",
+    "Metric Name": "SLA Breach Alerts Count",
+    "Adherence Status ": "No ",
+    "Taggd_Category": "Process Efficiency & SLA",
+    "Concise Description": "Real-time SLA breach alerts triggered"
+  },
+  {
+    "S.No.#": 34,
+    "Category": "Indian RPO",
+    "Company": "Cielo",
+    "Metric Name": "Stage-wise Funnel Conversion Rates",
+    "Adherence Status ": "No ",
+    "Taggd_Category": "Talent Funnel",
+    "Concise Description": "% conversion between funnel stages"
+  },
+  {
+    "S.No.#": 35,
+    "Category": "Indian RPO",
+    "Company": "Cielo",
+    "Metric Name": "Benchmark Positioning",
+    "Adherence Status ": "Yes",
+    "Taggd_Category": "Process Efficiency & SLA",
+    "Concise Description": "ORG KPIs vs industry benchmarks"
+  },
+  {
+    "S.No.#": 36,
+    "Category": "Indian RPO",
+    "Company": "Cielo",
+    "Metric Name": "Client NPS",
+    "Adherence Status ": "Yes",
+    "Taggd_Category": "Client Experience",
+    "Concise Description": "Net promoter score from clients"
+  },
+  {
+    "S.No.#": 37,
+    "Category": "Indian RPO",
+    "Company": "Cielo",
+    "Metric Name": "Client CSAT",
+    "Adherence Status ": "Yes",
+    "Taggd_Category": "Client Experience",
+    "Concise Description": "Client satisfaction score"
+  },
+  {
+    "S.No.#": 38,
+    "Category": "Indian RPO",
+    "Company": "Cielo",
+    "Metric Name": "Talent Intelligence Usage",
+    "Adherence Status ": "No  ",
+    "Taggd_Category": "Quality & Compliance",
+    "Concise Description": "Insights generated vs acted on"
+  },
+  {
+    "S.No.#": 39,
+    "Category": "Indian RPO",
+    "Company": "Randstad",
+    "Metric Name": "Time-to-Slate / Time-to-Fill",
+    "Adherence Status ": "Yes",
+    "Taggd_Category": "Process Efficiency & SLA",
+    "Concise Description": "Time to present slate or fill role"
+  },
+  {
+    "S.No.#": 40,
+    "Category": "Indian RPO",
+    "Company": "Randstad",
+    "Metric Name": "Source Channel Effectiveness",
+    "Adherence Status ": "Partial ",
+    "Taggd_Category": "Talent Funnel",
+    "Concise Description": "Hires and cost per source"
+  },
+  {
+    "S.No.#": 41,
+    "Category": "Indian RPO",
+    "Company": "Randstad",
+    "Metric Name": "AI vs Non-AI Sourcing Productivity",
+    "Adherence Status ": "No",
+    "Taggd_Category": "Productivity",
+    "Concise Description": "Candidates sourced per recruiter per day"
+  },
+  {
+    "S.No.#": 42,
+    "Category": "Indian RPO",
+    "Company": "Randstad",
+    "Metric Name": "Recruiter Productivity Index",
+    "Adherence Status ": "No  ",
+    "Taggd_Category": "Productivity",
+    "Concise Description": "Composite productivity score"
+  },
+  {
+    "S.No.#": 43,
+    "Category": "Indian RPO",
+    "Company": "Randstad",
+    "Metric Name": "Automation Coverage (% TA Tasks)",
+    "Adherence Status ": "No  ",
+    "Taggd_Category": "Productivity",
+    "Concise Description": "% TA tasks automated"
+  },
+  {
+    "S.No.#": 44,
+    "Category": "Indian RPO",
+    "Company": "Randstad",
+    "Metric Name": "Candidate Response Rate",
+    "Adherence Status ": "No ",
+    "Taggd_Category": "Talent Funnel",
+    "Concise Description": "% candidates responding to outreach"
+  },
+  {
+    "S.No.#": 45,
+    "Category": "Indian RPO",
+    "Company": "Randstad",
+    "Metric Name": "Candidate Drop-off Rate",
+    "Adherence Status ": "Partial ",
+    "Taggd_Category": "Talent Funnel",
+    "Concise Description": "% candidates leaving at each stage"
+  },
+  {
+    "S.No.#": 46,
+    "Category": "Indian RPO",
+    "Company": "Randstad",
+    "Metric Name": "Chatbot Resolution Rate",
+    "Adherence Status ": "No ",
+    "Taggd_Category": "AI Performance",
+    "Concise Description": "% queries resolved by chatbot"
+  },
+  {
+    "S.No.#": 47,
+    "Category": "Indian RPO",
+    "Company": "Randstad",
+    "Metric Name": "Chatbot CSAT",
+    "Adherence Status ": "No ",
+    "Taggd_Category": "AI Performance",
+    "Concise Description": "Satisfaction with chatbot interactions"
+  },
+  {
+    "S.No.#": 48,
+    "Category": "Indian RPO",
+    "Company": "ManpowerGroup",
+    "Metric Name": "Requisition Volume",
+    "Adherence Status ": "Yes ",
+    "Taggd_Category": "Demand & Client Intake",
+    "Concise Description": "Total requisitions created"
+  },
+  {
+    "S.No.#": 49,
+    "Category": "Indian RPO",
+    "Company": "ManpowerGroup",
+    "Metric Name": "Demand Variance (%)",
+    "Adherence Status ": "Yes ",
+    "Taggd_Category": "Demand & Client Intake",
+    "Concise Description": "Deviation of demand vs plan"
+  },
+  {
+    "S.No.#": 50,
+    "Category": "Indian RPO",
+    "Company": "ManpowerGroup",
+    "Metric Name": "Market Supply-Demand Index",
+    "Adherence Status ": "Yes ",
+    "Taggd_Category": "Demand & Client Intake",
+    "Concise Description": "Talent supply vs demand per skill/location"
+  },
+  {
+    "S.No.#": 51,
+    "Category": "Indian RPO",
+    "Company": "ManpowerGroup",
+    "Metric Name": "Aging of Open Requisitions",
+    "Adherence Status ": "Yes",
+    "Taggd_Category": "Process Efficiency & SLA",
+    "Concise Description": "Age buckets for open requisitions"
+  },
+  {
+    "S.No.#": 52,
+    "Category": "Indian RPO",
+    "Company": "ManpowerGroup",
+    "Metric Name": "Fill Rate (%)",
+    "Adherence Status ": "Yes",
+    "Taggd_Category": "Process Efficiency & SLA",
+    "Concise Description": "% requisitions filled within SLA"
+  },
+  {
+    "S.No.#": 53,
+    "Category": "Indian RPO",
+    "Company": "ManpowerGroup",
+    "Metric Name": "Dashboard Usage & Self-Service Rate",
+    "Adherence Status ": "No ",
+    "Taggd_Category": "Platform Health",
+    "Concise Description": "Active users and self-service rate"
+  },
+  {
+    "S.No.#": 54,
+    "Category": "Indian RPO",
+    "Company": "Adecco",
+    "Metric Name": "Stage Conversion Rates",
+    "Adherence Status ": "Partial ",
+    "Taggd_Category": "Talent Funnel",
+    "Concise Description": "% conversion at each funnel stage"
+  },
+  {
+    "S.No.#": 55,
+    "Category": "Indian RPO",
+    "Company": "Adecco",
+    "Metric Name": "Drop-off Reason Distribution",
+    "Adherence Status ": "Partial ",
+    "Taggd_Category": "Talent Funnel",
+    "Concise Description": "Breakdown of reasons for drop-off"
+  },
+  {
+    "S.No.#": 56,
+    "Category": "Indian RPO",
+    "Company": "Adecco",
+    "Metric Name": "Hiring Volume vs Plan",
+    "Adherence Status ": "Yes",
+    "Taggd_Category": "Process Efficiency & SLA",
+    "Concise Description": "Actual hires vs plan"
+  },
+  {
+    "S.No.#": 57,
+    "Category": "Indian RPO",
+    "Company": "Adecco",
+    "Metric Name": "SLA Adherence (%)",
+    "Adherence Status ": "Yes",
+    "Taggd_Category": "Process Efficiency & SLA",
+    "Concise Description": "% steps within SLA"
+  },
+  {
+    "S.No.#": 58,
+    "Category": "Indian RPO",
+    "Company": "Adecco",
+    "Metric Name": "CSAT",
+    "Adherence Status ": "Yes",
+    "Taggd_Category": "Client Experience",
+    "Concise Description": "Overall satisfaction score"
+  },
+  {
+    "S.No.#": 59,
+    "Category": "Indian RPO",
+    "Company": "Korn Ferry",
+    "Metric Name": "Candidate Quality Index (CQI)",
+    "Adherence Status ": "No",
+    "Taggd_Category": "Quality & Compliance",
+    "Concise Description": "Composite candidate quality score"
+  },
+  {
+    "S.No.#": 60,
+    "Category": "Indian RPO",
+    "Company": "Korn Ferry",
+    "Metric Name": "Quality of Hire Index",
+    "Adherence Status ": "No",
+    "Taggd_Category": "Quality & Compliance",
+    "Concise Description": "Performance + tenure index"
+  },
+  {
+    "S.No.#": 61,
+    "Category": "Indian RPO",
+    "Company": "Korn Ferry",
+    "Metric Name": "Diversity Mix",
+    "Adherence Status ": "Yes",
+    "Taggd_Category": "Talent Funnel",
+    "Concise Description": "Diversity composition across pipeline and hires"
+  },
+  {
+    "S.No.#": 62,
+    "Category": "Indian RPO",
+    "Company": "Korn Ferry",
+    "Metric Name": "Time to Productivity",
+    "Adherence Status ": "No",
+    "Taggd_Category": "Process Efficiency & SLA",
+    "Concise Description": "Time to reach target performance"
+  },
+  {
+    "S.No.#": 63,
+    "Category": "Indian RPO",
+    "Company": "Korn Ferry",
+    "Metric Name": "Forecast Accuracy (%)",
+    "Adherence Status ": "Yes",
+    "Taggd_Category": "Demand & Client Intake",
+    "Concise Description": "Planned vs actual hires accuracy"
+  },
+  {
+    "S.No.#": 64,
+    "Category": "Global Service Provider",
+    "Company": "Accenture",
+    "Metric Name": "Skill Demand vs Supply Gap",
+    "Adherence Status ": "Yes",
+    "Taggd_Category": "Demand & Client Intake",
+    "Concise Description": "Gap between needed and available skills"
+  },
+  {
+    "S.No.#": 65,
+    "Category": "Global Service Provider",
+    "Company": "Accenture",
+    "Metric Name": "Revenue per FTE / per Hire",
+    "Adherence Status ": "No ",
+    "Taggd_Category": "Financial",
+    "Concise Description": "Revenue generated per FTE or hire"
+  },
+  {
+    "S.No.#": 66,
+    "Category": "Global Service Provider",
+    "Company": "Accenture",
+    "Metric Name": "Defect / Rework Rate",
+    "Adherence Status ": "No",
+    "Taggd_Category": "Quality & Compliance",
+    "Concise Description": "Rework or errors in submissions/hires"
+  },
+  {
+    "S.No.#": 67,
+    "Category": "Global Service Provider",
+    "Company": "Accenture",
+    "Metric Name": "Workforce Planning Accuracy",
+    "Adherence Status ": "Yes",
+    "Taggd_Category": "Demand & Client Intake",
+    "Concise Description": "Accuracy of staffing vs plan"
+  },
+  {
+    "S.No.#": 68,
+    "Category": "Global Service Provider",
+    "Company": "Accenture",
+    "Metric Name": "Bench / Utilization Rate",
+    "Adherence Status ": "No ",
+    "Taggd_Category": "Productivity",
+    "Concise Description": "Time on bench vs billable/utilized"
+  },
+  {
+    "S.No.#": 69,
+    "Category": "Global Service Provider",
+    "Company": "IBM",
+    "Metric Name": "Data Quality Index",
+    "Adherence Status ": "NA ",
+    "Taggd_Category": "Platform Health",
+    "Concise Description": "Composite score of data quality"
+  },
+  {
+    "S.No.#": 70,
+    "Category": "Global Service Provider",
+    "Company": "IBM",
+    "Metric Name": "Data Freshness (Latency)",
+    "Adherence Status ": "NA ",
+    "Taggd_Category": "Platform Health",
+    "Concise Description": "Delay from event to system update"
+  },
+  {
+    "S.No.#": 71,
+    "Category": "Global Service Provider",
+    "Company": "IBM",
+    "Metric Name": "Data Catalog Coverage (%)",
+    "Adherence Status ": "NA ",
+    "Taggd_Category": "Platform Health",
+    "Concise Description": "% key data assets catalogued"
+  },
+  {
+    "S.No.#": 72,
+    "Category": "Global Service Provider",
+    "Company": "IBM",
+    "Metric Name": "Data Issues Rate",
+    "Adherence Status ": "No",
+    "Taggd_Category": "Quality & Compliance",
+    "Concise Description": "Rate of duplicates/missing/invalid data"
+  },
+  {
+    "S.No.#": 73,
+    "Category": "Global Service Provider",
+    "Company": "Adobe",
+    "Metric Name": "Diversity Representation by Stage",
+    "Adherence Status ": "No ",
+    "Taggd_Category": "Talent Funnel",
+    "Concise Description": "Diversity at each funnel stage"
+  },
+  {
+    "S.No.#": 74,
+    "Category": "Global Service Provider",
+    "Company": "Adobe",
+    "Metric Name": "Pipeline Depth vs Market Availability",
+    "Adherence Status ": "Yes",
+    "Taggd_Category": "Talent Funnel",
+    "Concise Description": "Pipeline strength vs market"
+  },
+  {
+    "S.No.#": 75,
+    "Category": "Global Service Provider",
+    "Company": "Adobe",
+    "Metric Name": "Data Journey Completion Rate",
+    "Adherence Status ": "NA ",
+    "Taggd_Category": "Platform Health",
+    "Concise Description": "% data flowing from ingest to activation"
+  },
+  {
+    "S.No.#": 76,
+    "Category": "Global Service Provider",
+    "Company": "Adobe",
+    "Metric Name": "Data Quality Errors per Batch",
+    "Adherence Status ": "NA ",
+    "Taggd_Category": "Platform Health",
+    "Concise Description": "Errors per data ingestion batch"
+  },
+  {
+    "S.No.#": 77,
+    "Category": "Global Service Provider",
+    "Company": "Adobe",
+    "Metric Name": "Recommendation Uptake (%)",
+    "Adherence Status ": "No",
+    "Taggd_Category": "AI Performance",
+    "Concise Description": "% AI-recommended candidates progressing"
+  },
+  {
+    "S.No.#": 78,
+    "Category": "Global Service Provider",
+    "Company": "Salesforce",
+    "Metric Name": "Lead/Inquiry Response Time",
+    "Adherence Status ": "NA ",
+    "Taggd_Category": "Process Efficiency & SLA",
+    "Concise Description": "Time from client inquiry to contact"
+  },
+  {
+    "S.No.#": 79,
+    "Category": "Global Service Provider",
+    "Company": "Salesforce",
+    "Metric Name": "Workflow Automation Coverage (%)",
+    "Adherence Status ": "NA ",
+    "Taggd_Category": "Productivity",
+    "Concise Description": "% processes on Salesforce Flow"
+  },
+  {
+    "S.No.#": 80,
+    "Category": "Global Service Provider",
+    "Company": "Salesforce",
+    "Metric Name": "Customer 360 Coverage (%)",
+    "Adherence Status ": "No ",
+    "Taggd_Category": "Platform Health",
+    "Concise Description": "% records with unified 360 view"
+  },
+  {
+    "S.No.#": 81,
+    "Category": "Global Service Provider",
+    "Company": "Salesforce",
+    "Metric Name": "Agent/Recruiter Activity Productivity",
+    "Adherence Status ": "No ",
+    "Taggd_Category": "Productivity",
+    "Concise Description": "Interactions/tasks closed per day"
+  },
+  {
+    "S.No.#": 82,
+    "Category": "Global Service Provider",
+    "Company": "Salesforce",
+    "Metric Name": "Lead Scoring / NBA Accuracy",
+    "Adherence Status ": "NA ",
+    "Taggd_Category": "AI Performance",
+    "Concise Description": "Correlation of AI scores with outcomes"
+  },
+  {
+    "S.No.#": 83,
+    "Category": "Global RPO",
+    "Company": "AMS",
+    "Metric Name": "Workflow Cycle Time Reduction",
+    "Adherence Status ": "NA ",
+    "Taggd_Category": "Process Efficiency & SLA",
+    "Concise Description": "Cycle time improvement vs baseline"
+  },
+  {
+    "S.No.#": 84,
+    "Category": "Global RPO",
+    "Company": "AMS",
+    "Metric Name": "Task Routing Efficiency",
+    "Adherence Status ": "NA ",
+    "Taggd_Category": "Process Efficiency & SLA",
+    "Concise Description": "% tasks routed to correct owner"
+  },
+  {
+    "S.No.#": 85,
+    "Category": "Global RPO",
+    "Company": "AMS",
+    "Metric Name": "AI Orchestration Adoption (%)",
+    "Adherence Status ": "No",
+    "Taggd_Category": "AI Performance",
+    "Concise Description": "% workflow steps AI-assisted"
+  },
+  {
+    "S.No.#": 86,
+    "Category": "Global RPO",
+    "Company": "AMS",
+    "Metric Name": "Benchmark Comparison Scores",
+    "Adherence Status ": "Yes",
+    "Taggd_Category": "Process Efficiency & SLA",
+    "Concise Description": "ORG KPIs vs peer benchmarks"
+  },
+  {
+    "S.No.#": 87,
+    "Category": "Global RPO",
+    "Company": "Allegis / Global RPO",
+    "Metric Name": "Funnel Conversion Rates",
+    "Adherence Status ": "Partial ",
+    "Taggd_Category": "Talent Funnel",
+    "Concise Description": "% conversion between key stages"
+  },
+  {
+    "S.No.#": 88,
+    "Category": "Global RPO",
+    "Company": "Allegis / Global RPO",
+    "Metric Name": "SLA Adherence (%)",
+    "Adherence Status ": "Yes",
+    "Taggd_Category": "Process Efficiency & SLA",
+    "Concise Description": "% steps within SLA"
+  },
+  {
+    "S.No.#": 89,
+    "Category": "Global RPO",
+    "Company": "Allegis / Global RPO",
+    "Metric Name": "NPS / CSAT",
+    "Adherence Status ": "Yes",
+    "Taggd_Category": "Client Experience",
+    "Concise Description": "Promoter and satisfaction scores"
+  },
+  {
+    "S.No.#": 90,
+    "Category": "Global RPO",
+    "Company": "Allegis / Global RPO",
+    "Metric Name": "Automation Coverage (%)",
+    "Adherence Status ": "No",
+    "Taggd_Category": "Productivity",
+    "Concise Description": "% process steps automated"
+  },
+  {
+    "S.No.#": 91,
+    "Category": "Global RPO",
+    "Company": "Allegis / Global RPO",
+    "Metric Name": "Data Quality Index",
+    "Adherence Status ": "No",
+    "Taggd_Category": "Platform Health",
+    "Concise Description": "Composite data quality score"
+  }
+]
