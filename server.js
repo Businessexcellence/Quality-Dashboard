@@ -18,7 +18,8 @@ const mimeTypes = {
     '.svg': 'image/svg+xml',
     '.ico': 'image/x-icon',
     '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    '.xls': 'application/vnd.ms-excel'
+    '.xls': 'application/vnd.ms-excel',
+    '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
 };
 
 const server = http.createServer((req, res) => {
@@ -26,7 +27,7 @@ const server = http.createServer((req, res) => {
     
     // Try to serve static files from public folder first
     // Match file extensions even with query parameters
-    if (req.url.match(/\.(jpg|jpeg|png|gif|svg|ico|css|js|xlsx|xls)(\?.*)?$/)) {
+    if (req.url.match(/\.(jpg|jpeg|png|gif|svg|ico|css|js|xlsx|xls|docx)(\?.*)?$/)) {
         // Remove /public prefix if present in URL
         let urlPath = req.url;
         if (urlPath.startsWith('/public/')) {
@@ -47,10 +48,18 @@ const server = http.createServer((req, res) => {
                     ? 'no-cache, no-store, must-revalidate' 
                     : 'public, max-age=86400';
                 
-                res.writeHead(200, { 
+                // Force download for Word documents
+                const headers = { 
                     'Content-Type': contentType,
                     'Cache-Control': cacheControl
-                });
+                };
+                
+                if (ext === '.docx' || ext === '.xlsx' || ext === '.xls') {
+                    const filename = path.basename(cleanPath);
+                    headers['Content-Disposition'] = `attachment; filename="${filename}"`;
+                }
+                
+                res.writeHead(200, headers);
                 res.end(content);
                 return;
             }
@@ -70,6 +79,8 @@ const server = http.createServer((req, res) => {
         filePath = path.join(__dirname, 'upload-test.html');
     } else if (req.url === '/minimal-test' || req.url === '/minimal-test.html') {
         filePath = path.join(__dirname, 'minimal-test.html');
+    } else if (req.url === '/download-sop' || req.url === '/download-sop.html') {
+        filePath = path.join(__dirname, 'public', 'download-sop.html');
     } else {
         filePath = path.join(__dirname, 'index.html');
     }

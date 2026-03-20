@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download Dashboard Documentation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #f04616 0%, #ff6b3d 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .download-container {
+            background: white;
+            border-radius: 20px;
+            padding: 50px 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+        
+        .icon-wrapper {
+            background: linear-gradient(135deg, #f04616 0%, #ff6b3d 100%);
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            box-shadow: 0 10px 30px rgba(240, 70, 22, 0.3);
+        }
+        
+        .icon-wrapper i {
+            font-size: 48px;
+            color: white;
+        }
+        
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 15px;
+        }
+        
+        p {
+            font-size: 16px;
+            color: #718096;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .download-btn {
+            background: linear-gradient(135deg, #f04616 0%, #ff6b3d 100%);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(240, 70, 22, 0.3);
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(240, 70, 22, 0.4);
+        }
+        
+        .download-btn i {
+            font-size: 20px;
+        }
+        
+        .file-info {
+            background: #f7fafc;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 30px;
+            text-align: left;
+        }
+        
+        .file-info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .file-info-item:last-child {
+            border-bottom: none;
+        }
+        
+        .file-info-label {
+            color: #718096;
+            font-size: 14px;
+        }
+        
+        .file-info-value {
+            color: #2d3748;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #f04616;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .back-link:hover {
+            color: #ff6b3d;
+        }
+        
+        .back-link i {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="download-container">
+        <div class="icon-wrapper">
+            <i class="fas fa-file-word"></i>
+        </div>
+        
+        <h1>Dashboard Documentation</h1>
+        <p>Complete Standard Operating Procedure (SOP) for the Quality Dashboard. This document includes all tabs, calculations, formulas, and technical specifications.</p>
+        
+        <a href="/downloads/Quality_Dashboard_Documentation.docx" download="Quality_Dashboard_Documentation.docx" class="download-btn">
+            <i class="fas fa-download"></i>
+            Download Word Document
+        </a>
+        
+        <div class="file-info">
+            <div class="file-info-item">
+                <span class="file-info-label"><i class="fas fa-file"></i> File Name</span>
+                <span class="file-info-value">Quality_Dashboard_Documentation.docx</span>
+            </div>
+            <div class="file-info-item">
+                <span class="file-info-label"><i class="fas fa-weight"></i> File Size</span>
+                <span class="file-info-value">60 KB</span>
+            </div>
+            <div class="file-info-item">
+                <span class="file-info-label"><i class="fas fa-file-alt"></i> Format</span>
+                <span class="file-info-value">Microsoft Word (.docx)</span>
+            </div>
+            <div class="file-info-item">
+                <span class="file-info-label"><i class="fas fa-book"></i> Pages</span>
+                <span class="file-info-value">~100+ pages</span>
+            </div>
+        </div>
+        
+        <a href="/" class="back-link">
+            <i class="fas fa-arrow-left"></i>
+            Back to Dashboard
+        </a>
+    </div>
+</body>
+</html>
