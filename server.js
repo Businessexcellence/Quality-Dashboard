@@ -54,7 +54,7 @@ const server = http.createServer((req, res) => {
                     'Cache-Control': cacheControl
                 };
                 
-                if (ext === '.docx' || ext === '.xlsx' || ext === '.xls') {
+                if (ext === '.docx' || ext === '.doc') {
                     const filename = path.basename(cleanPath);
                     headers['Content-Disposition'] = `attachment; filename="${filename}"`;
                 }
@@ -65,6 +65,28 @@ const server = http.createServer((req, res) => {
             }
             
             // If not found in public, return 404
+            res.writeHead(404, { 'Content-Type': 'text/plain' });
+            res.end('File not found');
+        });
+        return;
+    }
+    
+    // Serve Excel files from /data/ path (for auto-load)
+    if (req.url.startsWith('/data/')) {
+        const dataPath = path.join(__dirname, 'public', req.url);
+        fs.readFile(dataPath, (err, content) => {
+            if (!err) {
+                const ext = path.extname(req.url);
+                const contentType = mimeTypes[ext] || 'application/octet-stream';
+                
+                res.writeHead(200, { 
+                    'Content-Type': contentType,
+                    'Cache-Control': 'no-cache, no-store, must-revalidate'  // Always fresh data
+                });
+                res.end(content);
+                return;
+            }
+            
             res.writeHead(404, { 'Content-Type': 'text/plain' });
             res.end('File not found');
         });
