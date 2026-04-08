@@ -4927,24 +4927,24 @@
         }
 
         function getAccountOfMonth() {
-            if (!window.dashboardData.parameterAuditCount.length) return { name: 'N/A', accuracy: 0, weightage: 0 };
+            if (!window.dashboardData.parameterAuditCount.length) return { name: 'N/A', accuracy: 0, adjustedScore: 0 };
 
             // Use the same calculation as Top Performers
             const accounts = calculateAccountAccuracy();
             
-            if (accounts.length === 0) return { name: 'N/A', accuracy: 0, weightage: 0 };
+            if (accounts.length === 0) return { name: 'N/A', accuracy: 0, adjustedScore: 0 };
             
-            // Find account with highest Account Weightage
+            // Find account with highest Adjusted Score
             const best = accounts.reduce((prev, current) => {
                 return (current.accountWeightage > prev.accountWeightage) ? current : prev;
             });
             
-            console.log('🏆 Account of the Month:', best.name, 'Weightage:', best.accountWeightage.toFixed(2) + '%', 'Accuracy:', best.accuracy.toFixed(1) + '%', 'Audits:', best.auditCount);
+            console.log('🏆 Account of the Month:', best.name, 'Adjusted Score:', best.accountWeightage.toFixed(2) + '%', 'Accuracy:', best.accuracy.toFixed(1) + '%', 'Audits:', best.auditCount);
             
             return { 
                 name: best.name, 
                 accuracy: best.accuracy.toFixed(1),
-                weightage: best.accountWeightage.toFixed(1)
+                adjustedScore: best.accountWeightage.toFixed(1)
             };
         }
 
@@ -5058,17 +5058,17 @@
                 
                 console.log('🏆 Top Performers calculation - Total accounts:', accounts.length);
                 
-                // Top performers: HIGHEST Account Weightage (60% Accuracy + 40% Audit Count)
+                // Top performers: HIGHEST Adjusted Score
                 const topPerformers = accounts
                     .sort((a, b) => {
-                        // Primary sort: HIGHEST Account Weightage first
+                        // Primary sort: HIGHEST Adjusted Score first
                         return b.accountWeightage - a.accountWeightage;
                     })
                     .slice(0, 5);
 
-                console.log('🏆 Top 5 Performers (by Account Weightage):');
+                console.log('🏆 Top 5 Performers (by Adjusted Score):');
                 topPerformers.forEach((acc, idx) => {
-                    console.log(`  ${idx + 1}. ${acc.name}: Weightage ${acc.accountWeightage.toFixed(2)}, Accuracy ${acc.accuracy.toFixed(1)}%, Audits ${acc.auditCount}`);
+                    console.log(`  ${idx + 1}. ${acc.name}: Adjusted Score ${acc.accountWeightage.toFixed(2)}%, Accuracy ${acc.accuracy.toFixed(1)}%, Audits ${acc.auditCount}`);
                 });
 
                 if (topPerformers.length === 0) {
@@ -5082,7 +5082,7 @@
                             <tr style="border-bottom: 2px solid var(--border); background: rgba(16,185,129,0.05);">
                                 <th style="padding: 8px; text-align: left; font-size: 10px; font-weight: 700; color: var(--text-primary);">#</th>
                                 <th style="padding: 8px; text-align: left; font-size: 10px; font-weight: 700; color: var(--text-primary);">Account</th>
-                                <th style="padding: 8px; text-align: right; font-size: 10px; font-weight: 700; color: var(--text-primary);">Weightage</th>
+                                <th style="padding: 8px; text-align: right; font-size: 10px; font-weight: 700; color: var(--text-primary);">Adjusted Score</th>
                                 <th style="padding: 8px; text-align: right; font-size: 10px; font-weight: 700; color: var(--text-primary);">Audits</th>
                                 <th style="padding: 8px; text-align: right; font-size: 10px; font-weight: 700; color: var(--text-primary);">Accuracy</th>
                             </tr>
@@ -5096,13 +5096,13 @@
                                     <td style="padding: 8px; font-size: 11px; color: var(--text-primary); font-weight: 500;">${acc.name}</td>
                                     <td style="padding: 8px; text-align: right;">
                                         <span style="
-                                            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); 
+                                            background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
                                             color: white; 
                                             padding: 3px 8px; 
                                             border-radius: 10px; 
                                             font-size: 11px; 
                                             font-weight: 700;
-                                        ">${acc.accountWeightage.toFixed(1)}%</span>
+                                        ">${acc.accountWeightage.toFixed(2)}%</span>
                                     </td>
                                     <td style="padding: 8px; text-align: right;">
                                         <span style="
@@ -5139,6 +5139,7 @@
         function calculateAccountAccuracy() {
             const accounts = {};
             
+            // Step 1: Aggregate data per account
             window.dashboardData.parameterAuditCount.forEach(row => {
                 const account = row.Account || row.Client;
                 if (!account) return;
@@ -5153,31 +5154,58 @@
                 accounts[account].na += parseFloat(row['Opportunity NA']) || 0;
             });
 
+            // Step 2: Calculate global average
+            // global_avg = (Sum of Opportunity Pass across all accounts) / (Sum of Opportunity Count - Sum of Opportunity NA)
+            let totalPass = 0;
+            let totalCount = 0;
+            let totalNA = 0;
+            
+            Object.values(accounts).forEach(data => {
+                totalPass += data.pass;
+                totalCount += data.count;
+                totalNA += data.na;
+            });
+            
+            const globalDenominator = totalCount - totalNA;
+            const global_avg = globalDenominator > 0 ? (totalPass / globalDenominator) : 0; // This is a decimal (e.g., 0.85 for 85%)
+            
+            console.log('📊 Global Average Calculation:');
+            console.log(`   Total Pass: ${totalPass.toFixed(2)}`);
+            console.log(`   Total Count: ${totalCount.toFixed(2)}`);
+            console.log(`   Total NA: ${totalNA.toFixed(2)}`);
+            console.log(`   Global Avg (decimal): ${global_avg.toFixed(4)} (${(global_avg * 100).toFixed(2)}%)`);
+
+            // Step 3: Calculate Adjusted Score for each account
+            const m = 50; // Fixed value
+            
             return Object.keys(accounts).map(name => {
                 const data = accounts[name];
-                const denominator = data.count - data.na;
-                let accuracy = denominator > 0 ? (data.pass / denominator * 100) : 0;
+                const validCount = data.count - data.na; // Sum of Opportunity Count - Sum of NA Count
+                const accuracy = validCount > 0 ? (data.pass / validCount) : 0; // Accuracy as decimal (e.g., 0.85 for 85%)
                 
-                // Override TCPL accuracy to 92.3%
-                if (name.toUpperCase().includes('TCPL')) {
-                    accuracy = 92.3;
-                }
+                // Formula: adjusted_score = (((validCount * accuracy) + (m * global_avg)) / (data.count + m))
+                // Note: validCount * accuracy = data.pass (opportunity pass count)
+                const numerator = (validCount * accuracy) + (m * global_avg);
+                const denominator = data.count + m;
+                const adjusted_score = denominator > 0 ? (numerator / denominator) : 0; // Decimal value
+                const adjusted_score_percent = adjusted_score * 100; // Convert to percentage for display
                 
-                // Calculate Account Weightage
-                // Formula: 60% of Accuracy Score + 40% of Audit Count (normalized)
-                // Normalize audit count to 0-100 scale (assuming max 50,000 audits)
-                const maxAuditCount = 50000;
-                const normalizedAuditCount = Math.min((data.count / maxAuditCount) * 100, 100);
-                const accountWeightage = (accuracy * 0.6) + (normalizedAuditCount * 0.4);
+                // For display purposes, keep accuracy as percentage
+                const accuracyPercent = accuracy * 100;
+                
+                console.log(`📊 ${name}:`);
+                console.log(`   Valid Count: ${validCount}, Pass: ${data.pass.toFixed(2)}, Accuracy: ${accuracyPercent.toFixed(2)}%`);
+                console.log(`   Adjusted Score: ${adjusted_score_percent.toFixed(2)}% (raw: ${adjusted_score.toFixed(4)})`);
                 
                 return { 
                     name, 
-                    accuracy: parseFloat(accuracy.toFixed(1)), // Overall accuracy %
+                    accuracy: parseFloat(accuracyPercent.toFixed(1)), // Overall accuracy %
                     auditCount: data.count, // TOTAL audit count (sum of all Opportunity Count)
                     totalPass: data.pass,
                     totalNA: data.na,
-                    validAudits: denominator,
-                    accountWeightage: parseFloat(accountWeightage.toFixed(2)) // Account Weightage score
+                    validAudits: validCount,
+                    accountWeightage: parseFloat(adjusted_score_percent.toFixed(2)), // Adjusted Score as percentage
+                    adjustedScore: parseFloat(adjusted_score.toFixed(4)) // Keep raw score for debugging
                 };
             });
         }
@@ -5190,19 +5218,19 @@
                 const accounts = calculateAccountAccuracy();
                 
                 console.log('⚠️ Needs Attention calculation - Total accounts:', accounts.length);
-                console.log('⚠️ ALL accounts with details:', accounts.map(a => `${a.name}: Weightage ${a.accountWeightage.toFixed(2)} (${a.accuracy.toFixed(1)}% accuracy, ${a.auditCount} audits)`));
+                console.log('⚠️ ALL accounts with details:', accounts.map(a => `${a.name}: Adjusted Score ${a.accountWeightage.toFixed(2)}% (${a.accuracy.toFixed(1)}% accuracy, ${a.auditCount} audits)`));
 
-                // Needs Attention: 5 LOWEST Account Weightage
+                // Needs Attention: 5 LOWEST Adjusted Score
                 const needsAttention = accounts
                     .sort((a, b) => {
-                        // Primary sort: LOWEST Account Weightage first
+                        // Primary sort: LOWEST Adjusted Score first
                         return a.accountWeightage - b.accountWeightage; // Ascending (lowest first)
                     })
                     .slice(0, 5);
                 
-                console.log('⚠️ Needs Attention (5 lowest Account Weightage):');
+                console.log('⚠️ Needs Attention (5 lowest Adjusted Score):');
                 needsAttention.forEach((acc, idx) => {
-                    console.log(`  ${idx + 1}. ${acc.name}: Weightage ${acc.accountWeightage.toFixed(2)}, Accuracy ${acc.accuracy.toFixed(1)}%, Audits ${acc.auditCount}`);
+                    console.log(`  ${idx + 1}. ${acc.name}: Adjusted Score ${acc.accountWeightage.toFixed(2)}%, Accuracy ${acc.accuracy.toFixed(1)}%, Audits ${acc.auditCount}`);
                 });
 
                 if (needsAttention.length > 0) {
@@ -5212,7 +5240,7 @@
                                 <tr style="border-bottom: 2px solid var(--border); background: rgba(255,102,0,0.05);">
                                     <th style="padding: 8px; text-align: left; font-size: 10px; font-weight: 700; color: var(--text-primary);">#</th>
                                     <th style="padding: 8px; text-align: left; font-size: 10px; font-weight: 700; color: var(--text-primary);">Account</th>
-                                    <th style="padding: 8px; text-align: right; font-size: 10px; font-weight: 700; color: var(--text-primary);">Weightage</th>
+                                    <th style="padding: 8px; text-align: right; font-size: 10px; font-weight: 700; color: var(--text-primary);">Adjusted Score</th>
                                     <th style="padding: 8px; text-align: right; font-size: 10px; font-weight: 700; color: var(--text-primary);">Audits</th>
                                     <th style="padding: 8px; text-align: right; font-size: 10px; font-weight: 700; color: var(--text-primary);">Accuracy</th>
                                 </tr>
@@ -5232,7 +5260,7 @@
                                                 border-radius: 10px; 
                                                 font-size: 11px; 
                                                 font-weight: 700;
-                                            ">${acc.accountWeightage.toFixed(1)}%</span>
+                                            ">${acc.accountWeightage.toFixed(2)}%</span>
                                         </td>
                                         <td style="padding: 8px; text-align: right;">
                                             <span style="
