@@ -11017,33 +11017,68 @@ Total Population: ${totalPop}
                     paramStats[param].opportunityNA += parseFloat(row['Opportunity NA']) || 0;
                 });
                 
-                // Calculate accuracy using SAME formula as Transactional Overview
-                // Accuracy% = Sum of "Opportunity Pass" / (Sum of "Opportunity Count" - Sum of "Opportunity NA")
+                // Calculate accuracy and adjusted score
+                // Adjusted Score formula: ((validCount * accuracy + m * global_avg) / (totalCount + m))
+                // where m = 50, global_avg = total pass / (total count - total NA) across all parameters
+                
+                // First, calculate global average
+                let globalTotalPass = 0;
+                let globalTotalCount = 0;
+                let globalTotalNA = 0;
+                
+                Object.values(paramStats).forEach(stats => {
+                    globalTotalPass += stats.opportunityPass;
+                    globalTotalCount += stats.opportunityCount;
+                    globalTotalNA += stats.opportunityNA;
+                });
+                
+                const globalValidCount = globalTotalCount - globalTotalNA;
+                const global_avg = globalValidCount > 0 ? (globalTotalPass / globalValidCount) * 100 : 0;
+                const m = 50; // Fixed m value
+                
+                console.log('📊 Global stats for Adjusted Score:', {
+                    globalTotalPass,
+                    globalTotalCount,
+                    globalTotalNA,
+                    globalValidCount,
+                    global_avg: global_avg.toFixed(2) + '%',
+                    m
+                });
+                
                 const paramData = Object.entries(paramStats).map(([param, stats]) => {
-                    const denominator = stats.opportunityCount - stats.opportunityNA;
-                    // If denominator is 0 (Opportunity Count = Opportunity NA), accuracy is null (NA)
-                    const accuracy = denominator > 0 ? (stats.opportunityPass / denominator * 100) : null;
+                    const validCount = stats.opportunityCount - stats.opportunityNA;
+                    const totalCount = stats.opportunityCount;
+                    
+                    // Original accuracy
+                    const accuracy = validCount > 0 ? (stats.opportunityPass / validCount * 100) : null;
+                    
+                    // Adjusted Score calculation
+                    const adjustedScore = totalCount > 0 && accuracy !== null
+                        ? ((validCount * accuracy + m * global_avg) / (totalCount + m))
+                        : null;
+                    
                     return { 
                         parameter: param, 
-                        accuracy: accuracy, 
-                        auditCount: stats.opportunityCount,
-                        denominator: denominator
+                        accuracy: accuracy,
+                        adjustedScore: adjustedScore,
+                        auditCount: totalCount,
+                        validCount: validCount
                     };
                 })
-                .filter(p => p.auditCount > 0 && p.accuracy !== null && p.accuracy > 0) // Exclude 0% and NA values
-                .filter(p => p.denominator >= 5); // Only include parameters with at least 5 valid audits
+                .filter(p => p.auditCount > 0 && p.adjustedScore !== null && p.adjustedScore > 0) // Exclude 0% and NA values
+                .filter(p => p.validCount >= 5); // Only include parameters with at least 5 valid audits
                 
-                // Sort by accuracy descending
+                // Sort by adjusted score descending
                 paramData.sort((a, b) => {
-                    // Primary sort: accuracy
-                    if (b.accuracy !== a.accuracy) {
-                        return b.accuracy - a.accuracy;
+                    // Primary sort: adjusted score
+                    if (b.adjustedScore !== a.adjustedScore) {
+                        return b.adjustedScore - a.adjustedScore;
                     }
                     // Secondary sort: audit count (more audits = more reliable)
                     return b.auditCount - a.auditCount;
                 });
                 
-                console.log('📊 Filtered parameters:', paramData.length, 'with min 5 audits and >0% accuracy');
+                console.log('📊 Filtered parameters:', paramData.length, 'with min 5 valid audits and >0% adjusted score');
                 
                 // Get top 5 and bottom 5 WITHOUT duplicates
                 let displayData = [];
@@ -11058,7 +11093,7 @@ Total Population: ${totalPop}
                 }
                 
                 const labels = displayData.map(d => d.parameter.length > 25 ? d.parameter.substring(0, 25) + '...' : d.parameter);
-                const accuracyData = displayData.map(d => d.accuracy.toFixed(1));
+                const adjustedScoreData = displayData.map(d => d.adjustedScore.toFixed(1));
                 
                 // Color logic: Top performers (green), Bottom performers (red)
                 const colors = displayData.map((d, i) => {
@@ -11080,8 +11115,8 @@ Total Population: ${totalPop}
                     data: {
                         labels: labels,
                         datasets: [{
-                            label: 'Accuracy %',
-                            data: accuracyData,
+                            label: 'Adjusted Score',
+                            data: adjustedScoreData,
                             backgroundColor: colors,
                             borderColor: colors.map(c => c.replace('0.8', '1')),
                             borderWidth: 2,
@@ -11105,7 +11140,13 @@ Total Population: ${totalPop}
                                 backgroundColor: 'rgba(0, 0, 0, 0.8)',
                                 callbacks: {
                                     label: function(context) {
-                                        return 'Accuracy: ' + context.parsed.x + '%';
+                                        const index = context.dataIndex;
+                                        const param = displayData[index];
+                                        return [
+                                            'Adjusted Score: ' + context.parsed.x.toFixed(1),
+                                            'Accuracy: ' + param.accuracy.toFixed(1) + '%',
+                                            'Valid Audits: ' + param.validCount
+                                        ];
                                     }
                                 }
                             },
@@ -11118,7 +11159,7 @@ Total Population: ${totalPop}
                                     weight: 'bold'
                                 },
                                 formatter: function(value) {
-                                    return value + '%';
+                                    return value;
                                 },
                                 offset: 4,  // 4px offset from bar end
                                 clamp: false  // Don't clamp - let layout padding handle it
@@ -11132,7 +11173,7 @@ Total Population: ${totalPop}
                                 ticks: {
                                     font: { size: 10 },
                                     callback: function(value) {
-                                        return value + '%';
+                                        return value;
                                     }
                                 },
                                 grid: {
