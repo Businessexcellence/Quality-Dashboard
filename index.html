@@ -65,7 +65,7 @@
                 
                 // 🎯 INDEPENDENT TAB REFRESH: Only refresh the active tab
                 // This ensures each tab operates independently and doesn't affect others
-                if (window.window.dashboardData) {
+                if (window.dashboardData) {
                     console.log('🔄 Refreshing only active tab:', tabId);
                     if (tabId === 'home' && typeof window.refreshHomeTab === 'function') {
                         window.refreshHomeTab();
@@ -2031,21 +2031,10 @@
 
             <!-- Month Wise Accuracy & Audit Count Chart -->
             <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 12px; margin-top: 10px;">
-                <h3 style="font-size: 12px; font-weight: 700; color: var(--text-primary); margin: 0 0 8px 0;">
+                <h3 style="font-size: 12px; font-weight: 700; color: var(--text-primary); margin: 0 0 12px 0;">
                     <i class="fas fa-chart-line" style="color: var(--primary); font-size: 11px;"></i> Month Wise Accuracy Score & Audit Count
                 </h3>
-                <!-- External Legend -->
-                <div style="display: flex; justify-content: center; align-items: center; gap: 20px; margin-bottom: 8px; padding: 8px 0;">
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <div style="width: 15px; height: 15px; background: rgba(59, 130, 246, 1); border-radius: 50%;"></div>
-                        <span style="font-size: 12px; font-weight: 700; color: var(--text-primary);">Accuracy Score (%)</span>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <div style="width: 15px; height: 15px; background: rgba(240, 70, 22, 0.7); border-radius: 3px;"></div>
-                        <span style="font-size: 12px; font-weight: 700; color: var(--text-primary);">Audit Count</span>
-                    </div>
-                </div>
-                <div style="position: relative; height: 300px;">
+                <div style="position: relative; height: 350px;">
                     <canvas id="monthWiseChart"></canvas>
                 </div>
             </div>
@@ -11284,17 +11273,17 @@ Total Population: ${totalPop}
         function refreshStrategicTab() {
             try {
                 console.log('🔄 Refreshing Strategic Overview tab');
-                console.log('🔍 window.window.dashboardData:', window.window.dashboardData);
+                console.log('🔍 window.dashboardData:', window.dashboardData);
                 console.log('📊 Dashboard data check:', {
-                    hasProjects: !!window.window.dashboardData?.projects,
-                    projectsLength: window.window.dashboardData?.projects?.length || 0,
-                    hasRcaCapa: !!window.window.dashboardData?.rcaCapa,
-                    rcaCapaLength: window.window.dashboardData?.rcaCapa?.length || 0
+                    hasProjects: !!window.dashboardData?.projects,
+                    projectsLength: window.dashboardData?.projects?.length || 0,
+                    hasRcaCapa: !!window.dashboardData?.rcaCapa,
+                    rcaCapaLength: window.dashboardData?.rcaCapa?.length || 0
                 });
                 
-                if (!window.window.dashboardData || !window.window.dashboardData.projects || !window.window.dashboardData.rcaCapa) {
+                if (!window.dashboardData || !window.dashboardData.projects || !window.dashboardData.rcaCapa) {
                     console.warn('⚠️ No Projects or RCA_CAPA data available');
-                    console.log('Available data keys:', window.window.dashboardData ? Object.keys(window.window.dashboardData) : 'window.dashboardData is null');
+                    console.log('Available data keys:', window.dashboardData ? Object.keys(window.dashboardData) : 'window.dashboardData is null');
                     
                     // Show empty state
                     safeSetText('projectsTotal', 0);
@@ -11306,8 +11295,8 @@ Total Population: ${totalPop}
                     return;
                 }
 
-                strategicData.projects = window.window.dashboardData.projects;
-                strategicData.rcaCapa = window.window.dashboardData.rcaCapa;
+                strategicData.projects = window.dashboardData.projects;
+                strategicData.rcaCapa = window.dashboardData.rcaCapa;
 
                 console.log('📊 Strategic data loaded:', {
                     projects: strategicData.projects.length,
