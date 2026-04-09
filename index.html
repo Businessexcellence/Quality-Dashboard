@@ -6023,17 +6023,6 @@
                         <div style="font-size: 18px; font-weight: 700; color: white; margin-bottom: 2px;">${overallAccuracy}%</div>
                         <div style="font-size: 8px; color: rgba(255,255,255,0.95); font-weight: 600; background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 8px; display: inline-block;">${accuracyLabel}</div>
                     </div>
-                    <div style="background: linear-gradient(135deg, ${slaCompliance >= 75 ? '#11998e, #38ef7d' : slaCompliance >= 50 ? '#f46b45, #eea849' : '#eb3349, #f45c43'}); border: none; border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0 4px 15px ${slaCompliance >= 75 ? 'rgba(56, 239, 125, 0.3)' : slaCompliance >= 50 ? 'rgba(238, 168, 73, 0.3)' : 'rgba(244, 92, 67, 0.3)'}; position: relative; overflow: hidden;">
-                        <div style="position: absolute; top: 10px; right: 10px; font-size: 32px; opacity: 0.2; color: white;">
-                            <i class="fas fa-bullseye"></i>
-                        </div>
-                        <div style="font-size: 11px; color: rgba(255,255,255,0.9); margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">OVERALL SLA COMPLIANCE %</div>
-                        <div style="font-size: 32px; font-weight: 700; color: white; margin-bottom: 4px;">${slaCompliance}%</div>
-                        <div style="font-size: 10px; color: rgba(255,255,255,0.95); font-weight: 600; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 12px; display: inline-block;">${slaLabel}</div>
-                        <div style="font-size: 9px; color: rgba(255,255,255,0.85); margin-top: 8px; line-height: 1.3;">
-                            Met: ${totalSlaMet} | Not Met: ${totalSlaNotMet} | Not Reported: ${totalSlaNotReported}
-                        </div>
-                    </div>
                 `;
                 
                 document.getElementById('journeyStatsGrid').innerHTML = statsHTML;
@@ -6179,7 +6168,7 @@
                         <div style="background: ${professionalBg}; border: 2px solid #e5e7eb; border-radius: 14px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: all 0.3s ease; padding: 4px;" onmouseover="this.style.boxShadow='0 6px 20px rgba(0,0,0,0.12)'; this.style.transform='translateY(-2px)';" onmouseout="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)'; this.style.transform='translateY(0)';">
                             <div style="background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
                             <!-- Account Header -->
-                            <div style="background: white; border-bottom: 1px solid #e5e7eb; padding: 20px; display: flex; justify-content: space-between; align-items: center;">
+                            <div style="background: white; border-bottom: 1px solid #e5e7eb; padding: 12px; display: flex; justify-content: space-between; align-items: center;">
                                 <div style="flex: 1;">
                                     <h2 style="color: #111827; font-size: 20px; margin-bottom: 10px; font-weight: 700;">${account.name}</h2>
                                     <div style="display: flex; gap: 16px; flex-wrap: wrap; font-size: 12px; color: #6b7280;">
@@ -6200,23 +6189,23 @@
                                 <div style="display: flex; gap: 20px; align-items: center;">
                                     <!-- Accuracy Circle -->
                                     <div style="text-align: center;">
-                                        <div style="font-size: 10px; font-weight: 600; color: #6b7280; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">ACCURACY</div>
-                                        <div style="width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 6px; font-size: 18px; font-weight: 700; color: #000000; background: #f9fafb; border: 3px solid ${accuracyScore === 'NA' ? '#9ca3af' : (parseFloat(accuracyScore) >= 95 ? '#10b981' : '#f59e0b')}; cursor: ${accuracyScore === 'NA' ? 'default' : 'pointer'}; transition: all 0.3s ease;" ${accuracyScore === 'NA' ? '' : `onclick="toggleAccuracyTrend('${account.name}')" title="Click to view monthly trend"`} onmouseover="${accuracyScore === 'NA' ? '' : `this.style.transform='scale(1.05)'; this.style.boxShadow='0 4px 12px rgba(${parseFloat(accuracyScore) >= 95 ? '16, 185, 129' : '245, 158, 11'}, 0.3)';`}" onmouseout="${accuracyScore === 'NA' ? '' : `this.style.transform='scale(1)'; this.style.boxShadow='none';`}">${accuracyScore === 'NA' ? 'NA' : accuracyScore + '%'}</div>
-                                        ${accuracyScore === 'NA' ? '' : `<div style="font-size: 9px; font-weight: 700; color: ${parseFloat(accuracyScore) >= 95 ? '#10b981' : '#f59e0b'}; text-transform: uppercase; letter-spacing: 0.5px;">${accuracyLabel}</div>`}
+                                        <div style="font-size: 9px; font-weight: 600; color: #6b7280; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px;">ACCURACY</div>
+                                        <div style="width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 4px; font-size: 14px; font-weight: 700; color: #000000; background: #f9fafb; border: 2px solid ${accuracyScore === 'NA' ? '#9ca3af' : (parseFloat(accuracyScore) >= 95 ? '#10b981' : '#f59e0b')}; cursor: ${accuracyScore === 'NA' ? 'default' : 'pointer'}; transition: all 0.3s ease;" ${accuracyScore === 'NA' ? '' : `onclick="toggleAccuracyTrend('${account.name}')" title="Click to view monthly trend"`} onmouseover="${accuracyScore === 'NA' ? '' : `this.style.transform='scale(1.05)'; this.style.boxShadow='0 4px 12px rgba(${parseFloat(accuracyScore) >= 95 ? '16, 185, 129' : '245, 158, 11'}, 0.3)';`}" onmouseout="${accuracyScore === 'NA' ? '' : `this.style.transform='scale(1)'; this.style.boxShadow='none';`}">${accuracyScore === 'NA' ? 'NA' : accuracyScore + '%'}</div>
+                                        ${accuracyScore === 'NA' ? '' : `<div style="font-size: 8px; font-weight: 700; color: ${parseFloat(accuracyScore) >= 95 ? '#10b981' : '#f59e0b'}; text-transform: uppercase; letter-spacing: 0.5px;">${accuracyLabel}</div>`}
                                     </div>
                                     <!-- SLA Met% Circle -->
                                     ${account.has_sla ? `
                                     <div style="text-align: center;">
-                                        <div style="font-size: 10px; font-weight: 600; color: #6b7280; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">SLA MET%</div>
-                                        <div style="width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 6px; font-size: 18px; font-weight: 700; color: #000000; background: #f9fafb; border: 3px solid ${account.sla_compliance >= 75 ? '#10b981' : account.sla_compliance >= 50 ? '#f59e0b' : '#ef4444'}; cursor: pointer; transition: all 0.3s ease;" onclick="toggleSLATrend('${account.name}')" title="Click to view monthly trend" onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 4px 12px rgba(${account.sla_compliance >= 75 ? '16, 185, 129' : account.sla_compliance >= 50 ? '245, 158, 11' : '239, 68, 68'}, 0.3)';" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none';">${account.sla_compliance.toFixed(1)}%</div>
-                                        <div style="font-size: 9px; font-weight: 700; color: ${account.sla_compliance >= 75 ? '#10b981' : account.sla_compliance >= 50 ? '#f59e0b' : '#ef4444'}; text-transform: uppercase; letter-spacing: 0.5px;">${account.sla_compliance >= 75 ? 'EXCELLENT' : account.sla_compliance >= 50 ? 'NEEDS ATTENTION' : 'CRITICAL'}</div>
+                                        <div style="font-size: 9px; font-weight: 600; color: #6b7280; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px;">SLA MET%</div>
+                                        <div style="width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 4px; font-size: 14px; font-weight: 700; color: #000000; background: #f9fafb; border: 2px solid ${account.sla_compliance >= 75 ? '#10b981' : account.sla_compliance >= 50 ? '#f59e0b' : '#ef4444'}; cursor: pointer; transition: all 0.3s ease;" onclick="toggleSLATrend('${account.name}')" title="Click to view monthly trend" onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 4px 12px rgba(${account.sla_compliance >= 75 ? '16, 185, 129' : account.sla_compliance >= 50 ? '245, 158, 11' : '239, 68, 68'}, 0.3)';" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none';">${account.sla_compliance.toFixed(1)}%</div>
+                                        <div style="font-size: 8px; font-weight: 700; color: ${account.sla_compliance >= 75 ? '#10b981' : account.sla_compliance >= 50 ? '#f59e0b' : '#ef4444'}; text-transform: uppercase; letter-spacing: 0.5px;">${account.sla_compliance >= 75 ? 'EXCELLENT' : account.sla_compliance >= 50 ? 'NEEDS ATTENTION' : 'CRITICAL'}</div>
                                     </div>
                                     ` : ''}
                                 </div>
                             </div>
                             
                             <!-- Accuracy Monthly Trend (Hidden by default) -->
-                            <div id="accuracyTrend_${account.name.replace(/[^a-zA-Z0-9]/g, '_')}" style="display: none; background: #f9fafb; border-top: 1px solid #d1d5db; padding: 15px;">
+                            <div id="accuracyTrend_${account.name.replace(/[^a-zA-Z0-9]/g, '_')}" style="display: none; background: #f9fafb; border-top: 1px solid #d1d5db; padding: 10px;">
                                 <div style="font-size: 12px; font-weight: 700; color: #000000; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
                                     <span><i class="fas fa-chart-line" style="color: #10b981;"></i> Accuracy Monthly Trend</span>
                                     <button onclick="toggleAccuracyTrend('${account.name}')" style="background: #ef4444; color: white; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 10px; font-weight: 600;">CLOSE</button>
@@ -6226,7 +6215,7 @@
                             
                             <!-- SLA Monthly Trend (Hidden by default) -->
                             ${account.has_sla ? `
-                            <div id="slaTrend_${account.name.replace(/[^a-zA-Z0-9]/g, '_')}" style="display: none; background: #f9fafb; border-top: 1px solid #d1d5db; padding: 15px;">
+                            <div id="slaTrend_${account.name.replace(/[^a-zA-Z0-9]/g, '_')}" style="display: none; background: #f9fafb; border-top: 1px solid #d1d5db; padding: 10px;">
                                 <div style="font-size: 12px; font-weight: 700; color: #000000; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
                                     <span><i class="fas fa-chart-line" style="color: #3b82f6;"></i> SLA Met% Monthly Trend</span>
                                     <button onclick="toggleSLATrend('${account.name}')" style="background: #ef4444; color: white; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 10px; font-weight: 600;">CLOSE</button>
@@ -6237,9 +6226,9 @@
                             </div>
                             
                             <!-- Account Body -->
-                            <div style="padding: 15px;">
+                            <div style="padding: 10px;">
                                 <!-- Status Badges -->
-                                <div style="display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap;">
+                                <div style="display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap;">
                                     <span style="padding: 4px 10px; border-radius: 4px; font-size: 10px; font-weight: 600; background: ${account.status === 'Active' ? '#d1fae5' : '#fee2e2'}; color: ${account.status === 'Active' ? '#065f46' : '#991b1b'}; border: 1px solid ${account.status === 'Active' ? '#10b981' : '#dc2626'};">${account.status}</span>
                                     <span style="padding: 4px 10px; border-radius: 4px; font-size: 10px; font-weight: 600; background: ${account.audit_status === 'Yes' ? '#dbeafe' : account.audit_status === 'On Hold' ? '#fef3c7' : '#fed7aa'}; color: ${account.audit_status === 'Yes' ? '#1e40af' : account.audit_status === 'On Hold' ? '#92400e' : '#9a3412'}; border: 1px solid ${account.audit_status === 'Yes' ? '#3b82f6' : account.audit_status === 'On Hold' ? '#f59e0b' : '#f97316'};">Audit: ${account.audit_status}</span>
                                     ${account.audit_frequency !== 'Not Set' ? `<span style="padding: 4px 10px; border-radius: 4px; font-size: 10px; font-weight: 600; background: #dbeafe; color: #1e40af; border: 1px solid #3b82f6;">${account.audit_frequency}</span>` : ''}
@@ -6247,7 +6236,7 @@
                                 
                                 <!-- Audit Details Section -->
                                 ${account.contract_sign_date || account.audit_start_date || account.audit_end_date || account.ageing || account.agreed_sample ? `
-                                <div style="margin-bottom: 15px;">
+                                <div style="margin-bottom: 10px;">
                                     <div style="font-size: 13px; font-weight: 700; color: #000000; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
                                         <i class="fas fa-calendar-alt" style="font-size: 11px;"></i>
                                         Audit Details
@@ -6288,7 +6277,7 @@
                                 ` : ''}
                                 
                                 <!-- KPIs Section -->
-                                <div style="margin-bottom: 15px;">
+                                <div style="margin-bottom: 10px;">
                                     <div style="font-size: 13px; font-weight: 700; color: #000000; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
                                         <i class="fas fa-chart-line" style="font-size: 11px;"></i>
                                         Key Performance Indicators
@@ -6327,7 +6316,7 @@
                                 </div>
                                 
                                 <!-- Team & Coverage -->
-                                <div style="margin-bottom: 15px;">
+                                <div style="margin-bottom: 10px;">
                                     <div style="font-size: 13px; font-weight: 700; color: #000000; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
                                         <i class="fas fa-users" style="font-size: 11px;"></i>
                                         Team & Coverage
@@ -6349,7 +6338,7 @@
                                 </div>
                                 
                                 <!-- Projects -->
-                                <div style="margin-bottom: 15px;">
+                                <div style="margin-bottom: 10px;">
                                     <div style="font-size: 13px; font-weight: 700; color: #000000; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
                                         <i class="fas fa-project-diagram" style="font-size: 11px;"></i>
                                         Projects (${account.total_projects})
