@@ -118,14 +118,6 @@
             }
         };
         
-        window.openUserManual = function() {
-            const modal = document.getElementById('userManualModal');
-            if (modal) {
-                modal.style.display = 'flex';
-                modal.classList.add('active');
-            }
-        };
-        
         // Theme Toggle Function
         /* REMOVED: Dark Mode functionality
         window.toggleTheme = function() {
@@ -184,14 +176,6 @@
             }
         });
         END REMOVED Dark Mode functionality */
-        
-        window.closeUserManual = function() {
-            const modal = document.getElementById('userManualModal');
-            if (modal) {
-                modal.style.display = 'none';
-                modal.classList.remove('active');
-            }
-        };
         
         // Navigation Popup Functions
         window.openNavPopup = function() {
@@ -1699,12 +1683,6 @@
             <div class="menu-item" onclick="openUploadModal()" style="background: linear-gradient(135deg, #ff6b35 0%, #f04616 100%); color: white; margin: 4px 15px; border-radius: 8px; font-weight: 600; box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);">
                 <i class="fas fa-upload"></i>
                 <span>Upload Excel</span>
-            </div>
-            
-            <!-- User Manual Button -->
-            <div class="menu-item" onclick="openUserManual()" style="margin: 3px 15px 8px 15px; border: 1px solid #e5e7eb; background: #f9fafb;">
-                <i class="fas fa-book"></i>
-                <span>User Manual</span>
             </div>
             
         </div>
@@ -5409,7 +5387,7 @@
                         return client.toLowerCase() === accountName.toLowerCase();
                     });
                     
-                    let totalOppPass = 0, totalOppCount = 0, totalOppNA = 0, totalOppFail = 0;
+                    let totalOppPass = 0, totalOppCount = 0, totalOppNA = 0, totalOppFail = 0, totalPopulationSum = 0;
                     let criticalCount = 0, nonCriticalCount = 0;
                     
                     accountParams.forEach(row => {
@@ -5417,6 +5395,7 @@
                         totalOppCount += parseFloat(row['Opportunity Count']) || 0;
                         totalOppNA += parseFloat(row['Opportunity NA']) || 0;
                         totalOppFail += parseFloat(row['Opportunity Fail']) || 0;
+                        totalPopulationSum += parseFloat(row['Total Population']) || 0;
                         
                         const stage = (row['Stage'] || '').toString().toUpperCase();
                         if (stage === 'CRITICAL') criticalCount++;
@@ -5432,7 +5411,9 @@
                     }
                     
                     const avgError = validOpp > 0 ? ((totalOppFail / validOpp) * 100) : null;
-                    const samplePercent = totalOppCount > 0 ? ((validOpp / totalOppCount) * 100) : 0;
+                    // Sample Percent = Opportunity Count / Total Population (NEW FORMULA)
+                    const totalPopulation = totalPopulationSum; // Sum of Total Population column
+                    const samplePercent = totalPopulation > 0 ? ((totalOppCount / totalPopulation) * 100) : 0;
                     
                     // Get recruiter data
                     const accountRecruiters = recruiterData.filter(row => {
@@ -5556,7 +5537,8 @@
                         sample_percent: samplePercent,
                         critical_audits: criticalCount,
                         non_critical_audits: nonCriticalCount,
-                        total_opportunities: totalOppCount,
+                        total_population: totalPopulation, // NEW: Total Population from column J
+                        total_opportunities: totalOppCount, // This is Opportunity Count (will be displayed as Opportunity Count)
                         valid_opportunities: validOpp,
                         unique_recruiters: uniqueRecruiters,
                         recruiter_audits: recruiterAudits,
@@ -6151,15 +6133,15 @@
                                             <div style="position: absolute; top: 8px; right: 8px; font-size: 24px; opacity: 0.2; color: white;">
                                                 <i class="fas fa-chart-bar"></i>
                                             </div>
-                                            <h4 style="color: rgba(255,255,255,0.95); font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; font-weight: 600;">TOTAL OPPORTUNITIES</h4>
-                                            <div style="font-size: 22px; font-weight: 700; color: white;">${account.total_opportunities.toLocaleString()}</div>
+                                            <h4 style="color: rgba(255,255,255,0.95); font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; font-weight: 600;">TOTAL POPULATION</h4>
+                                            <div style="font-size: 22px; font-weight: 700; color: white;">${account.total_population ? account.total_population.toLocaleString() : 'N/A'}</div>
                                         </div>
                                         <div style="background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%); border: none; border-radius: 10px; padding: 14px; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(168, 85, 247, 0.25);">
                                             <div style="position: absolute; top: 8px; right: 8px; font-size: 24px; opacity: 0.2; color: white;">
                                                 <i class="fas fa-clipboard-list"></i>
                                             </div>
-                                            <h4 style="color: rgba(255,255,255,0.95); font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; font-weight: 600;">SAMPLE COUNT</h4>
-                                            <div style="font-size: 22px; font-weight: 700; color: white;">${account.valid_opportunities ? account.valid_opportunities.toLocaleString() : 'N/A'}</div>
+                                            <h4 style="color: rgba(255,255,255,0.95); font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; font-weight: 600;">OPPORTUNITY COUNT</h4>
+                                            <div style="font-size: 22px; font-weight: 700; color: white;">${account.total_opportunities ? account.total_opportunities.toLocaleString() : 'N/A'}</div>
                                         </div>
                                         <div style="background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%); border: none; border-radius: 10px; padding: 14px; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(6, 182, 212, 0.25);">
                                             <div style="position: absolute; top: 8px; right: 8px; font-size: 24px; opacity: 0.2; color: white;">
@@ -15221,15 +15203,6 @@ Total Population: ${totalPop}
                         <div class="nav-popup-item-content">
                             <div class="nav-popup-item-title">Upload Excel</div>
                             <div class="nav-popup-item-desc">Load new data</div>
-                        </div>
-                    </div>
-                    <div class="nav-popup-item" onclick="closeNavPopup(); openUserManual();">
-                        <div class="nav-popup-item-icon" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);">
-                            <i class="fas fa-book"></i>
-                        </div>
-                        <div class="nav-popup-item-content">
-                            <div class="nav-popup-item-title">User Manual</div>
-                            <div class="nav-popup-item-desc">Help & documentation</div>
                         </div>
                     </div>
                 </div>
