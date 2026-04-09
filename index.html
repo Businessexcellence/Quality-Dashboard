@@ -1658,14 +1658,6 @@
                 <i class="fas fa-chart-line"></i>
                 <span>Strategic Overview</span>
             </div>
-            <div class="menu-item" onclick="window.switchTab('projects', this)">
-                <i class="fas fa-project-diagram"></i>
-                <span>Project Summary</span>
-            </div>
-            <div class="menu-item" onclick="window.switchTab('rca-capa', this)">
-                <i class="fas fa-tools"></i>
-                <span>RCA & CAPA</span>
-            </div>
             <div class="menu-item" onclick="window.switchTab('csat', this)">
                 <i class="fas fa-smile"></i>
                 <span>Customer Satisfaction</span>
@@ -2374,6 +2366,21 @@
         </div>
 
         <div id="strategic" class="tab-content">
+            <!-- Sub-Navigation for Strategic Tabs -->
+            <div style="background: #f5f5f5; border: 1px solid #000000; border-radius: 6px; padding: 8px; margin-bottom: 12px; display: flex; gap: 8px;">
+                <button id="strategic-overview-btn" class="strategic-sub-tab active" onclick="switchStrategicSubTab('overview')" style="flex: 1; padding: 8px 16px; background: #000000; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 600; transition: all 0.3s;">
+                    <i class="fas fa-chart-line"></i> Overview
+                </button>
+                <button id="strategic-projects-btn" class="strategic-sub-tab" onclick="switchStrategicSubTab('projects')" style="flex: 1; padding: 8px 16px; background: white; color: #000000; border: 1px solid #d0d0d0; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 600; transition: all 0.3s;">
+                    <i class="fas fa-project-diagram"></i> Projects
+                </button>
+                <button id="strategic-rca-btn" class="strategic-sub-tab" onclick="switchStrategicSubTab('rca-capa')" style="flex: 1; padding: 8px 16px; background: white; color: #000000; border: 1px solid #d0d0d0; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 600; transition: all 0.3s;">
+                    <i class="fas fa-tools"></i> RCA & CAPA
+                </button>
+            </div>
+
+            <!-- Strategic Overview Sub-Tab -->
+            <div id="strategic-overview" class="strategic-sub-content" style="display: block;">
             <!-- Compact Filters Section - Matching Recruiter Insights Style -->
             <div style="background: white; border: 1px solid var(--border); border-radius: 6px; padding: 6px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
@@ -2535,9 +2542,11 @@
                     </div>
                 </div>
             </div>
-        </div>
+            </div>
+            <!-- End of Strategic Overview Sub-Tab -->
 
-        <div id="projects" class="tab-content">
+            <!-- Projects Sub-Tab -->
+            <div id="strategic-projects" class="strategic-sub-content" style="display: none;">
             <!-- PROJECT SUMMARY TAB -->
             
             <!-- Filters Section - Matching Recruiter Insights Style -->
@@ -2617,9 +2626,11 @@
                     </div>
                 </div>
             </div>
-        </div>
+            </div>
+            <!-- End of Projects Sub-Tab -->
 
-        <div id="rca-capa" class="tab-content">
+            <!-- RCA & CAPA Sub-Tab -->
+            <div id="strategic-rca-capa" class="strategic-sub-content" style="display: none;">
             <!-- Drill-Down Filters Section -->
             <div style="background: #f5f5f5; border: 1px solid #e0e0e0; border-radius: 6px; padding: 12px; margin-bottom: 12px; position: relative;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
@@ -2784,7 +2795,11 @@
                     </div>
                 </div>
             </div>
+            </div>
+            <!-- End of RCA & CAPA Sub-Tab -->
+
         </div>
+        <!-- End of Strategic Tab with Sub-Tabs -->
 
         <div id="csat" class="tab-content">
             <!-- CSAT Header - Compact -->
@@ -3418,34 +3433,19 @@
                     targetTab.classList.add('active');
                     console.log('✅ Tab activated:', tabId);
                     
+                    // If switching to Strategic tab, show Overview sub-tab by default
+                    if (tabId === 'strategic') {
+                        setTimeout(() => {
+                            window.switchStrategicSubTab('overview');
+                        }, 50);
+                    }
+                    
                     // Re-render chart when Account Summary tab is activated
                     if (tabId === 'account-summary' && window.dashboardData && window.dashboardData.accountSummary && window.dashboardData.accountSummary.length > 0) {
                         console.log('🗺️ Re-rendering region chart for visible tab');
                         // Use setTimeout to ensure DOM is fully rendered
                         setTimeout(() => {
                             renderRegionChart();
-                        }, 100);
-                    }
-                    
-                    // Refresh Projects tab when activated
-                    if (tabId === 'projects' && window.dashboardData && window.dashboardData.projects && window.dashboardData.projects.length > 0) {
-                        console.log('🔄 Refreshing Projects tab');
-                        setTimeout(() => {
-                            if (typeof refreshProjectsTab === 'function') {
-                                refreshProjectsTab();
-                            }
-                        }, 100);
-                    }
-                    
-                    // Refresh RCA & CAPA tab when activated
-                    if (tabId === 'rca-capa' && window.dashboardData && window.dashboardData.rcaCapa && window.dashboardData.rcaCapa.length > 0) {
-                        console.log('🔄 Auto-refreshing RCA & CAPA tab on activation');
-                        setTimeout(() => {
-                            if (typeof window.refreshRcaCapaTab === 'function') {
-                                window.refreshRcaCapaTab();
-                            } else {
-                                console.error('❌ refreshRcaCapaTab function not found');
-                            }
                         }, 100);
                     }
                 } else {
@@ -3460,6 +3460,73 @@
             } catch (error) {
                 console.error('❌ Error switching tab:', error);
                 alert('Error switching tab: ' + error.message);
+            }
+        };
+        
+        // Strategic Sub-Tab Switching Function
+        window.switchStrategicSubTab = function(subTabId) {
+            console.log('🔄 Switching to Strategic sub-tab:', subTabId);
+            try {
+                // Hide all strategic sub-content divs
+                document.querySelectorAll('.strategic-sub-content').forEach(content => {
+                    content.style.display = 'none';
+                });
+                
+                // Remove active class from all strategic sub-tab buttons
+                document.querySelectorAll('.strategic-sub-tab').forEach(btn => {
+                    btn.classList.remove('active');
+                    btn.style.background = 'white';
+                    btn.style.color = '#000000';
+                    btn.style.border = '1px solid #d0d0d0';
+                });
+                
+                // Show selected sub-tab content
+                const targetContent = document.getElementById('strategic-' + subTabId);
+                if (targetContent) {
+                    targetContent.style.display = 'block';
+                    console.log('✅ Strategic sub-tab content activated:', subTabId);
+                } else {
+                    console.error('❌ Strategic sub-tab content not found:', 'strategic-' + subTabId);
+                }
+                
+                // Activate the clicked button
+                const targetBtn = document.getElementById('strategic-' + subTabId + '-btn');
+                if (targetBtn) {
+                    targetBtn.classList.add('active');
+                    targetBtn.style.background = '#000000';
+                    targetBtn.style.color = 'white';
+                    targetBtn.style.border = 'none';
+                }
+                
+                // Refresh data for specific sub-tabs
+                if (subTabId === 'projects' && window.dashboardData && window.dashboardData.projects && window.dashboardData.projects.length > 0) {
+                    console.log('🔄 Refreshing Projects sub-tab');
+                    setTimeout(() => {
+                        if (typeof refreshProjectsTab === 'function') {
+                            refreshProjectsTab();
+                        }
+                    }, 100);
+                }
+                
+                if (subTabId === 'rca-capa' && window.dashboardData && window.dashboardData.rcaCapa && window.dashboardData.rcaCapa.length > 0) {
+                    console.log('🔄 Refreshing RCA & CAPA sub-tab');
+                    setTimeout(() => {
+                        if (typeof window.refreshRcaCapaTab === 'function') {
+                            window.refreshRcaCapaTab();
+                        }
+                    }, 100);
+                }
+                
+                if (subTabId === 'overview' && window.dashboardData) {
+                    console.log('🔄 Refreshing Strategic Overview sub-tab');
+                    setTimeout(() => {
+                        if (typeof window.refreshStrategicTab === 'function') {
+                            window.refreshStrategicTab();
+                        }
+                    }, 100);
+                }
+            } catch (error) {
+                console.error('❌ Error switching Strategic sub-tab:', error);
             }
         };
         
