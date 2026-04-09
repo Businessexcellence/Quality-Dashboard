@@ -11094,12 +11094,33 @@ Total Population: ${totalPop}
                 
                 const labels = displayData.map(d => d.parameter.length > 25 ? d.parameter.substring(0, 25) + '...' : d.parameter);
                 const adjustedScoreData = displayData.map(d => d.adjustedScore.toFixed(1));
+                const accuracyData = displayData.map(d => d.accuracy.toFixed(1));
                 
-                // Color logic: Top performers (green), Bottom performers (red)
+                // Color logic: Top performers (different shades of green), Bottom performers (different shades of red)
                 const colors = displayData.map((d, i) => {
                     const midPoint = Math.ceil(displayData.length / 2);
-                    // Top performers (first half) in GREEN, bottom performers (second half) in RED
-                    return i < midPoint ? 'rgba(34, 197, 94, 0.8)' : 'rgba(239, 68, 68, 0.8)';
+                    if (i < midPoint) {
+                        // Top performers - Different shades of GREEN (darkest to lightest)
+                        const greenShades = [
+                            'rgba(20, 83, 45, 0.9)',   // Dark green
+                            'rgba(22, 101, 52, 0.85)',  // Forest green
+                            'rgba(21, 128, 61, 0.8)',   // Medium green
+                            'rgba(34, 197, 94, 0.75)',  // Emerald green
+                            'rgba(74, 222, 128, 0.7)'   // Light green
+                        ];
+                        return greenShades[i % greenShades.length];
+                    } else {
+                        // Bottom performers - Different shades of RED (lightest to darkest)
+                        const redShades = [
+                            'rgba(254, 202, 202, 0.85)', // Light red
+                            'rgba(252, 165, 165, 0.8)',  // Coral red
+                            'rgba(248, 113, 113, 0.8)',  // Medium red
+                            'rgba(239, 68, 68, 0.85)',   // Bright red
+                            'rgba(220, 38, 38, 0.9)'     // Dark red
+                        ];
+                        const bottomIndex = i - midPoint;
+                        return redShades[bottomIndex % redShades.length];
+                    }
                 });
                 
                 // Destroy existing chart
@@ -11158,8 +11179,10 @@ Total Population: ${totalPop}
                                     size: 10,
                                     weight: 'bold'
                                 },
-                                formatter: function(value) {
-                                    return value;
+                                formatter: function(value, context) {
+                                    // Show accuracy % on the bar instead of adjusted score
+                                    const index = context.dataIndex;
+                                    return accuracyData[index] + '%';
                                 },
                                 offset: 4,  // 4px offset from bar end
                                 clamp: false  // Don't clamp - let layout padding handle it
