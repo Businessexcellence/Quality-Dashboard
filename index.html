@@ -9656,29 +9656,37 @@ Total Population: ${totalPop}
                             {
                                 label: 'Audit Count',
                                 data: auditCountData,
-                                backgroundColor: 'rgba(240, 70, 22, 0.7)',
-                                borderColor: 'rgba(240, 70, 22, 1)',
-                                borderWidth: 2,
+                                backgroundColor: 'rgba(99, 102, 241, 0.8)',
+                                borderColor: 'rgba(99, 102, 241, 1)',
+                                borderWidth: 0,
+                                borderRadius: 8,
                                 yAxisID: 'y1',
                                 order: 2,
-                                barPercentage: 0.4,
-                                categoryPercentage: 0.6
+                                barPercentage: 0.6,
+                                categoryPercentage: 0.7
                             },
                             {
                                 label: 'Accuracy Score (%)',
                                 data: accuracyData,
                                 type: 'line',
-                                backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                                borderColor: 'rgba(59, 130, 246, 1)',
+                                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                                borderColor: 'rgba(16, 185, 129, 1)',
                                 borderWidth: 3,
-                                pointBackgroundColor: 'rgba(59, 130, 246, 1)',
+                                pointBackgroundColor: 'rgba(16, 185, 129, 1)',
                                 pointBorderColor: '#fff',
-                                pointBorderWidth: 2,
-                                pointRadius: 4,
-                                pointHoverRadius: 6,
+                                pointBorderWidth: 3,
+                                pointRadius: 6,
+                                pointHoverRadius: 8,
+                                pointHoverBackgroundColor: 'rgba(16, 185, 129, 1)',
+                                pointHoverBorderColor: '#fff',
+                                pointHoverBorderWidth: 3,
                                 yAxisID: 'y',
                                 order: 1,
-                                tension: 0.3
+                                tension: 0.4,
+                                fill: {
+                                    target: 'origin',
+                                    above: 'rgba(16, 185, 129, 0.1)'
+                                }
                             }
                         ]
                     },
@@ -9687,10 +9695,10 @@ Total Population: ${totalPop}
                         maintainAspectRatio: false,
                         layout: {
                             padding: {
-                                top: 35,
-                                right: 20,
+                                top: 40,
+                                right: 25,
                                 bottom: 10,
-                                left: 15
+                                left: 20
                             }
                         },
                         interaction: {
@@ -9699,71 +9707,84 @@ Total Population: ${totalPop}
                         },
                         plugins: {
                             legend: {
-                                display: false
+                                display: true,
+                                position: 'top',
+                                align: 'end',
+                                labels: {
+                                    usePointStyle: true,
+                                    pointStyle: 'circle',
+                                    padding: 15,
+                                    font: {
+                                        size: 11,
+                                        weight: '600'
+                                    },
+                                    color: '#374151'
+                                }
                             },
                             datalabels: {
                                 display: function(context) {
-                                    // Always show bar labels, conditionally show line labels
-                                    if (context.datasetIndex === 0) return true; // Always show Audit Count
-                                    // For Accuracy line, show if value is significant or if not too close to other points
                                     return true;
                                 },
                                 align: function(context) {
-                                    // Bar: inside at top, Line: above the point
-                                    return context.datasetIndex === 0 ? 'start' : 'top';
+                                    return context.datasetIndex === 0 ? 'end' : 'top';
                                 },
                                 anchor: function(context) {
-                                    // Bar: anchor at end (top), Line: anchor at end (on point)
                                     return context.datasetIndex === 0 ? 'end' : 'end';
                                 },
                                 color: function(context) {
-                                    // Dataset 0 (Audit Count bars): White text for contrast
-                                    // Dataset 1 (Accuracy line): Blue text matching line color
-                                    return context.datasetIndex === 0 ? '#ffffff' : '#3b82f6';
+                                    return context.datasetIndex === 0 ? '#ffffff' : '#10b981';
                                 },
-                                font: {
-                                    size: 10,
-                                    weight: 'bold'
+                                font: function(context) {
+                                    return {
+                                        size: context.datasetIndex === 0 ? 9 : 10,
+                                        weight: 'bold'
+                                    };
                                 },
                                 backgroundColor: function(context) {
-                                    // Add semi-transparent dark background for bar labels for better contrast
-                                    return context.datasetIndex === 0 ? 'rgba(0, 0, 0, 0.6)' : 'transparent';
+                                    if (context.datasetIndex === 0) {
+                                        return 'rgba(99, 102, 241, 0.9)';
+                                    } else {
+                                        return 'rgba(16, 185, 129, 0.95)';
+                                    }
                                 },
-                                borderRadius: 4,
+                                borderRadius: 6,
                                 padding: {
-                                    top: 3,
-                                    bottom: 3,
-                                    left: 5,
-                                    right: 5
+                                    top: 4,
+                                    bottom: 4,
+                                    left: 6,
+                                    right: 6
                                 },
                                 formatter: function(value, context) {
                                     if (!value || isNaN(value)) return '';
                                     
                                     if (context.datasetIndex === 0) {
-                                        // Dataset 0 is now Audit Count - show number
                                         return Math.round(value).toLocaleString();
                                     } else {
-                                        // Dataset 1 is now Accuracy - show percentage
                                         return parseFloat(value).toFixed(1) + '%';
                                     }
                                 },
                                 offset: function(context) {
-                                    // Bar: 4px inside from top, Line: 15px above point to avoid overlap
-                                    return context.datasetIndex === 0 ? 4 : 15;
+                                    return context.datasetIndex === 0 ? -2 : 8;
                                 },
                                 clip: false
                             },
                             tooltip: {
-                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                backgroundColor: 'rgba(17, 24, 39, 0.95)',
                                 titleFont: {
-                                    size: 12,
-                                    weight: 'bold'
+                                    size: 13,
+                                    weight: 'bold',
+                                    family: 'Plus Jakarta Sans'
                                 },
                                 bodyFont: {
-                                    size: 11
+                                    size: 12,
+                                    family: 'Plus Jakarta Sans'
                                 },
-                                padding: 10,
+                                padding: 12,
                                 displayColors: true,
+                                boxPadding: 6,
+                                usePointStyle: true,
+                                borderColor: 'rgba(255, 255, 255, 0.1)',
+                                borderWidth: 1,
                                 callbacks: {
                                     label: function(context) {
                                         let label = context.dataset.label || '';
@@ -9771,10 +9792,8 @@ Total Population: ${totalPop}
                                             label += ': ';
                                         }
                                         if (context.datasetIndex === 0) {
-                                            // Dataset 0 is now Audit Count - show number
                                             label += Math.round(context.parsed.y).toLocaleString();
                                         } else {
-                                            // Dataset 1 is now Accuracy - show percentage
                                             label += context.parsed.y.toFixed(1) + '%';
                                         }
                                         return label;
@@ -9793,20 +9812,25 @@ Total Population: ${totalPop}
                                     display: true,
                                     text: 'Accuracy Score (%)',
                                     font: {
-                                        size: 11,
-                                        weight: '600'
-                                    }
+                                        size: 12,
+                                        weight: '700',
+                                        family: 'Plus Jakarta Sans'
+                                    },
+                                    color: '#10b981'
                                 },
                                 ticks: {
                                     font: {
-                                        size: 10
+                                        size: 10,
+                                        weight: '600'
                                     },
+                                    color: '#6b7280',
                                     callback: function(value) {
                                         return value + '%';
                                     }
                                 },
                                 grid: {
-                                    color: 'rgba(0, 0, 0, 0.05)'
+                                    color: 'rgba(0, 0, 0, 0.04)',
+                                    drawBorder: false
                                 }
                             },
                             y1: {
@@ -9817,31 +9841,43 @@ Total Population: ${totalPop}
                                     display: true,
                                     text: 'Audit Count',
                                     font: {
-                                        size: 11,
-                                        weight: '600'
-                                    }
+                                        size: 12,
+                                        weight: '700',
+                                        family: 'Plus Jakarta Sans'
+                                    },
+                                    color: '#6366f1'
                                 },
                                 ticks: {
                                     font: {
-                                        size: 10
+                                        size: 10,
+                                        weight: '600'
                                     },
+                                    color: '#6b7280',
                                     callback: function(value) {
                                         return value.toLocaleString();
                                     }
                                 },
                                 grid: {
-                                    drawOnChartArea: false
+                                    drawOnChartArea: false,
+                                    drawBorder: false
                                 }
                             },
                             x: {
                                 ticks: {
                                     font: {
-                                        size: 10,
-                                        weight: '600'
-                                    }
+                                        size: 11,
+                                        weight: '700'
+                                    },
+                                    color: '#374151'
                                 },
                                 grid: {
-                                    display: false
+                                    display: false,
+                                    drawBorder: false
+                                }
+                            }
+                        }
+                    }
+                });
                                 }
                             }
                         }
