@@ -4956,7 +4956,7 @@
                 },
                 {
                     title: 'Closed RCA & CAPA',
-                    value: closedRCA
+                    value: closedRCA.display  // Use display format: "RCA: X | CAPA: Y"
                 }
             ];
 
@@ -5033,31 +5033,84 @@
             
             if (!window.dashboardData.rcaCapa || window.dashboardData.rcaCapa.length === 0) {
                 console.warn('⚠️ No RCA/CAPA data available');
-                return 0;
+                return { rca: 0, capa: 0, total: 0, display: 'RCA: 0 | CAPA: 0' };
             }
             
             console.log(`📊 Total RCA/CAPA: ${window.dashboardData.rcaCapa.length}`);
             
-            // Log all status values to see what we have
-            const allStatuses = window.dashboardData.rcaCapa.map((r, idx) => {
-                const status = r.Status || r.status || r.STATUS || '';
-                if (idx < 5) { // Log first 5 for debugging
-                    console.log(`RCA/CAPA ${idx + 1} Status:`, status, 'Type:', typeof status);
+            // Helper to get Type from Column K
+            const getType = (item) => {
+                const keys = Object.keys(item);
+                const possibleKeys = [
+                    '__EMPTY_10',  // XLSX headerless column naming (Column K = 10th empty column)
+                    'K',
+                    keys[10],
+                    'Type',
+                    'TYPE',
+                    'type'
+                ];
+                
+                for (const key of possibleKeys) {
+                    if (key && item[key]) {
+                        return String(item[key]).toUpperCase().trim();
+                    }
                 }
-                return status;
+                return '';
+            };
+            
+            // Helper to get Status from Column I
+            const getStatus = (item) => {
+                const keys = Object.keys(item);
+                const possibleKeys = [
+                    '__EMPTY_8',  // Column I
+                    'I',
+                    keys[8],
+                    'Status',
+                    'status',
+                    'STATUS'
+                ];
+                
+                for (const key of possibleKeys) {
+                    if (key && item[key]) {
+                        return String(item[key]).toUpperCase().trim();
+                    }
+                }
+                return '';
+            };
+            
+            // Filter closed items
+            const closedItems = window.dashboardData.rcaCapa.filter(r => {
+                const status = getStatus(r);
+                return status === 'CLOSED' || status.includes('CLOSED') || 
+                       status === 'COMPLETE' || status.includes('COMPLETE');
             });
             
-            console.log('📋 All unique RCA/CAPA status values:', [...new Set(allStatuses)]);
-            
-            const closedCount = window.dashboardData.rcaCapa.filter(r => {
-                const status = r.Status || r.status || r.STATUS || '';
-                const statusStr = status ? status.toString().toLowerCase().trim() : '';
-                const isClosed = statusStr.includes('closed') || statusStr === 'closed';
-                return isClosed;
+            // Separate closed RCA and CAPA
+            const closedRCA = closedItems.filter(r => {
+                const type = getType(r);
+                return type === 'RCA' || type.includes('RCA');
             }).length;
             
-            console.log(`📊 Closed RCA/CAPA Count: ${closedCount} out of ${window.dashboardData.rcaCapa.length}`);
-            return closedCount;
+            const closedCAPA = closedItems.filter(r => {
+                const type = getType(r);
+                return type === 'CAPA' || type.includes('CAPA');
+            }).length;
+            
+            const totalClosed = closedItems.length;
+            
+            console.log(`📊 Closed RCA/CAPA breakdown:`, { 
+                closedRCA, 
+                closedCAPA, 
+                totalClosed, 
+                total: window.dashboardData.rcaCapa.length 
+            });
+            
+            return { 
+                rca: closedRCA, 
+                capa: closedCAPA, 
+                total: totalClosed, 
+                display: `RCA: ${closedRCA} | CAPA: ${closedCAPA}` 
+            };
         }
 
         function getAccountsUnderAudit() {
