@@ -9651,8 +9651,8 @@ Total Population: ${totalPop}
                                 borderRadius: 8,
                                 yAxisID: 'y1',
                                 order: 2,
-                                barPercentage: 0.6,
-                                categoryPercentage: 0.7
+                                barPercentage: 0.5,
+                                categoryPercentage: 0.6
                             },
                             {
                                 label: 'Accuracy Score (%)',
@@ -9684,10 +9684,10 @@ Total Population: ${totalPop}
                         maintainAspectRatio: false,
                         layout: {
                             padding: {
-                                top: 40,
-                                right: 25,
+                                top: 30,
+                                right: 20,
                                 bottom: 10,
-                                left: 20
+                                left: 15
                             }
                         },
                         interaction: {
@@ -9715,33 +9715,39 @@ Total Population: ${totalPop}
                                     return true;
                                 },
                                 align: function(context) {
-                                    return context.datasetIndex === 0 ? 'end' : 'top';
+                                    return context.datasetIndex === 0 ? 'center' : 'top';
                                 },
                                 anchor: function(context) {
-                                    return context.datasetIndex === 0 ? 'end' : 'end';
+                                    return context.datasetIndex === 0 ? 'end' : 'start';
                                 },
                                 color: function(context) {
                                     return context.datasetIndex === 0 ? '#ffffff' : '#3b82f6';
                                 },
                                 font: function(context) {
                                     return {
-                                        size: context.datasetIndex === 0 ? 9 : 10,
-                                        weight: 'bold'
+                                        size: context.datasetIndex === 0 ? 10 : 9,
+                                        weight: '600'
                                     };
                                 },
                                 backgroundColor: function(context) {
                                     if (context.datasetIndex === 0) {
-                                        return 'rgba(99, 102, 241, 0.9)';
+                                        return 'rgba(99, 102, 241, 0.95)';
                                     } else {
-                                        return 'rgba(59, 130, 246, 0.95)';
+                                        return 'rgba(255, 255, 255, 0.9)';
                                     }
                                 },
-                                borderRadius: 6,
+                                borderRadius: 4,
                                 padding: {
-                                    top: 4,
-                                    bottom: 4,
-                                    left: 6,
-                                    right: 6
+                                    top: 3,
+                                    bottom: 3,
+                                    left: 5,
+                                    right: 5
+                                },
+                                borderColor: function(context) {
+                                    return context.datasetIndex === 0 ? 'transparent' : 'rgba(59, 130, 246, 0.3)';
+                                },
+                                borderWidth: function(context) {
+                                    return context.datasetIndex === 0 ? 0 : 1;
                                 },
                                 formatter: function(value, context) {
                                     if (!value || isNaN(value)) return '';
@@ -9753,7 +9759,7 @@ Total Population: ${totalPop}
                                     }
                                 },
                                 offset: function(context) {
-                                    return context.datasetIndex === 0 ? -2 : 8;
+                                    return context.datasetIndex === 0 ? 4 : 6;
                                 },
                                 clip: false
                             },
