@@ -2492,34 +2492,34 @@
                 
                 <!-- Modern 2-Row Layout -->
                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 10px;">
-                    <!-- KPI Card 1: Total RCA/CAPA -->
+                    <!-- KPI Card 1: RCA Count -->
                     <div style="background: #ffffff; border: 1px solid #d0d0d0; border-radius: 6px; padding: 10px;">
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
-                            <div style="color: #000000; font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Total RCA/CAPA</div>
+                            <div style="color: #000000; font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">RCA</div>
+                            <i class="fas fa-search" style="color: #666666; font-size: 14px; opacity: 0.5;"></i>
+                        </div>
+                        <div style="color: #000000; font-size: 26px; font-weight: 900; line-height: 1; margin-bottom: 2px;" id="rcaCount">0</div>
+                        <div style="color: #666666; font-size: 7px; margin-top: 2px; font-weight: 600;">Root Cause Analysis</div>
+                    </div>
+                    
+                    <!-- KPI Card 2: CAPA Count -->
+                    <div style="background: #ffffff; border: 1px solid #d0d0d0; border-radius: 6px; padding: 10px;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
+                            <div style="color: #000000; font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">CAPA</div>
+                            <i class="fas fa-tasks" style="color: #666666; font-size: 14px; opacity: 0.5;"></i>
+                        </div>
+                        <div style="color: #000000; font-size: 26px; font-weight: 900; line-height: 1; margin-bottom: 2px;" id="capaCount">0</div>
+                        <div style="color: #666666; font-size: 7px; margin-top: 2px; font-weight: 600;">Corrective/Preventive Actions</div>
+                    </div>
+                    
+                    <!-- KPI Card 3: Total -->
+                    <div style="background: #ffffff; border: 1px solid #d0d0d0; border-radius: 6px; padding: 10px;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
+                            <div style="color: #000000; font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Total</div>
                             <i class="fas fa-clipboard-list" style="color: #666666; font-size: 14px; opacity: 0.5;"></i>
                         </div>
                         <div style="color: #000000; font-size: 26px; font-weight: 900; line-height: 1; margin-bottom: 2px;" id="rcaCapaTotal">0</div>
-                        <div style="color: #666666; font-size: 7px; margin-top: 2px; font-weight: 600;">WIP + Closed</div>
-                    </div>
-                    
-                    <!-- KPI Card 2: Closed -->
-                    <div style="background: #ffffff; border: 1px solid #d0d0d0; border-radius: 6px; padding: 10px;">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
-                            <div style="color: #000000; font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Closed</div>
-                            <i class="fas fa-check-double" style="color: #666666; font-size: 14px; opacity: 0.5;"></i>
-                        </div>
-                        <div style="color: #000000; font-size: 26px; font-weight: 900; line-height: 1; margin-bottom: 2px;" id="rcaCapaClosed">0</div>
-                        <div style="color: #666666; font-size: 7px; margin-top: 2px; font-weight: 600;">Resolved Issues</div>
-                    </div>
-                    
-                    <!-- KPI Card 3: WIP -->
-                    <div style="background: #ffffff; border: 1px solid #d0d0d0; border-radius: 6px; padding: 10px;">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
-                            <div style="color: #000000; font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Work In Progress</div>
-                            <i class="fas fa-hourglass-half" style="color: #666666; font-size: 14px; opacity: 0.5;"></i>
-                        </div>
-                        <div style="color: #000000; font-size: 26px; font-weight: 900; line-height: 1; margin-bottom: 2px;" id="rcaCapaWIP">0</div>
-                        <div style="color: #666666; font-size: 7px; margin-top: 2px; font-weight: 600;">Active Issues</div>
+                        <div style="color: #666666; font-size: 7px; margin-top: 2px; font-weight: 600;">RCA + CAPA</div>
                     </div>
                 </div>
                 
@@ -11102,9 +11102,9 @@ Total Population: ${totalPop}
                     safeSetText('projectsTotal', 0);
                     safeSetText('projectsClosed', 0);
                     safeSetText('projectsWIP', 0);
+                    safeSetText('rcaCount', 0);
+                    safeSetText('capaCount', 0);
                     safeSetText('rcaCapaTotal', 0);
-                    safeSetText('rcaCapaClosed', 0);
-                    safeSetText('rcaCapaWIP', 0);
                     return;
                 }
 
@@ -11909,32 +11909,61 @@ Total Population: ${totalPop}
                     return '';
                 }
                 
-                // Count WIP and Closed only from Column I
-                const wip = rcaCapa.filter(r => {
-                    const status = getRcaCapaStatus(r).toUpperCase().trim();
-                    return status === 'WIP' || status.includes('WIP');
-                }).length;
+                // Helper function to get Type from Column K (11th column)
+                function getType(item) {
+                    const keys = Object.keys(item);
+                    
+                    const possibleKeys = [
+                        '__EMPTY_10',  // XLSX headerless column naming (Column K = 10th empty column, 0-indexed)
+                        'K',
+                        keys[10],      // 11th column by index
+                        'Type',
+                        'TYPE',
+                        'type'
+                    ];
+                    
+                    for (const key of possibleKeys) {
+                        if (key && item[key]) {
+                            return String(item[key]).toUpperCase().trim();
+                        }
+                    }
+                    
+                    return '';
+                }
                 
-                const closed = rcaCapa.filter(r => {
-                    const status = getRcaCapaStatus(r).toUpperCase().trim();
-                    return status === 'CLOSED' || status.includes('CLOSED') || 
-                           status === 'COMPLETE' || status.includes('COMPLETE');
-                }).length;
+                // Count RCA and CAPA separately using Column K (Type)
+                const rcaItems = rcaCapa.filter(r => {
+                    const type = getType(r);
+                    return type === 'RCA' || type.includes('RCA');
+                });
                 
+                const capaItems = rcaCapa.filter(r => {
+                    const type = getType(r);
+                    return type === 'CAPA' || type.includes('CAPA');
+                });
+                
+                const rcaCount = rcaItems.length;
+                const capaCount = capaItems.length;
                 const total = rcaCapa.length; // Total is all RCA/CAPA items
                 
-                console.log('📊 RCA/CAPA count:', { total, wip, closed, allRcaCapa: rcaCapa.length });
+                console.log('📊 RCA/CAPA breakdown:', { 
+                    total, 
+                    rcaCount, 
+                    capaCount, 
+                    allRcaCapa: rcaCapa.length 
+                });
                 
-                // Log first few values to help debug
+                // Log first few Type values to help debug
                 if (rcaCapa.length > 0) {
-                    console.log('🔍 First 5 RCA/CAPA status values:', rcaCapa.slice(0, 5).map((r, idx) => {
+                    console.log('🔍 First 5 RCA/CAPA type values:', rcaCapa.slice(0, 5).map((r, idx) => {
                         const keys = Object.keys(r);
                         return {
                             row: idx + 1,
-                            __EMPTY_8: r['__EMPTY_8'],
-                            I: r['I'],
-                            keys_8: keys[8] ? r[keys[8]] : undefined,
-                            Status: r['Status'],
+                            __EMPTY_10: r['__EMPTY_10'],
+                            K: r['K'],
+                            keys_10: keys[10] ? r[keys[10]] : undefined,
+                            Type: r['Type'],
+                            detectedType: getType(r),
                             detectedStatus: getRcaCapaStatus(r),
                             errorType: getErrorType(r),
                             impact: getImpact(r),
@@ -11944,9 +11973,9 @@ Total Population: ${totalPop}
                 }
                 
                 // Update KPI cards
+                safeSetText('rcaCount', rcaCount);
+                safeSetText('capaCount', capaCount);
                 safeSetText('rcaCapaTotal', total);
-                safeSetText('rcaCapaClosed', closed);
-                safeSetText('rcaCapaWIP', wip);
                 
                 // Generate Error Type breakdown (Column C)
                 const errorTypeCounts = {};
@@ -12030,7 +12059,7 @@ Total Population: ${totalPop}
                 
                 safeSetHTML('rcaCapaImpact', impactHTML || '<div style="color: #94a3b8; font-size: 10px; text-align: center;">No data</div>');
                 
-                console.log('✅ RCA/CAPA section updated:', { total, wip, closed, allRcaCapa: rcaCapa.length, errorTypes: sortedErrorTypes.length, impacts: sortedImpacts.length });
+                console.log('✅ RCA/CAPA section updated:', { total, rcaCount, capaCount, allRcaCapa: rcaCapa.length, errorTypes: sortedErrorTypes.length, impacts: sortedImpacts.length });
             } catch (error) {
                 handleError(error, 'generateRcaCapaSection');
             }
