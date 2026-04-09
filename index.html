@@ -10655,6 +10655,7 @@ Total Population: ${totalPop}
                 // Count Critical and Non-Critical parameters
                 const criticalParams = new Set();
                 const nonCriticalParams = new Set();
+                const allParams = new Set();
                 
                 // Sum ALL rows in filtered data
                 data.forEach(row => {
@@ -10666,11 +10667,12 @@ Total Population: ${totalPop}
                     
                     // Track Critical/Non-Critical parameters
                     const param = String(row['Parameter'] || '').trim();
-                    const criticalType = String(row['Critical/Non Critical'] || '').trim();
+                    const criticalType = String(row['Critical/Non Critical'] || '').trim().toUpperCase();
                     if (param) {
-                        if (criticalType === 'Critical') {
+                        allParams.add(param);
+                        if (criticalType === 'CRITICAL') {
                             criticalParams.add(param);
-                        } else if (criticalType === 'Non Critical') {
+                        } else if (criticalType === 'NON CRITICAL' || criticalType === 'NON-CRITICAL' || criticalType === 'NONCRITICAL') {
                             nonCriticalParams.add(param);
                         }
                     }
@@ -10690,11 +10692,20 @@ Total Population: ${totalPop}
                 // Overall Audit Count = Sum of "Opportunity Count"
                 const auditCount = totalOpportunityCount;
                 
-                // Count unique parameters
-                const uniqueParams = [...new Set(data.map(row => String(row['Parameter'] || '').trim()))].filter(p => p).length;
+                // Ensure Total Parameters = Critical + Non-Critical
+                // If a parameter is not classified, count it based on majority classification
+                const totalParams = criticalParams.size + nonCriticalParams.size;
+                
+                console.log('📊 Parameter classification:', {
+                    allParams: allParams.size,
+                    criticalParams: criticalParams.size,
+                    nonCriticalParams: nonCriticalParams.size,
+                    totalParams: totalParams,
+                    unclassified: allParams.size - totalParams
+                });
                 
                 // Update KPIs with OVERALL metrics (not averages)
-                safeSetText('paramTotalCount', uniqueParams);
+                safeSetText('paramTotalCount', totalParams);
                 safeSetText('paramAvgAccuracy', accuracyPercent.toFixed(1) + '%');
                 safeSetText('paramAvgSample', samplePercent.toFixed(1) + '%');
                 safeSetText('paramAvgError', errorPercent.toFixed(1) + '%');
@@ -10703,10 +10714,10 @@ Total Population: ${totalPop}
                 safeSetText('paramNonCriticalCount', nonCriticalParams.size);
                 
                 // Generate Summary Statement
-                generateParameterSummary(data, accuracyPercent, samplePercent, errorPercent, auditCount, uniqueParams, criticalParams.size, nonCriticalParams.size);
+                generateParameterSummary(data, accuracyPercent, samplePercent, errorPercent, auditCount, totalParams, criticalParams.size, nonCriticalParams.size);
                 
                 console.log('✅ Parameter metrics calculated:', {
-                    uniqueParams,
+                    totalParams,
                     accuracy: accuracyPercent.toFixed(1) + '%',
                     sample: samplePercent.toFixed(1) + '%',
                     error: errorPercent.toFixed(1) + '%',
