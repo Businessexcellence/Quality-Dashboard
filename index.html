@@ -5566,12 +5566,51 @@
                         return client.toLowerCase() === accountName.toLowerCase();
                     });
                     
+                    // Helper to get Type from Column K
+                    const getType = (item) => {
+                        const keys = Object.keys(item);
+                        const possibleKeys = ['__EMPTY_10', 'K', keys[10], 'Type', 'TYPE', 'type'];
+                        for (const key of possibleKeys) {
+                            if (key && item[key]) {
+                                return String(item[key]).toUpperCase().trim();
+                            }
+                        }
+                        return '';
+                    };
+                    
+                    // Separate RCA and CAPA
+                    const rcaItems = accountRCAs.filter(r => {
+                        const type = getType(r);
+                        return type === 'RCA' || type.includes('RCA');
+                    });
+                    
+                    const capaItems = accountRCAs.filter(r => {
+                        const type = getType(r);
+                        return type === 'CAPA' || type.includes('CAPA');
+                    });
+                    
                     const totalRCA = accountRCAs.length;
+                    const rcaCount = rcaItems.length;
+                    const capaCount = capaItems.length;
+                    
                     const closedRCA = accountRCAs.filter(r => {
                         const status = (r['Status'] || '').toString().toUpperCase();
                         return status === 'CLOSED' || status === 'COMPLETED' || status === 'RESOLVED';
                     }).length;
+                    
+                    const closedRCAOnly = rcaItems.filter(r => {
+                        const status = (r['Status'] || '').toString().toUpperCase();
+                        return status === 'CLOSED' || status === 'COMPLETED' || status === 'RESOLVED';
+                    }).length;
+                    
+                    const closedCAPAOnly = capaItems.filter(r => {
+                        const status = (r['Status'] || '').toString().toUpperCase();
+                        return status === 'CLOSED' || status === 'COMPLETED' || status === 'RESOLVED';
+                    }).length;
+                    
                     const openRCA = totalRCA - closedRCA;
+                    const openRCAOnly = rcaCount - closedRCAOnly;
+                    const openCAPAOnly = capaCount - closedCAPAOnly;
                     
                     // Get SLA data - handle monthly Met/Not_Met columns
                     console.log(`🔍 Looking for SLA data for account: ${accountName}, Total SLA rows available: ${slaData.length}`);
@@ -5667,8 +5706,14 @@
                         ongoing_projects: ongoingProjects,
                         project_list: accountProjects,
                         total_rca: totalRCA,
+                        rca_count: rcaCount,
+                        capa_count: capaCount,
                         closed_rca: closedRCA,
+                        closed_rca_only: closedRCAOnly,
+                        closed_capa_only: closedCAPAOnly,
                         open_rca: openRCA,
+                        open_rca_only: openRCAOnly,
+                        open_capa_only: openCAPAOnly,
                         rca_list: accountRCAs,
                         has_audit_data: accountParams.length > 0,
                         has_projects: totalProjects > 0,
@@ -5949,34 +5994,34 @@
                 const sampleLabel = overallSample >= 90 ? 'EXCELLENT' : overallSample >= 75 ? 'GOOD' : 'NEEDS ATTENTION';
                 
                 const statsHTML = `
-                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); position: relative; overflow: hidden;">
-                        <div style="position: absolute; top: 10px; right: 10px; font-size: 32px; opacity: 0.2; color: white;">
+                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; border-radius: 8px; padding: 12px; text-align: center; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.25); position: relative; overflow: hidden;">
+                        <div style="position: absolute; top: 6px; right: 6px; font-size: 20px; opacity: 0.2; color: white;">
                             <i class="fas fa-users"></i>
                         </div>
-                        <div style="font-size: 11px; color: rgba(255,255,255,0.9); margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">TOTAL POPULATION</div>
-                        <div style="font-size: 32px; font-weight: 700; color: white;">${totalPopulation.toLocaleString()}</div>
+                        <div style="font-size: 9px; color: rgba(255,255,255,0.9); margin-bottom: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">TOTAL POPULATION</div>
+                        <div style="font-size: 18px; font-weight: 700; color: white;">${totalPopulation.toLocaleString()}</div>
                     </div>
-                    <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border: none; border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3); position: relative; overflow: hidden;">
-                        <div style="position: absolute; top: 10px; right: 10px; font-size: 32px; opacity: 0.2; color: white;">
+                    <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border: none; border-radius: 8px; padding: 12px; text-align: center; box-shadow: 0 2px 8px rgba(245, 87, 108, 0.25); position: relative; overflow: hidden;">
+                        <div style="position: absolute; top: 6px; right: 6px; font-size: 20px; opacity: 0.2; color: white;">
                             <i class="fas fa-chart-line"></i>
                         </div>
-                        <div style="font-size: 11px; color: rgba(255,255,255,0.9); margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">TOTAL OPPORTUNITY</div>
-                        <div style="font-size: 32px; font-weight: 700; color: white;">${totalOppCount.toLocaleString()}</div>
+                        <div style="font-size: 9px; color: rgba(255,255,255,0.9); margin-bottom: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">OPPORTUNITY COUNT</div>
+                        <div style="font-size: 18px; font-weight: 700; color: white;">${totalOppCount.toLocaleString()}</div>
                     </div>
-                    <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); border: none; border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3); position: relative; overflow: hidden;">
-                        <div style="position: absolute; top: 10px; right: 10px; font-size: 32px; opacity: 0.2; color: white;">
+                    <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); border: none; border-radius: 8px; padding: 12px; text-align: center; box-shadow: 0 2px 8px rgba(79, 172, 254, 0.25); position: relative; overflow: hidden;">
+                        <div style="position: absolute; top: 6px; right: 6px; font-size: 20px; opacity: 0.2; color: white;">
                             <i class="fas fa-percentage"></i>
                         </div>
-                        <div style="font-size: 11px; color: rgba(255,255,255,0.9); margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">AUDIT SAMPLE %</div>
-                        <div style="font-size: 32px; font-weight: 700; color: white;">${overallSample}%</div>
+                        <div style="font-size: 9px; color: rgba(255,255,255,0.9); margin-bottom: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">AUDIT SAMPLE %</div>
+                        <div style="font-size: 18px; font-weight: 700; color: white;">${overallSample}%</div>
                     </div>
-                    <div style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); border: none; border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0 4px 15px rgba(56, 239, 125, 0.3); position: relative; overflow: hidden;">
-                        <div style="position: absolute; top: 10px; right: 10px; font-size: 32px; opacity: 0.2; color: white;">
+                    <div style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); border: none; border-radius: 8px; padding: 12px; text-align: center; box-shadow: 0 2px 8px rgba(56, 239, 125, 0.25); position: relative; overflow: hidden;">
+                        <div style="position: absolute; top: 6px; right: 6px; font-size: 20px; opacity: 0.2; color: white;">
                             <i class="fas fa-check-circle"></i>
                         </div>
-                        <div style="font-size: 11px; color: rgba(255,255,255,0.9); margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">AUDIT ACCURACY %</div>
-                        <div style="font-size: 32px; font-weight: 700; color: white; margin-bottom: 4px;">${overallAccuracy}%</div>
-                        <div style="font-size: 10px; color: rgba(255,255,255,0.95); font-weight: 600; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 12px; display: inline-block;">${accuracyLabel}</div>
+                        <div style="font-size: 9px; color: rgba(255,255,255,0.9); margin-bottom: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">AUDIT ACCURACY %</div>
+                        <div style="font-size: 18px; font-weight: 700; color: white; margin-bottom: 2px;">${overallAccuracy}%</div>
+                        <div style="font-size: 8px; color: rgba(255,255,255,0.95); font-weight: 600; background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 8px; display: inline-block;">${accuracyLabel}</div>
                     </div>
                     <div style="background: linear-gradient(135deg, ${slaCompliance >= 75 ? '#11998e, #38ef7d' : slaCompliance >= 50 ? '#f46b45, #eea849' : '#eb3349, #f45c43'}); border: none; border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0 4px 15px ${slaCompliance >= 75 ? 'rgba(56, 239, 125, 0.3)' : slaCompliance >= 50 ? 'rgba(238, 168, 73, 0.3)' : 'rgba(244, 92, 67, 0.3)'}; position: relative; overflow: hidden;">
                         <div style="position: absolute; top: 10px; right: 10px; font-size: 32px; opacity: 0.2; color: white;">
@@ -6328,17 +6373,17 @@
                                 <div>
                                     <div style="font-size: 13px; font-weight: 700; color: #000000; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
                                         <i class="fas fa-tools" style="font-size: 11px;"></i>
-                                        RCA/CAPA (${account.total_rca})
+                                        RCA/CAPA (Total: ${account.total_rca} | RCA: ${account.rca_count} | CAPA: ${account.capa_count})
                                     </div>
                                     ${account.total_rca > 0 ? `
                                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 15px;">
                                             <div style="font-size: 13px;">
-                                                <div style="color: #718096; font-weight: 500; margin-bottom: 3px;">Closed Cases</div>
-                                                <div style="color: #2d3748; font-weight: 600;">${account.closed_rca}</div>
+                                                <div style="color: #718096; font-weight: 500; margin-bottom: 3px;">RCA: Closed/Open</div>
+                                                <div style="color: #2d3748; font-weight: 600;">${account.closed_rca_only} / ${account.open_rca_only}</div>
                                             </div>
                                             <div style="font-size: 13px;">
-                                                <div style="color: #718096; font-weight: 500; margin-bottom: 3px;">Open Cases</div>
-                                                <div style="color: #2d3748; font-weight: 600;">${account.open_rca}</div>
+                                                <div style="color: #718096; font-weight: 500; margin-bottom: 3px;">CAPA: Closed/Open</div>
+                                                <div style="color: #2d3748; font-weight: 600;">${account.closed_capa_only} / ${account.open_capa_only}</div>
                                             </div>
                                         </div>
                                     ` : ''}
