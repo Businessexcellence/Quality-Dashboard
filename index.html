@@ -4936,11 +4936,11 @@
                     value: accountsAudit.display
                 },
                 {
-                    title: 'Account of the Month',
+                    title: 'Leading Account (6M)',
                     value: accountOfMonth.name || 'N/A'
                 },
                 {
-                    title: 'Closed Projects',
+                    title: 'Closed Six Sigma Project',
                     value: closedProjects
                 },
                 {
@@ -4963,8 +4963,16 @@
         function getAccountOfMonth() {
             if (!window.dashboardData.parameterAuditCount.length) return { name: 'N/A', accuracy: 0, adjustedScore: 0 };
 
-            // Use the same calculation as Top Performers
-            const accounts = calculateAccountAccuracy();
+            // Get last 6 months data
+            const last6MonthsData = getLastSixMonthsData();
+            
+            if (last6MonthsData.length === 0) {
+                console.warn('⚠️ No data available for last 6 months');
+                return { name: 'N/A', accuracy: 0, adjustedScore: 0 };
+            }
+            
+            // Calculate account performance using last 6 months data
+            const accounts = calculateAccountAccuracyFromData(last6MonthsData);
             
             if (accounts.length === 0) return { name: 'N/A', accuracy: 0, adjustedScore: 0 };
             
@@ -4973,13 +4981,108 @@
                 return (current.accountWeightage > prev.accountWeightage) ? current : prev;
             });
             
-            console.log('🏆 Account of the Month:', best.name, 'Adjusted Score:', best.accountWeightage.toFixed(2) + '%', 'Accuracy:', best.accuracy.toFixed(1) + '%', 'Audits:', best.auditCount);
+            console.log('🏆 Leading Account (6M):', best.name, 'Adjusted Score:', best.accountWeightage.toFixed(2) + '%', 'Accuracy:', best.accuracy.toFixed(1) + '%', 'Audits:', best.auditCount);
             
             return { 
                 name: best.name, 
                 accuracy: best.accuracy.toFixed(1),
                 adjustedScore: best.accountWeightage.toFixed(1)
             };
+        }
+        
+        // Helper function to get last 6 months data
+        function getLastSixMonthsData() {
+            const monthOrder = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            
+            // Get all unique months from the data
+            const dataMonths = [...new Set(window.dashboardData.parameterAuditCount
+                .map(row => String(row['Month'] || '').trim())
+                .filter(m => m && monthOrder.includes(m))
+            )];
+            
+            // Sort months in chronological order
+            const sortedMonths = dataMonths.sort((a, b) => {
+                return monthOrder.indexOf(a) - monthOrder.indexOf(b);
+            });
+            
+            // Get last 6 months
+            const last6Months = sortedMonths.slice(-6);
+            
+            console.log('📅 All months in data:', sortedMonths);
+            console.log('📅 Last 6 months selected:', last6Months);
+            
+            // Filter data for last 6 months
+            const filteredData = window.dashboardData.parameterAuditCount.filter(row => {
+                const month = String(row['Month'] || '').trim();
+                return last6Months.includes(month);
+            });
+            
+            console.log(`📊 Last 6 months data: ${filteredData.length} rows (from total ${window.dashboardData.parameterAuditCount.length} rows)`);
+            
+            return filteredData;
+        }
+        
+        // Calculate account accuracy from provided data (instead of using global data)
+        function calculateAccountAccuracyFromData(data) {
+            const accounts = {};
+            
+            // Step 1: Aggregate data per account
+            data.forEach(row => {
+                const account = row.Account || row.Client;
+                if (!account) return;
+
+                if (!accounts[account]) {
+                    accounts[account] = { pass: 0, count: 0, na: 0 };
+                }
+
+                // Aggregate all opportunities and passes
+                accounts[account].pass += parseFloat(row['Opportunity Pass']) || 0;
+                accounts[account].count += parseFloat(row['Opportunity Count']) || 0;
+                accounts[account].na += parseFloat(row['Opportunity NA']) || 0;
+            });
+
+            // Step 2: Calculate global average
+            let totalPass = 0;
+            let totalCount = 0;
+            let totalNA = 0;
+            
+            Object.values(accounts).forEach(accData => {
+                totalPass += accData.pass;
+                totalCount += accData.count;
+                totalNA += accData.na;
+            });
+            
+            const globalDenominator = totalCount - totalNA;
+            const global_avg = globalDenominator > 0 ? (totalPass / globalDenominator) : 0;
+            
+            console.log('📊 Leading Account (6M) - Global Average:', (global_avg * 100).toFixed(2) + '%');
+
+            // Step 3: Calculate Adjusted Score for each account
+            const m = 50; // Fixed value
+            
+            return Object.keys(accounts).map(name => {
+                const accData = accounts[name];
+                const validCount = accData.count - accData.na;
+                const accuracy = validCount > 0 ? (accData.pass / validCount) : 0;
+                
+                const numerator = (validCount * accuracy) + (m * global_avg);
+                const denominator = accData.count + m;
+                const adjusted_score = denominator > 0 ? (numerator / denominator) : 0;
+                const adjusted_score_percent = adjusted_score * 100;
+                
+                const accuracyPercent = accuracy * 100;
+                
+                return { 
+                    name, 
+                    accuracy: parseFloat(accuracyPercent.toFixed(1)),
+                    auditCount: accData.count,
+                    totalPass: accData.pass,
+                    totalNA: accData.na,
+                    validAudits: validCount,
+                    accountWeightage: parseFloat(adjusted_score_percent.toFixed(2)),
+                    adjustedScore: parseFloat(adjusted_score.toFixed(4))
+                };
+            });
         }
 
         function getClosedProjectCount() {
@@ -5002,7 +5105,7 @@
                        status === 'COMPLETE' || status.includes('COMPLETE');
             }).length;
             
-            console.log(`📊 Closed Projects Count: ${closedCount} out of ${window.dashboardData.projects.length}`);
+            console.log(`📊 Closed Six Sigma Projects Count: ${closedCount} out of ${window.dashboardData.projects.length}`);
             
             // Log first few for debugging
             if (window.dashboardData.projects.length > 0) {
