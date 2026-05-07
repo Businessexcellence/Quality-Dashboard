@@ -5130,57 +5130,78 @@
             
             console.log(`📊 Total RCA/CAPA: ${window.dashboardData.rcaCapa.length}`);
             
-            // Helper to get Type from I.D. column (since Type column K is missing)
+            // Helper to get Type from Column B (Type column)
             const getType = (item) => {
-                // Try to get from I.D. column first (e.g., "RCA0001" or "CAPA0001")
-                const id = item['I.D.'] || item['ID'] || item['Id'] || '';
-                if (id) {
-                    const idStr = String(id).toUpperCase().trim();
-                    if (idStr.startsWith('RCA')) {
-                        if (window.dashboardData.rcaCapa.indexOf(item) === 0) {
-                            console.log('🔍 Detected RCA from I.D.:', idStr);
-                        }
-                        return 'RCA';
-                    }
-                    if (idStr.startsWith('CAPA')) {
-                        if (window.dashboardData.rcaCapa.indexOf(item) === 0) {
-                            console.log('🔍 Detected CAPA from I.D.:', idStr);
-                        }
-                        return 'CAPA';
-                    }
+                const keys = Object.keys(item);
+                
+                // Log first item for debugging
+                if (window.dashboardData.rcaCapa.indexOf(item) === 0) {
+                    console.log('🔍 First RCA/CAPA item columns:', keys);
+                    console.log('🔍 First RCA/CAPA item data:', item);
                 }
                 
-                // Fallback: Try Column K if it exists (for future compatibility)
-                const keys = Object.keys(item);
+                // Column B possible keys (Type column)
                 const possibleKeys = [
-                    '__EMPTY_10',
-                    '__EMPTY_9',
-                    'K',
-                    keys[10],
-                    keys[9],
-                    'Type',
+                    'Type',           // If header exists
                     'TYPE',
                     'type',
-                    'Category',
-                    'CATEGORY'
+                    '__EMPTY_1',      // Column B = 1st empty column after A
+                    'B',
+                    keys[1],          // Second column (index 1)
+                    'Problem Statement' // Sometimes Column B header
                 ];
                 
                 for (const key of possibleKeys) {
                     if (key && item[key]) {
                         const value = String(item[key]).toUpperCase().trim();
-                        // Make sure it's actually RCA or CAPA, not a region
-                        if (value === 'RCA' || value === 'CAPA' || value.includes('RCA') || value.includes('CAPA')) {
+                        
+                        // Check if it's RCA or CAPA
+                        if (value === 'RCA' || value === 'CAPA') {
                             if (window.dashboardData.rcaCapa.indexOf(item) === 0) {
-                                console.log(`🔍 Found Type in key "${key}":`, value);
+                                console.log(`🔍 Found Type in Column B (key: "${key}"):`, value);
                             }
                             return value;
                         }
+                        
+                        // Check if it contains RCA or CAPA
+                        if (value.includes('RCA')) {
+                            if (window.dashboardData.rcaCapa.indexOf(item) === 0) {
+                                console.log(`🔍 Found RCA in Column B (key: "${key}"):`, value);
+                            }
+                            return 'RCA';
+                        }
+                        if (value.includes('CAPA')) {
+                            if (window.dashboardData.rcaCapa.indexOf(item) === 0) {
+                                console.log(`🔍 Found CAPA in Column B (key: "${key}"):`, value);
+                            }
+                            return 'CAPA';
+                        }
+                    }
+                }
+                
+                // Fallback: Try to detect from I.D. column (Column A)
+                const id = item['I.D.'] || item['ID'] || item['Id'] || keys[0] && item[keys[0]] || '';
+                if (id) {
+                    const idStr = String(id).toUpperCase().trim();
+                    if (idStr.startsWith('RCA')) {
+                        if (window.dashboardData.rcaCapa.indexOf(item) === 0) {
+                            console.log('🔍 Fallback: Detected RCA from I.D.:', idStr);
+                        }
+                        return 'RCA';
+                    }
+                    if (idStr.startsWith('CAPA')) {
+                        if (window.dashboardData.rcaCapa.indexOf(item) === 0) {
+                            console.log('🔍 Fallback: Detected CAPA from I.D.:', idStr);
+                        }
+                        return 'CAPA';
                     }
                 }
                 
                 // Log if not found on first item
                 if (window.dashboardData.rcaCapa.indexOf(item) === 0) {
-                    console.warn('⚠️ Type not detected from I.D. or Type column!');
+                    console.warn('⚠️ Type not found in Column B or I.D.!');
+                    console.warn('⚠️ Available keys:', keys);
+                    console.warn('⚠️ Item values:', item);
                 }
                 return '';
             };
