@@ -4638,6 +4638,26 @@
                     if (window.dashboardData.rcaCapa.length > 0) {
                         console.log('📋 RCA_CAPA sample row:', window.dashboardData.rcaCapa[0]);
                         console.log('📋 RCA_CAPA columns:', Object.keys(window.dashboardData.rcaCapa[0]));
+                        
+                        // Check Column B specifically
+                        const firstRow = window.dashboardData.rcaCapa[0];
+                        const keys = Object.keys(firstRow);
+                        console.log('🔍 Column A (keys[0]):', keys[0], '=', firstRow[keys[0]]);
+                        console.log('🔍 Column B (keys[1]):', keys[1], '=', firstRow[keys[1]]);
+                        console.log('🔍 Column C (keys[2]):', keys[2], '=', firstRow[keys[2]]);
+                        
+                        // Count RCA vs CAPA in Column B
+                        let rcaCount = 0;
+                        let capaCount = 0;
+                        window.dashboardData.rcaCapa.forEach(row => {
+                            const colB = row[keys[1]];
+                            if (colB) {
+                                const value = String(colB).toUpperCase().trim();
+                                if (value === 'RCA' || value.includes('RCA')) rcaCount++;
+                                if (value === 'CAPA' || value.includes('CAPA')) capaCount++;
+                            }
+                        });
+                        console.log('🔍 Column B RCA count:', rcaCount, 'CAPA count:', capaCount);
                     } else {
                         console.warn('⚠️ RCA_CAPA sheet not found or empty');
                         console.warn('📋 Available sheets:', workbook.SheetNames.join(', '));
