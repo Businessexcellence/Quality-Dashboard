@@ -5130,22 +5130,57 @@
             
             console.log(`📊 Total RCA/CAPA: ${window.dashboardData.rcaCapa.length}`);
             
-            // Helper to get Type from Column K
+            // Helper to get Type from I.D. column (since Type column K is missing)
             const getType = (item) => {
+                // Try to get from I.D. column first (e.g., "RCA0001" or "CAPA0001")
+                const id = item['I.D.'] || item['ID'] || item['Id'] || '';
+                if (id) {
+                    const idStr = String(id).toUpperCase().trim();
+                    if (idStr.startsWith('RCA')) {
+                        if (window.dashboardData.rcaCapa.indexOf(item) === 0) {
+                            console.log('🔍 Detected RCA from I.D.:', idStr);
+                        }
+                        return 'RCA';
+                    }
+                    if (idStr.startsWith('CAPA')) {
+                        if (window.dashboardData.rcaCapa.indexOf(item) === 0) {
+                            console.log('🔍 Detected CAPA from I.D.:', idStr);
+                        }
+                        return 'CAPA';
+                    }
+                }
+                
+                // Fallback: Try Column K if it exists (for future compatibility)
                 const keys = Object.keys(item);
                 const possibleKeys = [
-                    '__EMPTY_10',  // XLSX headerless column naming (Column K = 10th empty column)
+                    '__EMPTY_10',
+                    '__EMPTY_9',
                     'K',
                     keys[10],
+                    keys[9],
                     'Type',
                     'TYPE',
-                    'type'
+                    'type',
+                    'Category',
+                    'CATEGORY'
                 ];
                 
                 for (const key of possibleKeys) {
                     if (key && item[key]) {
-                        return String(item[key]).toUpperCase().trim();
+                        const value = String(item[key]).toUpperCase().trim();
+                        // Make sure it's actually RCA or CAPA, not a region
+                        if (value === 'RCA' || value === 'CAPA' || value.includes('RCA') || value.includes('CAPA')) {
+                            if (window.dashboardData.rcaCapa.indexOf(item) === 0) {
+                                console.log(`🔍 Found Type in key "${key}":`, value);
+                            }
+                            return value;
+                        }
                     }
+                }
+                
+                // Log if not found on first item
+                if (window.dashboardData.rcaCapa.indexOf(item) === 0) {
+                    console.warn('⚠️ Type not detected from I.D. or Type column!');
                 }
                 return '';
             };
