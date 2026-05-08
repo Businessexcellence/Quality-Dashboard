@@ -4850,7 +4850,7 @@
             if (workbook.SheetNames.includes(sheetName)) {
                 const worksheet = workbook.Sheets[sheetName];
                 // Parse with raw:false to ensure dates are properly converted
-                const data = XLSX.utils.sheet_to_json(worksheet, { raw: false, dateNF: 'yyyy-mm-dd' });
+                const data = XLSX.utils.sheet_to_json(worksheet, { raw: false, dateNF: 'yyyy-mm-dd', defval: '' });
                 console.log(`✅ Loaded ${data.length} rows from "${sheetName}"`);
                 if (data.length > 0) {
                     console.log(`📋 Columns in "${sheetName}":`, Object.keys(data[0]));
@@ -4883,7 +4883,7 @@
                     console.log(`💡 Found similar sheet: "${actualSheet}" (was looking for "${sheetName}")`);
                     const worksheet = workbook.Sheets[actualSheet];
                     // Parse with raw:false to ensure dates are properly converted
-                    const data = XLSX.utils.sheet_to_json(worksheet, { raw: false, dateNF: 'yyyy-mm-dd' });
+                    const data = XLSX.utils.sheet_to_json(worksheet, { raw: false, dateNF: 'yyyy-mm-dd', defval: '' });
                     console.log(`✅ Loaded ${data.length} rows from "${actualSheet}"`);
                     if (data.length > 0) {
                         console.log(`📋 Columns in "${actualSheet}":`, Object.keys(data[0]));
