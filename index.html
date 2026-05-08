@@ -5226,16 +5226,19 @@
                 return '';
             };
             
-            // Helper to get Status from Column I
+            // Helper to get Status from Column J (Status column)
             const getStatus = (item) => {
                 const keys = Object.keys(item);
                 const possibleKeys = [
-                    '__EMPTY_8',  // Column I
-                    'I',
-                    keys[8],
-                    'Status',
+                    'Status',        // Direct header name
+                    'STATUS',
                     'status',
-                    'STATUS'
+                    '__EMPTY_9',     // Column J = 9th empty column after A
+                    'J',
+                    keys[9],         // 10th column (index 9)
+                    '__EMPTY_8',     // Fallback to Column I if needed
+                    'I',
+                    keys[8]
                 ];
                 
                 for (const key of possibleKeys) {
