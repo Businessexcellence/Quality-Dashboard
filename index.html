@@ -5740,12 +5740,49 @@
                     // Helper to get Type from Column K
                     const getType = (item) => {
                         const keys = Object.keys(item);
-                        const possibleKeys = ['__EMPTY_10', 'K', keys[10], 'Type', 'TYPE', 'type'];
+                        
+                        // Column B possible keys (Type column)
+                        const possibleKeys = [
+                            'Type',           // If header exists
+                            'TYPE',
+                            'type',
+                            '__EMPTY_1',      // Column B = 1st empty column after A
+                            'B',
+                            keys[1],          // Second column (index 1)
+                            'Problem Statement' // Sometimes Column B header
+                        ];
+                        
                         for (const key of possibleKeys) {
                             if (key && item[key]) {
-                                return String(item[key]).toUpperCase().trim();
+                                const value = String(item[key]).toUpperCase().trim();
+                                
+                                // Check if it's RCA or CAPA
+                                if (value === 'RCA' || value === 'CAPA') {
+                                    return value;
+                                }
+                                
+                                // Check if it contains RCA or CAPA
+                                if (value.includes('RCA')) {
+                                    return 'RCA';
+                                }
+                                if (value.includes('CAPA')) {
+                                    return 'CAPA';
+                                }
                             }
                         }
+                        
+                        // Fallback: Try to detect from I.D. column (Column A)
+                        const id = item['I.D.'] || item['ID'] || item['Id'] || keys[0] && item[keys[0]] || '';
+                        if (id) {
+                            const idStr = String(id).toUpperCase().trim();
+                            if (idStr.startsWith('RCA')) {
+                                return 'RCA';
+                            }
+                            if (idStr.startsWith('CAPA')) {
+                                return 'CAPA';
+                            }
+                        }
+                        
                         return '';
                     };
                     
