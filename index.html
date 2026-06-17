@@ -2791,37 +2791,93 @@
         <!-- End of Strategic Tab with Sub-Tabs -->
 
         <div id="csat" class="tab-content">
-            <!-- CSAT Header - Compact -->
-            <div style="margin-bottom: 8px;">
-                <h2 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin: 0 0 4px 0;">
-                    <i class="fas fa-smile" style="color: var(--primary); margin-right: 6px; font-size: 12px;"></i>
-                    Customer Satisfaction (CSAT)
+            <!-- CSAT Header -->
+            <div style="margin-bottom: 16px;">
+                <h2 style="font-size: 20px; font-weight: 700; color: var(--text-primary); margin: 0 0 8px 0;">
+                    <i class="fas fa-smile" style="color: var(--primary); margin-right: 8px;"></i>
+                    Customer Satisfaction (NPS)
                 </h2>
+                <p style="font-size: 14px; color: var(--text-secondary); margin: 0;">
+                    Net Promoter Score analysis across financial years
+                </p>
             </div>
 
-            <!-- Top Box Comparison Section -->
-            <div style="background: white; border: 1px solid var(--border); border-radius: 6px; padding: 12px; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                <h3 style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin: 0 0 12px 0; display: flex; align-items: center;">
-                    <i class="fas fa-chart-line" style="color: var(--primary); font-size: 11px; margin-right: 6px;"></i>
-                    Top Box Comparison Across Financial Years
-                </h3>
-                <div id="topBoxComparisonContainer">
-                    <!-- Top Box comparison will be displayed here -->
+            <!-- NPS Overview Cards -->
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px;">
+                <div id="npsOverallCard" style="background: white; border: 1px solid var(--border); border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                        <div style="width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, #10b981, #059669); display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-chart-line" style="color: white; font-size: 24px;"></i>
+                        </div>
+                        <div>
+                            <div style="font-size: 12px; color: var(--text-secondary); font-weight: 600; text-transform: uppercase;">Overall NPS</div>
+                            <div id="npsOverallValue" style="font-size: 32px; font-weight: 800; color: var(--text-primary); line-height: 1;">--</div>
+                        </div>
+                    </div>
+                    <div id="npsOverallStatus" style="font-size: 12px; color: var(--text-secondary);"></div>
+                </div>
+
+                <div id="npsPromotersCard" style="background: white; border: 1px solid var(--border); border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                        <div style="width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, #3b82f6, #2563eb); display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-thumbs-up" style="color: white; font-size: 24px;"></i>
+                        </div>
+                        <div>
+                            <div style="font-size: 12px; color: var(--text-secondary); font-weight: 600; text-transform: uppercase;">Promoters</div>
+                            <div id="npsPromotersValue" style="font-size: 32px; font-weight: 800; color: var(--text-primary); line-height: 1;">--</div>
+                        </div>
+                    </div>
+                    <div id="npsPromotersPercent" style="font-size: 12px; color: var(--text-secondary);"></div>
+                </div>
+
+                <div id="npsPassivesCard" style="background: white; border: 1px solid var(--border); border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                        <div style="width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, #f59e0b, #d97706); display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-minus-circle" style="color: white; font-size: 24px;"></i>
+                        </div>
+                        <div>
+                            <div style="font-size: 12px; color: var(--text-secondary); font-weight: 600; text-transform: uppercase;">Passives</div>
+                            <div id="npsPassivesValue" style="font-size: 32px; font-weight: 800; color: var(--text-primary); line-height: 1;">--</div>
+                        </div>
+                    </div>
+                    <div id="npsPassivesPercent" style="font-size: 12px; color: var(--text-secondary);"></div>
+                </div>
+
+                <div id="npsDetractorsCard" style="background: white; border: 1px solid var(--border); border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                        <div style="width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, #ef4444, #dc2626); display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-thumbs-down" style="color: white; font-size: 24px;"></i>
+                        </div>
+                        <div>
+                            <div style="font-size: 12px; color: var(--text-secondary); font-weight: 600; text-transform: uppercase;">Detractors</div>
+                            <div id="npsDetractorsValue" style="font-size: 32px; font-weight: 800; color: var(--text-primary); line-height: 1;">--</div>
+                        </div>
+                    </div>
+                    <div id="npsDetractorsPercent" style="font-size: 12px; color: var(--text-secondary);"></div>
                 </div>
             </div>
 
-            <!-- Key Insights Section -->
-            <div style="background: white; border: 1px solid var(--border); border-radius: 6px; padding: 12px; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                <h3 style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin: 0 0 12px 0; display: flex; align-items: center;">
-                    <i class="fas fa-lightbulb" style="color: #f59e0b; font-size: 11px; margin-right: 6px;"></i>
-                    Key Insights & Analysis
+            <!-- Year-wise NPS Comparison Chart -->
+            <div style="background: white; border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <h3 style="font-size: 16px; font-weight: 700; color: var(--text-primary); margin: 0 0 16px 0; display: flex; align-items: center;">
+                    <i class="fas fa-chart-bar" style="color: var(--primary); margin-right: 8px;"></i>
+                    NPS Comparison by Financial Year
                 </h3>
-                <div id="csatInsightsContainer">
-                    <!-- CSAT insights will be displayed here -->
+                <div style="position: relative; height: 300px;">
+                    <canvas id="npsYearlyChart"></canvas>
                 </div>
             </div>
 
-            <!-- CSAT Data Table - REMOVED AS PER USER REQUEST -->
+            <!-- NPS Distribution Table -->
+            <div style="background: white; border: 1px solid var(--border); border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <h3 style="font-size: 16px; font-weight: 700; color: var(--text-primary); margin: 0 0 16px 0; display: flex; align-items: center;">
+                    <i class="fas fa-table" style="color: var(--primary); margin-right: 8px;"></i>
+                    Year-wise NPS Breakdown
+                </h3>
+                <div id="npsYearlyTableContainer">
+                    <!-- Yearly breakdown table will be rendered here -->
+                </div>
+            </div>
         </div>
 
         <!-- INDUSTRY BENCHMARKS TAB -->
@@ -3534,22 +3590,293 @@
         // ==========================================
         
         window.refreshCSATTab = function() {
-            console.log('🔄 Refreshing CSAT tab');
+            console.log('🔄 Refreshing CSAT tab with NPS data');
             try {
                 if (!window.dashboardData || !window.dashboardData.csat || window.dashboardData.csat.length === 0) {
                     console.warn('⚠️ No CSAT data available');
+                    return;
                 }
                 
-                populateCSATFilters();
-                renderTopBoxComparison();
-                renderCSATInsights();
-                renderCSATTable();
+                renderNPSOverview();
+                renderNPSYearlyChart();
+                renderNPSYearlyTable();
                 
-                console.log('✅ CSAT tab refreshed');
+                console.log('✅ CSAT tab refreshed with NPS metrics');
             } catch (error) {
                 handleError(error, 'refreshCSATTab');
             }
         };
+        
+        // Helper function to get NPS score from CSAT data
+        function getNPSScore(row) {
+            // NPS is in column R (index 17) - "GPNPS_NPS"
+            const score = row[17] || row['GPNPS_NPS'] || row['Net Promoter Score - NPS'];
+            return score && !isNaN(score) ? parseFloat(score) : null;
+        }
+        
+        // Helper function to get Year from CSAT data
+        function getYear(row) {
+            // Year is in column B (index 1)
+            return row[1] || row['Year'] || row['__EMPTY_1'];
+        }
+        
+        // Helper function to get Account from CSAT data
+        function getAccount(row) {
+            // Account is in column F (index 5)
+            return row[5] || row['Account Name'] || row['__EMPTY_5'];
+        }
+        
+        // Filter actual data rows (skip headers)
+        function getActualCSATData() {
+            const allData = window.dashboardData.csat || [];
+            // Row 1 and 2 are headers, data starts from row 3 (index 2)
+            // Filter rows where column A (S.no.) is a number
+            return allData.filter((row, idx) => {
+                const sno = row[0] || row['S.no.'] || row['__EMPTY'];
+                return sno && !isNaN(sno) && sno !== 'S.no.';
+            });
+        }
+        
+        // Calculate overall NPS and categories
+        function calculateNPSMetrics(data = null) {
+            const actualData = data || getActualCSATData();
+            
+            const npsScores = actualData.map(row => getNPSScore(row)).filter(s => s !== null);
+            
+            if (npsScores.length === 0) {
+                return {
+                    totalResponses: 0,
+                    promoters: 0,
+                    passives: 0,
+                    detractors: 0,
+                    npsScore: 0,
+                    avgScore: 0
+                };
+            }
+            
+            const promoters = npsScores.filter(s => s >= 9).length;
+            const passives = npsScores.filter(s => s >= 7 && s <= 8).length;
+            const detractors = npsScores.filter(s => s <= 6).length;
+            const npsScore = ((promoters - detractors) / npsScores.length * 100);
+            const avgScore = npsScores.reduce((a, b) => a + b, 0) / npsScores.length;
+            
+            return {
+                totalResponses: npsScores.length,
+                promoters,
+                passives,
+                detractors,
+                npsScore: parseFloat(npsScore.toFixed(1)),
+                avgScore: parseFloat(avgScore.toFixed(2)),
+                promotersPercent: parseFloat((promoters / npsScores.length * 100).toFixed(1)),
+                passivesPercent: parseFloat((passives / npsScores.length * 100).toFixed(1)),
+                detractorsPercent: parseFloat((detractors / npsScores.length * 100).toFixed(1))
+            };
+        }
+        
+        // Render NPS Overview Cards
+        function renderNPSOverview() {
+            try {
+                const metrics = calculateNPSMetrics();
+                
+                // Overall NPS
+                document.getElementById('npsOverallValue').textContent = metrics.npsScore;
+                document.getElementById('npsOverallStatus').textContent = 
+                    `Based on ${metrics.totalResponses} responses • Avg Score: ${metrics.avgScore}`;
+                
+                // Promoters
+                document.getElementById('npsPromotersValue').textContent = metrics.promoters;
+                document.getElementById('npsPromotersPercent').textContent = 
+                    `${metrics.promotersPercent}% of responses • Score 9-10`;
+                
+                // Passives
+                document.getElementById('npsPassivesValue').textContent = metrics.passives;
+                document.getElementById('npsPassivesPercent').textContent = 
+                    `${metrics.passivesPercent}% of responses • Score 7-8`;
+                
+                // Detractors
+                document.getElementById('npsDetractorsValue').textContent = metrics.detractors;
+                document.getElementById('npsDetractorsPercent').textContent = 
+                    `${metrics.detractorsPercent}% of responses • Score 0-6`;
+                
+                console.log('✅ NPS Overview rendered:', metrics);
+            } catch (error) {
+                console.error('❌ Error rendering NPS overview:', error);
+            }
+        }
+        
+        // Render Year-wise NPS Comparison Chart
+        function renderNPSYearlyChart() {
+            try {
+                const actualData = getActualCSATData();
+                
+                // Group by year
+                const yearGroups = {};
+                actualData.forEach(row => {
+                    const year = getYear(row);
+                    if (year) {
+                        if (!yearGroups[year]) yearGroups[year] = [];
+                        yearGroups[year].push(row);
+                    }
+                });
+                
+                const years = Object.keys(yearGroups).sort();
+                const yearlyMetrics = years.map(year => ({
+                    year,
+                    ...calculateNPSMetrics(yearGroups[year])
+                }));
+                
+                const canvas = document.getElementById('npsYearlyChart');
+                const ctx = canvas.getContext('2d');
+                
+                // Destroy existing chart if any
+                if (window.npsChartInstance) {
+                    window.npsChartInstance.destroy();
+                }
+                
+                window.npsChartInstance = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: years,
+                        datasets: [
+                            {
+                                label: 'Promoters',
+                                data: yearlyMetrics.map(m => m.promoters),
+                                backgroundColor: '#3b82f6',
+                                order: 1
+                            },
+                            {
+                                label: 'Passives',
+                                data: yearlyMetrics.map(m => m.passives),
+                                backgroundColor: '#f59e0b',
+                                order: 2
+                            },
+                            {
+                                label: 'Detractors',
+                                data: yearlyMetrics.map(m => m.detractors),
+                                backgroundColor: '#ef4444',
+                                order: 3
+                            },
+                            {
+                                label: 'NPS Score',
+                                data: yearlyMetrics.map(m => m.npsScore),
+                                type: 'line',
+                                borderColor: '#10b981',
+                                backgroundColor: 'transparent',
+                                borderWidth: 3,
+                                pointRadius: 6,
+                                pointBackgroundColor: '#10b981',
+                                yAxisID: 'y1',
+                                order: 0
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const label = context.dataset.label || '';
+                                        const value = context.parsed.y;
+                                        if (label === 'NPS Score') {
+                                            return `${label}: ${value.toFixed(1)}`;
+                                        }
+                                        return `${label}: ${value}`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Number of Responses'
+                                }
+                            },
+                            y1: {
+                                beginAtZero: true,
+                                position: 'right',
+                                title: {
+                                    display: true,
+                                    text: 'NPS Score'
+                                },
+                                grid: {
+                                    drawOnChartArea: false
+                                }
+                            }
+                        }
+                    }
+                });
+                
+                console.log('✅ NPS Yearly Chart rendered');
+            } catch (error) {
+                console.error('❌ Error rendering NPS yearly chart:', error);
+            }
+        }
+        
+        // Render Year-wise NPS Breakdown Table
+        function renderNPSYearlyTable() {
+            try {
+                const actualData = getActualCSATData();
+                
+                // Group by year
+                const yearGroups = {};
+                actualData.forEach(row => {
+                    const year = getYear(row);
+                    if (year) {
+                        if (!yearGroups[year]) yearGroups[year] = [];
+                        yearGroups[year].push(row);
+                    }
+                });
+                
+                const years = Object.keys(yearGroups).sort();
+                const yearlyMetrics = years.map(year => ({
+                    year,
+                    ...calculateNPSMetrics(yearGroups[year])
+                }));
+                
+                const container = document.getElementById('npsYearlyTableContainer');
+                
+                container.innerHTML = `
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: #f9fafb; border-bottom: 2px solid var(--border);">
+                                <th style="padding: 12px; text-align: left; font-size: 13px; font-weight: 700; color: var(--text-primary);">Financial Year</th>
+                                <th style="padding: 12px; text-align: center; font-size: 13px; font-weight: 700; color: var(--text-primary);">NPS Score</th>
+                                <th style="padding: 12px; text-align: center; font-size: 13px; font-weight: 700; color: var(--text-primary);">Avg Score</th>
+                                <th style="padding: 12px; text-align: center; font-size: 13px; font-weight: 700; color: var(--text-primary);">Responses</th>
+                                <th style="padding: 12px; text-align: center; font-size: 13px; font-weight: 700; color: #3b82f6;">Promoters</th>
+                                <th style="padding: 12px; text-align: center; font-size: 13px; font-weight: 700; color: #f59e0b;">Passives</th>
+                                <th style="padding: 12px; text-align: center; font-size: 13px; font-weight: 700; color: #ef4444;">Detractors</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${yearlyMetrics.map((m, idx) => `
+                                <tr style="border-bottom: 1px solid var(--border); ${idx % 2 === 0 ? 'background: white;' : 'background: #f9fafb;'}">
+                                    <td style="padding: 12px; font-size: 14px; font-weight: 600; color: var(--text-primary);">${m.year}</td>
+                                    <td style="padding: 12px; text-align: center; font-size: 16px; font-weight: 700; color: #10b981;">${m.npsScore}</td>
+                                    <td style="padding: 12px; text-align: center; font-size: 14px; color: var(--text-secondary);">${m.avgScore}</td>
+                                    <td style="padding: 12px; text-align: center; font-size: 14px; color: var(--text-secondary);">${m.totalResponses}</td>
+                                    <td style="padding: 12px; text-align: center; font-size: 14px; color: #3b82f6; font-weight: 600;">${m.promoters} (${m.promotersPercent}%)</td>
+                                    <td style="padding: 12px; text-align: center; font-size: 14px; color: #f59e0b; font-weight: 600;">${m.passives} (${m.passivesPercent}%)</td>
+                                    <td style="padding: 12px; text-align: center; font-size: 14px; color: #ef4444; font-weight: 600;">${m.detractors} (${m.detractorsPercent}%)</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                
+                console.log('✅ NPS Yearly Table rendered');
+            } catch (error) {
+                console.error('❌ Error rendering NPS yearly table:', error);
+            }
+        }
         
         // Refresh Benchmarks Tab
         window.refreshBenchmarksTab = function() {
