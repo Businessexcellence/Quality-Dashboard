@@ -3669,17 +3669,24 @@
         // Calculate overall NPS and categories
         function calculateNPSMetrics(data = null) {
             const actualData = data || getActualCSATData();
+            console.log('📊 calculateNPSMetrics - actualData length:', actualData.length);
             
             const npsScores = actualData.map(row => getNPSScore(row)).filter(s => s !== null);
+            console.log('📊 calculateNPSMetrics - valid NPS scores:', npsScores.length);
+            console.log('📊 First 5 NPS scores:', npsScores.slice(0, 5));
             
             if (npsScores.length === 0) {
+                console.warn('⚠️ No valid NPS scores found in CSAT data');
                 return {
                     totalResponses: 0,
                     promoters: 0,
                     passives: 0,
                     detractors: 0,
                     npsScore: 0,
-                    avgScore: 0
+                    avgScore: 0,
+                    promotersPercent: 0,
+                    passivesPercent: 0,
+                    detractorsPercent: 0
                 };
             }
             
@@ -3705,7 +3712,30 @@
         // Render NPS Overview Cards
         function renderNPSOverview() {
             try {
+                console.log('🔄 Rendering NPS Overview...');
+                console.log('📊 CSAT data length:', window.dashboardData?.csat?.length || 0);
+                
+                if (!window.dashboardData || !window.dashboardData.csat || window.dashboardData.csat.length === 0) {
+                    console.error('❌ No CSAT data available for NPS calculation');
+                    // Show "No data" message
+                    document.getElementById('npsOverallValue').textContent = '--';
+                    document.getElementById('npsOverallStatus').textContent = 'No CSAT data available';
+                    document.getElementById('npsPromotersValue').textContent = '--';
+                    document.getElementById('npsPromotersPercent').textContent = 'Upload Base File with CSAT sheet';
+                    document.getElementById('npsPassivesValue').textContent = '--';
+                    document.getElementById('npsPassivesPercent').textContent = 'Upload Base File with CSAT sheet';
+                    document.getElementById('npsDetractorsValue').textContent = '--';
+                    document.getElementById('npsDetractorsPercent').textContent = 'Upload Base File with CSAT sheet';
+                    return;
+                }
+                
+                // Sample first row to verify structure
+                const sampleRow = window.dashboardData.csat[0];
+                console.log('📋 Sample CSAT row:', sampleRow);
+                console.log('📋 NPS value (index 6):', sampleRow ? sampleRow[6] : 'N/A');
+                
                 const metrics = calculateNPSMetrics();
+                console.log('📊 Calculated NPS metrics:', metrics);
                 
                 // Overall NPS
                 document.getElementById('npsOverallValue').textContent = metrics.npsScore;
@@ -15863,23 +15893,53 @@ Total Population: ${totalPop}
                                 if (workbook.SheetNames.includes('CSAT')) {
                                     const worksheet = workbook.Sheets['CSAT'];
                                     const csatRawData = XLSX.utils.sheet_to_json(worksheet, { raw: false, defval: '', header: 1 });
-                                    // Find header row (contains "S.no.")
+                                    console.log('📊 CSAT raw data rows:', csatRawData.length);
+                                    
+                                    // Find header row (contains "S.no." or "S.No")
                                     let headerRowIndex = -1;
                                     for (let i = 0; i < Math.min(10, csatRawData.length); i++) {
-                                        if (csatRawData[i][0] && String(csatRawData[i][0]).includes('S.no')) {
+                                        const firstCell = String(csatRawData[i][0] || '').toLowerCase();
+                                        if (firstCell.includes('s.no') || firstCell.includes('sno') || firstCell === 's.no' || firstCell === 's.no.') {
                                             headerRowIndex = i;
+                                            console.log('✅ Found CSAT header row at index:', i);
+                                            console.log('📋 Header row:', csatRawData[i].slice(0, 8));
                                             break;
                                         }
                                     }
+                                    
+                                    if (headerRowIndex === -1) {
+                                        console.warn('⚠️ Could not find header row with "S.no", trying first 3 rows...');
+                                        csatRawData.slice(0, 3).forEach((row, idx) => {
+                                            console.log(`Row ${idx}:`, row.slice(0, 8));
+                                        });
+                                    }
+                                    
                                     // Get actual data rows (skip header rows)
-                                    window.dashboardData.csat = headerRowIndex !== -1 
+                                    const dataRows = headerRowIndex !== -1 
                                         ? csatRawData.slice(headerRowIndex + 1).filter(row => row[0] && !isNaN(row[0]))
-                                        : [];
-                                    console.log('✅ CSAT rows:', window.dashboardData.csat.length);
-                                    console.log('📊 CSAT data structure: Array format with NPS in column R (index 17)');
+                                        : csatRawData.filter(row => row[0] && !isNaN(row[0]));
+                                    
+                                    window.dashboardData.csat = dataRows;
+                                    console.log('✅ CSAT data rows loaded:', window.dashboardData.csat.length);
+                                    
+                                    if (window.dashboardData.csat.length > 0) {
+                                        console.log('📊 Sample CSAT row (first data row):');
+                                        const sample = window.dashboardData.csat[0];
+                                        console.log('  A (0) - S.No:', sample[0]);
+                                        console.log('  B (1) - Financial Year:', sample[1]);
+                                        console.log('  C (2) - Management Level:', sample[2]);
+                                        console.log('  D (3) - Account Name:', sample[3]);
+                                        console.log('  E (4) - Account Type:', sample[4]);
+                                        console.log('  F (5) - Account Region:', sample[5]);
+                                        console.log('  G (6) - NPS Score:', sample[6]);
+                                        console.log('  H (7) - NPS Feedback:', sample[7] ? sample[7].substring(0, 50) + '...' : 'N/A');
+                                    } else {
+                                        console.error('❌ No valid CSAT data rows found after filtering');
+                                    }
                                 } else {
                                     window.dashboardData.csat = [];
-                                    console.log('⚠️ CSAT sheet not found');
+                                    console.log('⚠️ CSAT sheet not found in workbook');
+                                    console.log('📋 Available sheets:', workbook.SheetNames);
                                 }
                                 
                                 window.dashboardData.transactionalOverview = parseSheet(workbook, 'Transactional_Overview') || parseSheet(workbook, 'Transactional Overview') || parseSheet(workbook, 'TransactionalOverview') || [];
