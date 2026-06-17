@@ -3620,8 +3620,15 @@
         // Helper function to get NPS score from CSAT data
         function getNPSScore(row) {
             // NPS is in Column G (index 6)
-            const score = row[6];
-            return score && !isNaN(score) ? parseFloat(score) : null;
+            const rawScore = row[6];
+            if (!rawScore) return null;
+            
+            // Trim whitespace and parse
+            const score = String(rawScore).trim();
+            const parsed = parseFloat(score);
+            
+            // Return parsed value if it's a valid number between 0-10
+            return !isNaN(parsed) && parsed >= 0 && parsed <= 10 ? parsed : null;
         }
         
         // Helper function to get Year from CSAT data
@@ -15916,11 +15923,19 @@ Total Population: ${totalPop}
                                     
                                     // Get actual data rows (skip header rows)
                                     const dataRows = headerRowIndex !== -1 
-                                        ? csatRawData.slice(headerRowIndex + 1).filter(row => row[0] && !isNaN(row[0]))
-                                        : csatRawData.filter(row => row[0] && !isNaN(row[0]));
+                                        ? csatRawData.slice(headerRowIndex + 1).filter(row => {
+                                            const sno = String(row[0] || '').trim();
+                                            return sno && !isNaN(sno);
+                                        })
+                                        : csatRawData.filter(row => {
+                                            const sno = String(row[0] || '').trim();
+                                            return sno && !isNaN(sno);
+                                        });
                                     
                                     window.dashboardData.csat = dataRows;
                                     console.log('✅ CSAT data rows loaded:', window.dashboardData.csat.length);
+                                    console.log('📊 Total raw CSAT rows:', csatRawData.length);
+                                    console.log('📊 After filtering:', dataRows.length);
                                     
                                     if (window.dashboardData.csat.length > 0) {
                                         console.log('📊 Sample CSAT row (first data row):');
