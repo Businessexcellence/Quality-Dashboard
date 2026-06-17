@@ -3607,34 +3607,67 @@
             }
         };
         
+        // CSAT Column Mapping (Array-based access):
+        // Column A (0): S.no.
+        // Column B (1): Year (Financial Year)
+        // Column C (2): Status
+        // Column D (3): Variant
+        // Column E (4): Management Level
+        // Column F (5): Account Name
+        // Column G (6): Account Location
+        // Column H (7): Account Type
+        // Column I (8): Account Region
+        // ...
+        // Column R (17): GPNPS_NPS (NPS Score 0-10)
+        // Column S (18): GPNPS_NPS Reason (NPS Feedback)
+        
         // Helper function to get NPS score from CSAT data
         function getNPSScore(row) {
             // NPS is in column R (index 17) - "GPNPS_NPS"
-            const score = row[17] || row['GPNPS_NPS'] || row['Net Promoter Score - NPS'];
+            const score = row[17];
             return score && !isNaN(score) ? parseFloat(score) : null;
         }
         
         // Helper function to get Year from CSAT data
         function getYear(row) {
             // Year is in column B (index 1)
-            return row[1] || row['Year'] || row['__EMPTY_1'];
+            return row[1];
+        }
+        
+        // Helper function to get Management Level from CSAT data
+        function getManagementLevel(row) {
+            // Management Level is in column E (index 4)
+            return row[4];
         }
         
         // Helper function to get Account from CSAT data
         function getAccount(row) {
-            // Account is in column F (index 5)
-            return row[5] || row['Account Name'] || row['__EMPTY_5'];
+            // Account Name is in column F (index 5)
+            return row[5];
         }
         
-        // Filter actual data rows (skip headers)
+        // Helper function to get Account Type from CSAT data
+        function getAccountType(row) {
+            // Account Type is in column H (index 7)
+            return row[7];
+        }
+        
+        // Helper function to get Account Region from CSAT data
+        function getAccountRegion(row) {
+            // Account Region is in column I (index 8)
+            return row[8];
+        }
+        
+        // Helper function to get NPS Feedback from CSAT data
+        function getNPSFeedback(row) {
+            // NPS Feedback is in column S (index 18)
+            return row[18];
+        }
+        
+        // Filter actual data rows (already filtered during parsing)
         function getActualCSATData() {
-            const allData = window.dashboardData.csat || [];
-            // Row 1 and 2 are headers, data starts from row 3 (index 2)
-            // Filter rows where column A (S.no.) is a number
-            return allData.filter((row, idx) => {
-                const sno = row[0] || row['S.no.'] || row['__EMPTY'];
-                return sno && !isNaN(sno) && sno !== 'S.no.';
-            });
+            // Data is already filtered in parseSheet - only valid data rows
+            return window.dashboardData.csat || [];
         }
         
         // Calculate overall NPS and categories
@@ -15830,8 +15863,28 @@ Total Population: ${totalPop}
                                 window.dashboardData.notReportedSla = parseSheet(workbook, 'Not Reported SLA') || [];
                                 console.log('✅ Not Reported SLA rows:', window.dashboardData.notReportedSla.length);
                                 
-                                window.dashboardData.csat = parseSheet(workbook, 'CSAT') || [];
-                                console.log('✅ CSAT rows:', window.dashboardData.csat.length);
+                                // Parse CSAT with array format (header: 1) for index-based access
+                                if (workbook.SheetNames.includes('CSAT')) {
+                                    const worksheet = workbook.Sheets['CSAT'];
+                                    const csatRawData = XLSX.utils.sheet_to_json(worksheet, { raw: false, defval: '', header: 1 });
+                                    // Find header row (contains "S.no.")
+                                    let headerRowIndex = -1;
+                                    for (let i = 0; i < Math.min(10, csatRawData.length); i++) {
+                                        if (csatRawData[i][0] && String(csatRawData[i][0]).includes('S.no')) {
+                                            headerRowIndex = i;
+                                            break;
+                                        }
+                                    }
+                                    // Get actual data rows (skip header rows)
+                                    window.dashboardData.csat = headerRowIndex !== -1 
+                                        ? csatRawData.slice(headerRowIndex + 1).filter(row => row[0] && !isNaN(row[0]))
+                                        : [];
+                                    console.log('✅ CSAT rows:', window.dashboardData.csat.length);
+                                    console.log('📊 CSAT data structure: Array format with NPS in column R (index 17)');
+                                } else {
+                                    window.dashboardData.csat = [];
+                                    console.log('⚠️ CSAT sheet not found');
+                                }
                                 
                                 window.dashboardData.transactionalOverview = parseSheet(workbook, 'Transactional_Overview') || parseSheet(workbook, 'Transactional Overview') || parseSheet(workbook, 'TransactionalOverview') || [];
                                 if (window.dashboardData.transactionalOverview.length > 0) {
