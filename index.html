@@ -3608,60 +3608,56 @@
         };
         
         // CSAT Column Mapping (Array-based access):
-        // Column A (0): S.no.
-        // Column B (1): Year (Financial Year)
-        // Column C (2): Status
-        // Column D (3): Variant
-        // Column E (4): Management Level
-        // Column F (5): Account Name
-        // Column G (6): Account Location
-        // Column H (7): Account Type
-        // Column I (8): Account Region
-        // ...
-        // Column R (17): GPNPS_NPS (NPS Score 0-10)
-        // Column S (18): GPNPS_NPS Reason (NPS Feedback)
+        // Column A (0): S.No
+        // Column B (1): Financial Year
+        // Column C (2): Management Level
+        // Column D (3): Account Name
+        // Column E (4): Account Type
+        // Column F (5): Account Region
+        // Column G (6): NPS Score (0-10)
+        // Column H (7): NPS Feedback
         
         // Helper function to get NPS score from CSAT data
         function getNPSScore(row) {
-            // NPS is in column R (index 17) - "GPNPS_NPS"
-            const score = row[17];
+            // NPS is in Column G (index 6)
+            const score = row[6];
             return score && !isNaN(score) ? parseFloat(score) : null;
         }
         
         // Helper function to get Year from CSAT data
         function getYear(row) {
-            // Year is in column B (index 1)
+            // Financial Year is in Column B (index 1)
             return row[1];
         }
         
         // Helper function to get Management Level from CSAT data
         function getManagementLevel(row) {
-            // Management Level is in column E (index 4)
-            return row[4];
+            // Management Level is in Column C (index 2)
+            return row[2];
         }
         
         // Helper function to get Account from CSAT data
         function getAccount(row) {
-            // Account Name is in column F (index 5)
-            return row[5];
+            // Account Name is in Column D (index 3)
+            return row[3];
         }
         
         // Helper function to get Account Type from CSAT data
         function getAccountType(row) {
-            // Account Type is in column H (index 7)
-            return row[7];
+            // Account Type is in Column E (index 4)
+            return row[4];
         }
         
         // Helper function to get Account Region from CSAT data
         function getAccountRegion(row) {
-            // Account Region is in column I (index 8)
-            return row[8];
+            // Account Region is in Column F (index 5)
+            return row[5];
         }
         
         // Helper function to get NPS Feedback from CSAT data
         function getNPSFeedback(row) {
-            // NPS Feedback is in column S (index 18)
-            return row[18];
+            // NPS Feedback is in Column H (index 7)
+            return row[7];
         }
         
         // Filter actual data rows (already filtered during parsing)
