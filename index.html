@@ -6025,6 +6025,42 @@
             try {
                 const accountsMap = new Map();
                 
+                // ===== CLIENT GROUPING CONFIGURATION =====
+                // Define client entities that should be merged together
+                const clientGroupings = {
+                    'Saint Gobain': [
+                        'saint gobain_glass',
+                        'saint gobain_gyproc', 
+                        'saint gobain_indec',
+                        'saint gobain indec', // Handle naming variation
+                        'saint gobain glass',
+                        'saint gobain gyproc'
+                    ],
+                    'SKF': [
+                        'skf',
+                        'skf industrial',
+                        'skf auto',
+                        'skf india',
+                        'skf industrial ', // Handle trailing space
+                        'skf auto ' // Handle trailing space
+                    ]
+                };
+                
+                // Function to normalize account name to merged parent name
+                const normalizeAccountName = (accountName) => {
+                    const lowerName = accountName.toLowerCase().trim();
+                    
+                    // Check each client group
+                    for (const [parentName, entities] of Object.entries(clientGroupings)) {
+                        if (entities.some(entity => lowerName === entity || lowerName.startsWith(entity))) {
+                            return parentName; // Return the parent client name
+                        }
+                    }
+                    
+                    // No match found, return original name
+                    return accountName;
+                };
+                
                 // Get all accounts from Account Summary
                 const accountSummary = window.dashboardData.accountSummary || [];
                 const parameterData = window.dashboardData.parameterAuditCount || [];
@@ -6036,8 +6072,11 @@
                 
                 // Process each account from Account Summary
                 accountSummary.forEach(acc => {
-                    const accountName = (acc['Account'] || acc['Client'] || acc['Account Name'] || '').toString().trim();
-                    if (!accountName || accountName === '') return;
+                    const rawAccountName = (acc['Account'] || acc['Client'] || acc['Account Name'] || '').toString().trim();
+                    if (!rawAccountName || rawAccountName === '') return;
+                    
+                    // Normalize account name to merge entities
+                    const accountName = normalizeAccountName(rawAccountName);
                     
                     const region = (acc['Region'] || 'Unknown').toString().trim();
                     const status = (acc['Status'] || 'Active').toString().trim();
@@ -6068,7 +6107,8 @@
                     // Calculate metrics from Parameter Audit Count
                     const accountParams = parameterData.filter(row => {
                         const client = (row['Account'] || row['Client'] || row['Account Name'] || '').toString().trim();
-                        return client.toLowerCase() === accountName.toLowerCase();
+                        const normalizedClient = normalizeAccountName(client);
+                        return normalizedClient.toLowerCase() === accountName.toLowerCase();
                     });
                     
                     let totalOppPass = 0, totalOppCount = 0, totalOppNA = 0, totalOppFail = 0, totalPopulationSum = 0;
@@ -6102,7 +6142,8 @@
                     // Get recruiter data
                     const accountRecruiters = recruiterData.filter(row => {
                         const client = (row['Account'] || row['Client'] || row['Account Name'] || '').toString().trim();
-                        return client.toLowerCase() === accountName.toLowerCase();
+                        const normalizedClient = normalizeAccountName(client);
+                        return normalizedClient.toLowerCase() === accountName.toLowerCase();
                     });
                     
                     const uniqueRecruiters = new Set(accountRecruiters.map(r => r['Recruiter'] || r['Recruiter Name'] || '')).size;
@@ -6111,7 +6152,8 @@
                     // Get projects
                     const accountProjects = projectsData.filter(row => {
                         const client = (row['Account'] || row['Client'] || row['Account Name'] || '').toString().trim();
-                        return client.toLowerCase() === accountName.toLowerCase();
+                        const normalizedClient = normalizeAccountName(client);
+                        return normalizedClient.toLowerCase() === accountName.toLowerCase();
                     });
                     
                     const totalProjects = accountProjects.length;
@@ -6127,7 +6169,8 @@
                     // Get RCAs
                     const accountRCAs = rcaData.filter(row => {
                         const client = (row['Account'] || row['Client'] || row['Account Name'] || '').toString().trim();
-                        return client.toLowerCase() === accountName.toLowerCase();
+                        const normalizedClient = normalizeAccountName(client);
+                        return normalizedClient.toLowerCase() === accountName.toLowerCase();
                     });
                     
                     // Helper to get Type from Column K
@@ -6217,14 +6260,16 @@
                     console.log(`🔍 Looking for SLA data for account: ${accountName}, Total SLA rows available: ${slaData.length}`);
                     const accountSLA = slaData.filter(row => {
                         const client = (row['Project'] || row['Account'] || row['Client'] || row['Account Name'] || '').toString().trim();
-                        return client.toLowerCase() === accountName.toLowerCase();
+                        const normalizedClient = normalizeAccountName(client);
+                        return normalizedClient.toLowerCase() === accountName.toLowerCase();
                     });
                     console.log(`✅ Found ${accountSLA.length} SLA row(s) for ${accountName}`);
                     
                     // Get Not Reported SLA data
                     const accountNotReportedSLA = notReportedSlaData.filter(row => {
                         const client = (row['Project'] || row['Account'] || row['Client'] || row['Account Name'] || '').toString().trim();
-                        return client.toLowerCase() === accountName.toLowerCase();
+                        const normalizedClient = normalizeAccountName(client);
+                        return normalizedClient.toLowerCase() === accountName.toLowerCase();
                     });
                     
                     let slaCompliance = 0, slaMet = 0, slaNotMet = 0, slaNotReported = 0;
@@ -6276,57 +6321,152 @@
                     }
                     healthScore = Math.min(100, Math.max(0, healthScore));
                     
-                    accountsMap.set(accountName, {
-                        name: accountName,
-                        region: region,
-                        status: status,
-                        audit_status: auditStatus,
-                        audit_frequency: auditFrequency,
-                        contract_sign_date: contractSignDate, // Column Q
-                        audit_start_date: auditStartDate,
-                        audit_end_date: auditEndDate,
-                        agreed_sample: agreedSample,
-                        ageing: ageing, // Column P: categorical value
-                        practice_head: practiceHead,
-                        regional_head: regionalHead,
-                        be_spoc_sla: beSpocSla,
-                        be_spoc_audit: beSpocAudit,
-                        audit_records: accountParams.length,
-                        avg_accuracy: avgAccuracy,
-                        avg_error: avgError,
-                        sample_percent: samplePercent,
-                        critical_audits: criticalCount,
-                        non_critical_audits: nonCriticalCount,
-                        total_population: totalPopulation, // NEW: Total Population from column J
-                        total_opportunities: totalOppCount, // This is Opportunity Count (will be displayed as Opportunity Count)
-                        valid_opportunities: validOpp,
-                        unique_recruiters: uniqueRecruiters,
-                        recruiter_audits: recruiterAudits,
-                        total_projects: totalProjects,
-                        closed_projects: closedProjects,
-                        ongoing_projects: ongoingProjects,
-                        project_list: accountProjects,
-                        total_rca: totalRCA,
-                        rca_count: rcaCount,
-                        capa_count: capaCount,
-                        closed_rca: closedRCA,
-                        closed_rca_only: closedRCAOnly,
-                        closed_capa_only: closedCAPAOnly,
-                        open_rca: openRCA,
-                        open_rca_only: openRCAOnly,
-                        open_capa_only: openCAPAOnly,
-                        rca_list: accountRCAs,
-                        has_audit_data: accountParams.length > 0,
-                        has_projects: totalProjects > 0,
-                        has_rca: totalRCA > 0,
-                        has_sla: accountSLA.length > 0,
-                        sla_compliance: slaCompliance,
-                        sla_met: slaMet,
-                        sla_not_met: slaNotMet,
-                        sla_not_reported: slaNotReported,
-                        sla_monthly_data: slaMonthlyData,
-                        health_score: parseFloat(healthScore.toFixed(1))
-                    });
+                    // Check if this account already exists in the map (for merged entities)
+                    const existingAccount = accountsMap.get(accountName);
+                    
+                    if (existingAccount) {
+                        // Merge/aggregate the data with existing account
+                        console.log(`🔄 Merging data for "${rawAccountName}" into "${accountName}"`);
+                        
+                        // Aggregate numeric values
+                        existingAccount.audit_records += accountParams.length;
+                        existingAccount.total_population += totalPopulation;
+                        existingAccount.total_opportunities += totalOppCount;
+                        existingAccount.valid_opportunities += validOpp;
+                        existingAccount.unique_recruiters += uniqueRecruiters;
+                        existingAccount.recruiter_audits += recruiterAudits;
+                        existingAccount.critical_audits += criticalCount;
+                        existingAccount.non_critical_audits += nonCriticalCount;
+                        existingAccount.total_projects += totalProjects;
+                        existingAccount.closed_projects += closedProjects;
+                        existingAccount.ongoing_projects += ongoingProjects;
+                        existingAccount.total_rca += totalRCA;
+                        existingAccount.rca_count += rcaCount;
+                        existingAccount.capa_count += capaCount;
+                        existingAccount.closed_rca += closedRCA;
+                        existingAccount.closed_rca_only += closedRCAOnly;
+                        existingAccount.closed_capa_only += closedCAPAOnly;
+                        existingAccount.open_rca += openRCA;
+                        existingAccount.open_rca_only += openRCAOnly;
+                        existingAccount.open_capa_only += openCAPAOnly;
+                        existingAccount.sla_met += slaMet;
+                        existingAccount.sla_not_met += slaNotMet;
+                        existingAccount.sla_not_reported += slaNotReported;
+                        
+                        // Recalculate percentages based on aggregated values
+                        existingAccount.avg_accuracy = existingAccount.valid_opportunities > 0 
+                            ? (((existingAccount.avg_accuracy || 0) * existingAccount.valid_opportunities + 
+                                (avgAccuracy || 0) * validOpp) / (existingAccount.valid_opportunities + validOpp))
+                            : null;
+                        
+                        existingAccount.avg_error = existingAccount.valid_opportunities > 0
+                            ? (((existingAccount.avg_error || 0) * existingAccount.valid_opportunities + 
+                                (avgError || 0) * validOpp) / (existingAccount.valid_opportunities + validOpp))
+                            : null;
+                        
+                        existingAccount.sample_percent = existingAccount.total_population > 0
+                            ? ((existingAccount.total_opportunities / existingAccount.total_population) * 100)
+                            : 0;
+                        
+                        existingAccount.sla_compliance = (existingAccount.sla_met + existingAccount.sla_not_met) > 0
+                            ? ((existingAccount.sla_met / (existingAccount.sla_met + existingAccount.sla_not_met)) * 100)
+                            : 0;
+                        
+                        // Update boolean flags
+                        existingAccount.has_audit_data = existingAccount.has_audit_data || accountParams.length > 0;
+                        existingAccount.has_projects = existingAccount.has_projects || totalProjects > 0;
+                        existingAccount.has_rca = existingAccount.has_rca || totalRCA > 0;
+                        existingAccount.has_sla = existingAccount.has_sla || accountSLA.length > 0;
+                        
+                        // Merge arrays (avoid duplicates)
+                        existingAccount.project_list = [...existingAccount.project_list, ...accountProjects];
+                        existingAccount.rca_list = [...existingAccount.rca_list, ...accountRCAs];
+                        
+                        // Merge monthly SLA data
+                        Object.keys(slaMonthlyData).forEach(month => {
+                            if (!existingAccount.sla_monthly_data[month]) {
+                                existingAccount.sla_monthly_data[month] = slaMonthlyData[month];
+                            } else {
+                                existingAccount.sla_monthly_data[month].met += slaMonthlyData[month].met;
+                                existingAccount.sla_monthly_data[month].not_met += slaMonthlyData[month].not_met;
+                                existingAccount.sla_monthly_data[month].not_reported += slaMonthlyData[month].not_reported;
+                                const total = existingAccount.sla_monthly_data[month].met + existingAccount.sla_monthly_data[month].not_met;
+                                existingAccount.sla_monthly_data[month].compliance = total > 0 
+                                    ? (existingAccount.sla_monthly_data[month].met / total * 100) 
+                                    : 0;
+                            }
+                        });
+                        
+                        // Recalculate health score for merged entity
+                        let mergedHealthScore = 50; // Base score
+                        if (existingAccount.avg_accuracy !== null) {
+                            mergedHealthScore += (existingAccount.avg_accuracy * 0.3); // 30% weight for accuracy
+                        }
+                        if (existingAccount.sla_compliance > 0) {
+                            mergedHealthScore += (existingAccount.sla_compliance * 0.2); // 20% weight for SLA
+                        }
+                        if (existingAccount.closed_rca > 0 && existingAccount.total_rca > 0) {
+                            mergedHealthScore += ((existingAccount.closed_rca / existingAccount.total_rca) * 100 * 0.1); // 10% weight
+                        }
+                        if (existingAccount.total_projects > 0) {
+                            mergedHealthScore += 10;
+                        }
+                        existingAccount.health_score = parseFloat(Math.min(100, Math.max(0, mergedHealthScore)).toFixed(1));
+                        
+                    } else {
+                        // New account, add to map
+                        accountsMap.set(accountName, {
+                            name: accountName,
+                            region: region,
+                            status: status,
+                            audit_status: auditStatus,
+                            audit_frequency: auditFrequency,
+                            contract_sign_date: contractSignDate, // Column Q
+                            audit_start_date: auditStartDate,
+                            audit_end_date: auditEndDate,
+                            agreed_sample: agreedSample,
+                            ageing: ageing, // Column P: categorical value
+                            practice_head: practiceHead,
+                            regional_head: regionalHead,
+                            be_spoc_sla: beSpocSla,
+                            be_spoc_audit: beSpocAudit,
+                            audit_records: accountParams.length,
+                            avg_accuracy: avgAccuracy,
+                            avg_error: avgError,
+                            sample_percent: samplePercent,
+                            critical_audits: criticalCount,
+                            non_critical_audits: nonCriticalCount,
+                            total_population: totalPopulation, // NEW: Total Population from column J
+                            total_opportunities: totalOppCount, // This is Opportunity Count (will be displayed as Opportunity Count)
+                            valid_opportunities: validOpp,
+                            unique_recruiters: uniqueRecruiters,
+                            recruiter_audits: recruiterAudits,
+                            total_projects: totalProjects,
+                            closed_projects: closedProjects,
+                            ongoing_projects: ongoingProjects,
+                            project_list: accountProjects,
+                            total_rca: totalRCA,
+                            rca_count: rcaCount,
+                            capa_count: capaCount,
+                            closed_rca: closedRCA,
+                            closed_rca_only: closedRCAOnly,
+                            closed_capa_only: closedCAPAOnly,
+                            open_rca: openRCA,
+                            open_rca_only: openRCAOnly,
+                            open_capa_only: openCAPAOnly,
+                            rca_list: accountRCAs,
+                            has_audit_data: accountParams.length > 0,
+                            has_projects: totalProjects > 0,
+                            has_rca: totalRCA > 0,
+                            has_sla: accountSLA.length > 0,
+                            sla_compliance: slaCompliance,
+                            sla_met: slaMet,
+                            sla_not_met: slaNotMet,
+                            sla_not_reported: slaNotReported,
+                            sla_monthly_data: slaMonthlyData,
+                            health_score: parseFloat(healthScore.toFixed(1))
+                        });
+                    }
                 });
                 
                 window.journeyAccountsData = Array.from(accountsMap.values());
