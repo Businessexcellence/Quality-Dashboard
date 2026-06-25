@@ -6434,21 +6434,63 @@
                         
                         // Track sub-entity (for drill-down feature)
                         const subEntityName = getSubEntityName(rawAccountName);
-                        if (subEntityName && !existingAccount.sub_entities.find(se => se.name === subEntityName)) {
-                            existingAccount.sub_entities.push({
-                                name: subEntityName,
-                                original_name: rawAccountName,
-                                audit_records: accountParams.length,
-                                avg_accuracy: avgAccuracy,
-                                avg_error: avgError,
-                                sample_percent: samplePercent,
-                                total_population: totalPopulation,
-                                total_opportunities: totalOppCount,
-                                unique_recruiters: uniqueRecruiters,
-                                total_projects: totalProjects,
-                                total_rca: totalRCA,
-                                sla_compliance: slaCompliance
-                            });
+                        if (subEntityName) {
+                            // Find existing sub-entity or create new one
+                            let subEntity = existingAccount.sub_entities.find(se => se.name === subEntityName);
+                            
+                            if (!subEntity) {
+                                // Create new sub-entity
+                                subEntity = {
+                                    name: subEntityName,
+                                    original_name: rawAccountName,
+                                    audit_records: 0,
+                                    avg_accuracy: 0,
+                                    avg_error: 0,
+                                    sample_percent: 0,
+                                    total_population: 0,
+                                    total_opportunities: 0,
+                                    valid_opportunities: 0,
+                                    unique_recruiters: 0,
+                                    total_projects: 0,
+                                    total_rca: 0,
+                                    sla_compliance: 0,
+                                    sla_met: 0,
+                                    sla_not_met: 0
+                                };
+                                existingAccount.sub_entities.push(subEntity);
+                            }
+                            
+                            // Aggregate sub-entity metrics
+                            subEntity.audit_records += accountParams.length;
+                            subEntity.total_population += totalPopulation;
+                            subEntity.total_opportunities += totalOppCount;
+                            subEntity.valid_opportunities += validOpp;
+                            subEntity.unique_recruiters += uniqueRecruiters;
+                            subEntity.total_projects += totalProjects;
+                            subEntity.total_rca += totalRCA;
+                            subEntity.sla_met += slaMet;
+                            subEntity.sla_not_met += slaNotMet;
+                            
+                            // Recalculate weighted averages
+                            if (subEntity.valid_opportunities > 0) {
+                                subEntity.avg_accuracy = (avgAccuracy || 0) !== 0 
+                                    ? ((subEntity.avg_accuracy * (subEntity.valid_opportunities - validOpp) + 
+                                        (avgAccuracy || 0) * validOpp) / subEntity.valid_opportunities)
+                                    : subEntity.avg_accuracy;
+                                
+                                subEntity.avg_error = (avgError || 0) !== 0
+                                    ? ((subEntity.avg_error * (subEntity.valid_opportunities - validOpp) + 
+                                        (avgError || 0) * validOpp) / subEntity.valid_opportunities)
+                                    : subEntity.avg_error;
+                            }
+                            
+                            if (subEntity.total_population > 0) {
+                                subEntity.sample_percent = (subEntity.total_opportunities / subEntity.total_population) * 100;
+                            }
+                            
+                            if (subEntity.sla_met + subEntity.sla_not_met > 0) {
+                                subEntity.sla_compliance = (subEntity.sla_met / (subEntity.sla_met + subEntity.sla_not_met)) * 100;
+                            }
                         }
                         
                         // Merge arrays (avoid duplicates)
@@ -7154,8 +7196,8 @@
                                     </div>
                                 </div>
                                 <div style="display: flex; gap: 20px; align-items: center;">
-                                    <!-- Drill-down button for merged entities -->
-                                    ${account.is_merged ? `
+                                    <!-- Drill-down button for merged entities (only if 2+ verticals) -->
+                                    ${account.is_merged && account.sub_entities && account.sub_entities.length >= 2 ? `
                                     <button onclick="showSubEntities('${account.name}')" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; color: white; padding: 10px 16px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 16px rgba(102, 126, 234, 0.4)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(102, 126, 234, 0.3)';" title="View ${account.sub_entities.length} sub-entities (verticals)">
                                         <i class="fas fa-sitemap"></i>
                                         <span>View ${account.sub_entities.length} Verticals</span>
@@ -9364,11 +9406,50 @@
                 return;
             }
 
+            // ===== MERGE ENTITIES BEFORE RENDERING =====
+            const clientGroupings = {
+                'Saint Gobain': ['saint gobain_glass', 'saint gobain_gyproc', 'saint gobain_indec', 'saint gobain indec'],
+                'SKF': ['skf industrial', 'skf auto', 'skf india', 'skf']
+            };
+            
+            const normalizeAccountName = (accountName) => {
+                const lowerName = accountName.toLowerCase().trim();
+                for (const [parentName, entities] of Object.entries(clientGroupings)) {
+                    if (entities.some(entity => lowerName === entity || lowerName.startsWith(entity))) {
+                        return parentName;
+                    }
+                }
+                return accountName;
+            };
+            
+            // Merge duplicate entities
+            const mergedAccountsMap = new Map();
+            window.dashboardData.accountSummary.forEach(row => {
+                const rawName = row.Account || row.Client || row['Account Name'] || '';
+                if (!rawName) return;
+                
+                const normalizedName = normalizeAccountName(rawName);
+                
+                if (!mergedAccountsMap.has(normalizedName)) {
+                    // First occurrence - create merged entry
+                    mergedAccountsMap.set(normalizedName, {
+                        ...row,
+                        Account: normalizedName,
+                        'Account Name': normalizedName
+                    });
+                }
+                // Note: For merged entities, we keep the first occurrence's metadata (Region, Practice Head, etc.)
+                // The numeric metrics will be aggregated when calculating from Parameter_Audit_Count
+            });
+            
+            const mergedAccountSummary = Array.from(mergedAccountsMap.values());
+            console.log(`📊 Merged accounts: ${window.dashboardData.accountSummary.length} → ${mergedAccountSummary.length}`);
+
             // Apply multi-select filters
-            let filteredData = window.dashboardData.accountSummary;
+            let filteredData = mergedAccountSummary;
             
             if (window.activeAccountFilters && Object.keys(window.activeAccountFilters).length > 0) {
-                filteredData = window.dashboardData.accountSummary.filter(row => {
+                filteredData = mergedAccountSummary.filter(row => {
                     // AND logic across different filter fields
                     return Object.entries(window.activeAccountFilters).every(([field, values]) => {
                         if (!values || values.length === 0) return true;
@@ -9384,9 +9465,9 @@
                         });
                     });
                 });
-                filteredCount.textContent = `(Showing ${filteredData.length} of ${window.dashboardData.accountSummary.length} accounts)`;
+                filteredCount.textContent = `(Showing ${filteredData.length} of ${mergedAccountSummary.length} accounts)`;
             } else {
-                filteredCount.textContent = `(Showing all ${window.dashboardData.accountSummary.length} accounts)`;
+                filteredCount.textContent = `(Showing all ${mergedAccountSummary.length} accounts)`;
             }
 
             console.log(`📋 Rendering ${filteredData.length} accounts in table`);
@@ -9396,10 +9477,13 @@
                 // Get account name for matching with Parameter_Audit_Count
                 const accountName = row.Account || row.Client || row['Account Name'] || '';
                 
-                // Find matching data in Parameter_Audit_Count for calculations
-                const paramData = window.dashboardData.parameterAuditCount.filter(p => 
-                    (p.Account || p.Client) === accountName
-                );
+                // Find matching data in Parameter_Audit_Count for calculations (with normalization)
+                const paramData = window.dashboardData.parameterAuditCount.filter(p => {
+                    const pAccount = p.Account || p.Client || '';
+                    const normalizedPAccount = normalizeAccountName(pAccount);
+                    const normalizedAccountName = normalizeAccountName(accountName);
+                    return normalizedPAccount === normalizedAccountName;
+                });
                 
                 // Calculate metrics from Parameter_Audit_Count data
                 let oppPass = 0, oppCount = 0, oppNA = 0, oppFail = 0, totalPop = 0;
