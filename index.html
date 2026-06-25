@@ -5799,12 +5799,50 @@
         }
 
         function calculateAccountAccuracy() {
+            // Client groupings for merging entities (same as Journey at Glance)
+            const clientGroupings = {
+                'Saint Gobain': [
+                    'saint gobain_glass',
+                    'saint gobain_gyproc', 
+                    'saint gobain_indec',
+                    'saint gobain indec',
+                    'saint gobain glass',
+                    'saint gobain gyproc'
+                ],
+                'SKF': [
+                    'skf',
+                    'skf industrial',
+                    'skf auto',
+                    'skf india',
+                    'skf industrial ',
+                    'skf auto '
+                ]
+            };
+            
+            // Function to normalize account name to merged parent name
+            const normalizeAccountName = (accountName) => {
+                const lowerName = accountName.toLowerCase().trim();
+                
+                // Check each client group
+                for (const [parentName, entities] of Object.entries(clientGroupings)) {
+                    if (entities.some(entity => lowerName === entity || lowerName.startsWith(entity))) {
+                        return parentName; // Return the parent client name
+                    }
+                }
+                
+                // No match found, return original name
+                return accountName;
+            };
+            
             const accounts = {};
             
-            // Step 1: Aggregate data per account
+            // Step 1: Aggregate data per account (with normalization)
             window.dashboardData.parameterAuditCount.forEach(row => {
-                const account = row.Account || row.Client;
-                if (!account) return;
+                const rawAccount = row.Account || row.Client;
+                if (!rawAccount) return;
+                
+                // Normalize account name
+                const account = normalizeAccountName(rawAccount);
 
                 if (!accounts[account]) {
                     accounts[account] = { pass: 0, count: 0, na: 0 };
@@ -6063,6 +6101,15 @@
                         if (lowerName.includes('glass')) return 'Glass';
                         if (lowerName.includes('gyproc')) return 'Gyproc';
                         if (lowerName.includes('indec')) return 'Indec';
+                    }
+                    
+                    // Extract SKF sub-entity
+                    if (lowerName.includes('skf')) {
+                        if (lowerName.includes('industrial')) return 'Industrial';
+                        if (lowerName.includes('auto')) return 'Auto';
+                        if (lowerName.includes('india')) return 'India';
+                        // If just "SKF" without any qualifier, it's a generic entry
+                        if (lowerName === 'skf') return 'SKF Group';
                     }
                     
                     return null; // Not a sub-entity
@@ -7081,17 +7128,15 @@
                     }
                     
                     return `
-                        <div style="background: ${professionalBg}; border: 2px solid #e5e7eb; border-radius: 14px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: all 0.3s ease; padding: 4px; ${account.is_merged ? 'cursor: pointer;' : ''}" 
+                        <div style="background: ${professionalBg}; border: 2px solid #e5e7eb; border-radius: 14px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: all 0.3s ease; padding: 4px;" 
                             onmouseover="this.style.boxShadow='0 6px 20px rgba(0,0,0,0.12)'; this.style.transform='translateY(-2px)';" 
-                            onmouseout="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)'; this.style.transform='translateY(0)';"
-                            ${account.is_merged ? `ondblclick="showSubEntities('${account.name}')" title="Double-click to view sub-entities"` : ''}>
+                            onmouseout="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)'; this.style.transform='translateY(0)';">
                             <div style="background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
                             <!-- Account Header -->
                             <div style="background: white; border-bottom: 1px solid #e5e7eb; padding: 12px; display: flex; justify-content: space-between; align-items: center;">
                                 <div style="flex: 1;">
                                     <h2 style="color: #111827; font-size: 20px; margin-bottom: 10px; font-weight: 700;">
                                         ${account.name}
-                                        ${account.is_merged ? '<i class="fas fa-layer-group" style="color: #3b82f6; font-size: 14px; margin-left: 8px;" title="Merged Entity - Double-click to expand"></i>' : ''}
                                     </h2>
                                     <div style="display: flex; gap: 16px; flex-wrap: wrap; font-size: 12px; color: #6b7280;">
                                         <div style="display: flex; align-items: center; gap: 6px;">
@@ -7106,10 +7151,17 @@
                                             <i class="fas fa-globe" style="color: #9ca3af; width: 14px;"></i>
                                             <span>${account.regional_head}</span>
                                         </div>
-                                        ${account.is_merged ? `<div style="background: #dbeafe; color: #1e40af; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; border: 1px solid #3b82f6;"><i class="fas fa-sitemap"></i> ${account.sub_entities.length} Verticals</div>` : ''}
                                     </div>
                                 </div>
                                 <div style="display: flex; gap: 20px; align-items: center;">
+                                    <!-- Drill-down button for merged entities -->
+                                    ${account.is_merged ? `
+                                    <button onclick="showSubEntities('${account.name}')" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; color: white; padding: 10px 16px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 16px rgba(102, 126, 234, 0.4)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(102, 126, 234, 0.3)';" title="View ${account.sub_entities.length} sub-entities (verticals)">
+                                        <i class="fas fa-sitemap"></i>
+                                        <span>View ${account.sub_entities.length} Verticals</span>
+                                        <i class="fas fa-chevron-right" style="font-size: 10px;"></i>
+                                    </button>
+                                    ` : ''}
                                     <!-- Accuracy Circle -->
                                     <div style="text-align: center;">
                                         <div style="font-size: 9px; font-weight: 600; color: #6b7280; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px;">ACCURACY</div>
